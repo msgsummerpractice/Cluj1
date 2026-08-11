@@ -1,0 +1,8 @@
+mat-toolbar.font-carnac {
+  font-family: 'Carnac';
+}
+
+mat-toolbar.font-carnac a,
+mat-toolbar.font-carnac button {
+  font-family: 'Carnac';
+}

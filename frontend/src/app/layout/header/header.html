@@ -1,0 +1,57 @@
+<mat-toolbar
+  color="via-white"
+  class="flex justify-start items-center px-8 py-4 h-20 gap-4 font-carnac"
+>
+  <a routerLink="/homepage" class="cursor-pointer">
+    <img src="/images/msg-logo.png" alt="Logo" class="h-10 w-auto" />
+  </a>
+
+  <span class="flex-1"></span>
+
+  <nav class="hidden md:flex items-center gap-2">
+    <a mat-button class="nav-button" routerLink="/homepage" routerLinkActive="active" disableRipple
+      >Home</a
+    >
+    <a mat-button class="nav-button" routerLink="/check-in" routerLinkActive="active" disableRipple
+      >Check in</a
+    >
+    <a mat-button class="nav-button" routerLink="/events" routerLinkActive="active" disableRipple
+      >Events</a
+    >
+  </nav>
+
+  <button
+    mat-icon-button
+    [matMenuTriggerFor]="mainNav"
+    class="nav-icon-button md:!hidden"
+    aria-label="Open navigation menu"
+    disableRipple
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <mat-menu #mainNav="matMenu">
+    <a mat-menu-item routerLink="/homepage">
+      <mat-icon>home</mat-icon>
+      <span>Home</span>
+    </a>
+    <a mat-menu-item routerLink="/check-in">
+      <mat-icon>event</mat-icon>
+      <span>Check in</span>
+    </a>
+    <a mat-menu-item routerLink="/events">
+      <mat-icon>calendar_today</mat-icon>
+      <span>Events</span>
+    </a>
+  </mat-menu>
+
+  <a
+    mat-icon-button
+    class="nav-icon-button"
+    routerLink="/profile"
+    aria-label="User account"
+    disableRipple
+  >
+    <mat-icon>account_circle</mat-icon>
+  </a>
+</mat-toolbar>
