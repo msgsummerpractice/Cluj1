@@ -14,8 +14,8 @@ public class DtoMapper {
 
     public User mapToEntity(UserRegistrationDto userRegistrationDto){
         User user = new User();
-        user.setEmail(userRegistrationDto.getEmail();
-        user.setPassword(passwordEncoder.encode(userRegistrationDto.getPassword())));
+        user.setEmail(userRegistrationDto.getEmail());
+        user.setPasswordHash(passwordEncoder.encode(userRegistrationDto.getPassword()));
         user.setCreatedAt(OffsetDateTime.now());
         return user;
     }
