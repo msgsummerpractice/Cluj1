@@ -1,0 +1,14 @@
+{
+  "nav": {
+    "home": "Home",
+    "checkIn": "Check in",
+    "events": "Events"
+  },
+  "user": {
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Log out"
+  },
+  "account": "User account",
+  "openMenu": "Open navigation menu"
+}

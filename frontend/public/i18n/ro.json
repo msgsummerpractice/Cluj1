@@ -1,0 +1,14 @@
+{
+  "nav": {
+    "home": "Acasă",
+    "checkIn": "Check in",
+    "events": "Evenimente"
+  },
+  "user": {
+    "profile": "Profil",
+    "settings": "Setări",
+    "logout": "Deconectare"
+  },
+  "account": "Cont utilizator",
+  "openMenu": "Deschide meniul"
+}

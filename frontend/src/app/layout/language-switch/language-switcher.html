@@ -1,0 +1,15 @@
+<button mat-icon-button [matMenuTriggerFor]="langMenu" aria-label="Change language" disableRipple>
+  <mat-icon>language</mat-icon>
+</button>
+
+<mat-menu #langMenu="matMenu">
+  @for (lang of languageService.supportedLanguages; track lang.code) {
+    <button
+      mat-menu-item
+      (click)="languageService.setLanguage(lang.code)"
+      [class.active-lang]="lang.code === languageService.currentLanguage()"
+    >
+      {{ lang.label }}
+    </button>
+  }
+</mat-menu>
