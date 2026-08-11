@@ -8,7 +8,7 @@ import com.cluj1.eventapp.model.enums.UserLocation;
  
 @Entity
 @Table(name = "user_details")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
 public class UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

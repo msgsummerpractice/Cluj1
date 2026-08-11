@@ -9,7 +9,7 @@ import java.util.UUID;
     name = "notification_recipients",
     uniqueConstraints = {@UniqueConstraint(columnNames = {"notification_id", "user_id"})}
 )
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
 public class NotificationRecipient {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

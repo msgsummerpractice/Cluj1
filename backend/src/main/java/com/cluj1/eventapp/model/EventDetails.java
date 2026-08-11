@@ -6,7 +6,7 @@ import java.util.UUID;
  
 @Entity
 @Table(name = "event_details")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
 public class EventDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -18,11 +18,12 @@ public class EventDetails {
  
     @Column(columnDefinition = "TEXT")
     private String description;
- 
+    
+    @Column(name = "poster")
     @Lob
     private byte[] poster;
  
-    @Column(name = "food_provided")
+    @Column(name = "food_provided", nullable = false)
     private Boolean foodProvided;
  
     @Column(name = "qr_code_content", columnDefinition = "TEXT")

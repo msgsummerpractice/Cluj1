@@ -12,7 +12,7 @@ import java.util.UUID;
     name = "registrations",
     uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "event_id"})}
 )
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
 public class Registration {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -28,7 +28,7 @@ public class Registration {
  
     @Column(name = "gdpr_consent", nullable = false)
     @Builder.Default
-    private Boolean gdprConsent = false;
+    private Boolean gdprConsent = true;
  
     @Column(name = "photo_consent", nullable = false)
     @Builder.Default

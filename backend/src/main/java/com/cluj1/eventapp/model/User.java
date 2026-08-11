@@ -1,6 +1,7 @@
 package com.cluj1.eventapp.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -12,13 +13,17 @@ import java.util.UUID;
  
 @Entity
 @Table(name = "users")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
  
     @Column(nullable = false, unique = true)
+    @Pattern(
+        regexp = "^[a-zA-Z0-9]+\\.[a-zA-Z0-9]+@msg\\.[a-zA-Z0-9]+$",
+        message = "Invalid email format"
+)
     private String email;
  
     @Column(name = "password_hash", nullable = false)

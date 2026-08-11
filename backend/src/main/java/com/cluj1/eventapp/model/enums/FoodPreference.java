@@ -1,3 +1,7 @@
 package com.cluj1.eventapp.model.enums;
 
-public enum FoodPreference { NONE, VEGETARIAN, VEGAN }
+public enum FoodPreference { 
+    NONE,
+    VEGETARIAN,
+    VEGAN
+}

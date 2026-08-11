@@ -8,7 +8,7 @@ import java.util.UUID;
  
 @Entity
 @Table(name = "notifications")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
 public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

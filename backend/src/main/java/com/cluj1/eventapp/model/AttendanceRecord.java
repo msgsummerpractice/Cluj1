@@ -9,7 +9,7 @@ import java.util.UUID;
  
 @Entity
 @Table(name = "attendance_records")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
 public class AttendanceRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
