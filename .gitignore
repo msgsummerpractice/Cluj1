@@ -1,0 +1,126 @@
+# =========================
+# Spring Boot / Java
+# =========================
+
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# Java packaged files
+*.jar
+*.war
+*.ear
+
+# JVM crash logs
+hs_err_pid*
+replay_pid*
+
+# Spring Boot build output
+target/
+build/
+out/
+
+# Maven
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+gradle-app.setting
+.gradletasknamecache
+
+# =========================
+# Angular / Node
+# =========================
+
+# Dependencies
+node_modules/
+
+# Angular build output
+dist/
+.angular/
+out-tsc/
+
+# Angular cache
+.cache/
+
+# npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Package manager caches
+.npm/
+.yarn/
+.pnpm-store/
+
+# Coverage
+coverage/
+
+# =========================
+# Environment / Secrets
+# =========================
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Spring configuration containing local secrets
+application-local.properties
+application-local.yml
+application-local.yaml
+
+# =========================
+# IDEs
+# =========================
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Eclipse
+.classpath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/tasks.json
+!.vscode/launch.json
+
+# =========================
+# OS files
+# =========================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# =========================
+# Temporary files
+# =========================
+
+*.tmp
+*.temp
+*.swp
+*.swo
