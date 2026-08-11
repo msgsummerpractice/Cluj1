@@ -1,69 +1,75 @@
 <mat-toolbar
   color="via-white"
-  class="flex justify-start items-center px-8 py-4 h-20 gap-4 font-carnac"
+  class="flex items-center justify-between px-8 py-4 h-20 gap-4 font-carnac"
 >
-  <a routerLink="/homepage" class="cursor-pointer">
-    <img src="/images/msg-logo.png" alt="Logo" class="h-10 w-auto" />
-  </a>
+  <div class="flex items-center">
+    <a routerLink="/homepage" class="cursor-pointer">
+      <img src="/images/msg-logo.png" alt="Logo" class="h-10 w-auto" />
+    </a>
+  </div>
 
-  <span class="flex-1"></span>
+  <div class="flex items-center gap-4">
+    <nav class="hidden md:flex items-center gap-2">
+      <a
+        mat-button
+        class="nav-button"
+        routerLink="/homepage"
+        routerLinkActive="active"
+        disableRipple
+      >
+        {{ 'nav.home' | transloco }}
+      </a>
 
-  <nav class="hidden md:flex items-center gap-2">
-    <a
-      mat-button
-      class="nav-button"
-      routerLink="/homepage"
-      routerLinkActive="active"
+      <a
+        mat-button
+        class="nav-button"
+        routerLink="/check-in"
+        routerLinkActive="active"
+        disableRipple
+      >
+        {{ 'nav.checkIn' | transloco }}
+      </a>
+
+      <a mat-button class="nav-button" routerLink="/events" routerLinkActive="active" disableRipple>
+        {{ 'nav.events' | transloco }}
+      </a>
+    </nav>
+
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="mainNav"
+      class="nav-icon-button md:!hidden"
+      aria-label="Open navigation menu"
       disableRipple
-      >{{ 'nav.home' | transloco }}</a
     >
+      <mat-icon>menu</mat-icon>
+    </button>
+
+    <mat-menu #mainNav="matMenu">
+      <a mat-menu-item routerLink="/homepage">
+        <mat-icon>home</mat-icon>
+        <span>{{ 'nav.home' | transloco }}</span>
+      </a>
+      <a mat-menu-item routerLink="/check-in">
+        <mat-icon>event</mat-icon>
+        <span>{{ 'nav.checkIn' | transloco }}</span>
+      </a>
+      <a mat-menu-item routerLink="/events">
+        <mat-icon>calendar_today</mat-icon>
+        <span>{{ 'nav.events' | transloco }}</span>
+      </a>
+    </mat-menu>
+
+    <app-language-switcher />
+
     <a
-      mat-button
-      class="nav-button"
-      routerLink="/check-in"
-      routerLinkActive="active"
+      mat-icon-button
+      class="nav-icon-button"
+      routerLink="/profile"
+      aria-label="User account"
       disableRipple
-      >{{ 'nav.checkIn' | transloco }}</a
     >
-    <a mat-button class="nav-button" routerLink="/events" routerLinkActive="active" disableRipple>{{
-      'nav.events' | transloco
-    }}</a>
-  </nav>
-
-  <button
-    mat-icon-button
-    [matMenuTriggerFor]="mainNav"
-    class="nav-icon-button md:!hidden"
-    aria-label="Open navigation menu"
-    disableRipple
-  >
-    <mat-icon>menu</mat-icon>
-  </button>
-
-  <mat-menu #mainNav="matMenu">
-    <a mat-menu-item routerLink="/homepage">
-      <mat-icon>home</mat-icon>
-      <span>{{ 'nav.home' | transloco }}</span>
+      <mat-icon>account_circle</mat-icon>
     </a>
-    <a mat-menu-item routerLink="/check-in">
-      <mat-icon>event</mat-icon>
-      <span>{{ 'nav.checkIn' | transloco }}</span>
-    </a>
-    <a mat-menu-item routerLink="/events">
-      <mat-icon>calendar_today</mat-icon>
-      <span>{{ 'nav.events' | transloco }}</span>
-    </a>
-  </mat-menu>
-
-  <app-language-switcher />
-
-  <a
-    mat-icon-button
-    class="nav-icon-button"
-    routerLink="/profile"
-    aria-label="User account"
-    disableRipple
-  >
-    <mat-icon>account_circle</mat-icon>
-  </a>
+  </div>
 </mat-toolbar>
