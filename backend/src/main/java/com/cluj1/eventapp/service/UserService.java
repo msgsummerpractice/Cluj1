@@ -5,14 +5,13 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.cluj1.eventapp.dto.UserDTO;
 import com.cluj1.eventapp.model.User;
 
 import com.cluj1.eventapp.repository.UserRepository;
 
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
-
-import com.cluj1.eventapp.service.dto.UserDTO;
 
 @Service
 @RequiredArgsConstructor

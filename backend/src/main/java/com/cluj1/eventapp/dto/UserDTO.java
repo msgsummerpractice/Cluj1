@@ -1,7 +1,7 @@
 package com.cluj1.eventapp.dto;
 
-import com.cluj1.eventapp.model.Role;
-import com.cluj1.eventapp.model.UserLocation;
+import com.cluj1.eventapp.model.enums.Role;
+import com.cluj1.eventapp.model.enums.UserLocation;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
