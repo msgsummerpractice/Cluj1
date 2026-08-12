@@ -1,11 +1,12 @@
-package com.company.events.service;
+package com.cluj1.eventapp.service;
 
-import com.company.events.dto.AuthResponse;
-import com.company.events.dto.LoginRequest;
-import com.company.events.model.entity.User;
-import com.company.events.model.enums.Role;
-import com.company.events.repository.UserRepository;
-import com.company.events.security.JwtTokenProvider;
+import com.cluj1.eventapp.dto.AuthResponse;
+import com.cluj1.eventapp.dto.LogInRequest;
+import com.cluj1.eventapp.model.User;
+import com.cluj1.eventapp.model.enums.Role;
+import com.cluj1.eventapp.repository.UserRepository;
+import com.cluj1.eventapp.security.JwtTokenProvider;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,26 +40,26 @@ class AuthServiceTest {
     private AuthService authService;
 
     private User testUser;
-    private LoginRequest validLoginRequest;
+    private LogInRequest validLoginRequest;
 
     @BeforeEach
     void setUp() {
         testUser = User.builder()
                 .id(UUID.randomUUID())
-                .email("user@company.com")
+                .email("user@example.com")
                 .passwordHash("encodedPassword")
                 .role(Role.PARTICIPANT)
                 .isActive(true)
                 .build();
 
-        validLoginRequest = new LoginRequest();
-        validLoginRequest.setEmail("user@company.com");
+        validLoginRequest = new LogInRequest();
+        validLoginRequest.setEmail("user@example.com");
         validLoginRequest.setPassword("secretPassword");
     }
 
     @Test
-    void login_Success() {
-        when(userRepository.findByEmail("user@company.com")).thenReturn(Optional.of(testUser));
+    void login_validCredentials_returnsAuthResponseWithToken() {
+        when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches("secretPassword", "encodedPassword")).thenReturn(true);
         when(tokenProvider.generateToken(any(User.class))).thenReturn("mocked.jwt.token");
 
@@ -66,15 +67,13 @@ class AuthServiceTest {
 
         assertThat(response).isNotNull();
         assertThat(response.getToken()).isEqualTo("mocked.jwt.token");
-        assertThat(response.getEmail()).isEqualTo("user@company.com");
-        assertThat(response.getRole()).isEqualTo(Role.PARTICIPANT);
 
-        verify(userRepository, times(1)).findByEmail("user@company.com");
+        verify(userRepository, times(1)).findByEmail("user@example.com");
     }
 
     @Test
-    void login_WrongPassword_ThrowsException() {
-        when(userRepository.findByEmail("user@company.com")).thenReturn(Optional.of(testUser));
+    void login_wrongPassword_throwsException() {
+        when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches("secretPassword", "encodedPassword")).thenReturn(false);
 
         assertThatThrownBy(() -> authService.login(validLoginRequest))
@@ -83,8 +82,8 @@ class AuthServiceTest {
     }
 
     @Test
-    void login_UserNotFound_ThrowsException() {
-        when(userRepository.findByEmail("user@company.com")).thenReturn(Optional.empty());
+    void login_userNotFound_throwsException() {
+        when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> authService.login(validLoginRequest))
                 .isInstanceOf(BadCredentialsException.class)
@@ -92,9 +91,9 @@ class AuthServiceTest {
     }
 
     @Test
-    void login_InactiveUser_ThrowsException() {
+    void login_inactiveUser_throwsException() {
         testUser.setIsActive(false);
-        when(userRepository.findByEmail("user@company.com")).thenReturn(Optional.of(testUser));
+        when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(testUser));
 
         assertThatThrownBy(() -> authService.login(validLoginRequest))
                 .isInstanceOf(BadCredentialsException.class)
