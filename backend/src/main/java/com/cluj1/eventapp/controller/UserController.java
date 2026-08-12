@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cluj1.eventapp.dto.UserDTO;
+import com.cluj1.eventapp.dto.UserDto;
 import com.cluj1.eventapp.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<UserDTO>> getUsers(
+    public ResponseEntity<List<UserDto>> getUsers(
             @RequestParam(value = "search", required = false) String search) {
         return ResponseEntity.ok(userService.getAllUsers(search));
     }

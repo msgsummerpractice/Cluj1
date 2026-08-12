@@ -14,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.cluj1.eventapp.dto.UserDTO;
+import com.cluj1.eventapp.dto.UserDto;
 import com.cluj1.eventapp.model.enums.Role;
 import com.cluj1.eventapp.model.enums.UserLocation;
 import com.cluj1.eventapp.model.User;
@@ -46,7 +46,7 @@ class UserServiceTest {
 
         when(userRepository.searchUsers("John")).thenReturn(Arrays.asList(user));
 
-        List<UserDTO> result = userService.getAllUsers("John");
+        List<UserDto> result = userService.getAllUsers("John");
 
         assertEquals(1, result.size());
         assertEquals("John", result.get(0).getFirstName());
@@ -69,7 +69,7 @@ class UserServiceTest {
 
         when(userRepository.searchUsers(null)).thenReturn(Arrays.asList(userWithoutDetails));
 
-        List<UserDTO> result = userService.getAllUsers(null);
+        List<UserDto> result = userService.getAllUsers(null);
 
         assertEquals(1, result.size());
         assertNull(result.get(0).getFirstName());
@@ -82,7 +82,7 @@ class UserServiceTest {
     void getAllUsers_ShouldReturnEmptyList_WhenNoMatchFound() {
         when(userRepository.searchUsers("NonExistent")).thenReturn(Collections.emptyList());
 
-        List<UserDTO> result = userService.getAllUsers("NonExistent");
+        List<UserDto> result = userService.getAllUsers("NonExistent");
 
         assertTrue(result.isEmpty());
     }

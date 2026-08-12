@@ -5,8 +5,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.cluj1.eventapp.dto.UserDTO;
-import com.cluj1.eventapp.model.User;
+import com.cluj1.eventapp.dto.UserDto;
+import com.cluj1.eventapp.mapper.UserMapper;
 
 import com.cluj1.eventapp.repository.UserRepository;
 
@@ -17,25 +17,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Transactional(readOnly = true)
-    public List<UserDTO> getAllUsers(String searchTerm) {
-        List<User> users = userRepository.searchUsers(searchTerm);
-
-        return users.stream()
-                .map(this::mapToDTO)
+    public List<UserDto> getAllUsers(String searchTerm) {
+        return userRepository.searchUsers(searchTerm).stream()
+                .map(userMapper::toDto)
                 .collect(Collectors.toList());
-    }
-
-    private UserDTO mapToDTO(User user) {
-        return UserDTO.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .isActive(user.getIsActive())
-                .firstName(user.getUserDetails() != null ? user.getUserDetails().getFirstName() : null)
-                .lastName(user.getUserDetails() != null ? user.getUserDetails().getLastName() : null)
-                .location(user.getUserDetails() != null ? user.getUserDetails().getLocation() : null)
-                .build();
     }
 }

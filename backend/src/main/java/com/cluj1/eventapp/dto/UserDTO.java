@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class UserDTO {
+public class UserDto {
     private UUID id;
     private String firstName;
     private String lastName;
