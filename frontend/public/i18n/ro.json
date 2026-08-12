@@ -2,13 +2,23 @@
   "nav": {
     "home": "Acasă",
     "checkIn": "Check in",
-    "events": "Evenimente"
+    "events": "Evenimente",
+    "users": "Utilizatori"
   },
   "user": {
     "profile": "Profil",
     "settings": "Setări",
-    "logout": "Deconectare"
+    "logout": "Deconectare",
+    "login": "Autentificare"
   },
   "account": "Cont utilizator",
-  "openMenu": "Deschide meniul"
+  "openMenu": "Deschide meniul de navigare",
+  "auth": {
+    "loginTitle": "Autentificare",
+    "loginSubtitle": "Introdu adresa de email și parola pentru a-ți accesa contul.",
+    "signInTitle": "Autentifică-te pentru a continua.",
+    "emailLabel": "Email",
+    "passwordLabel": "Parolă",
+    "forgotPassword": "Ai uitat parola?"
+  }
 }

@@ -2,13 +2,23 @@
   "nav": {
     "home": "Home",
     "checkIn": "Check in",
-    "events": "Events"
+    "events": "Events",
+    "users": "Users"
   },
   "user": {
     "profile": "Profile",
     "settings": "Settings",
-    "logout": "Log out"
+    "logout": "Log out",
+    "login": "Log in"
   },
   "account": "User account",
-  "openMenu": "Open navigation menu"
+  "openMenu": "Open navigation menu",
+  "auth": {
+    "loginTitle": "Log in",
+    "loginSubtitle": "Enter your email and password to access your account.",
+    "signInTitle": "Sign in to continue.",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "forgotPassword": "Forgot password?"
+  }
 }
