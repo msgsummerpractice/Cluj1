@@ -6,7 +6,6 @@ import { LanguageService } from '../../core/services/language-service';
 
 @Component({
   selector: 'app-language-switcher',
-  standalone: true,
   imports: [MatMenuModule, MatButtonModule, MatIconModule],
   templateUrl: './language-switcher.html',
   styleUrl: './language-switcher.css',

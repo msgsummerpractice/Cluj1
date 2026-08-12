@@ -9,12 +9,12 @@ import { TranslocoModule } from '@jsverse/transloco';
 @Component({
   selector: 'app-header',
   imports: [
+    LanguageSwitcher,
     MatButtonModule,
-    MatToolbarModule,
     MatIconModule,
     MatMenuModule,
+    MatToolbarModule,
     TranslocoModule,
-    LanguageSwitcher,
   ],
   templateUrl: './header.html',
 })
