@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -66,13 +67,15 @@ class AuthControllerIntegrationTest {
 
     @Test
     void registerUser_IntegrationSuccess() throws Exception {
-        UserRegistrationDto dto = new UserRegistrationDto();
-        dto.setEmail("integration.user@example.com");
-        dto.setPassword("Password123!");
-        dto.setConfirmPassword("Password123!");
+        UserRegistrationDto dto = createUserRegistrationDto("integration.user@example.com", "Password123!");
+
         mockMvc.perform(post("/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)));
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk());
+
+        assertTrue(userRepository.findByEmail("integration.user@example.com").isPresent());
     }
     @Test
     void login_validCredentials_returns200AndToken() throws Exception {
@@ -119,5 +122,12 @@ class AuthControllerIntegrationTest {
         request.setEmail(email);
         request.setPassword(password);
         return request;
+    }
+    private UserRegistrationDto createUserRegistrationDto(String email, String password) {
+        UserRegistrationDto dto = new UserRegistrationDto();
+        dto.setEmail(email);
+        dto.setPassword(password);
+        dto.setConfirmPassword(password);
+        return dto;
     }
 }

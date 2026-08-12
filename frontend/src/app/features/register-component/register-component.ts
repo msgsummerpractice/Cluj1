@@ -4,12 +4,22 @@ import { AuthService } from '../../core/auth/auth-service';
 import { Router } from '@angular/router';
 import {ChangeDetectorRef} from '@angular/core';
 import { TranslocoModule } from '@jsverse/transloco';
-
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
 @Component({
   selector: 'app-register-component',
-  imports: [ReactiveFormsModule, TranslocoModule],
+  imports: [
+    ReactiveFormsModule,
+    TranslocoModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+  ],
   templateUrl: './register-component.html',
-  styleUrl: './register-component.css',
+  styleUrls: [],
 })
 export class RegisterComponent {
   private readonly _formBuilder: NonNullableFormBuilder = inject(NonNullableFormBuilder);
@@ -28,7 +38,7 @@ export class RegisterComponent {
         '',
         [
           Validators.required,
-          Validators.pattern('^[a-zA-Z0-9]+\\.[a-zA-Z0-9]+@msg\\.[a-zA-Z0-9]+$'),
+          Validators.pattern('^[a-zA-Z0-9]+\\.[a-zA-Z0-9]+@msg.group'),
         ],
       ],
       password: [
@@ -57,7 +67,8 @@ export class RegisterComponent {
 
   onSubmit() {
     if (this.registerForm.valid) {
-      const { firstName, lastName, userLocation, email, password, confirmPassword } = this.registerForm.getRawValue();
+      const { firstName, lastName, userLocation, email, password, confirmPassword } =
+        this.registerForm.getRawValue();
       console.log(firstName, lastName, userLocation, email, password, confirmPassword);
       this.authService
         .registerUser({ firstName, lastName, userLocation, email, password, confirmPassword })
@@ -71,11 +82,11 @@ export class RegisterComponent {
             }, 1500);
           },
           error: (err) => {
-            const errorMessage = err.error?.error || err.error || 'An error occurred during registration.';
+            const errorMessage =
+              err.error?.error || err.error || 'An error occurred during registration.';
             this.formMessage = errorMessage;
             this.cdr.detectChanges();
             console.error(err);
-
           },
         });
     }

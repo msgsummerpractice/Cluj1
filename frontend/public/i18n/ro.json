@@ -17,8 +17,13 @@
     "firstNamePlaceholder": "Prenume",
     "lastName": "Nume de familie",
     "lastNamePlaceholder": "Nume de familie",
-    "location": "Locatie",
-    "locationPlaceholder": "Selecteaza locatia",
+    "userLocation": "Locatie",
+    "selectLocation": "Selecteaza locatia",
+    "locations": {
+      "cluj": "Cluj-Napoca",
+      "timisoara": "Timișoara",
+      "mures": "Târgu Mureș"
+    },
     "email": "Email",
     "emailPlaceholder": "Prenume.Nume@msg",
     "password": "Parola",
@@ -31,6 +36,7 @@
       "lastNameRequired": "Numele de familie este obligatoriu.",
       "locationRequired": "Locatia este obligatorie.",
       "emailRequired": "Emailul este obligatoriu.",
+      "emailInvalid": "Te rugam sa introduci o adresa de email valida.",
       "passwordRequired": "Parola este obligatorie.",
       "passwordMinLength": "Parola trebuie sa contina cel putin 8 caractere.",
       "passwordPattern": "Trebuie sa contina cel putin 1 litera mare, 1 litera mica, 1 cifra si 1 caracter special.",

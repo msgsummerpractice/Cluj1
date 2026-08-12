@@ -26,7 +26,7 @@ public class User{
 
     @Column(nullable = false, unique = true)
     @Pattern(
-            regexp = "^[a-zA-Z0-9]+\\.[a-zA-Z0-9]+@msg\\.[a-zA-Z0-9]+$",
+            regexp = "^[a-zA-Z0-9]+\\.[a-zA-Z0-9]+@msg.group",
             message = "Invalid email format"
     )
     private String email;

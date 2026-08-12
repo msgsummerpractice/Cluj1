@@ -4,7 +4,7 @@ import com.cluj1.eventapp.dto.AuthResponse;
 import com.cluj1.eventapp.dto.LogInRequest;
 import com.cluj1.eventapp.dto.UserRegistrationDto;
 import com.cluj1.eventapp.exception.EmailAlreadyRegisteredException;
-import com.cluj1.eventapp.mapper.DtoMapper;
+import com.cluj1.eventapp.mapper.UserMapper;
 import com.cluj1.eventapp.model.User;
 import com.cluj1.eventapp.model.enums.Role;
 import com.cluj1.eventapp.repository.UserRepository;
@@ -40,7 +40,7 @@ class AuthServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @Mock
-    private DtoMapper mapper;
+    private UserMapper mapper;
 
     @Mock
     private JwtTokenProvider tokenProvider;
@@ -110,33 +110,31 @@ class AuthServiceTest {
 
     @Test
     void registerUser_ShouldSaveUserWhenEmailIsNotRegistered() {
-        String email = "test@example.com";
+        String email = "test.user@msg.group";
 
-        UserRegistrationDto dto = mock(UserRegistrationDto.class);
-        when(dto.getEmail()).thenReturn(email);
+        UserRegistrationDto dto = new UserRegistrationDto();
+        dto.setEmail(email);
 
         User mappedUser = new User();
 
         when(userRepository.existsByEmail(email)).thenReturn(false);
         when(mapper.mapToEntity(dto)).thenReturn(mappedUser);
 
-        authService.registerUser(dto);
+        userService.registerUser(dto);
         verify(userRepository, times(1)).save(mappedUser);
-
     }
 
     @Test
     void registerUser_ShouldThrowExceptionWhenEmailIsAlreadyRegistered() {
+        String email = "duplicate.user@msg.group";
 
-        String email = "duplicate@example.com";
-
-        UserRegistrationDto dto = mock(UserRegistrationDto.class);
-        when(dto.getEmail()).thenReturn(email);
+        UserRegistrationDto dto = new UserRegistrationDto();
+        dto.setEmail(email);
 
         when(userRepository.existsByEmail(email)).thenReturn(true);
 
         assertThrows(EmailAlreadyRegisteredException.class, () -> {
-            authService.registerUser(dto);
+            userService.registerUser(dto);
         });
 
         verify(mapper, never()).mapToEntity(any());

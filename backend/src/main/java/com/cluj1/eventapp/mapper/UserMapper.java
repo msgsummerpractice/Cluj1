@@ -1,5 +1,6 @@
 package com.cluj1.eventapp.mapper;
 
+import com.cluj1.eventapp.dto.UserDTO;
 import com.cluj1.eventapp.dto.UserRegistrationDto;
 import com.cluj1.eventapp.model.User;
 import com.cluj1.eventapp.model.UserDetails;
@@ -12,7 +13,7 @@ import java.time.OffsetDateTime;
 
 @RequiredArgsConstructor
 @Component
-public class DtoMapper {
+public class UserMapper {
 
     private final PasswordEncoder passwordEncoder;
 
@@ -30,5 +31,16 @@ public class DtoMapper {
         details.setUser(user);
         user.setUserDetails(details);
         return user;
+    }
+    public UserDTO mapToDTO(User user) {
+        return UserDTO.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .isActive(user.getIsActive())
+                .firstName(user.getUserDetails() != null ? user.getUserDetails().getFirstName() : null)
+                .lastName(user.getUserDetails() != null ? user.getUserDetails().getLastName() : null)
+                .location(user.getUserDetails() != null ? user.getUserDetails().getLocation() : null)
+                .build();
     }
 }

@@ -21,26 +21,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @CrossOrigin(origins = "http://localhost:4200")
 public class AuthController {
 
     private final AuthService authService;
-
-    @PostMapping("/register")
-    public ResponseEntity registerUser(@RequestBody @Valid UserRegistrationDto userRegistrationDto){
-        if(!userRegistrationDto.getPassword().equals(userRegistrationDto.getConfirmPassword())){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Passwords do not match");
-        }
-        try{
-            authService.registerUser(userRegistrationDto);
-            return ResponseEntity.ok().build();
-        }catch(IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }catch(EmailAlreadyRegisteredException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
-        }
-    }
 
 
     @PostMapping("/login")
