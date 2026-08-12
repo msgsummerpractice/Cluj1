@@ -12,9 +12,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.cluj1.eventapp.dto.UserDto;
+import com.cluj1.eventapp.mapper.UserMapper;
 import com.cluj1.eventapp.model.enums.Role;
 import com.cluj1.eventapp.model.enums.UserLocation;
 import com.cluj1.eventapp.model.User;
@@ -26,6 +28,9 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Spy
+    private UserMapper userMapper = new UserMapper();
 
     @InjectMocks
     private UserService userService;
