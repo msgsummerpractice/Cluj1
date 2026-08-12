@@ -1,0 +1,142 @@
+<div class="max-w-md mx-auto mt-12 p-8 bg-white rounded-xl shadow-lg border border-gray-100 justify-center flex flex-col w-full h-auto">
+  <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+    Register an account
+  </h2>
+
+  <form class="flex flex-col w-full gap-5" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    @if(formMessage){
+      <div class="p-3 text-sm text-center font-medium rounded-md bg-blue-50 text-blue-600 border border-blue-200">
+        {{formMessage}}
+      </div>
+    }
+
+    <div class="flex flex-col w-full">
+      <label for="firstName" class="mb-1 text-sm font-semibold text-gray-700">First Name:</label>
+      <input
+        id="firstName"
+        formControlName="firstName"
+        type="text"
+        placeholder="e.g. John"
+        class="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-md focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+      />
+      @if (registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched) {
+        <div class="mt-1 text-xs text-red-500">
+          @if (registerForm.get('firstName')?.hasError('required')) {
+            <span>First name is required.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="flex flex-col w-full">
+      <label for="lastName" class="mb-1 text-sm font-semibold text-gray-700">Last Name:</label>
+      <input
+        id="lastName"
+        formControlName="lastName"
+        type="text"
+        placeholder="e.g. Doe"
+        class="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-md focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+      />
+      @if (registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched) {
+        <div class="mt-1 text-xs text-red-500">
+          @if (registerForm.get('lastName')?.hasError('required')) {
+            <span>Last name is required.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="flex flex-col w-full">
+      <label for="location" class="mb-1 text-sm font-semibold text-gray-700">Location:</label>
+      <select
+        id="location"
+        formControlName="location"
+        class="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-md focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+      >
+        <option value="" disabled selected>Select location</option>
+        <option value="CLUJ">Cluj</option>
+        <option value="TIMISOARA">Timisoara</option>
+        <option value="MURES">Mures</option>
+      </select>
+      @if (registerForm.get('location')?.invalid && registerForm.get('location')?.touched) {
+        <div class="mt-1 text-xs text-red-500">
+          @if (registerForm.get('location')?.hasError('required')) {
+            <span>Location is required.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="flex flex-col w-full">
+      <label for="email" class="mb-1 text-sm font-semibold text-gray-700">Email:</label>
+      <input
+        id="email"
+        formControlName="email"
+        type="email"
+        placeholder="Firstname.Lastname@msg"
+        class="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-md focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+      />
+      @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+        <div class="mt-1 text-xs text-red-500">
+          @if (registerForm.get('email')?.hasError('required')) {
+            <span>Email is required.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="flex flex-col w-full">
+      <label for="password" class="mb-1 text-sm font-semibold text-gray-700">Password:</label>
+      <input
+        id="password"
+        formControlName="password"
+        type="password"
+        placeholder="Enter password"
+        class="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-md focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+      />
+      @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+        <div class="mt-1 text-xs text-red-500 flex flex-col">
+          @if (registerForm.get('password')?.hasError('required')) {
+            <span>Password is required.</span>
+          }
+          @if (registerForm.get('password')?.hasError('minlength')) {
+            <span>Password must contain at least 8 characters.</span>
+          }
+          @if (registerForm.get('password')?.hasError('pattern')) {
+            <span>Must contain at least 1 uppercase, 1 lowercase, 1 number and 1 special character.</span>
+          }
+        </div>
+      }
+    </div>
+
+
+    <div class="flex flex-col w-full">
+      <label for="confirmPassword" class="mb-1 text-sm font-semibold text-gray-700">Confirm Password</label>
+      <input
+        id="confirmPassword"
+        type="password"
+        formControlName="confirmPassword"
+        placeholder="Confirm password"
+        class="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-md focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+      >
+      @if (registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched) {
+        <div class="mt-1 text-xs text-red-500">
+          @if (registerForm.get('confirmPassword')?.hasError('required')) {
+            <span>Please confirm your password.</span>
+          }
+          @if (registerForm.get('confirmPassword')?.hasError('passwordMismatch')) {
+            <span>Passwords do not match.</span>
+          }
+        </div>
+      }
+    </div>
+
+    <button
+      type="submit"
+      [disabled]="registerForm.invalid"
+      class="w-full mt-2 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transition-all"
+    >
+      Create account
+    </button>
+  </form>
+</div>

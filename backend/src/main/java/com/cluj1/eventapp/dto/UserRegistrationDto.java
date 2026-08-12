@@ -1,6 +1,7 @@
 package com.cluj1.eventapp.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -8,6 +9,15 @@ import lombok.Data;
 
 @Data
 public class UserRegistrationDto {
+
+    @NotBlank
+    private String firstName;
+
+    @NotBlank
+    private String lastName;
+
+    @NotNull
+    private UserLocation userLocation;
 
     @NotBlank
     @Pattern(
@@ -23,4 +33,7 @@ public class UserRegistrationDto {
             message = "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character"
     )
     private String password;
+
+    @NotBlank(message = "Please confirm your password")
+    private String confirmPassword;
 }
