@@ -20,6 +20,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             "LOWER(ud.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
             "LOWER(ud.lastName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
             "LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-            "LOWER(CAST(u.role AS string)) LIKE LOWER(CONCAT('%', :search, '%'))")
+            "LOWER(CAST(u.role AS String)) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(CAST(ud.location AS String)) LIKE LOWER(CONCAT('%', :search, '%'))")
     List<User> searchUsers(@Param("search") String search);
 }
