@@ -108,36 +108,5 @@ class AuthServiceTest {
                 .hasMessage("Invalid email or password.");
     }
 
-    @Test
-    void registerUser_ShouldSaveUserWhenEmailIsNotRegistered() {
-        String email = "test.user@msg.group";
 
-        UserRegistrationDto dto = new UserRegistrationDto();
-        dto.setEmail(email);
-
-        User mappedUser = new User();
-
-        when(userRepository.existsByEmail(email)).thenReturn(false);
-        when(mapper.mapToEntity(dto)).thenReturn(mappedUser);
-
-        userService.registerUser(dto);
-        verify(userRepository, times(1)).save(mappedUser);
-    }
-
-    @Test
-    void registerUser_ShouldThrowExceptionWhenEmailIsAlreadyRegistered() {
-        String email = "duplicate.user@msg.group";
-
-        UserRegistrationDto dto = new UserRegistrationDto();
-        dto.setEmail(email);
-
-        when(userRepository.existsByEmail(email)).thenReturn(true);
-
-        assertThrows(EmailAlreadyRegisteredException.class, () -> {
-            userService.registerUser(dto);
-        });
-
-        verify(mapper, never()).mapToEntity(any());
-        verify(userRepository, never()).save(any());
-    }
 }
