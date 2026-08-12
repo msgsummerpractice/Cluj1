@@ -1,6 +1,5 @@
 package com.cluj1.eventapp.controller;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -69,8 +68,8 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(authorities = "ADMIN")
-    void getUsers_ShouldReturn200_WhenUserIsAdmin() throws Exception {
-        when(userService.getAllUsers(any())).thenReturn(Collections.emptyList());
+    void getUsers_returns200_whenUserIsAdmin() throws Exception {
+        when(userService.getAllUsers(null)).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/api/users")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -80,13 +79,13 @@ class UserControllerTest {
 
     @Test
     @WithMockUser(authorities = "PARTICIPANT")
-    void getUsers_ShouldReturn403_WhenUserIsNotAdmin() throws Exception {
+    void getUsers_returns403_whenUserIsNotAdmin() throws Exception {
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    void getUsers_ShouldReturn401_WhenUserIsUnauthenticated() throws Exception {
+    void getUsers_returns401_whenUserIsUnauthenticated() throws Exception {
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isUnauthorized());
     }

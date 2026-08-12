@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -81,6 +82,7 @@ class UserIntegrationTest {
         }
 
         @Test
+        @DisplayName("GET /api/users - should return all users when no search term is provided")
         @WithMockUser(authorities = "ADMIN")
         void shouldReturnAllUsers_WhenNoSearchTermIsProvided() throws Exception {
                 mockMvc.perform(get("/api/users")
@@ -93,6 +95,7 @@ class UserIntegrationTest {
         }
 
         @Test
+        @DisplayName("GET /api/users - should return filtered users when search term is provided")
         @WithMockUser(authorities = "ADMIN")
         void shouldReturnFilteredUsers_WhenSearchTermIsProvided() throws Exception {
                 mockMvc.perform(get("/api/users")
@@ -105,6 +108,7 @@ class UserIntegrationTest {
         }
 
         @Test
+        @DisplayName("GET /api/users - should return filtered users when role is provided")
         @WithMockUser(authorities = "ADMIN")
         void shouldReturnFilteredUsers_WhenRoleIsProvided() throws Exception {
                 mockMvc.perform(get("/api/users")
@@ -117,6 +121,7 @@ class UserIntegrationTest {
         }
 
         @Test
+        @DisplayName("GET /api/users - should return 403 when user is not admin")
         @WithMockUser(authorities = "PARTICIPANT")
         void shouldReturn403_WhenUserIsNotAdmin() throws Exception {
                 mockMvc.perform(get("/api/users"))
@@ -124,6 +129,7 @@ class UserIntegrationTest {
         }
 
         @Test
+        @DisplayName("GET /api/users - should return 401 when user is unauthenticated")
         void shouldReturn401_WhenUserIsUnauthenticated() throws Exception {
                 mockMvc.perform(get("/api/users"))
                                 .andExpect(status().isUnauthorized());

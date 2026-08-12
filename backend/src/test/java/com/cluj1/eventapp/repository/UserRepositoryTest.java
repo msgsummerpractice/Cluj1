@@ -24,53 +24,55 @@ class UserRepositoryTest {
 
     @BeforeEach
     void setUp() {
+        userRepository.saveAll(List.of(createAdminUser(), createParticipantUser(), createHrUser()));
+    }
 
-        User adminUser = User.builder()
+    private User createAdminUser() {
+        User user = User.builder()
                 .email("test.admin@msg.group")
                 .passwordHash("hash")
                 .role(Role.valueOf("ADMIN"))
                 .isActive(true)
                 .build();
-
-        UserDetails adminDetails = UserDetails.builder()
-                .user(adminUser)
+        user.setUserDetails(UserDetails.builder()
+                .user(user)
                 .firstName("TestAdmin")
                 .lastName("TestSuprem")
                 .location(UserLocation.valueOf("CLUJ"))
-                .build();
-        adminUser.setUserDetails(adminDetails);
+                .build());
+        return user;
+    }
 
-        User participantUser = User.builder()
+    private User createParticipantUser() {
+        User user = User.builder()
                 .email("test.participant@msg.group")
                 .passwordHash("hash")
                 .role(Role.valueOf("PARTICIPANT"))
                 .isActive(true)
                 .build();
-
-        UserDetails participantDetails = UserDetails.builder()
-                .user(participantUser)
+        user.setUserDetails(UserDetails.builder()
+                .user(user)
                 .firstName("TestAndrei")
                 .lastName("TestPopescu")
                 .location(UserLocation.valueOf("CLUJ"))
-                .build();
-        participantUser.setUserDetails(participantDetails);
+                .build());
+        return user;
+    }
 
-        User hrUser = User.builder()
+    private User createHrUser() {
+        User user = User.builder()
                 .email("test.hr@msg.group")
                 .passwordHash("hash")
                 .role(Role.valueOf("PARTICIPANT"))
                 .isActive(true)
                 .build();
-
-        UserDetails hrDetails = UserDetails.builder()
-                .user(hrUser)
+        user.setUserDetails(UserDetails.builder()
+                .user(user)
                 .firstName("TestElena")
                 .lastName("TestResurseUmane")
                 .location(UserLocation.valueOf("MURES"))
-                .build();
-        hrUser.setUserDetails(hrDetails);
-
-        userRepository.saveAll(List.of(adminUser, participantUser, hrUser));
+                .build());
+        return user;
     }
 
     @Test
