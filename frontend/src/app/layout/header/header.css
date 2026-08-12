@@ -1,0 +1,12 @@
+mat-toolbar.font-carnac {
+  font-family: 'Carnac';
+}
+
+mat-toolbar.font-carnac a,
+mat-toolbar.font-carnac button {
+  font-family: 'Carnac';
+}
+.nav-active {
+  background-color: var(--active-white) !important;
+  border-radius: 0.375rem;
+}
