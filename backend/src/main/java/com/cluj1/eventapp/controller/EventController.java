@@ -18,12 +18,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class EventController {
 
-    private final EventService eventService;
+	private final EventService eventService;
 
-    @GetMapping
-    @PreAuthorize("hasAnyRole('MARKETING_ORGANIZER', 'HR_USER')")
-    public ResponseEntity<List<EventDto>> getAllEvents() {
-        return ResponseEntity.ok(eventService.getAllEvents());
-    }
+	@GetMapping
+	@PreAuthorize("hasAnyRole('MARKETING_ORGANIZER', 'HR_USER')")
+	public ResponseEntity<List<EventDto>> getAllEvents() {
+		return ResponseEntity.ok(eventService.getAllEvents());
+	}
 
 }
