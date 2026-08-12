@@ -6,6 +6,7 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { User } from '../../../core/models/user.model';
 import { UserService } from '../../../core/services/user.service';
 
+import { TranslocoModule } from '@jsverse/transloco';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,6 +19,7 @@ import { MatChipsModule } from '@angular/material/chips';
   imports: [
     CommonModule,
     FormsModule,
+    TranslocoModule,
     MatTableModule,
     MatInputModule,
     MatFormFieldModule,

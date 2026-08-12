@@ -10,5 +10,21 @@
     "logout": "Deconectare"
   },
   "account": "Cont utilizator",
-  "openMenu": "Deschide meniul"
+  "openMenu": "Deschide meniul",
+  "userList": {
+    "title": "Gestionare utilizatori",
+    "searchLabel": "Caută utilizatori...",
+    "searchPlaceholder": "După nume, email sau rol",
+    "colFirstName": "Prenume",
+    "colLastName": "Nume",
+    "colEmail": "Email",
+    "colRole": "Rol",
+    "colLocation": "Locație",
+    "colStatus": "Stare",
+    "colActions": "Acțiuni",
+    "statusActive": "Activ",
+    "statusInactive": "Inactiv",
+    "manageRole": "Gestionare rol",
+    "noData": "Niciun utilizator găsit pentru"
+  }
 }
