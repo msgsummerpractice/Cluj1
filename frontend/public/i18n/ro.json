@@ -10,5 +10,32 @@
     "logout": "Deconectare"
   },
   "account": "Cont utilizator",
-  "openMenu": "Deschide meniul"
+  "openMenu": "Deschide meniul",
+  "register": {
+    "title": "Inregistreaza un cont nou",
+    "firstName": "Prenume",
+    "firstNamePlaceholder": "Prenume",
+    "lastName": "Nume de familie",
+    "lastNamePlaceholder": "Nume de familie",
+    "location": "Locatie",
+    "locationPlaceholder": "Selecteaza locatia",
+    "email": "Email",
+    "emailPlaceholder": "Prenume.Nume@msg",
+    "password": "Parola",
+    "passwordPlaceholder": "Introdu parola",
+    "confirmPassword": "Confirma parola",
+    "confirmPasswordPlaceholder": "Confirma parola",
+    "submit": "Inregistreaza",
+    "errors": {
+      "firstNameRequired": "Prenumele este obligatoriu.",
+      "lastNameRequired": "Numele de familie este obligatoriu.",
+      "locationRequired": "Locatia este obligatorie.",
+      "emailRequired": "Emailul este obligatoriu.",
+      "passwordRequired": "Parola este obligatorie.",
+      "passwordMinLength": "Parola trebuie sa contina cel putin 8 caractere.",
+      "passwordPattern": "Trebuie sa contina cel putin 1 litera mare, 1 litera mica, 1 cifra si 1 caracter special.",
+      "confirmPasswordRequired": "Te rugam sa confirmi parola.",
+      "passwordMismatch": "Parolele nu coincid."
+    }
+  }
 }

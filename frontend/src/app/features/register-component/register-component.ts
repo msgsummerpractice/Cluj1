@@ -1,11 +1,13 @@
 import { Component, inject } from '@angular/core';
-import { AbstractControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { AuthService } from '../../core/auth/auth-service';
 import { Router } from '@angular/router';
+import {ChangeDetectorRef} from '@angular/core';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-register-component',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, TranslocoModule],
   templateUrl: './register-component.html',
   styleUrl: './register-component.css',
 })
@@ -13,6 +15,7 @@ export class RegisterComponent {
   private readonly _formBuilder: NonNullableFormBuilder = inject(NonNullableFormBuilder);
   private readonly authService: AuthService = inject(AuthService);
   private readonly router: Router = inject(Router);
+  private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   formMessage: string = '';
 
@@ -20,7 +23,7 @@ export class RegisterComponent {
     {
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
-      location: ['', [Validators.required]],
+      userLocation: ['', [Validators.required]],
       email: [
         '',
         [
@@ -54,20 +57,27 @@ export class RegisterComponent {
 
   onSubmit() {
     if (this.registerForm.valid) {
-      const { firstName, lastName, location, email, password } = this.registerForm.getRawValue();
-      this.authService.registerUser({ firstName, lastName, location, email, password }).subscribe({
-        next: () => {
-          this.formMessage = 'User registered successfully!';
-          this.registerForm.reset();
-          setTimeout(() => {
-            this.router.navigate(['/login']);
-          }, 1500);
-        },
-        error: (err) => {
-          this.formMessage = 'Error registering user';
-          console.error(err);
-        },
-      });
+      const { firstName, lastName, userLocation, email, password, confirmPassword } = this.registerForm.getRawValue();
+      console.log(firstName, lastName, userLocation, email, password, confirmPassword);
+      this.authService
+        .registerUser({ firstName, lastName, userLocation, email, password, confirmPassword })
+        .subscribe({
+          next: () => {
+            this.formMessage = 'User registered successfully!';
+            this.cdr.detectChanges();
+            this.registerForm.reset();
+            setTimeout(() => {
+              this.router.navigate(['/login']);
+            }, 1500);
+          },
+          error: (err) => {
+            const errorMessage = err.error?.error || err.error || 'An error occurred during registration.';
+            this.formMessage = errorMessage;
+            this.cdr.detectChanges();
+            console.error(err);
+
+          },
+        });
     }
   }
 }

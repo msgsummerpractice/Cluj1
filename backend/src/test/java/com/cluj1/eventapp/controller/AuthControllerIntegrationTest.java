@@ -15,16 +15,13 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import tools.jackson.databind.ObjectMapper;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,8 +39,9 @@ class AuthControllerIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     @Autowired
-    private ObjectMapper objectMapper;
     private PasswordEncoder passwordEncoder;
 
 
@@ -73,19 +71,20 @@ class AuthControllerIntegrationTest {
         dto.setPassword("Password123!");
         dto.setConfirmPassword("Password123!");
         mockMvc.perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)));
+    }
+    @Test
     void login_validCredentials_returns200AndToken() throws Exception {
         LogInRequest request = createLoginRequest("admin.test@msg.com", "Password123!");
 
         mockMvc.perform(
-                        post("/api/auth/login")
+                        post("/auth/login")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
                 )
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("User registered successfully!"));
                 .andExpect(jsonPath("$.token", notNullValue()));
     }
 
@@ -94,7 +93,7 @@ class AuthControllerIntegrationTest {
         LogInRequest request = createLoginRequest("admin.test@msg.com", "WrongPassword");
 
         mockMvc.perform(
-                        post("/api/auth/login")
+                        post("/auth/login")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
@@ -106,9 +105,8 @@ class AuthControllerIntegrationTest {
     void login_emptyFields_returns400() throws Exception {
         LogInRequest request = createLoginRequest("", "");
 
-        assertTrue(userRepository.existsByEmail("integration.user@example.com"));
         mockMvc.perform(
-                        post("/api/auth/login")
+                        post("/auth/login")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))

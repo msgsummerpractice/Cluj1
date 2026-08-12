@@ -2,6 +2,8 @@ package com.cluj1.eventapp.mapper;
 
 import com.cluj1.eventapp.dto.UserRegistrationDto;
 import com.cluj1.eventapp.model.User;
+import com.cluj1.eventapp.model.UserDetails;
+import com.cluj1.eventapp.model.enums.UserLocation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -23,7 +25,7 @@ public class DtoMapper {
         UserDetails details = new UserDetails();
         details.setFirstName(userRegistrationDto.getFirstName());
         details.setLastName(userRegistrationDto.getFirstName());
-        details.setLocation(userRegistrationDto.getUserLocation());
+        details.setLocation(UserLocation.valueOf(userRegistrationDto.getUserLocation().name()));
 
         details.setUser(user);
         user.setUserDetails(details);

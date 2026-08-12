@@ -1,44 +1,37 @@
-<div class="max-w-md mx-auto mt-12 p-8 bg-white rounded-xl shadow-lg border border-gray-100 justify-center flex flex-col w-full h-auto">
-  <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
-    Register an account
-  </h2>
+<div class="w-full h-auto bg-[url(/images/backgroundmsg.webp)] opacity-95">
 
-  <form class="flex flex-col w-full gap-5" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    @if(formMessage){
-      <div class="p-3 text-sm text-center font-medium rounded-md bg-blue-50 text-blue-600 border border-blue-200">
+<div class="bg-[var(--active-white)] p-10 rounded-xl shadow-lg w-full max-w-md mx-auto mt-12 border border-[var(--light-grey)]" style="font-family: 'Carnac', sans-serif;">
+  <h2 class="text-2xl font-bold text-center text-[var(--dark-grey)] mb-8">{{ 'register.title' | transloco }}</h2>
+
+  <form class="space-y-5" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+    @if(formMessage) {
+      <div class="p-3 text-sm text-center font-medium rounded-md bg-[var(--card-pink)] text-[var(--dark-red-dot)] border border-[var(--light-grey)]">
         {{formMessage}}
       </div>
     }
 
-    <div class="flex flex-col w-full">
-      <label for="firstName" class="mb-1 text-sm font-semibold text-gray-700">First Name:</label>
-      <input
-        id="firstName"
-        formControlName="firstName"
-        type="text"
-        placeholder="e.g. John"
-        class="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-md focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-      />
+    <div>
+      <label for="firstName" class="block text-sm font-medium text-[var(--dark-grey)] mb-1.5">{{ 'register.firstName' | transloco }}:</label>
+      <input type="text" id="firstName" formControlName="firstName" [placeholder]="'register.firstNamePlaceholder' | transloco"
+             class="w-full px-4 py-2.5 bg-white border border-[var(--light-grey)] rounded-lg text-[var(--dark-grey)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--tick-purple)] focus:border-[var(--tick-purple)] transition duration-150">
+
       @if (registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched) {
-        <div class="mt-1 text-xs text-red-500">
+        <div class="mt-1 text-xs text-[var(--dark-red-dot)]">
           @if (registerForm.get('firstName')?.hasError('required')) {
-            <span>First name is required.</span>
+            <span>{{ 'register.errors.firstNameRequired' | transloco }}</span>
           }
         </div>
       }
     </div>
 
-    <div class="flex flex-col w-full">
-      <label for="lastName" class="mb-1 text-sm font-semibold text-gray-700">Last Name:</label>
-      <input
-        id="lastName"
-        formControlName="lastName"
-        type="text"
-        placeholder="e.g. Doe"
-        class="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-md focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-      />
+    <div>
+      <label for="lastName" class="block text-sm font-medium text-[var(--dark-grey)] mb-1.5">{{ 'register.lastName' | transloco }}</label>
+      <input type="text" id="lastName" formControlName="lastName" [placeholder]="'register.lastNamePlaceholder' | transloco"
+             class="w-full px-4 py-2.5 bg-white border border-[var(--light-grey)] rounded-lg text-[var(--dark-grey)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--tick-purple)] focus:border-[var(--tick-purple)] transition duration-150">
+
       @if (registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched) {
-        <div class="mt-1 text-xs text-red-500">
+        <div class="mt-1 text-xs text-[var(--dark-red-dot)]">
           @if (registerForm.get('lastName')?.hasError('required')) {
             <span>Last name is required.</span>
           }
@@ -46,97 +39,88 @@
       }
     </div>
 
-    <div class="flex flex-col w-full">
-      <label for="location" class="mb-1 text-sm font-semibold text-gray-700">Location:</label>
-      <select
-        id="location"
-        formControlName="location"
-        class="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-md focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-      >
-        <option value="" disabled selected>Select location</option>
-        <option value="CLUJ">Cluj</option>
-        <option value="TIMISOARA">Timisoara</option>
-        <option value="MURES">Mures</option>
+
+    <div>
+      <label for="userLocation" class="block text-sm font-medium text-[var(--dark-grey)] mb-1.5">{{ 'register.userLocation' | transloco }}</label>
+      <select id="userLocation" formControlName="userLocation"
+              class="w-full px-4 py-2.5 bg-white border border-[var(--light-grey)] rounded-lg text-[var(--dark-grey)] focus:outline-none focus:ring-2 focus:ring-[var(--tick-purple)] focus:border-[var(--tick-purple)] transition duration-150">
+        <option value="" disabled selected>{{ 'register.selectLocation' | transloco }}</option>
+        <option value="CLUJ">{{ 'register.locations.cluj' | transloco }}</option>
+        <option value="TIMISOARA">{{ 'register.locations.timisoara' | transloco }}</option>
+        <option value="MURES">{{ 'register.locations.mures' | transloco }}</option>
       </select>
-      @if (registerForm.get('location')?.invalid && registerForm.get('location')?.touched) {
-        <div class="mt-1 text-xs text-red-500">
-          @if (registerForm.get('location')?.hasError('required')) {
-            <span>Location is required.</span>
+
+      @if (registerForm.get('userLocation')?.invalid && registerForm.get('userLocation')?.touched) {
+        <div class="mt-1 text-xs text-[var(--dark-red-dot)]">
+          @if (registerForm.get('userLocation')?.hasError('required')) {
+            <span>{{ 'register.errors.locationRequired' | transloco }}</span>
           }
         </div>
       }
     </div>
 
-    <div class="flex flex-col w-full">
-      <label for="email" class="mb-1 text-sm font-semibold text-gray-700">Email:</label>
-      <input
-        id="email"
-        formControlName="email"
-        type="email"
-        placeholder="Firstname.Lastname@msg"
-        class="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-md focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-      />
+    <div>
+      <label for="email" class="block text-sm font-medium text-[var(--dark-grey)] mb-1.5">{{ 'register.email' | transloco }}</label>
+      <input type="email" id="email" formControlName="email" [placeholder]="'register.emailPlaceholder' | transloco"
+             class="w-full px-4 py-2.5 bg-white border border-[var(--light-grey)] rounded-lg text-[var(--dark-grey)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--tick-purple)] focus:border-[var(--tick-purple)] transition duration-150">
+
       @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
-        <div class="mt-1 text-xs text-red-500">
+        <div class="mt-1 text-xs text-[var(--dark-red-dot)]">
           @if (registerForm.get('email')?.hasError('required')) {
-            <span>Email is required.</span>
+            <span>{{ 'register.errors.emailRequired' | transloco }}</span>
+          }
+          @if (registerForm.get('email')?.hasError('pattern')) {
+            <span>{{ 'register.errors.emailInvalid' | transloco }}</span>
           }
         </div>
       }
     </div>
 
-    <div class="flex flex-col w-full">
-      <label for="password" class="mb-1 text-sm font-semibold text-gray-700">Password:</label>
-      <input
-        id="password"
-        formControlName="password"
-        type="password"
-        placeholder="Enter password"
-        class="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-md focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-      />
+
+    <div>
+      <label for="password" class="block text-sm font-medium text-[var(--dark-grey)] mb-1.5">{{ 'register.password' | transloco }}</label>
+      <input type="password" id="password" formControlName="password" [placeholder]="'register.passwordPlaceholder' | transloco"
+             class="w-full px-4 py-2.5 bg-white border border-[var(--light-grey)] rounded-lg text-[var(--dark-grey)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--tick-purple)] focus:border-[var(--tick-purple)] transition duration-150">
+
       @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
-        <div class="mt-1 text-xs text-red-500 flex flex-col">
+        <div class="mt-1 text-xs text-[var(--dark-red-dot)] flex flex-col">
           @if (registerForm.get('password')?.hasError('required')) {
-            <span>Password is required.</span>
+            <span>{{ 'register.errors.passwordRequired' | transloco }}</span>
           }
           @if (registerForm.get('password')?.hasError('minlength')) {
-            <span>Password must contain at least 8 characters.</span>
+            <span>{{ 'register.errors.passwordMinLength' | transloco }}</span>
           }
           @if (registerForm.get('password')?.hasError('pattern')) {
-            <span>Must contain at least 1 uppercase, 1 lowercase, 1 number and 1 special character.</span>
+            <span>{{ 'register.errors.passwordPattern' | transloco }}</span>
           }
         </div>
       }
     </div>
 
 
-    <div class="flex flex-col w-full">
-      <label for="confirmPassword" class="mb-1 text-sm font-semibold text-gray-700">Confirm Password</label>
-      <input
-        id="confirmPassword"
-        type="password"
-        formControlName="confirmPassword"
-        placeholder="Confirm password"
-        class="w-full px-4 py-2 text-gray-700 bg-gray-50 border border-gray-300 rounded-md focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-      >
+    <div>
+      <label for="confirmPassword" class="block text-sm font-medium text-[var(--dark-grey)] mb-1.5">{{ 'register.confirmPassword' | transloco }}</label>
+      <input type="password" id="confirmPassword" formControlName="confirmPassword" [placeholder]="'register.confirmPasswordPlaceholder' | transloco"
+             class="w-full px-4 py-2.5 bg-white border border-[var(--light-grey)] rounded-lg text-[var(--dark-grey)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--tick-purple)] focus:border-[var(--tick-purple)] transition duration-150">
+
       @if (registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched) {
-        <div class="mt-1 text-xs text-red-500">
+        <div class="mt-1 text-xs text-[var(--dark-red-dot)]">
           @if (registerForm.get('confirmPassword')?.hasError('required')) {
-            <span>Please confirm your password.</span>
+            <span>{{ 'register.errors.confirmPasswordRequired' | transloco }}</span>
           }
           @if (registerForm.get('confirmPassword')?.hasError('passwordMismatch')) {
-            <span>Passwords do not match.</span>
+            <span>{{ 'register.errors.passwordMismatch' | transloco }}</span>
           }
         </div>
       }
     </div>
 
-    <button
-      type="submit"
-      [disabled]="registerForm.invalid"
-      class="w-full mt-2 py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transition-all"
-    >
-      Create account
-    </button>
+    <div class="pt-2">
+      <button type="submit" [disabled]="registerForm.invalid"
+              class="w-full bg-[var(--dark-red-dot)] text-[var(--active-white)] font-bold py-3 rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[var(--dark-red-dot)] focus:ring-offset-2 disabled:bg-[var(--light-grey)] disabled:text-[var(--dark-grey)] disabled:cursor-not-allowed transition duration-200 shadow-md">
+        {{ 'register.submit' | transloco }}
+      </button>
+    </div>
   </form>
+</div>
 </div>

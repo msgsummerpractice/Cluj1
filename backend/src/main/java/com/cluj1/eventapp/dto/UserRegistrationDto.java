@@ -1,5 +1,6 @@
 package com.cluj1.eventapp.dto;
 
+import com.cluj1.eventapp.model.enums.UserLocation;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

@@ -1,5 +1,7 @@
 package com.cluj1.eventapp.service;
 
+import com.cluj1.eventapp.dto.AuthResponse;
+import com.cluj1.eventapp.dto.LogInRequest;
 import com.cluj1.eventapp.dto.UserRegistrationDto;
 import com.cluj1.eventapp.exception.EmailAlreadyRegisteredException;
 import com.cluj1.eventapp.mapper.DtoMapper;
@@ -34,10 +36,13 @@ class AuthServiceTest {
 
     @Mock
     private UserService userService;
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @Mock
     private DtoMapper mapper;
+
+    @Mock
     private JwtTokenProvider tokenProvider;
 
     @InjectMocks
@@ -74,16 +79,16 @@ class AuthServiceTest {
 
         verify(userRepository, times(1)).findByEmail("user@example.com");
     }
+
     @Test
     void login_wrongPassword_throwsException() {
         when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches("secretPassword", "encodedPassword")).thenReturn(false);
-        UserRegistrationDto dto = mock(UserRegistrationDto.class);
-        when(dto.getEmail()).thenReturn(email);
         assertThatThrownBy(() -> authService.login(validLoginRequest))
                 .isInstanceOf(BadCredentialsException.class)
                 .hasMessage("Invalid email or password.");
     }
+
     @Test
     void login_userNotFound_throwsException() {
         when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.empty());
@@ -92,6 +97,7 @@ class AuthServiceTest {
                 .isInstanceOf(BadCredentialsException.class)
                 .hasMessage("Invalid email or password.");
     }
+
     @Test
     void login_inactiveUser_throwsException() {
         testUser.setIsActive(false);
@@ -101,6 +107,7 @@ class AuthServiceTest {
                 .isInstanceOf(BadCredentialsException.class)
                 .hasMessage("Invalid email or password.");
     }
+
     @Test
     void registerUser_ShouldSaveUserWhenEmailIsNotRegistered() {
         String email = "test@example.com";
@@ -116,7 +123,7 @@ class AuthServiceTest {
         authService.registerUser(dto);
         verify(userRepository, times(1)).save(mappedUser);
 
-        }
+    }
 
     @Test
     void registerUser_ShouldThrowExceptionWhenEmailIsAlreadyRegistered() {

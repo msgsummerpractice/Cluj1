@@ -10,5 +10,32 @@
     "logout": "Log out"
   },
   "account": "User account",
-  "openMenu": "Open navigation menu"
+  "openMenu": "Open navigation menu",
+  "register": {
+    "title": "Register an account",
+    "firstName": "First Name",
+    "firstNamePlaceholder": "First Name",
+    "lastName": "Last Name",
+    "lastNamePlaceholder": "Last Name",
+    "location": "Location",
+    "locationPlaceholder": "Select location",
+    "email": "Email",
+    "emailPlaceholder": "Firstname.Lastname@msg",
+    "password": "Password",
+    "passwordPlaceholder": "Enter password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Confirm password",
+    "submit": "Create account",
+    "errors": {
+      "firstNameRequired": "First name is required.",
+      "lastNameRequired": "Last name is required.",
+      "locationRequired": "Location is required.",
+      "emailRequired": "Email is required.",
+      "passwordRequired": "Password is required.",
+      "passwordMinLength": "Password must contain at least 8 characters.",
+      "passwordPattern": "Must contain at least 1 uppercase, 1 lowercase, 1 number and 1 special character.",
+      "confirmPasswordRequired": "Please confirm your password.",
+      "passwordMismatch": "Passwords do not match."
+    }
+  }
 }
