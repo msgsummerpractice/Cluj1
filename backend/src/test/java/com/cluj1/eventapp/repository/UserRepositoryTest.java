@@ -74,49 +74,49 @@ class UserRepositoryTest {
     }
 
     @Test
-    void searchUsers_ShouldReturnAll_WhenSearchTermIsNull() {
+    void searchUsers_returnAll_whenSearchTermIsNull() {
         List<User> results = userRepository.searchUsers(null);
         assertThat(results.size()).isGreaterThanOrEqualTo(3);
     }
 
     @Test
-    void searchUsers_ShouldReturnAll_WhenSearchTermIsEmpty() {
+    void searchUsers_returnAll_whenSearchTermIsEmpty() {
         List<User> results = userRepository.searchUsers("");
         assertThat(results.size()).isGreaterThanOrEqualTo(3);
     }
 
     @Test
-    void searchUsers_ShouldMatchByFirstNameCaseInsensitive() {
+    void searchUsers_matchByFirstNameCaseInsensitive() {
         List<User> results = userRepository.searchUsers("testadmin");
         assertThat(results).anyMatch(user -> user.getEmail().equals("test.admin@msg.group"));
     }
 
     @Test
-    void searchUsers_ShouldMatchByLastNameCaseInsensitive() {
+    void searchUsers_matchByLastNameCaseInsensitive() {
         List<User> results = userRepository.searchUsers("TESTPOPESCU");
         assertThat(results).anyMatch(user -> user.getUserDetails().getFirstName().equals("TestAndrei"));
     }
 
     @Test
-    void searchUsers_ShouldMatchByEmailPartial() {
+    void searchUsers_matchByEmailPartial() {
         List<User> results = userRepository.searchUsers("test.participant");
         assertThat(results).anyMatch(user -> user.getUserDetails().getLastName().equals("TestPopescu"));
     }
 
     @Test
-    void searchUsers_ShouldMatchByLocation() {
+    void searchUsers_matchByLocation() {
         List<User> results = userRepository.searchUsers("CLUJ");
         assertThat(results.size()).isGreaterThanOrEqualTo(2);
     }
 
     @Test
-    void searchUsers_ShouldMatchByRole() {
+    void searchUsers_matchByRole() {
         List<User> results = userRepository.searchUsers("ADMIN");
         assertThat(results).anyMatch(user -> user.getEmail().equals("test.admin@msg.group"));
     }
 
     @Test
-    void searchUsers_ShouldReturnEmpty_WhenNoMatch() {
+    void searchUsers_returnEmpty_whenNoMatch() {
         List<User> results = userRepository.searchUsers("DateCareNuExistaNiciodata123");
         assertThat(results).isEmpty();
     }
