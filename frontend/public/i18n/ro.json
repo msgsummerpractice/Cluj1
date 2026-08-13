@@ -62,6 +62,7 @@
   },
   "register": {
     "title": "Înregistrează un cont nou",
+    "subtitle": "Creează un cont pentru a participa la evenimentele noastre, pentru a te conecta cu comunitatea și pentru a-ți gestiona înscrierile.",
     "firstName": "Prenume",
     "firstNamePlaceholder": "Prenume",
     "lastName": "Nume de familie",
@@ -71,14 +72,17 @@
     "locations": {
       "cluj": "Cluj-Napoca",
       "timisoara": "Timișoara",
-      "mures": "Târgu Mureș"
+      "mures": "Târgu Mureș",
+      "remote": "Remote"
     },
     "email": "Email",
-    "emailPlaceholder": "Prenume.Nume@msg",
+    "emailPlaceholder": "Prenume.Nume@msg.group",
     "password": "Parola",
     "passwordPlaceholder": "Introdu parola",
     "confirmPassword": "Confirma parola",
     "confirmPasswordPlaceholder": "Confirma parola",
+    "alreadyHaveAccount": "Ai deja un cont?",
+    "signin": "Autentificare",
     "submit": "Inregistreaza",
     "errors": {
       "firstNameRequired": "Prenumele este obligatoriu.",

@@ -20,13 +20,12 @@
           </span>
           <h1 class="m-0 text-5xl leading-tight">{{ 'register.title' | transloco }}</h1>
           <p class="m-0 max-w-md text-lg text-white/80">
-            Create an account to join our events, connect with the community, and manage your registrations.
+            {{ 'register.subtitle' | transloco }}
           </p>
         </div>
 
         <div></div>
       </section>
-
 
       <section class="p-6 sm:p-10 max-h-[calc(100vh-5rem)] overflow-y-auto custom-scrollbar">
         <mat-card class="!bg-transparent !shadow-none">
@@ -41,15 +40,14 @@
 
           <mat-card-content class="!p-0">
             <form class="grid gap-4" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-
-              @if(successMessage) {
+              @if (successMessage) {
                 <div
                   class="rounded-2xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
                 >
                   {{ successMessage }}
                 </div>
               }
-              @if(errorMessage) {
+              @if (errorMessage) {
                 <div
                   class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
                 >
@@ -59,16 +57,34 @@
               <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <mat-form-field appearance="outline">
                   <mat-label>{{ 'register.firstName' | transloco }}</mat-label>
-                  <input matInput type="text" id="firstName" formControlName="firstName" [placeholder]="'register.firstNamePlaceholder' | transloco">
-                  @if (registerForm.get('firstName')?.hasError('required') && registerForm.get('firstName')?.touched) {
+                  <input
+                    matInput
+                    type="text"
+                    id="firstName"
+                    formControlName="firstName"
+                    [placeholder]="'register.firstNamePlaceholder' | transloco"
+                  />
+                  @if (
+                    registerForm.get('firstName')?.hasError('required') &&
+                    registerForm.get('firstName')?.touched
+                  ) {
                     <mat-error>{{ 'register.errors.firstNameRequired' | transloco }}</mat-error>
                   }
                 </mat-form-field>
 
                 <mat-form-field appearance="outline">
                   <mat-label>{{ 'register.lastName' | transloco }}</mat-label>
-                  <input matInput type="text" id="lastName" formControlName="lastName" [placeholder]="'register.lastNamePlaceholder' | transloco">
-                  @if (registerForm.get('lastName')?.hasError('required') && registerForm.get('lastName')?.touched) {
+                  <input
+                    matInput
+                    type="text"
+                    id="lastName"
+                    formControlName="lastName"
+                    [placeholder]="'register.lastNamePlaceholder' | transloco"
+                  />
+                  @if (
+                    registerForm.get('lastName')?.hasError('required') &&
+                    registerForm.get('lastName')?.touched
+                  ) {
                     <mat-error>Last name is required.</mat-error>
                   }
                 </mat-form-field>
@@ -77,54 +93,115 @@
               <mat-form-field appearance="outline">
                 <mat-label>{{ 'register.userLocation' | transloco }}</mat-label>
                 <mat-select id="userLocation" formControlName="userLocation">
-                  <mat-option value="" disabled>{{ 'register.selectLocation' | transloco }}</mat-option>
-                  <mat-option value="CLUJ">{{ 'register.locations.cluj' | transloco }}</mat-option>
-                  <mat-option value="TIMISOARA">{{ 'register.locations.timisoara' | transloco }}</mat-option>
-                  <mat-option value="MURES">{{ 'register.locations.mures' | transloco }}</mat-option>
+                  <mat-option value="" disabled>{{
+                    'register.selectLocation' | transloco
+                  }}</mat-option>
+                  @for (location of locations; track location.value) {
+                    <mat-option [value]="location.value">{{
+                      location.labelKey | transloco
+                    }}</mat-option>
+                  }
                 </mat-select>
-                @if (registerForm.get('userLocation')?.hasError('required') && registerForm.get('userLocation')?.touched) {
+                @if (
+                  registerForm.get('userLocation')?.hasError('required') &&
+                  registerForm.get('userLocation')?.touched
+                ) {
                   <mat-error>{{ 'register.errors.locationRequired' | transloco }}</mat-error>
                 }
               </mat-form-field>
 
-
               <mat-form-field appearance="outline">
                 <mat-label>{{ 'register.email' | transloco }}</mat-label>
-                <input matInput type="email" id="email" formControlName="email" [placeholder]="'register.emailPlaceholder' | transloco">
-                @if (registerForm.get('email')?.hasError('required') && registerForm.get('email')?.touched) {
+                <input
+                  matInput
+                  type="email"
+                  id="email"
+                  formControlName="email"
+                  [placeholder]="'register.emailPlaceholder' | transloco"
+                />
+                @if (
+                  registerForm.get('email')?.hasError('required') &&
+                  registerForm.get('email')?.touched
+                ) {
                   <mat-error>{{ 'register.errors.emailRequired' | transloco }}</mat-error>
                 }
-                @if (registerForm.get('email')?.hasError('pattern') && registerForm.get('email')?.touched) {
+                @if (
+                  registerForm.get('email')?.hasError('pattern') &&
+                  registerForm.get('email')?.touched
+                ) {
                   <mat-error>{{ 'register.errors.emailInvalid' | transloco }}</mat-error>
                 }
               </mat-form-field>
 
               <mat-form-field appearance="outline">
                 <mat-label>{{ 'register.password' | transloco }}</mat-label>
-                <input matInput type="password" id="password" formControlName="password" [placeholder]="'register.passwordPlaceholder' | transloco">
-                @if (registerForm.get('password')?.hasError('required') && registerForm.get('password')?.touched) {
+                <input
+                  matInput
+                  [type]="hidePassword ? 'password' : 'text'"
+                  id="password"
+                  formControlName="password"
+                  [placeholder]="'register.passwordPlaceholder' | transloco"
+                />
+                <button
+                  mat-icon-button
+                  matSuffix
+                  type="button"
+                  [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'"
+                  (click)="hidePassword = !hidePassword"
+                >
+                  <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+                @if (
+                  registerForm.get('password')?.hasError('required') &&
+                  registerForm.get('password')?.touched
+                ) {
                   <mat-error>{{ 'register.errors.passwordRequired' | transloco }}</mat-error>
                 }
-                @if (registerForm.get('password')?.hasError('minlength') && registerForm.get('password')?.touched) {
+                @if (
+                  registerForm.get('password')?.hasError('minlength') &&
+                  registerForm.get('password')?.touched
+                ) {
                   <mat-error>{{ 'register.errors.passwordMinLength' | transloco }}</mat-error>
                 }
-                @if (registerForm.get('password')?.hasError('pattern') && registerForm.get('password')?.touched) {
+                @if (
+                  registerForm.get('password')?.hasError('pattern') &&
+                  registerForm.get('password')?.touched
+                ) {
                   <mat-error>{{ 'register.errors.passwordPattern' | transloco }}</mat-error>
                 }
               </mat-form-field>
 
-
               <mat-form-field appearance="outline">
                 <mat-label>{{ 'register.confirmPassword' | transloco }}</mat-label>
-                <input matInput type="password" id="confirmPassword" formControlName="confirmPassword" [placeholder]="'register.confirmPasswordPlaceholder' | transloco">
-                @if (registerForm.get('confirmPassword')?.hasError('required') && registerForm.get('confirmPassword')?.touched) {
+                <input
+                  matInput
+                  [type]="hideConfirmPassword ? 'password' : 'text'"
+                  id="confirmPassword"
+                  formControlName="confirmPassword"
+                  [placeholder]="'register.confirmPasswordPlaceholder' | transloco"
+                />
+                <button
+                  mat-icon-button
+                  matSuffix
+                  type="button"
+                  [attr.aria-label]="hideConfirmPassword ? 'Show password' : 'Hide password'"
+                  (click)="hideConfirmPassword = !hideConfirmPassword"
+                >
+                  <mat-icon>{{ hideConfirmPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+                @if (
+                  registerForm.get('confirmPassword')?.hasError('required') &&
+                  registerForm.get('confirmPassword')?.touched
+                ) {
                   <mat-error>{{ 'register.errors.confirmPasswordRequired' | transloco }}</mat-error>
                 }
-                @if (registerForm.get('confirmPassword')?.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched) {
+                @if (
+                  registerForm.get('confirmPassword')?.hasError('passwordMismatch') &&
+                  registerForm.get('confirmPassword')?.touched
+                ) {
                   <mat-error>{{ 'register.errors.passwordMismatch' | transloco }}</mat-error>
                 }
               </mat-form-field>
-
 
               <button
                 mat-flat-button
@@ -135,11 +212,10 @@
                 {{ 'register.submit' | transloco }}
               </button>
 
-
               <div class="mt-6 text-center text-sm text-slate-500">
-                Already have an account?
+                {{ 'register.alreadyHaveAccount' | transloco }}
                 <a routerLink="/login" class="font-semibold text-slate-900 hover:underline ms-1">
-                  Sign in
+                  {{ 'register.signin' | transloco }}
                 </a>
               </div>
             </form>

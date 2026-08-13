@@ -60,7 +60,7 @@ export class LoginComponent {
 
     this.authService
       .login({
-        email: credentials.email.trim(),
+        email: credentials.email.trim().toLowerCase(),
         password: credentials.password,
       })
       .pipe(finalize(() => this.isSubmitting.set(false)))
