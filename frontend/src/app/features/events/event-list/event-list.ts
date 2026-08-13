@@ -36,7 +36,7 @@ import { EventSortField, shouldShowEventEndDate, sortEvents } from './event-list
 export class EventListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) private sort?: MatSort;
 
-  readonly displayedColumns: string[] = ['name', 'date', 'type', 'status', 'actions'];
+  readonly displayedColumns: string[] = ['name', 'date', 'status', 'type', 'actions'];
   readonly dataSource = new MatTableDataSource<Event>([]);
   readonly events = signal<readonly Event[]>([]);
   readonly sortField = signal<EventSortField | ''>('');
@@ -71,6 +71,20 @@ export class EventListComponent implements OnInit, AfterViewInit {
 
   shouldShowEndDate(event: Event): boolean {
     return shouldShowEventEndDate(event);
+  }
+
+  getStatusBadgeClass(status: string): string {
+    const normalizedStatus = status.trim().toLowerCase();
+
+    if (normalizedStatus.includes('draft')) {
+      return 'status-draft';
+    }
+
+    if (normalizedStatus.includes('published')) {
+      return 'status-published';
+    }
+
+    return 'status-completed';
   }
 
   fetchEvents(): void {
