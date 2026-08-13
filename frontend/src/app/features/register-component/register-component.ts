@@ -15,8 +15,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
-import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
-import {RouterLink} from '@angular/router';
+import {
+  MatCard,
+  MatCardContent,
+  MatCardHeader,
+  MatCardSubtitle,
+  MatCardTitle,
+} from '@angular/material/card';
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-register-component',
   imports: [
@@ -82,7 +88,6 @@ export class RegisterComponent {
     if (this.registerForm.valid) {
       const { firstName, lastName, userLocation, email, password, confirmPassword } =
         this.registerForm.getRawValue();
-      console.log(firstName, lastName, userLocation, email, password, confirmPassword);
       this.userService
         .registerUser({ firstName, lastName, userLocation, email, password, confirmPassword })
         .subscribe({
@@ -96,10 +101,12 @@ export class RegisterComponent {
           },
           error: (err) => {
             const errorMessage =
-              err.error?.message ||err.error?.error || err.message || 'An error occurred during registration.';
+              err.error?.message ||
+              err.error?.error ||
+              err.message ||
+              'An error occurred during registration.';
             this.errorMessage = errorMessage;
             this.cdr.detectChanges();
-            console.error(err);
           },
         });
     }

@@ -70,8 +70,6 @@ export class LoginComponent {
           void this.router.navigateByUrl(nextUrl);
         },
         error: (error) => {
-          console.log('Login error response:', error);
-
           if (error.status !== 0) {
             this.errorMessage.set('Invalid email or password.');
             return;
