@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
 import {
@@ -32,6 +33,7 @@ import { RouterLink } from '@angular/router';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatIconModule,
     MatCardContent,
     MatCardSubtitle,
     MatCardTitle,
@@ -40,7 +42,7 @@ import { RouterLink } from '@angular/router';
     RouterLink,
   ],
   templateUrl: './register-component.html',
-  styleUrls: [],
+  styleUrls: ['./register-component.css'],
 })
 export class RegisterComponent {
   private readonly _formBuilder: NonNullableFormBuilder = inject(NonNullableFormBuilder);
@@ -48,8 +50,17 @@ export class RegisterComponent {
   private readonly router: Router = inject(Router);
   private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
+  readonly locations = [
+    { value: 'CLUJ', labelKey: 'register.locations.cluj' },
+    { value: 'TIMISOARA', labelKey: 'register.locations.timisoara' },
+    { value: 'MURES', labelKey: 'register.locations.mures' },
+    { value: 'REMOTE', labelKey: 'register.locations.remote' },
+  ] as const;
+
   successMessage: string = '';
   errorMessage: string = '';
+  hidePassword = true;
+  hideConfirmPassword = true;
 
   registerForm = this._formBuilder.group(
     {
@@ -95,9 +106,7 @@ export class RegisterComponent {
             this.successMessage = 'User registered successfully!';
             this.cdr.detectChanges();
             this.registerForm.reset();
-            setTimeout(() => {
-              this.router.navigate(['/login']);
-            }, 1500);
+            this.router.navigate(['/login']);
           },
           error: (err) => {
             const errorMessage =

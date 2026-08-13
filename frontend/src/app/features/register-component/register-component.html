@@ -20,8 +20,7 @@
           </span>
           <h1 class="m-0 text-5xl leading-tight">{{ 'register.title' | transloco }}</h1>
           <p class="m-0 max-w-md text-lg text-white/80">
-            Create an account to join our events, connect with the community, and manage your
-            registrations.
+            {{ 'register.subtitle' | transloco }}
           </p>
         </div>
 
@@ -97,13 +96,11 @@
                   <mat-option value="" disabled>{{
                     'register.selectLocation' | transloco
                   }}</mat-option>
-                  <mat-option value="CLUJ">{{ 'register.locations.cluj' | transloco }}</mat-option>
-                  <mat-option value="TIMISOARA">{{
-                    'register.locations.timisoara' | transloco
-                  }}</mat-option>
-                  <mat-option value="MURES">{{
-                    'register.locations.mures' | transloco
-                  }}</mat-option>
+                  @for (location of locations; track location.value) {
+                    <mat-option [value]="location.value">{{
+                      location.labelKey | transloco
+                    }}</mat-option>
+                  }
                 </mat-select>
                 @if (
                   registerForm.get('userLocation')?.hasError('required') &&
@@ -140,11 +137,20 @@
                 <mat-label>{{ 'register.password' | transloco }}</mat-label>
                 <input
                   matInput
-                  type="password"
+                  [type]="hidePassword ? 'password' : 'text'"
                   id="password"
                   formControlName="password"
                   [placeholder]="'register.passwordPlaceholder' | transloco"
                 />
+                <button
+                  mat-icon-button
+                  matSuffix
+                  type="button"
+                  [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'"
+                  (click)="hidePassword = !hidePassword"
+                >
+                  <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
                 @if (
                   registerForm.get('password')?.hasError('required') &&
                   registerForm.get('password')?.touched
@@ -169,11 +175,20 @@
                 <mat-label>{{ 'register.confirmPassword' | transloco }}</mat-label>
                 <input
                   matInput
-                  type="password"
+                  [type]="hideConfirmPassword ? 'password' : 'text'"
                   id="confirmPassword"
                   formControlName="confirmPassword"
                   [placeholder]="'register.confirmPasswordPlaceholder' | transloco"
                 />
+                <button
+                  mat-icon-button
+                  matSuffix
+                  type="button"
+                  [attr.aria-label]="hideConfirmPassword ? 'Show password' : 'Hide password'"
+                  (click)="hideConfirmPassword = !hideConfirmPassword"
+                >
+                  <mat-icon>{{ hideConfirmPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
                 @if (
                   registerForm.get('confirmPassword')?.hasError('required') &&
                   registerForm.get('confirmPassword')?.touched
@@ -198,9 +213,9 @@
               </button>
 
               <div class="mt-6 text-center text-sm text-slate-500">
-                Already have an account?
+                {{ 'register.alreadyHaveAccount' | transloco }}
                 <a routerLink="/login" class="font-semibold text-slate-900 hover:underline ms-1">
-                  Sign in
+                  {{ 'register.signin' | transloco }}
                 </a>
               </div>
             </form>

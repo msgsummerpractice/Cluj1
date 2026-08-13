@@ -31,8 +31,9 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public void registerUser(UserRegistrationDto registrationDto){
-        if(userRepository.existsByEmail(registrationDto.getEmail())){
+    public void registerUser(UserRegistrationDto registrationDto) {
+        registrationDto.setEmail(registrationDto.getEmail().toLowerCase());
+        if (userRepository.existsByEmail(registrationDto.getEmail())) {
             throw new EmailAlreadyRegisteredException();
         }
         User user = mapper.mapToEntity(registrationDto);
