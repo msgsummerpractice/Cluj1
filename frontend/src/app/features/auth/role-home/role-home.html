@@ -5,8 +5,12 @@
     <section
       class="overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#8b143d_0%,#d45c82_50%,#f5b9cb_100%)] px-8 py-12 text-white shadow-[0_24px_80px_rgba(33,40,60,0.18)] sm:px-12"
     >
-      <p class="mb-4 text-sm uppercase tracking-[0.2em] text-white/75">Welcome back</p>
-      <h1 class="m-0 max-w-3xl text-4xl leading-tight sm:text-5xl">{{ roleLabel() }} workspace</h1>
+      <p class="mb-4 text-sm uppercase tracking-[0.2em] text-white/75">
+        {{ 'roles.welcome' | transloco }}
+      </p>
+      <h1 class="m-0 max-w-3xl text-4xl leading-tight sm:text-5xl">
+        {{ roleLabel() }} {{ 'roles.workspace' | transloco }}
+      </h1>
       <p class="mt-4 max-w-2xl text-lg text-white/85">
         {{ roleSummary() }}
       </p>
