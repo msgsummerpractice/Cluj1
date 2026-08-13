@@ -1,26 +1,31 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  computed,
+  effect,
+  inject,
+  OnInit,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { Event } from '../../../core/models/event.model';
 import { EventService } from '../../../core/services/event.service';
 
-import { MatTableModule } from '@angular/material/table';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatSort, MatSortModule, Sort, SortDirection } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
+import { EventSortField, shouldShowEventEndDate, sortEvents } from './event-list.utils';
 
 @Component({
   selector: 'app-event-list',
   imports: [
     CommonModule,
-    FormsModule,
     MatTableModule,
-    MatInputModule,
-    MatFormFieldModule,
+    MatSortModule,
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
@@ -28,46 +33,50 @@ import { MatChipsModule } from '@angular/material/chips';
   templateUrl: './event-list.html',
   styleUrl: './event-list.css',
 })
-export class EventListComponent implements OnInit {
-  events: Event[] = [];
-  displayedColumns: string[] = ['name', 'date', 'type', 'status', 'actions'];
-  searchTerm: string = '';
-  searchSubject: Subject<string> = new Subject<string>();
+export class EventListComponent implements OnInit, AfterViewInit {
+  @ViewChild(MatSort) private sort?: MatSort;
 
-  constructor(
-    private eventService: EventService,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
-  ) {}
+  readonly displayedColumns: string[] = ['name', 'date', 'type', 'status', 'actions'];
+  readonly dataSource = new MatTableDataSource<Event>([]);
+  readonly events = signal<readonly Event[]>([]);
+  readonly sortField = signal<EventSortField | ''>('');
+  readonly sortDirection = signal<SortDirection>('');
+  readonly visibleEvents = computed(() =>
+    sortEvents(this.events(), this.sortField(), this.sortDirection()),
+  );
+
+  private readonly eventService = inject(EventService);
+  private readonly router = inject(Router);
+
+  private readonly syncDataSource = effect(() => {
+    this.dataSource.data = this.visibleEvents();
+  });
 
   ngOnInit(): void {
     this.fetchEvents();
-
-    this.searchSubject.pipe(debounceTime(300), distinctUntilChanged()).subscribe((term) => {
-      this.fetchEvents(term);
-    });
   }
 
-  onSearch(term: string): void {
-    this.searchSubject.next(term);
+  ngAfterViewInit(): void {
+    if (this.sort !== undefined) {
+      this.dataSource.sort = this.sort;
+    }
+  }
+
+  handleSortChange(sort: Sort): void {
+    const sortField = this.toEventSortField(sort.active);
+
+    this.sortField.set(sortField);
+    this.sortDirection.set(sortField === '' ? '' : sort.direction);
   }
 
   shouldShowEndDate(event: Event): boolean {
-    const startDateValue = new Date(event.startDate);
-    const endDateValue = new Date(event.endDate);
-
-    if (Number.isNaN(startDateValue.getTime()) || Number.isNaN(endDateValue.getTime())) {
-      return event.startDate !== event.endDate;
-    }
-
-    return startDateValue.toDateString() !== endDateValue.toDateString();
+    return shouldShowEventEndDate(event);
   }
 
-  fetchEvents(search?: string): void {
-    this.eventService.getEvents(search).subscribe({
+  fetchEvents(): void {
+    this.eventService.getEvents().subscribe({
       next: (data) => {
-        this.events = data;
-        this.cdr.detectChanges();
+        this.events.set(data);
       },
       error: (err) => console.error('Error fetching events', err),
     });
@@ -75,5 +84,17 @@ export class EventListComponent implements OnInit {
 
   manageEvent(eventId: string): void {
     this.router.navigate(['/admin/events', eventId, 'manage']);
+  }
+
+  private toEventSortField(sortField: string): EventSortField | '' {
+    switch (sortField) {
+      case 'name':
+      case 'startDate':
+      case 'type':
+      case 'status':
+        return sortField;
+      default:
+        return '';
+    }
   }
 }

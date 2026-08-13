@@ -1,4 +1,4 @@
-export interface Event {
+export type Event = {
   id: string;
   name: string;
   startDate: string;
@@ -6,4 +6,4 @@ export interface Event {
   location: string | null;
   status: string;
   type: string;
-}
+};
