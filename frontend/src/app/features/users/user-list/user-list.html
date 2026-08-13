@@ -1,15 +1,14 @@
-<!-- src/app/features/users/user-list/user-list.component.html -->
 <div class="p-8 bg-white min-h-screen">
   <div class="flex justify-between items-center mb-6">
-    <h2 class="text-3xl font-bold text-gray-800 m-0">User Management</h2>
+    <h2 class="text-3xl font-bold text-gray-800 m-0">{{ 'userList.title' | transloco }}</h2>
 
     <mat-form-field appearance="outline" class="w-80">
-      <mat-label>Search users...</mat-label>
+      <mat-label>{{ 'userList.searchLabel' | transloco }}</mat-label>
       <input
         matInput
         [(ngModel)]="searchTerm"
         (ngModelChange)="onSearch($event)"
-        placeholder="By name, email, or role"
+        [placeholder]="'userList.searchPlaceholder' | transloco"
       />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
@@ -19,28 +18,28 @@
     <table mat-table [dataSource]="users" class="w-full">
       <ng-container matColumnDef="firstName">
         <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50">
-          First Name
+          {{ 'userList.colFirstName' | transloco }}
         </th>
         <td mat-cell *matCellDef="let user">{{ user.firstName }}</td>
       </ng-container>
 
       <ng-container matColumnDef="lastName">
         <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50">
-          Last Name
+          {{ 'userList.colLastName' | transloco }}
         </th>
         <td mat-cell *matCellDef="let user">{{ user.lastName }}</td>
       </ng-container>
 
       <ng-container matColumnDef="email">
         <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50">
-          Email
+          {{ 'userList.colEmail' | transloco }}
         </th>
         <td mat-cell *matCellDef="let user" class="text-gray-600">{{ user.email }}</td>
       </ng-container>
 
       <ng-container matColumnDef="role">
         <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50">
-          Role
+          {{ 'userList.colRole' | transloco }}
         </th>
         <td mat-cell *matCellDef="let user">
           <mat-chip-set>
@@ -51,14 +50,14 @@
 
       <ng-container matColumnDef="location">
         <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50">
-          Location
+          {{ 'userList.colLocation' | transloco }}
         </th>
         <td mat-cell *matCellDef="let user">{{ user.location }}</td>
       </ng-container>
 
       <ng-container matColumnDef="isActive">
         <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50">
-          Status
+          {{ 'userList.colStatus' | transloco }}
         </th>
         <td mat-cell *matCellDef="let user">
           <span
@@ -67,7 +66,11 @@
               'text-red-500 font-medium': !user.isActive,
             }"
           >
-            {{ user.isActive ? 'Active' : 'Inactive' }}
+            {{
+              user.isActive
+                ? ('userList.statusActive' | transloco)
+                : ('userList.statusInactive' | transloco)
+            }}
           </span>
         </td>
       </ng-container>
@@ -78,7 +81,7 @@
           *matHeaderCellDef
           class="text-center font-semibold text-gray-700 bg-gray-50"
         >
-          Actions
+          {{ 'userList.colActions' | transloco }}
         </th>
         <td mat-cell *matCellDef="let user" class="text-center">
           <button
@@ -88,7 +91,7 @@
             class="!rounded-md"
           >
             <mat-icon>manage_accounts</mat-icon>
-            Manage Role
+            {{ 'userList.manageRole' | transloco }}
           </button>
         </td>
       </ng-container>
@@ -102,7 +105,7 @@
 
       <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell text-center py-8 text-gray-500" colspan="7">
-          No users found matching "{{ searchTerm }}"
+          {{ 'userList.noData' | transloco }} "{{ searchTerm }}"
         </td>
       </tr>
     </table>

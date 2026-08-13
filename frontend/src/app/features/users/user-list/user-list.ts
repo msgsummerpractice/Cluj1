@@ -12,12 +12,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
+import { ChangeDetectorRef } from '@angular/core';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-user-list',
   imports: [
     CommonModule,
     FormsModule,
+    TranslocoModule,
     MatTableModule,
     MatInputModule,
     MatFormFieldModule,
@@ -45,6 +48,7 @@ export class UserListComponent implements OnInit {
   constructor(
     private userService: UserService,
     private router: Router,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -63,6 +67,7 @@ export class UserListComponent implements OnInit {
     this.userService.getUsers(search).subscribe({
       next: (data) => {
         this.users = data;
+        this.cdr.detectChanges();
       },
       error: (err) => console.error('Error fetching users', err),
     });

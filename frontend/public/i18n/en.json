@@ -13,6 +13,22 @@
   },
   "account": "User account",
   "openMenu": "Open navigation menu",
+  "userList": {
+    "title": "User Management",
+    "searchLabel": "Search users...",
+    "searchPlaceholder": "By name, email, or role",
+    "colFirstName": "First Name",
+    "colLastName": "Last Name",
+    "colEmail": "Email",
+    "colRole": "Role",
+    "colLocation": "Location",
+    "colStatus": "Status",
+    "colActions": "Actions",
+    "statusActive": "Active",
+    "statusInactive": "Inactive",
+    "manageRole": "Manage Role",
+    "noData": "No users found matching"
+  },
   "auth": {
     "loginTitle": "Log in",
     "loginSubtitle": "Enter your email and password to access your account.",

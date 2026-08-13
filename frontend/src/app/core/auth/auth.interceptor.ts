@@ -8,7 +8,7 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const token = authService.getToken();
 
   const authenticatedRequest =
-    token && request.url.startsWith('/api')
+    token && request.url.startsWith('http://localhost:8080')
       ? request.clone({
           setHeaders: {
             Authorization: `Bearer ${token}`,
