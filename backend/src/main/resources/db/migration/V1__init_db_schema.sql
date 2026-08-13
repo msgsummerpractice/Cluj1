@@ -1,3 +1,5 @@
+CREATE SCHEMA IF NOT EXISTS public;
+
 CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA public;
 
 CREATE TABLE public.attendance_records (
