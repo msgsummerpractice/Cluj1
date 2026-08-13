@@ -2,7 +2,7 @@
   <div class="user-list-header">
     <h2 class="user-list-title">{{ 'userList.title' | transloco }}</h2>
 
-    <mat-form-field appearance="outline" class="w-80">
+    <mat-form-field appearance="outline" class="w-full sm:w-80">
       <mat-label>{{ 'userList.searchLabel' | transloco }}</mat-label>
       <input
         matInput
@@ -14,7 +14,7 @@
   </div>
 
   <div class="table-container">
-    <table mat-table [dataSource]="users" class="w-full">
+    <table mat-table [dataSource]="users" class="w-full min-w-[800px]">
       <ng-container matColumnDef="firstName">
         <th mat-header-cell *matHeaderCellDef class="table-header">
           {{ 'userList.colFirstName' | transloco }}
