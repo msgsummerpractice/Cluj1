@@ -20,7 +20,28 @@
     "emailLabel": "Email",
     "passwordLabel": "Parolă",
     "forgotPassword": "Ai uitat parola?",
-    "openMenu": "Deschide meniul"
+    "openMenu": "Deschide meniul",
+    "description": "Accesează spațiul de lucru și uneltele disponibile pentru rolul tău de participant, marketing, resurse umane sau administrator.",
+    "sessionInfo": "Sesiunea ta va rămâne activă până la deconectare sau expirare.",
+    "submitting": "Se autentifică...",
+    "noAccount": "Nu ai un cont?",
+    "signUp": "Înregistrează-te"
+  },
+  "roles": {
+    "welcome": "Bun revenit",
+    "workspace": "spațiu de lucru",
+    "labels": {
+      "MARKETING_ORGANIZER": "Organizator Marketing",
+      "HR_USER": "Utilizator HR",
+      "ADMIN": "Administrator",
+      "PARTICIPANT": "Participant"
+    },
+    "summaries": {
+      "MARKETING_ORGANIZER": "Planifică comunicarea, coordonează promovarea și menține campaniile pentru evenimente în mișcare.",
+      "HR_USER": "Monitorizează informațiile despre personal și gestionează fluxurile de lucru orientate spre oameni.",
+      "ADMIN": "Gestionează aplicația și controlează accesul în cadrul platformei de evenimente.",
+      "PARTICIPANT": "Vizualizează spațiul tău pentru evenimente și continuă acțiunile disponibile pentru contul tău."
+    }
   },
   "openMenu": "Deschide meniul",
   "userList": {
@@ -40,7 +61,7 @@
     "noData": "Niciun utilizator găsit pentru"
   },
   "register": {
-    "title": "Inregistreaza un cont nou",
+    "title": "Înregistrează un cont nou",
     "firstName": "Prenume",
     "firstNamePlaceholder": "Prenume",
     "lastName": "Nume de familie",
