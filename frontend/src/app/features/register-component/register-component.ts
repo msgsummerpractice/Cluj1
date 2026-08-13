@@ -15,6 +15,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
+import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle } from '@angular/material/card';
+import {RouterLink} from '@angular/router';
 @Component({
   selector: 'app-register-component',
   imports: [
@@ -24,6 +26,12 @@ import { UserService } from '../../core/services/user.service';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatCardContent,
+    MatCardSubtitle,
+    MatCardTitle,
+    MatCard,
+    MatCardHeader,
+    RouterLink,
   ],
   templateUrl: './register-component.html',
   styleUrls: [],
@@ -34,7 +42,8 @@ export class RegisterComponent {
   private readonly router: Router = inject(Router);
   private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
-  formMessage: string = '';
+  successMessage: string = '';
+  errorMessage: string = '';
 
   registerForm = this._formBuilder.group(
     {
@@ -78,7 +87,7 @@ export class RegisterComponent {
         .registerUser({ firstName, lastName, userLocation, email, password, confirmPassword })
         .subscribe({
           next: () => {
-            this.formMessage = 'User registered successfully!';
+            this.successMessage = 'User registered successfully!';
             this.cdr.detectChanges();
             this.registerForm.reset();
             setTimeout(() => {
@@ -87,8 +96,8 @@ export class RegisterComponent {
           },
           error: (err) => {
             const errorMessage =
-              err.error?.error || err.error || 'An error occurred during registration.';
-            this.formMessage = errorMessage;
+              err.error?.message ||err.error?.error || err.message || 'An error occurred during registration.';
+            this.errorMessage = errorMessage;
             this.cdr.detectChanges();
             console.error(err);
           },
