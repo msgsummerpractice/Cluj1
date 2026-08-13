@@ -1,6 +1,8 @@
 package com.cluj1.eventapp.repository;
 
 import com.cluj1.eventapp.model.User;
+import com.cluj1.eventapp.model.enums.Role;
+
 import java.util.UUID;
 
 import java.util.List;
@@ -23,6 +25,8 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             "LOWER(CAST(u.role AS String)) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
             "LOWER(CAST(ud.location AS String)) LIKE LOWER(CONCAT('%', :search, '%'))")
     List<User> searchUsers(@Param("search") String search);
+
     boolean existsByEmail(String email);
 
+    long countByRoleAndIsActiveTrue(Role role);
 }

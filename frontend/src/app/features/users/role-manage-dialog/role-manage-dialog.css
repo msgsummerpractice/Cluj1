@@ -1,0 +1,14 @@
+::ng-deep .custom-focused-field.mat-focused .mdc-notched-outline__leading,
+::ng-deep .custom-focused-field.mat-focused .mdc-notched-outline__notch,
+::ng-deep .custom-focused-field.mat-focused .mdc-notched-outline__trailing {
+  border-color: #8a1538 !important;
+  border-width: 2px !important;
+}
+
+::ng-deep .custom-focused-field.mat-focused .mat-mdc-select-value-text {
+  color: #1f2937 !important;
+}
+
+::ng-deep .custom-focused-field .mat-mdc-form-field-label {
+  color: #8a1538 !important;
+}

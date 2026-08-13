@@ -22,4 +22,13 @@ export class UserService {
   registerUser(userData: RegisterDto): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, userData);
   }
+
+  updateRole(userId: string, role: string): Observable<User> {
+    return this.http.patch<User>(`${this.apiUrl}/${userId}/role`, { role });
+  }
+
+  updateStatus(userId: string, isActive: boolean): Observable<User> {
+    const params = new HttpParams().set('isActive', isActive.toString());
+    return this.http.patch<User>(`${this.apiUrl}/${userId}/status`, {}, { params });
+  }
 }

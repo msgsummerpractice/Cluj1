@@ -1,0 +1,29 @@
+::ng-deep .custom-warn-toggle .mdc-switch--selected .mdc-switch__track::after {
+  background-color: #8a1538 !important;
+}
+
+::ng-deep .custom-warn-toggle .mdc-switch--selected .mdc-switch__handle::after {
+  background-color: #8a1538 !important;
+}
+
+::ng-deep .custom-warn-toggle .mdc-switch--selected:hover .mdc-switch__state-layer,
+::ng-deep .custom-warn-toggle .mdc-switch--selected:focus .mdc-switch__state-layer {
+  background-color: rgba(138, 21, 56, 0.15) !important;
+}
+
+::ng-deep .mat-mdc-table {
+  background: transparent !important;
+}
+
+::ng-deep .mat-mdc-row {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+::ng-deep .custom-warn-toggle .mdc-switch--selected .mdc-switch__icon {
+  color: #ffffff !important;
+}
+
+::ng-deep .custom-warn-toggle .mdc-switch--selected .mdc-switch__icons svg path {
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}

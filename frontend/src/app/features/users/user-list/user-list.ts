@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { User } from '../../../core/models/user.model';
 import { UserService } from '../../../core/services/user.service';
 
@@ -12,14 +11,19 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
-import { ChangeDetectorRef } from '@angular/core';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { TranslocoModule } from '@jsverse/transloco';
+import { RoleManageDialogComponent } from '../role-manage-dialog/role-manage-dialog';
 
 @Component({
   selector: 'app-user-list',
+  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     TranslocoModule,
     MatTableModule,
     MatInputModule,
@@ -27,6 +31,9 @@ import { TranslocoModule } from '@jsverse/transloco';
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
+    MatSlideToggleModule,
+    MatDialogModule,
+    MatSnackBarModule,
   ],
   templateUrl: './user-list.html',
   styleUrl: './user-list.css',
@@ -42,25 +49,24 @@ export class UserListComponent implements OnInit {
     'isActive',
     'actions',
   ];
-  searchTerm: string = '';
-  searchSubject: Subject<string> = new Subject<string>();
+
+  searchControl = new FormControl('');
 
   constructor(
     private userService: UserService,
-    private router: Router,
     private cdr: ChangeDetectorRef,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
     this.fetchUsers();
 
-    this.searchSubject.pipe(debounceTime(300), distinctUntilChanged()).subscribe((term) => {
-      this.fetchUsers(term);
-    });
-  }
-
-  onSearch(term: string): void {
-    this.searchSubject.next(term);
+    this.searchControl.valueChanges
+      .pipe(debounceTime(300), distinctUntilChanged())
+      .subscribe((term) => {
+        this.fetchUsers(term || '');
+      });
   }
 
   fetchUsers(search?: string): void {
@@ -73,7 +79,53 @@ export class UserListComponent implements OnInit {
     });
   }
 
-  manageRole(userId: string): void {
-    this.router.navigate(['/admin/users', userId, 'manage-role']);
+  manageRole(user: User): void {
+    const dialogRef = this.dialog.open(RoleManageDialogComponent, {
+      width: '500px',
+      data: { user },
+      panelClass: 'custom-dialog-container',
+    });
+
+    dialogRef.afterClosed().subscribe((newRole) => {
+      if (newRole && newRole !== user.role) {
+        if (confirm(`Are you sure you want to change the role for ${user.email} to ${newRole}?`)) {
+          this.userService.updateRole(user.id, newRole).subscribe({
+            next: (updatedUser) => {
+              const index = this.users.findIndex((u) => u.id === updatedUser.id);
+              if (index !== -1) this.users[index] = updatedUser;
+              this.users = [...this.users];
+              this.showNotification('Role updated successfully');
+            },
+            error: (err) =>
+              this.showNotification(err.error?.message || 'Error updating role', 'error'),
+          });
+        }
+      }
+    });
+  }
+
+  toggleStatus(user: User): void {
+    const newStatus = !user.isActive;
+    this.userService.updateStatus(user.id, newStatus).subscribe({
+      next: (updatedUser) => {
+        const index = this.users.findIndex((u) => u.id === updatedUser.id);
+        if (index !== -1) this.users[index] = updatedUser;
+        this.users = [...this.users];
+        this.showNotification(
+          `User account ${newStatus ? 'activated' : 'deactivated'} successfully`,
+        );
+      },
+      error: (err) => {
+        user.isActive = !newStatus;
+        this.showNotification(err.error?.message || 'Error updating status', 'error');
+      },
+    });
+  }
+
+  private showNotification(message: string, type: 'success' | 'error' = 'success'): void {
+    this.snackBar.open(message, 'Close', {
+      duration: 4000,
+      panelClass: type === 'error' ? ['bg-red-500', 'text-white'] : ['bg-green-600', 'text-white'],
+    });
   }
 }
