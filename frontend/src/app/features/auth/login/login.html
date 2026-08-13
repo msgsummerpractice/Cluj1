@@ -1,0 +1,128 @@
+<div
+  class="min-h-screen bg-[linear-gradient(135deg,#f7eaef_0%,#ffffff_45%,#eef6fb_100%)] px-4 py-10 sm:px-6 lg:px-8"
+>
+  <div class="mx-auto flex min-h-[calc(100vh-5rem)] max-w-6xl items-center justify-center">
+    <div
+      class="grid w-full max-w-5xl overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 shadow-[0_24px_80px_rgba(33,40,60,0.14)] backdrop-blur md:grid-cols-[1.1fr_0.9fr]"
+    >
+      <section
+        class="hidden flex-col justify-between bg-[linear-gradient(180deg,#8b143d_0%,#c23f69_100%)] p-10 text-white md:flex"
+      >
+        <div>
+          <img src="/images/msg-logo.png" alt="msg logo" class="h-10 w-auto brightness-0 invert" />
+        </div>
+
+        <div class="space-y-6">
+          <span
+            class="inline-flex rounded-full border border-white/30 px-4 py-1 text-sm tracking-[0.18em] uppercase"
+          >
+            Event App
+          </span>
+          <h1 class="m-0 text-5xl leading-tight">{{ 'auth.signInTitle' | transloco }}</h1>
+          <p class="m-0 max-w-md text-lg text-white/80">
+            Access the workspace and tools available for your participant, marketing, HR, or admin
+            role.
+          </p>
+        </div>
+
+        <div class="grid gap-4 text-sm text-white/80 sm:grid-cols-3">
+          <div class="rounded-2xl border border-white/20 bg-white/10 p-4">Secure token session</div>
+          <div class="rounded-2xl border border-white/20 bg-white/10 p-4">
+            Role-based landing page
+          </div>
+          <div class="rounded-2xl border border-white/20 bg-white/10 p-4">
+            Protected application areas
+          </div>
+        </div>
+      </section>
+
+      <section class="p-6 sm:p-10">
+        <mat-card class="!bg-transparent !shadow-none">
+          <mat-card-header class="!mb-6 !px-0">
+            <mat-card-title class="!mb-2 !text-3xl !font-semibold !text-slate-900">
+              {{ 'auth.loginTitle' | transloco }}
+            </mat-card-title>
+            <mat-card-subtitle class="!text-base !text-slate-500">
+              {{ 'auth.loginSubtitle' | transloco }}
+            </mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content class="!p-0">
+            <form class="grid gap-4" [formGroup]="loginForm" (ngSubmit)="submit()">
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'auth.emailLabel' | transloco }}</mat-label>
+                <input matInput type="email" formControlName="email" autocomplete="email" />
+                @if (
+                  loginForm.controls.email.hasError('required') && loginForm.controls.email.touched
+                ) {
+                  <mat-error>Email is required.</mat-error>
+                }
+                @if (
+                  (loginForm.controls.email.hasError('email') ||
+                    loginForm.controls.email.hasError('pattern')) &&
+                  loginForm.controls.email.touched
+                ) {
+                  <mat-error>Please enter a valid company email address (@msg.group).</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>{{ 'auth.passwordLabel' | transloco }}</mat-label>
+                <input
+                  matInput
+                  [type]="hidePassword ? 'password' : 'text'"
+                  formControlName="password"
+                  autocomplete="current-password"
+                />
+                <button
+                  mat-icon-button
+                  matSuffix
+                  type="button"
+                  [attr.aria-label]="hidePassword ? 'Show password' : 'Hide password'"
+                  (click)="hidePassword = !hidePassword"
+                >
+                  <mat-icon>{{ hidePassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+                </button>
+                @if (
+                  loginForm.controls.password.hasError('required') &&
+                  loginForm.controls.password.touched
+                ) {
+                  <mat-error>Password is required.</mat-error>
+                }
+              </mat-form-field>
+
+              @if (errorMessage(); as message) {
+                <div
+                  class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                >
+                  {{ message }}
+                </div>
+              }
+
+              <div class="flex items-center justify-between gap-4 text-sm">
+                <span class="text-slate-500"
+                  >Your session will stay active until you log out or it expires.</span
+                >
+                <a
+                  routerLink="/forgot-password"
+                  class="font-medium text-[var(--dark-red-dot)] no-underline hover:underline"
+                >
+                  {{ 'auth.forgotPassword' | transloco }}
+                </a>
+              </div>
+
+              <button
+                mat-flat-button
+                type="submit"
+                class="!mt-2 !h-12 !rounded-xl"
+                [disabled]="isSubmitting()"
+              >
+                {{ isSubmitting() ? 'Signing in...' : ('user.login' | transloco) }}
+              </button>
+            </form>
+          </mat-card-content>
+        </mat-card>
+      </section>
+    </div>
+  </div>
+</div>
