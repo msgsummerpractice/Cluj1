@@ -62,14 +62,34 @@
 
     <app-language-switcher />
 
-    <a
+    <button
       mat-icon-button
       class="nav-icon-button"
-      routerLink="/profile"
+      [matMenuTriggerFor]="userMenu"
       aria-label="User account"
       disableRipple
     >
       <mat-icon>account_circle</mat-icon>
-    </a>
+    </button>
+
+    <mat-menu #userMenu="matMenu" xPosition="before">
+      @if (authService.isAuthenticated()) {
+        @if (authService.currentUser(); as user) {
+          <div class="px-4 py-2 text-xs text-slate-500 border-b border-slate-100">
+            {{ user.email }}
+          </div>
+        }
+
+        <button mat-menu-item (click)="authService.logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Log out</span>
+        </button>
+      } @else {
+        <a mat-menu-item routerLink="/login">
+          <mat-icon>login</mat-icon>
+          <span>Log in</span>
+        </a>
+      }
+    </mat-menu>
   </div>
 </mat-toolbar>

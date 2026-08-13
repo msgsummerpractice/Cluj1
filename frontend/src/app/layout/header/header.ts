@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
 import { LanguageSwitcher } from '../language-switch/language-switcher';
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -9,6 +12,8 @@ import { TranslocoModule } from '@jsverse/transloco';
 @Component({
   selector: 'app-header',
   imports: [
+    CommonModule,
+    RouterLink,
     LanguageSwitcher,
     MatButtonModule,
     MatIconModule,
@@ -18,4 +23,6 @@ import { TranslocoModule } from '@jsverse/transloco';
   ],
   templateUrl: './header.html',
 })
-export class Header {}
+export class Header {
+  protected readonly authService = inject(AuthService);
+}
