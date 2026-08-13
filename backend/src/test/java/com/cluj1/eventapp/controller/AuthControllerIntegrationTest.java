@@ -3,12 +3,14 @@ package com.cluj1.eventapp.controller;
 import com.cluj1.eventapp.dto.LogInRequest;
 import com.cluj1.eventapp.model.User;
 import com.cluj1.eventapp.model.enums.Role;
+import com.cluj1.eventapp.dto.UserRegistrationDto;
 import com.cluj1.eventapp.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
@@ -17,6 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -24,9 +27,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
 class AuthControllerIntegrationTest {
 
+    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
@@ -35,10 +40,11 @@ class AuthControllerIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    private ObjectMapper objectMapper = new ObjectMapper();
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
@@ -60,11 +66,23 @@ class AuthControllerIntegrationTest {
     }
 
     @Test
+    void registerUser_IntegrationSuccess() throws Exception {
+        UserRegistrationDto dto = createUserRegistrationDto("integration.user@example.com", "Password123!");
+
+        mockMvc.perform(post("/auth/register")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk());
+
+        assertTrue(userRepository.findByEmail("integration.user@example.com").isPresent());
+    }
+    @Test
     void login_validCredentials_returns200AndToken() throws Exception {
         LogInRequest request = createLoginRequest("admin.test@msg.com", "Password123!");
 
         mockMvc.perform(
-                        post("/api/auth/login")
+                        post("/auth/login")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
@@ -78,7 +96,7 @@ class AuthControllerIntegrationTest {
         LogInRequest request = createLoginRequest("admin.test@msg.com", "WrongPassword");
 
         mockMvc.perform(
-                        post("/api/auth/login")
+                        post("/auth/login")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
@@ -91,7 +109,7 @@ class AuthControllerIntegrationTest {
         LogInRequest request = createLoginRequest("", "");
 
         mockMvc.perform(
-                        post("/api/auth/login")
+                        post("/auth/login")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
@@ -104,5 +122,12 @@ class AuthControllerIntegrationTest {
         request.setEmail(email);
         request.setPassword(password);
         return request;
+    }
+    private UserRegistrationDto createUserRegistrationDto(String email, String password) {
+        UserRegistrationDto dto = new UserRegistrationDto();
+        dto.setEmail(email);
+        dto.setPassword(password);
+        dto.setConfirmPassword(password);
+        return dto;
     }
 }

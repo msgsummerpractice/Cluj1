@@ -1,0 +1,97 @@
+<div class="w-full h-auto bg-[url(/images/backgroundmsg.webp)] opacity-95">
+  <div class="bg-[var(--active-white)] p-10 rounded-xl shadow-lg w-full max-w-md mx-auto mt-12 border border-[var(--light-grey)]" style="font-family: 'Carnac', sans-serif;">
+    <h2 class="text-3xl font-normal text-center text-shadow-black mb-9">{{ 'register.title' | transloco }}</h2>
+
+    <form class="flex flex-col gap-2" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+
+      @if(formMessage) {
+        <div class="p-3 mb-4 text-sm text-center font-medium rounded-md bg-[var(--card-pink)] text-[var(--dark-red-dot)] border border-[var(--light-grey)]">
+          {{formMessage}}
+        </div>
+      }
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>{{ 'register.firstName' | transloco }}</mat-label>
+        <input matInput type="text" id="firstName" formControlName="firstName" [placeholder]="'register.firstNamePlaceholder' | transloco">
+
+        @if (registerForm.get('firstName')?.hasError('required')) {
+          <mat-error>{{ 'register.errors.firstNameRequired' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>{{ 'register.lastName' | transloco }}</mat-label>
+        <input matInput type="text" id="lastName" formControlName="lastName" [placeholder]="'register.lastNamePlaceholder' | transloco">
+
+        @if (registerForm.get('lastName')?.hasError('required')) {
+          <mat-error>Last name is required.</mat-error>
+        }
+      </mat-form-field>
+
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>{{ 'register.userLocation' | transloco }}</mat-label>
+        <mat-select id="userLocation" formControlName="userLocation">
+          <mat-option value="" disabled>{{ 'register.selectLocation' | transloco }}</mat-option>
+          <mat-option value="CLUJ">{{ 'register.locations.cluj' | transloco }}</mat-option>
+          <mat-option value="TIMISOARA">{{ 'register.locations.timisoara' | transloco }}</mat-option>
+          <mat-option value="MURES">{{ 'register.locations.mures' | transloco }}</mat-option>
+        </mat-select>
+
+        @if (registerForm.get('userLocation')?.hasError('required')) {
+          <mat-error>{{ 'register.errors.locationRequired' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>{{ 'register.email' | transloco }}</mat-label>
+        <input matInput type="email" id="email" formControlName="email" [placeholder]="'register.emailPlaceholder' | transloco">
+
+        @if (registerForm.get('email')?.hasError('required')) {
+          <mat-error>{{ 'register.errors.emailRequired' | transloco }}</mat-error>
+        }
+        @if (registerForm.get('email')?.hasError('pattern')) {
+          <mat-error>{{ 'register.errors.emailInvalid' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>{{ 'register.password' | transloco }}</mat-label>
+        <input matInput type="password" id="password" formControlName="password" [placeholder]="'register.passwordPlaceholder' | transloco">
+
+        @if (registerForm.get('password')?.hasError('required')) {
+          <mat-error>{{ 'register.errors.passwordRequired' | transloco }}</mat-error>
+        }
+        @if (registerForm.get('password')?.hasError('minlength')) {
+          <mat-error>{{ 'register.errors.passwordMinLength' | transloco }}</mat-error>
+        }
+        @if (registerForm.get('password')?.hasError('pattern')) {
+          <mat-error>{{ 'register.errors.passwordPattern' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>{{ 'register.confirmPassword' | transloco }}</mat-label>
+        <input matInput type="password" id="confirmPassword" formControlName="confirmPassword" [placeholder]="'register.confirmPasswordPlaceholder' | transloco">
+
+        @if (registerForm.get('confirmPassword')?.hasError('required')) {
+          <mat-error>{{ 'register.errors.confirmPasswordRequired' | transloco }}</mat-error>
+        }
+        @if (registerForm.get('confirmPassword')?.hasError('passwordMismatch')) {
+          <mat-error>{{ 'register.errors.passwordMismatch' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+
+
+      <div class="pt-2">
+        <button mat-flat-button type="submit" [disabled]="registerForm.invalid"
+                class="w-full !bg-[var(--dark-red-dot)] !text-[var(--active-white)] font-bold !py-6 rounded-lg hover:!opacity-90 disabled:!bg-[var(--light-grey)] disabled:!text-[var(--dark-grey)] disabled:cursor-not-allowed transition duration-200 shadow-md text-lg">
+          {{ 'register.submit' | transloco }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -8,6 +8,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import com.cluj1.eventapp.dto.UserRegistrationDto;
+import com.cluj1.eventapp.exception.EmailAlreadyRegisteredException;
+import com.cluj1.eventapp.mapper.UserMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,6 +23,7 @@ import com.cluj1.eventapp.model.enums.UserLocation;
 import com.cluj1.eventapp.model.User;
 import com.cluj1.eventapp.model.UserDetails;
 import com.cluj1.eventapp.repository.UserRepository;
+import tools.jackson.databind.ObjectMapper;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -29,6 +33,10 @@ class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
+
+
+    @Mock
+    private UserMapper mapper;
 
     @Test
     void getAllUsers_ShouldReturnMappedUsers_WhenUsersExist() {
@@ -85,5 +93,37 @@ class UserServiceTest {
         List<UserDTO> result = userService.getAllUsers("NonExistent");
 
         assertTrue(result.isEmpty());
+    }
+    @Test
+    void registerUser_ShouldSaveUserWhenEmailIsNotRegistered() {
+        String email = "test.user@msg.group";
+
+        UserRegistrationDto dto = new UserRegistrationDto();
+        dto.setEmail(email);
+
+        User mappedUser = new User();
+
+        when(userRepository.existsByEmail(email)).thenReturn(false);
+        when(mapper.mapToEntity(dto)).thenReturn(mappedUser);
+
+        userService.registerUser(dto);
+        verify(userRepository, times(1)).save(mappedUser);
+    }
+
+    @Test
+    void registerUser_ShouldThrowExceptionWhenEmailIsAlreadyRegistered() {
+        String email = "duplicate.user@msg.group";
+
+        UserRegistrationDto dto = new UserRegistrationDto();
+        dto.setEmail(email);
+
+        when(userRepository.existsByEmail(email)).thenReturn(true);
+
+        assertThrows(EmailAlreadyRegisteredException.class, () -> {
+            userService.registerUser(dto);
+        });
+
+        verify(mapper, never()).mapToEntity(any());
+        verify(userRepository, never()).save(any());
     }
 }
