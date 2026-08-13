@@ -34,7 +34,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.cluj1.eventapp.config.SecurityConfig;
 import com.cluj1.eventapp.dto.UserRegistrationDto;
 import com.cluj1.eventapp.security.JwtAuthenticationFilter;
-import com.cluj1.eventapp.service.AuthService;
 import com.cluj1.eventapp.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

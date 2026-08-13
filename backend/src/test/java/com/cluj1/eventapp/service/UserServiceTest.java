@@ -23,7 +23,6 @@ import com.cluj1.eventapp.model.enums.UserLocation;
 import com.cluj1.eventapp.model.User;
 import com.cluj1.eventapp.model.UserDetails;
 import com.cluj1.eventapp.repository.UserRepository;
-import tools.jackson.databind.ObjectMapper;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -33,7 +32,6 @@ class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
-
 
     @Mock
     private UserMapper mapper;
@@ -94,6 +92,7 @@ class UserServiceTest {
 
         assertTrue(result.isEmpty());
     }
+
     @Test
     void registerUser_ShouldSaveUserWhenEmailIsNotRegistered() {
         String email = "test.user@msg.group";
