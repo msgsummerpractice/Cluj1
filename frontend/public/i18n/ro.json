@@ -19,8 +19,26 @@
     "signInTitle": "Autentifică-te pentru a continua.",
     "emailLabel": "Email",
     "passwordLabel": "Parolă",
-    "forgotPassword": "Ai uitat parola?"
+    "forgotPassword": "Ai uitat parola?",
+    "openMenu": "Deschide meniul"
+  },
   "openMenu": "Deschide meniul",
+  "userList": {
+    "title": "Gestionare utilizatori",
+    "searchLabel": "Caută utilizatori...",
+    "searchPlaceholder": "După nume, email sau rol",
+    "colFirstName": "Prenume",
+    "colLastName": "Nume",
+    "colEmail": "Email",
+    "colRole": "Rol",
+    "colLocation": "Locație",
+    "colStatus": "Stare",
+    "colActions": "Acțiuni",
+    "statusActive": "Activ",
+    "statusInactive": "Inactiv",
+    "manageRole": "Gestionare rol",
+    "noData": "Niciun utilizator găsit pentru"
+  },
   "register": {
     "title": "Inregistreaza un cont nou",
     "firstName": "Prenume",
