@@ -1,22 +1,20 @@
-<div class="relative p-7 bg-white">
-  <button
-    mat-icon-button
-    class="absolute top-2 right-2 text-gray-400 hover:text-[#8a1538] transition-colors"
-    (click)="onCancel()"
-  >
+<div class="dialog-container">
+  <button mat-icon-button class="close-button" (click)="onCancel()">
     <mat-icon>close</mat-icon>
   </button>
 
-  <h2 class="text-[22px] font-bold m-0 p-0 mb-1 text-[#1f2937]">Manage role</h2>
+  <h2 class="dialog-title">
+    {{ 'roleManageDialog.title' | transloco }}
+  </h2>
 
-  <p class="text-[14px] text-[#64748b] mb-6 mt-1 pr-6">
+  <p class="dialog-subtitle">
     {{ data.user.firstName }} {{ data.user.lastName }} —
-    <span class="text-[#3b82f6]">{{ data.user.email }}</span>
+    <span class="user-email">{{ data.user.email }}</span>
   </p>
 
-  <mat-form-field appearance="outline" class="w-full custom-focused-field mb-2">
-    <mat-label class="text-[#8a1538] font-bold text-[11px] tracking-widest uppercase">
-      PLATFORM ROLE
+  <mat-form-field appearance="outline" class="role-form-field">
+    <mat-label class="role-label">
+      {{ 'roleManageDialog.platformRole' | transloco }}
     </mat-label>
     <mat-select [(ngModel)]="selectedRole" panelClass="custom-select-panel">
       <mat-option *ngFor="let role of roles" [value]="role">
@@ -25,16 +23,12 @@
     </mat-select>
   </mat-form-field>
 
-  <div class="flex justify-center gap-4 mt-2">
-    <button
-      mat-stroked-button
-      (click)="onCancel()"
-      class="!rounded-md border-gray-300 !text-gray-700 px-6 transition-colors hover:!bg-gray-50"
-    >
-      Cancel
+  <div class="actions-container">
+    <button mat-stroked-button (click)="onCancel()" class="btn-cancel">
+      {{ 'roleManageDialog.cancel' | transloco }}
     </button>
-    <button mat-flat-button (click)="onSave()" class="!rounded-md !bg-[#8a1538] !text-white px-6">
-      Save changes
+    <button mat-flat-button (click)="onSave()" class="btn-save">
+      {{ 'roleManageDialog.save' | transloco }}
     </button>
   </div>
 </div>

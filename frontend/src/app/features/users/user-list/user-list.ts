@@ -1,3 +1,5 @@
+// src/app/features/users/user-list/user-list.ts
+
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -14,7 +16,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { RoleManageDialogComponent } from '../role-manage-dialog/role-manage-dialog';
 
 @Component({
@@ -57,6 +59,7 @@ export class UserListComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
+    private translocoService: TranslocoService,
   ) {}
 
   ngOnInit(): void {
@@ -88,16 +91,25 @@ export class UserListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((newRole) => {
       if (newRole && newRole !== user.role) {
-        if (confirm(`Are you sure you want to change the role for ${user.email} to ${newRole}?`)) {
+        const confirmMessage = this.translocoService.translate('notifications.confirmRoleChange', {
+          email: user.email,
+          role: newRole,
+        });
+
+        if (confirm(confirmMessage)) {
           this.userService.updateRole(user.id, newRole).subscribe({
             next: (updatedUser) => {
               const index = this.users.findIndex((u) => u.id === updatedUser.id);
               if (index !== -1) this.users[index] = updatedUser;
               this.users = [...this.users];
-              this.showNotification('Role updated successfully');
+              this.showNotification(this.translocoService.translate('notifications.roleUpdated'));
             },
             error: (err) =>
-              this.showNotification(err.error?.message || 'Error updating role', 'error'),
+              this.showNotification(
+                err.error?.message ||
+                  this.translocoService.translate('notifications.errorUpdatingRole'),
+                'error',
+              ),
           });
         }
       }
@@ -111,13 +123,19 @@ export class UserListComponent implements OnInit {
         const index = this.users.findIndex((u) => u.id === updatedUser.id);
         if (index !== -1) this.users[index] = updatedUser;
         this.users = [...this.users];
-        this.showNotification(
-          `User account ${newStatus ? 'activated' : 'deactivated'} successfully`,
-        );
+
+        const messageKey = newStatus
+          ? 'notifications.userActivated'
+          : 'notifications.userDeactivated';
+        this.showNotification(this.translocoService.translate(messageKey));
       },
       error: (err) => {
         user.isActive = !newStatus;
-        this.showNotification(err.error?.message || 'Error updating status', 'error');
+        this.showNotification(
+          err.error?.message ||
+            this.translocoService.translate('notifications.errorUpdatingStatus'),
+          'error',
+        );
       },
     });
   }

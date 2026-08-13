@@ -1,14 +1,66 @@
-::ng-deep .custom-focused-field.mat-focused .mdc-notched-outline__leading,
-::ng-deep .custom-focused-field.mat-focused .mdc-notched-outline__notch,
-::ng-deep .custom-focused-field.mat-focused .mdc-notched-outline__trailing {
+@reference "tailwindcss";
+
+::ng-deep .role-form-field.mat-focused .mdc-notched-outline__leading,
+::ng-deep .role-form-field.mat-focused .mdc-notched-outline__notch,
+::ng-deep .role-form-field.mat-focused .mdc-notched-outline__trailing {
   border-color: #8a1538 !important;
   border-width: 2px !important;
 }
 
-::ng-deep .custom-focused-field.mat-focused .mat-mdc-select-value-text {
+::ng-deep .role-form-field.mat-focused .mat-mdc-select-value-text {
   color: #1f2937 !important;
 }
 
-::ng-deep .custom-focused-field .mat-mdc-form-field-label {
+::ng-deep .role-form-field .mat-mdc-form-field-label {
   color: #8a1538 !important;
+}
+
+.dialog-container {
+  @apply relative p-7 bg-white;
+}
+
+.close-button {
+  @apply absolute top-2 right-2 text-gray-400 hover:text-[#8a1538] transition-colors;
+}
+
+.dialog-title {
+  @apply text-[22px] font-bold m-0 p-0 mb-1 text-[#1f2937];
+}
+
+.dialog-subtitle {
+  @apply text-[14px] text-[#64748b] mb-6 mt-1 pr-6;
+}
+
+.user-email {
+  @apply text-[#3b82f6];
+}
+
+.role-form-field {
+  @apply w-full mb-2;
+}
+
+.role-label {
+  @apply text-[#8a1538] font-bold text-[11px] tracking-widest uppercase;
+}
+
+.actions-container {
+  @apply flex justify-center gap-4 mt-2;
+}
+
+.btn-cancel {
+  @apply px-6 transition-colors;
+  border-radius: 0.375rem !important;
+  border-color: #d1d5db !important;
+  color: #374151 !important;
+}
+
+.btn-cancel:hover {
+  background-color: #f9fafb !important;
+}
+
+.btn-save {
+  @apply px-6;
+  border-radius: 0.375rem !important;
+  background-color: #8a1538 !important;
+  color: #ffffff !important;
 }

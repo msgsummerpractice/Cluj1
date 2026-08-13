@@ -29,6 +29,20 @@
     "manageRole": "Manage Role",
     "noData": "No users found matching"
   },
+  "roleManageDialog": {
+    "title": "Manage role",
+    "platformRole": "PLATFORM ROLE",
+    "cancel": "Cancel",
+    "save": "Save changes"
+  },
+  "notifications": {
+    "confirmRoleChange": "Are you sure you want to change the role for {{email}} to {{role}}?",
+    "roleUpdated": "Role updated successfully",
+    "errorUpdatingRole": "Error updating role",
+    "userActivated": "User account activated successfully",
+    "userDeactivated": "User account deactivated successfully",
+    "errorUpdatingStatus": "Error updating status"
+  },
   "auth": {
     "loginTitle": "Log in",
     "loginSubtitle": "Enter your email and password to access your account.",
