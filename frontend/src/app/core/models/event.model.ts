@@ -1,7 +1,9 @@
 export interface Event {
   id: string;
   name: string;
-  date: string;
+  startDate: string;
+  endDate: string;
+  location: string | null;
   status: string;
   type: string;
 }

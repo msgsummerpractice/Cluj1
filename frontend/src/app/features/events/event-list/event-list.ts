@@ -52,6 +52,17 @@ export class EventListComponent implements OnInit {
     this.searchSubject.next(term);
   }
 
+  shouldShowEndDate(event: Event): boolean {
+    const startDateValue = new Date(event.startDate);
+    const endDateValue = new Date(event.endDate);
+
+    if (Number.isNaN(startDateValue.getTime()) || Number.isNaN(endDateValue.getTime())) {
+      return event.startDate !== event.endDate;
+    }
+
+    return startDateValue.toDateString() !== endDateValue.toDateString();
+  }
+
   fetchEvents(search?: string): void {
     this.eventService.getEvents(search).subscribe({
       next: (data) => {
