@@ -20,6 +20,7 @@
     "emailLabel": "Email",
     "passwordLabel": "Password",
     "forgotPassword": "Forgot password?"
+  },
   "register": {
     "title": "Register an account",
     "firstName": "First Name",
