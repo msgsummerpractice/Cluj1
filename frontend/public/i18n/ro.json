@@ -19,8 +19,9 @@
     "signInTitle": "Autentifică-te pentru a continua.",
     "emailLabel": "Email",
     "passwordLabel": "Parolă",
-    "forgotPassword": "Ai uitat parola?"
-  "openMenu": "Deschide meniul",
+    "forgotPassword": "Ai uitat parola?",
+    "openMenu": "Deschide meniul"
+  },
   "register": {
     "title": "Inregistreaza un cont nou",
     "firstName": "Prenume",
