@@ -32,17 +32,13 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity registerUser(@RequestBody @Valid UserRegistrationDto userRegistrationDto){
+    public ResponseEntity<Void> registerUser(@RequestBody @Valid UserRegistrationDto userRegistrationDto){
         if(!userRegistrationDto.getPassword().equals(userRegistrationDto.getConfirmPassword())){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Passwords do not match");
+            throw new IllegalArgumentException("Passwords do not match");
         }
-        try{
-            userService.registerUser(userRegistrationDto);
-            return ResponseEntity.ok().build();
-        }catch(IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }catch(EmailAlreadyRegisteredException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
-        }
+
+        userService.registerUser(userRegistrationDto);
+        return ResponseEntity.ok().build();
+
     }
 }
