@@ -98,12 +98,12 @@
 
         <button mat-menu-item (click)="authService.logout()">
           <mat-icon>logout</mat-icon>
-          <span>Log out</span>
+          <span>{{ 'user.logout' | transloco }}</span>
         </button>
       } @else {
         <a mat-menu-item routerLink="/login">
           <mat-icon>login</mat-icon>
-          <span>Log in</span>
+          <span>{{ 'user.login' | transloco }}</span>
         </a>
       }
     </mat-menu>
