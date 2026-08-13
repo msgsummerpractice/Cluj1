@@ -15,6 +15,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByEmail(String email);
 
+
     @Query("SELECT u FROM User u LEFT JOIN FETCH u.userDetails ud WHERE " +
             ":search IS NULL OR :search = '' OR " +
             "LOWER(ud.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
