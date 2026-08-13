@@ -22,7 +22,6 @@
     "forgotPassword": "Ai uitat parola?",
     "openMenu": "Deschide meniul"
   },
-  "openMenu": "Deschide meniul",
   "userList": {
     "title": "Gestionare utilizatori",
     "searchLabel": "Caută utilizatori...",
@@ -70,6 +69,21 @@
       "passwordPattern": "Trebuie sa contina cel putin 1 litera mare, 1 litera mica, 1 cifra si 1 caracter special.",
       "confirmPasswordRequired": "Te rugam sa confirmi parola.",
       "passwordMismatch": "Parolele nu coincid."
+    },
+    "events": {
+      "eventPageTitle ": "Gestionare evenimente",
+      "eventNameColumn": "Nume",
+      "eventDateColumn": "Data",
+      "eventStatusColumn": "Stare",
+      "eventTypeColumn": "Tip",
+      "eventActionsColumn": "Acțiuni",
+      "eventStatusPublished": "Publicat",
+      "eventStatusDraft": "Ciornă",
+      "eventStatusCompleted": "Finalizat",
+      "eventTypeInternal": "Intern",
+      "eventTypeExternal": "Extern",
+      "eventTypeLocal": "Local",
+      "eventViewButton": "Vizualizează"
     }
   }
 }
