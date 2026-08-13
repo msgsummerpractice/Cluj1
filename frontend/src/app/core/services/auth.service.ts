@@ -1,7 +1,8 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, map } from 'rxjs';
+import { Observable, finalize, map } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
 import { AuthRequest } from '../models/auth-request.model';
 import { AuthResponse } from '../models/auth-response.model';
 import { AuthUser, UserRole } from '../models/auth-user.model';
@@ -21,11 +22,20 @@ export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly router = inject(Router);
   private readonly storageKey = 'eventapp.auth.token';
+  private expirationTimer: ReturnType<typeof setTimeout> | null = null;
+
   private readonly authUserState = signal<AuthUser | null>(this.restoreSession());
 
-  readonly currentUser = computed(() => this.authUserState());
-  readonly currentRole = computed(() => this.authUserState()?.role ?? null);
-  readonly isAuthenticated = computed(() => this.authUserState() !== null);
+  readonly currentUser = computed(() => {
+    const user = this.authUserState();
+    if (!user || user.exp * 1000 <= Date.now()) {
+      return null;
+    }
+    return user;
+  });
+
+  readonly currentRole = computed(() => this.currentUser()?.role ?? null);
+  readonly isAuthenticated = computed(() => this.currentUser() !== null);
 
   login(request: AuthRequest): Observable<AuthUser> {
     return this.http
@@ -34,11 +44,15 @@ export class AuthService {
   }
 
   logout(): void {
-    this.clearSession();
-    this.http.post<void>('/api/auth/logout', {}).subscribe({
-      error: () => undefined,
-    });
-    void this.router.navigate(['/login']);
+    this.http
+      .post<void>('/api/auth/logout', {})
+      .pipe(
+        finalize(() => {
+          this.clearSession();
+          void this.router.navigate(['/login']);
+        }),
+      )
+      .subscribe();
   }
 
   expireSession(): void {
@@ -52,7 +66,7 @@ export class AuthService {
       return null;
     }
 
-    if (!this.authUserState()) {
+    if (!this.currentUser()) {
       this.clearSession();
       return null;
     }
@@ -87,6 +101,7 @@ export class AuthService {
 
     localStorage.setItem(this.storageKey, token);
     this.authUserState.set(user);
+    this.scheduleExpiration(user.exp);
     return user;
   }
 
@@ -102,22 +117,13 @@ export class AuthService {
       return null;
     }
 
+    this.scheduleExpiration(user.exp);
     return user;
   }
 
   private parseToken(token: string): AuthUser | null {
     try {
-      const [, encodedPayload] = token.split('.');
-      if (!encodedPayload) {
-        return null;
-      }
-
-      const normalizedPayload = encodedPayload.replace(/-/g, '+').replace(/_/g, '/');
-      const paddedPayload = normalizedPayload.padEnd(
-        normalizedPayload.length + ((4 - (normalizedPayload.length % 4)) % 4),
-        '=',
-      );
-      const payload = JSON.parse(atob(paddedPayload)) as JwtPayload;
+      const payload = jwtDecode<JwtPayload>(token);
 
       if (!payload.sub || !payload.email || !payload.role || !payload.exp || !payload.iat) {
         return null;
@@ -139,11 +145,31 @@ export class AuthService {
     }
   }
 
+  private scheduleExpiration(expInSeconds: number): void {
+    if (this.expirationTimer) {
+      clearTimeout(this.expirationTimer);
+    }
+
+    const msUntilExpiration = expInSeconds * 1000 - Date.now();
+    if (msUntilExpiration <= 0) {
+      this.expireSession();
+      return;
+    }
+
+    this.expirationTimer = setTimeout(() => {
+      this.expireSession();
+    }, msUntilExpiration);
+  }
+
   private getStoredToken(): string | null {
     return localStorage.getItem(this.storageKey);
   }
 
   private clearSession(): void {
+    if (this.expirationTimer) {
+      clearTimeout(this.expirationTimer);
+      this.expirationTimer = null;
+    }
     localStorage.removeItem(this.storageKey);
     this.authUserState.set(null);
   }

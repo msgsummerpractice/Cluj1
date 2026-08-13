@@ -3,6 +3,11 @@ import { authGuard, guestGuard, roleGuard } from './core/auth/auth.guards';
 
 export const routes: Routes = [
   {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full',
+  },
+  {
     path: 'login',
     canActivate: [guestGuard],
     loadComponent: () => import('./features/auth/login/login').then((m) => m.LoginComponent),
@@ -34,5 +39,9 @@ export const routes: Routes = [
     data: { roles: ['ADMIN'] },
     loadComponent: () =>
       import('./features/users/user-list/user-list').then((m) => m.UserListComponent),
+  },
+  {
+    path: '**',
+    redirectTo: 'login',
   },
 ];

@@ -39,7 +39,10 @@ export class LoginComponent {
   protected hidePassword = true;
 
   protected readonly loginForm = this.formBuilder.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
+    email: [
+      '',
+      [Validators.required, Validators.email, Validators.pattern(/^[a-zA-Z0-9._%+-]+@msg\.group$/)],
+    ],
     password: ['', [Validators.required]],
   });
 

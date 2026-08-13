@@ -58,9 +58,11 @@
                   <mat-error>Email is required.</mat-error>
                 }
                 @if (
-                  loginForm.controls.email.hasError('email') && loginForm.controls.email.touched
+                  (loginForm.controls.email.hasError('email') ||
+                    loginForm.controls.email.hasError('pattern')) &&
+                  loginForm.controls.email.touched
                 ) {
-                  <mat-error>Enter a valid email address.</mat-error>
+                  <mat-error>Please enter a valid company email address (@msg.group).</mat-error>
                 }
               </mat-form-field>
 
