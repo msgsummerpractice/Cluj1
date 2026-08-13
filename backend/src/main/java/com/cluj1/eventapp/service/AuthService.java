@@ -1,5 +1,7 @@
 package com.cluj1.eventapp.service;
 
+
+import com.cluj1.eventapp.mapper.UserMapper;
 import com.cluj1.eventapp.dto.AuthResponse;
 import com.cluj1.eventapp.dto.LogInRequest;
 import com.cluj1.eventapp.model.User;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final UserService userService;
+    private final UserMapper mapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider tokenProvider;
 
@@ -36,4 +40,5 @@ public class AuthService {
                 .token(token)
                 .build();
     }
+
 }

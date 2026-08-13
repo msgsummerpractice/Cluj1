@@ -1,7 +1,12 @@
 import { Routes } from '@angular/router';
 import { authGuard, guestGuard, roleGuard } from './core/auth/auth.guards';
+import { RegisterComponent } from './features/register-component/register-component';
 
 export const routes: Routes = [
+  {
+    path: 'register', 
+    component: RegisterComponent
+  },
   {
     path: '',
     redirectTo: 'login',

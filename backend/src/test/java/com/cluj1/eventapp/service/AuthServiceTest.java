@@ -2,6 +2,9 @@ package com.cluj1.eventapp.service;
 
 import com.cluj1.eventapp.dto.AuthResponse;
 import com.cluj1.eventapp.dto.LogInRequest;
+import com.cluj1.eventapp.dto.UserRegistrationDto;
+import com.cluj1.eventapp.exception.EmailAlreadyRegisteredException;
+import com.cluj1.eventapp.mapper.UserMapper;
 import com.cluj1.eventapp.model.User;
 import com.cluj1.eventapp.model.enums.Role;
 import com.cluj1.eventapp.repository.UserRepository;
@@ -22,6 +25,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,7 +35,12 @@ class AuthServiceTest {
     private UserRepository userRepository;
 
     @Mock
+    private UserService userService;
+    @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private UserMapper mapper;
 
     @Mock
     private JwtTokenProvider tokenProvider;
@@ -75,7 +84,6 @@ class AuthServiceTest {
     void login_wrongPassword_throwsException() {
         when(userRepository.findByEmail("user@example.com")).thenReturn(Optional.of(testUser));
         when(passwordEncoder.matches("secretPassword", "encodedPassword")).thenReturn(false);
-
         assertThatThrownBy(() -> authService.login(validLoginRequest))
                 .isInstanceOf(BadCredentialsException.class)
                 .hasMessage("Invalid email or password.");
@@ -99,4 +107,6 @@ class AuthServiceTest {
                 .isInstanceOf(BadCredentialsException.class)
                 .hasMessage("Invalid email or password.");
     }
+
+
 }

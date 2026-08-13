@@ -3,6 +3,9 @@ package com.cluj1.eventapp.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.cluj1.eventapp.dto.UserRegistrationDto;
+import com.cluj1.eventapp.exception.EmailAlreadyRegisteredException;
+import com.cluj1.eventapp.mapper.UserMapper;
 import org.springframework.stereotype.Service;
 
 import com.cluj1.eventapp.dto.UserDTO;
@@ -17,25 +20,22 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final UserMapper mapper;
 
     @Transactional(readOnly = true)
     public List<UserDTO> getAllUsers(String searchTerm) {
         List<User> users = userRepository.searchUsers(searchTerm);
 
         return users.stream()
-                .map(this::mapToDTO)
+                .map(mapper::mapToDTO)
                 .collect(Collectors.toList());
     }
 
-    private UserDTO mapToDTO(User user) {
-        return UserDTO.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .role(user.getRole())
-                .isActive(user.getIsActive())
-                .firstName(user.getUserDetails() != null ? user.getUserDetails().getFirstName() : null)
-                .lastName(user.getUserDetails() != null ? user.getUserDetails().getLastName() : null)
-                .location(user.getUserDetails() != null ? user.getUserDetails().getLocation() : null)
-                .build();
+    public void registerUser(UserRegistrationDto registrationDto){
+        if(userRepository.existsByEmail(registrationDto.getEmail())){
+            throw new EmailAlreadyRegisteredException();
+        }
+        User user = mapper.mapToEntity(registrationDto);
+        userRepository.save(user);
     }
 }
