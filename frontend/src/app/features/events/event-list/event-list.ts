@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -37,6 +37,7 @@ export class EventListComponent implements OnInit {
   constructor(
     private eventService: EventService,
     private router: Router,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -55,6 +56,7 @@ export class EventListComponent implements OnInit {
     this.eventService.getEvents(search).subscribe({
       next: (data) => {
         this.events = data;
+        this.cdr.detectChanges();
       },
       error: (err) => console.error('Error fetching events', err),
     });

@@ -84,12 +84,7 @@
           {{ 'userList.colActions' | transloco }}
         </th>
         <td mat-cell *matCellDef="let user" class="text-center">
-          <button
-            mat-stroked-button
-            color="primary"
-            (click)="manageRole(user.id)"
-            class="!rounded-md"
-          >
+          <button mat-flat-button (click)="manageRole(user.id)" class="user-manage-button">
             <mat-icon>manage_accounts</mat-icon>
             {{ 'userList.manageRole' | transloco }}
           </button>
