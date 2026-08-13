@@ -4,8 +4,8 @@ import { RegisterComponent } from './features/register-component/register-compon
 
 export const routes: Routes = [
   {
-    path: 'register', 
-    component: RegisterComponent
+    path: 'register',
+    component: RegisterComponent,
   },
   {
     path: '',

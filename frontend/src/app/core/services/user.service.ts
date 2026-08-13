@@ -1,15 +1,15 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../models/user.model';
+import { RegisterDto } from '../models/register-dto';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  private apiUrl = '/api/users';
-
-  constructor(private http: HttpClient) {}
+  private apiUrl: string = 'http://localhost:8080/api/users';
+  private http = inject(HttpClient);
 
   getUsers(searchTerm?: string): Observable<User[]> {
     let params = new HttpParams();
@@ -17,5 +17,9 @@ export class UserService {
       params = params.set('search', searchTerm);
     }
     return this.http.get<User[]>(this.apiUrl, { params });
+  }
+
+  registerUser(userData: RegisterDto): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, userData);
   }
 }

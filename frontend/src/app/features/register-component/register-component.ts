@@ -1,13 +1,20 @@
 import { Component, inject } from '@angular/core';
-import { AbstractControl, NonNullableFormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { AuthService } from '../../core/auth/auth-service';
+import {
+  AbstractControl,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
-import {ChangeDetectorRef} from '@angular/core';
+import { ChangeDetectorRef } from '@angular/core';
 import { TranslocoModule } from '@jsverse/transloco';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { AuthService } from '../../core/services/auth.service';
+import { UserService } from '../../core/services/user.service';
 @Component({
   selector: 'app-register-component',
   imports: [
@@ -23,7 +30,7 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class RegisterComponent {
   private readonly _formBuilder: NonNullableFormBuilder = inject(NonNullableFormBuilder);
-  private readonly authService: AuthService = inject(AuthService);
+  private readonly userService: UserService = inject(UserService);
   private readonly router: Router = inject(Router);
   private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
@@ -36,10 +43,7 @@ export class RegisterComponent {
       userLocation: ['', [Validators.required]],
       email: [
         '',
-        [
-          Validators.required,
-          Validators.pattern('^[a-zA-Z0-9]+\\.[a-zA-Z0-9]+@msg.group'),
-        ],
+        [Validators.required, Validators.pattern('^[a-zA-Z0-9]+\\.[a-zA-Z0-9]+@msg.group')],
       ],
       password: [
         '',
@@ -70,7 +74,7 @@ export class RegisterComponent {
       const { firstName, lastName, userLocation, email, password, confirmPassword } =
         this.registerForm.getRawValue();
       console.log(firstName, lastName, userLocation, email, password, confirmPassword);
-      this.authService
+      this.userService
         .registerUser({ firstName, lastName, userLocation, email, password, confirmPassword })
         .subscribe({
           next: () => {
