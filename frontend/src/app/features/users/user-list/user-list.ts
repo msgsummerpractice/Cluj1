@@ -163,6 +163,12 @@ export class UserListComponent implements OnInit {
       });
   }
 
+  formatLocation(location: string): string {
+    if (!location) return '';
+    const formatted = location.replace(/_/g, ' ').toLowerCase();
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+  }
+
   private showNotification(message: string, type: 'success' | 'error' = 'success'): void {
     this.snackBar.open(message, 'Close', {
       duration: 4000,

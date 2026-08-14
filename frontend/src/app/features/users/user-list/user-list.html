@@ -23,6 +23,10 @@
       [noDataLabel]="'userList.noData'"
       [noDataDetail]="searchControl.value || ''"
     >
+      <ng-template appDataTableCellDef="location" let-user>
+        {{ formatLocation(user.location) }}
+      </ng-template>
+
       <ng-template appDataTableCellDef="role" let-user>
         <span
           class="role-badge"
@@ -35,7 +39,6 @@
         </span>
       </ng-template>
 
-      <!-- Custom Status Toggle -->
       <ng-template appDataTableCellDef="isActive" let-user>
         <div class="status-wrapper">
           <mat-slide-toggle
@@ -59,7 +62,6 @@
         </div>
       </ng-template>
 
-      <!-- Custom Actions -->
       <ng-template appDataTableCellDef="actions" let-user>
         <button mat-stroked-button (click)="manageRole(user)" class="manage-role-btn">
           {{ 'userList.manageRole' | transloco }}
