@@ -113,5 +113,27 @@
       "confirmPasswordRequired": "Please confirm your password.",
       "passwordMismatch": "Passwords do not match."
     }
+  },
+  "forgotPassword": {
+    "title": "Forgot Password",
+    "description": "Enter your company email address and we'll send you a link to reset your password.",
+    "emailLabel": "Email",
+    "emailRequired": "Email is required.",
+    "emailPattern": "Please enter a valid company email address (@msg.group).",
+    "submit": "Send Reset Link",
+    "submitting": "Sending...",
+    "backToLogin": "Back to Sign In"
+  },
+  "resetPassword": {
+    "title": "Reset Password",
+    "subtitle": "Please enter your new password below.",
+    "newPasswordLabel": "New Password",
+    "confirmPasswordLabel": "Confirm Password",
+    "passwordRequired": "Password is required.",
+    "passwordError": "Password must be at least 8 chars and contain uppercase, lowercase, number, and special character.",
+    "confirmPasswordRequired": "Please confirm your password.",
+    "redirecting": "Redirecting to login...",
+    "submit": "Reset Password",
+    "submitting": "Resetting..."
   }
 }
