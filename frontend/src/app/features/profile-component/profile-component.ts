@@ -18,6 +18,7 @@ import { UserService } from '../../core/services/user.service';
 import { UserProfile } from '../../core/models/user-profile.model';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { TranslocoPipe } from '@jsverse/transloco';
+import { RegistrationService } from '../../core/services/registration.service';
 
 @Component({
   selector: 'app-profile-component',
@@ -42,6 +43,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 })
 export class ProfileComponent implements OnInit {
   private readonly userService: UserService = inject(UserService);
+  private readonly registrationService = inject(RegistrationService);
 
   readonly locations = [
     { value: 'CLUJ', label: 'Cluj-Napoca' },
@@ -55,12 +57,14 @@ export class ProfileComponent implements OnInit {
   successMessage = signal<string>('');
   errorMessage = signal<string>('');
   previewImage = signal<string | null>(null);
+  registrationCount = signal<number | null>(null);
 
   selectedLocation: string = '';
   selectedFile: File | null = null;
 
   ngOnInit(): void {
     this.loadProfile();
+    this.loadRegistrationCount();
   }
 
   loadProfile(): void {
@@ -71,6 +75,16 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         this.errorMessage.set(err?.error?.message || 'Failed to load profile.');
+      },
+    });
+  }
+  loadRegistrationCount(): void {
+    this.registrationService.getRegistrationCountPerUser().subscribe({
+      next: (count) => {
+        this.registrationCount.set(count);
+      },
+      error: (err) => {
+        this.errorMessage.set(err?.error?.message || 'Failed to load registration count.');
       },
     });
   }
