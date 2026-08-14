@@ -1,52 +1,82 @@
-<div class="p-8 bg-white min-h-screen">
-  <app-data-table
-    [columns]="columns"
-    [data]="users"
-    tableTitle="userList.title"
-    noDataLabel="userList.noData"
-    [noDataDetail]="searchTerm"
-  >
-    <mat-form-field dataTableActions appearance="outline" class="w-80">
+<div class="user-list-wrapper">
+  <div class="user-list-header flex justify-between items-center mb-6">
+    <h2 class="user-list-title text-3xl font-bold text-gray-800 m-0">
+      {{ 'userList.title' | transloco }}
+    </h2>
+
+    <mat-form-field appearance="outline" class="w-full sm:w-80">
       <mat-label>{{ 'userList.searchLabel' | transloco }}</mat-label>
       <input
         matInput
-        [(ngModel)]="searchTerm"
-        (ngModelChange)="onSearch($event)"
+        [formControl]="searchControl"
         [placeholder]="'userList.searchPlaceholder' | transloco"
       />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
+  </div>
 
-    <ng-template appDataTableCellDef="role" let-user>
-      <mat-chip-set>
-        <mat-chip highlighted color="primary">{{ user.role }}</mat-chip>
-      </mat-chip-set>
-    </ng-template>
+  <div class="table-container">
+    <app-data-table
+      [data]="users()"
+      [columns]="tableColumns"
+      [showPaginator]="false"
+      [noDataLabel]="'userList.noData'"
+      [noDataDetail]="searchControl.value || ''"
+    >
+      <ng-template appDataTableCellDef="location" let-user>
+        {{ formatLocation(user.location) }}
+      </ng-template>
 
-    <ng-template appDataTableCellDef="location" let-user>
-      {{ user.location | titlecase }}
-    </ng-template>
+      <ng-template appDataTableCellDef="role" let-user>
+        <span
+          class="role-badge"
+          [ngClass]="{
+            'role-admin': user.role === 'ADMIN',
+            'role-standard': user.role !== 'ADMIN',
+          }"
+        >
+          {{ user.role.replace('_', ' ') | titlecase }}
+        </span>
+      </ng-template>
 
-    <ng-template appDataTableCellDef="isActive" let-user>
-      <span
-        [ngClass]="{
-          'text-green-600 font-medium': user.isActive,
-          'text-red-500 font-medium': !user.isActive,
-        }"
-      >
-        {{
-          user.isActive
-            ? ('userList.statusActive' | transloco)
-            : ('userList.statusInactive' | transloco)
-        }}
-      </span>
-    </ng-template>
+      <ng-template appDataTableCellDef="isActive" let-user>
+        <div class="status-wrapper">
+          <mat-slide-toggle
+            [checked]="user.isActive"
+            (change)="toggleStatus(user, $event)"
+            class="custom-warn-toggle"
+          >
+          </mat-slide-toggle>
+          <span
+            [ngClass]="{
+              'status-text-active': user.isActive,
+              'status-text-inactive': !user.isActive,
+            }"
+          >
+            {{
+              user.isActive
+                ? ('userList.statusActive' | transloco)
+                : ('userList.statusInactive' | transloco)
+            }}
+          </span>
+        </div>
+      </ng-template>
 
-    <ng-template appDataTableCellDef="actions" let-user>
-      <button mat-flat-button (click)="manageRole(user.id)" class="user-manage-button">
-        <mat-icon>manage_accounts</mat-icon>
-        {{ 'userList.manageRole' | transloco }}
-      </button>
-    </ng-template>
-  </app-data-table>
+      <ng-template appDataTableCellDef="actions" let-user>
+        <button mat-stroked-button (click)="manageRole(user)" class="manage-role-btn">
+          {{ 'userList.manageRole' | transloco }}
+        </button>
+      </ng-template>
+    </app-data-table>
+
+    <mat-paginator
+      class="border border-gray-200 border-t-0 rounded-b-lg"
+      [length]="totalUsers()"
+      [pageSize]="pageSize()"
+      [pageSizeOptions]="[5, 10, 25, 100]"
+      (page)="onPageChange($event)"
+      aria-label="Select page"
+    >
+    </mat-paginator>
+  </div>
 </div>

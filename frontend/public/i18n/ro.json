@@ -78,6 +78,26 @@
     "manageRole": "Gestionare rol",
     "noData": "Niciun utilizator găsit pentru"
   },
+  "roleManageDialog": {
+    "title": "Gestionare rol",
+    "platformRole": "ROL PLATFORMĂ",
+    "cancel": "Anulează",
+    "save": "Salvează modificările",
+    "successMessage": "Rolul a fost actualizat cu succes",
+    "errorMessage": "Actualizarea rolului a eșuat",
+    "confirmTitle": "Confirmă modificarea rolului",
+    "confirmPrompt": "Sigur dorești să modifici rolul acestui utilizator în",
+    "no": "Nu",
+    "yes": "Da"
+  },
+  "notifications": {
+    "confirmRoleChange": "Ești sigur că vrei să schimbi rolul pentru {{email}} în {{role}}?",
+    "roleUpdated": "Rolul a fost actualizat cu succes",
+    "errorUpdatingRole": "Eroare la actualizarea rolului",
+    "userActivated": "Contul utilizatorului a fost activat cu succes",
+    "userDeactivated": "Contul utilizatorului a fost dezactivat cu succes",
+    "errorUpdatingStatus": "Eroare la actualizarea stării"
+  },
   "register": {
     "title": "Înregistrează un cont nou",
     "subtitle": "Creează un cont pentru a participa la evenimentele noastre, pentru a te conecta cu comunitatea și pentru a-ți gestiona înscrierile.",
