@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { TranslocoService } from '@jsverse/transloco';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Language } from '../models/language-model';
+import { Language } from '../models/language.model';
 
 @Injectable({ providedIn: 'root' })
 export class LanguageService {

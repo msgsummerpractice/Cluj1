@@ -43,7 +43,25 @@
       "PARTICIPANT": "Vizualizează spațiul tău pentru evenimente și continuă acțiunile disponibile pentru contul tău."
     }
   },
-  "openMenu": "Deschide meniul",
+  "events": {
+    "eventPageTitle": "Gestionare evenimente",
+    "eventNameColumn": "Nume",
+    "eventDateColumn": "Data",
+    "eventStatusColumn": "Stare",
+    "eventTypeColumn": "Tip",
+    "eventActionsColumn": "Acțiuni",
+    "eventStatusPublished": "Publicat",
+    "eventStatusDraft": "Ciornă",
+    "eventStatusCompleted": "Finalizat",
+    "eventDateYear": "An",
+    "eventDateMonth": "Lună",
+    "eventTypeInternal": "Intern",
+    "eventTypeExternal": "Extern",
+    "eventTypeLocal": "Local",
+    "eventViewButton": "Vizualizează",
+    "clearFilters": "Șterge filtrele",
+    "noData": "Nu s-au găsit evenimente"
+  },
   "userList": {
     "title": "Gestionare utilizatori",
     "searchLabel": "Caută utilizatori...",

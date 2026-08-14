@@ -1,0 +1,36 @@
+.data-table-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+table[mat-table] {
+  width: 100%;
+  min-width: 48rem;
+  table-layout: fixed;
+}
+
+th[mat-header-cell] {
+  white-space: nowrap;
+}
+
+th[mat-header-cell] button {
+  vertical-align: middle;
+}
+
+.filter-menu-content {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem;
+  min-width: 12rem;
+}
+
+.filter-menu-content ::ng-deep mat-checkbox {
+  padding: 0.25rem 0;
+}
+
+@media (max-width: 768px), (hover: none) {
+  ::ng-deep th[mat-header-cell] .mat-sort-header-arrow {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+  }
+}

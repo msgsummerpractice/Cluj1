@@ -3,21 +3,16 @@ package com.cluj1.eventapp.controller;
 import com.cluj1.eventapp.dto.AuthResponse;
 import com.cluj1.eventapp.dto.LogInRequest;
 
-import com.cluj1.eventapp.dto.UserRegistrationDto;
-import com.cluj1.eventapp.exception.EmailAlreadyRegisteredException;
 import com.cluj1.eventapp.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
 import org.springframework.web.bind.annotation.*;
-
 
 @RequiredArgsConstructor
 @RestController
@@ -26,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
-
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LogInRequest request) {

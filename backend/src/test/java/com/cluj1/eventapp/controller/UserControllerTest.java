@@ -34,7 +34,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.cluj1.eventapp.config.SecurityConfig;
 import com.cluj1.eventapp.dto.UserRegistrationDto;
 import com.cluj1.eventapp.security.JwtAuthenticationFilter;
-import com.cluj1.eventapp.service.AuthService;
 import com.cluj1.eventapp.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -97,8 +96,8 @@ class UserControllerTest {
         validDto.setConfirmPassword("password123");
 
         mockMvc.perform(post("/api/users/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(validDto)))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
 
@@ -112,8 +111,8 @@ class UserControllerTest {
         invalidDto.setConfirmPassword("differentPassword");
 
         mockMvc.perform(post("/api/users/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(invalidDto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Passwords do not match"));
 
@@ -130,8 +129,8 @@ class UserControllerTest {
                 .when(userService).registerUser(any(UserRegistrationDto.class));
 
         mockMvc.perform(post("/api/users/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(validDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(validDto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("There is already an account registered to this email address!"));
 

@@ -45,7 +45,6 @@ class AuthControllerIntegrationTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-
     @BeforeEach
     void setUp() {
         this.mockMvc = MockMvcBuilders
@@ -70,23 +69,23 @@ class AuthControllerIntegrationTest {
         UserRegistrationDto dto = createUserRegistrationDto("integration.user@example.com", "Password123!");
 
         mockMvc.perform(post("/auth/register")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
 
         assertTrue(userRepository.findByEmail("integration.user@example.com").isPresent());
     }
+
     @Test
     void login_validCredentials_returns200AndToken() throws Exception {
         LogInRequest request = createLoginRequest("admin.test@msg.com", "Password123!");
 
         mockMvc.perform(
-                        post("/auth/login")
-                                .with(csrf())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(request))
-                )
+                post("/auth/login")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token", notNullValue()));
     }
@@ -96,11 +95,10 @@ class AuthControllerIntegrationTest {
         LogInRequest request = createLoginRequest("admin.test@msg.com", "WrongPassword");
 
         mockMvc.perform(
-                        post("/auth/login")
-                                .with(csrf())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(request))
-                )
+                post("/auth/login")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -109,11 +107,10 @@ class AuthControllerIntegrationTest {
         LogInRequest request = createLoginRequest("", "");
 
         mockMvc.perform(
-                        post("/auth/login")
-                                .with(csrf())
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(request))
-                )
+                post("/auth/login")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -123,6 +120,7 @@ class AuthControllerIntegrationTest {
         request.setPassword(password);
         return request;
     }
+
     private UserRegistrationDto createUserRegistrationDto(String email, String password) {
         UserRegistrationDto dto = new UserRegistrationDto();
         dto.setEmail(email);
