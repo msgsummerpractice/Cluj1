@@ -25,4 +25,8 @@ import { TranslocoModule } from '@jsverse/transloco';
 })
 export class Header {
   protected readonly authService = inject(AuthService);
+
+  showHeader() {
+    return this.authService.isAuthenticated();
+  }
 }

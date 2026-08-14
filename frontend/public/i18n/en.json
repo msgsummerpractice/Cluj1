@@ -35,7 +35,28 @@
     "signInTitle": "Sign in to continue.",
     "emailLabel": "Email",
     "passwordLabel": "Password",
-    "forgotPassword": "Forgot password?"
+    "forgotPassword": "Forgot password?",
+    "description": "Access the workspace and tools available for your participant, marketing, HR, or admin role.",
+    "sessionInfo": "Your session will stay active until you log out or it expires.",
+    "submitting": "Signing in...",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up"
+  },
+  "roles": {
+    "welcome": "Welcome back",
+    "workspace": "workspace",
+    "labels": {
+      "MARKETING_ORGANIZER": "Marketing Organizer",
+      "HR_USER": "HR User",
+      "ADMIN": "Admin",
+      "PARTICIPANT": "Participant"
+    },
+    "summaries": {
+      "MARKETING_ORGANIZER": "Plan communication, coordinate promotion, and keep event campaigns moving.",
+      "HR_USER": "Monitor staffing-related event information and manage people-focused workflows.",
+      "ADMIN": "Manage the application and control access across the event platform.",
+      "PARTICIPANT": "View your event space and continue the actions available for your account."
+    }
   },
   "events": {
     "eventPageTitle": "Event Management",
@@ -58,6 +79,7 @@
   },
   "register": {
     "title": "Register an account",
+    "subtitle": "Create an account to participate in our events, connect with the community, and manage your registrations.",
     "firstName": "First Name",
     "firstNamePlaceholder": "First Name",
     "lastName": "Last Name",
@@ -67,14 +89,17 @@
     "locations": {
       "cluj": "Cluj-Napoca",
       "timisoara": "Timișoara",
-      "mures": "Târgu Mureș"
+      "mures": "Târgu Mureș",
+      "remote": "Remote"
     },
     "email": "Email",
-    "emailPlaceholder": "Firstname.Lastname@msg",
+    "emailPlaceholder": "Firstname.Lastname@msg.group",
     "password": "Password",
     "passwordPlaceholder": "Enter password",
     "confirmPassword": "Confirm Password",
     "confirmPasswordPlaceholder": "Confirm password",
+    "alreadyHaveAccount": "Already have an account?",
+    "signin": "Sign in",
     "submit": "Create account",
     "errors": {
       "firstNameRequired": "First name is required.",

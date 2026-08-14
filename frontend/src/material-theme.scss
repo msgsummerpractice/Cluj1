@@ -1,12 +1,7 @@
 @use '@angular/material' as mat;
 @use 'tailwindcss';
 
-@font-face {
-  font-family: 'Carnac';
-  src: url('../public/fonts/fonnts.com-carnac-reg.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-}
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 
 :root {
   --dark-red-dot: #a01441;
@@ -29,8 +24,8 @@ html {
         tertiary: mat.$blue-palette,
       ),
       typography: (
-        plain-family: 'Carnac, sans-serif',
-        brand-family: 'Carnac, sans-serif',
+        plain-family: 'Manrope, sans-serif',
+        brand-family: 'Manrope, sans-serif',
       ),
       density: 0,
     )
@@ -41,7 +36,7 @@ body {
   color-scheme: light;
   background-color: var(--mat-sys-surface);
   color: var(--mat-sys-on-surface);
-  font-family: 'Carnac', sans-serif;
+  font-family: 'Manrope', sans-serif;
   color: var(--mat-sys-on-surface);
   margin: 0;
   height: 100%;

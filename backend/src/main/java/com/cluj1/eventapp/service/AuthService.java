@@ -1,5 +1,6 @@
 package com.cluj1.eventapp.service;
 
+import com.cluj1.eventapp.mapper.UserMapper;
 import com.cluj1.eventapp.dto.AuthResponse;
 import com.cluj1.eventapp.dto.LogInRequest;
 import com.cluj1.eventapp.model.User;
@@ -19,7 +20,7 @@ public class AuthService {
     private final JwtTokenProvider tokenProvider;
 
     public AuthResponse login(LogInRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmail(request.getEmail().toLowerCase())
                 .orElseThrow(() -> new BadCredentialsException("Invalid email or password."));
 
         if (!Boolean.TRUE.equals(user.getIsActive())) {
