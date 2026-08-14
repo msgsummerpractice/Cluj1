@@ -47,10 +47,13 @@
     "eventStatusPublished": "Published",
     "eventStatusDraft": "Draft",
     "eventStatusCompleted": "Completed",
+    "eventDateYear": "Year",
+    "eventDateMonth": "Month",
     "eventTypeInternal": "Internal",
     "eventTypeExternal": "External",
     "eventTypeLocal": "Local",
     "eventViewButton": "View",
+    "clearFilters": "Clear filters",
     "noData": "No events found"
   },
   "register": {
