@@ -12,8 +12,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.Collections;
 import java.util.UUID;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.cluj1.eventapp.dto.UserDTO;
 import com.cluj1.eventapp.exception.EmailAlreadyRegisteredException;
@@ -61,7 +63,8 @@ class UserControllerTest {
                             .requestMatchers("/api/users/register").permitAll()
                             .anyRequest().authenticated())
                     .exceptionHandling(
-                            ex -> ex.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)));
+                            ex -> ex.authenticationEntryPoint(new HttpStatusEntryPoint(
+                                    HttpStatus.UNAUTHORIZED)));
             return http.build();
         }
     }
@@ -76,13 +79,13 @@ class UserControllerTest {
 
     @Test
     void getUsers_return200_whenUserIsAdmin() throws Exception {
-        when(userService.getAllUsers(any())).thenReturn(Collections.emptyList());
+        when(userService.getAllUsers(any(), any(Pageable.class))).thenReturn(Page.empty());
 
         mockMvc.perform(get("/api/users")
                 .with(user("admin").authorities(new SimpleGrantedAuthority("ADMIN")))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json("[]"));
+                .andExpect(jsonPath("$.content").isArray());
     }
 
     @Test
@@ -155,7 +158,8 @@ class UserControllerTest {
     @Test
     void updateUserRole_return200_whenUserIsAdmin() throws Exception {
         UUID userId = UUID.randomUUID();
-        UserDTO response = UserDTO.builder().id(userId).role(Role.ADMIN).isActive(true).email("user@msg.group").build();
+        UserDTO response = UserDTO.builder().id(userId).role(Role.ADMIN).isActive(true).email("user@msg.group")
+                .build();
         when(userService.updateUserRole(any(UUID.class), any(Role.class))).thenReturn(response);
 
         mockMvc.perform(patch("/api/users/" + userId + "/role")
@@ -213,7 +217,8 @@ class UserControllerTest {
     @Test
     void updateUserStatus_return200_whenUserIsAdmin() throws Exception {
         UUID userId = UUID.randomUUID();
-        UserDTO response = UserDTO.builder().id(userId).role(Role.PARTICIPANT).isActive(false).email("user@msg.group")
+        UserDTO response = UserDTO.builder().id(userId).role(Role.PARTICIPANT).isActive(false)
+                .email("user@msg.group")
                 .build();
         when(userService.updateUserStatus(any(UUID.class), anyBoolean())).thenReturn(response);
 

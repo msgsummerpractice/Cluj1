@@ -33,7 +33,13 @@
     "title": "Manage role",
     "platformRole": "PLATFORM ROLE",
     "cancel": "Cancel",
-    "save": "Save changes"
+    "save": "Save changes",
+    "successMessage": "Role updated successfully",
+    "errorMessage": "Failed to update role",
+    "confirmTitle": "Confirm role change",
+    "confirmPrompt": "Are you sure you want to change this user's role to",
+    "no": "No",
+    "yes": "Yes"
   },
   "notifications": {
     "confirmRoleChange": "Are you sure you want to change the role for {{email}} to {{role}}?",

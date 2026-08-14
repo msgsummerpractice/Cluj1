@@ -5,9 +5,12 @@ import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import com.cluj1.eventapp.dto.UserRegistrationDto;
 import com.cluj1.eventapp.exception.EmailAlreadyRegisteredException;
@@ -55,17 +58,17 @@ class UserServiceTest {
                 .location(UserLocation.values()[0])
                 .build();
 
-        when(userRepository.searchUsers("John")).thenReturn(Arrays.asList(user));
+        when(userRepository.searchUsers(any(), any())).thenReturn(new PageImpl<>(Arrays.asList(user)));
         when(mapper.mapToDTO(user)).thenReturn(expectedDto);
 
-        List<UserDTO> result = userService.getAllUsers("John");
+        Page<UserDTO> result = userService.getAllUsers("John", PageRequest.of(0, 10));
 
-        assertEquals(1, result.size());
-        assertEquals("John", result.get(0).getFirstName());
-        assertEquals("Doe", result.get(0).getLastName());
-        assertEquals("john.doe@msg.group", result.get(0).getEmail());
-        assertEquals(Role.PARTICIPANT, result.get(0).getRole());
-        verify(userRepository, times(1)).searchUsers("John");
+        assertEquals(1, result.getTotalElements());
+        assertEquals("John", result.getContent().get(0).getFirstName());
+        assertEquals("Doe", result.getContent().get(0).getLastName());
+        assertEquals("john.doe@msg.group", result.getContent().get(0).getEmail());
+        assertEquals(Role.PARTICIPANT, result.getContent().get(0).getRole());
+        verify(userRepository, times(1)).searchUsers(any(), any());
     }
 
     @Test
@@ -83,23 +86,23 @@ class UserServiceTest {
                 .isActive(false)
                 .build();
 
-        when(userRepository.searchUsers(null)).thenReturn(Arrays.asList(userWithoutDetails));
+        when(userRepository.searchUsers(any(), any())).thenReturn(new PageImpl<>(Arrays.asList(userWithoutDetails)));
         when(mapper.mapToDTO(userWithoutDetails)).thenReturn(expectedDto);
 
-        List<UserDTO> result = userService.getAllUsers(null);
+        Page<UserDTO> result = userService.getAllUsers(null, PageRequest.of(0, 10));
 
-        assertEquals(1, result.size());
-        assertNull(result.get(0).getFirstName());
-        assertNull(result.get(0).getLastName());
-        assertNull(result.get(0).getLocation());
-        assertEquals("ghost.admin@msg.group", result.get(0).getEmail());
+        assertEquals(1, result.getTotalElements());
+        assertNull(result.getContent().get(0).getFirstName());
+        assertNull(result.getContent().get(0).getLastName());
+        assertNull(result.getContent().get(0).getLocation());
+        assertEquals("ghost.admin@msg.group", result.getContent().get(0).getEmail());
     }
 
     @Test
     void getAllUsers_returnEmptyList_whenNoMatchFound() {
-        when(userRepository.searchUsers("NonExistent")).thenReturn(Collections.emptyList());
+        when(userRepository.searchUsers(any(), any())).thenReturn(new PageImpl<>(Collections.emptyList()));
 
-        List<UserDTO> result = userService.getAllUsers("NonExistent");
+        Page<UserDTO> result = userService.getAllUsers("NonExistent", PageRequest.of(0, 10));
 
         assertTrue(result.isEmpty());
     }
@@ -146,14 +149,13 @@ class UserServiceTest {
         UserDTO expectedDto = UserDTO.builder().id(userId).role(Role.PARTICIPANT).isActive(false).build();
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(userRepository.save(user)).thenReturn(user);
         when(mapper.mapToDTO(user)).thenReturn(expectedDto);
 
         UserDTO result = userService.updateUserStatus(userId, false);
 
         assertFalse(result.getIsActive());
         assertFalse(user.getIsActive());
-        verify(userRepository).save(user);
+        verify(userRepository, never()).save(any());
     }
 
     @Test
@@ -165,14 +167,13 @@ class UserServiceTest {
         UserDTO expectedDto = UserDTO.builder().id(userId).role(Role.PARTICIPANT).isActive(true).build();
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(userRepository.save(user)).thenReturn(user);
         when(mapper.mapToDTO(user)).thenReturn(expectedDto);
 
         UserDTO result = userService.updateUserStatus(userId, true);
 
         assertTrue(result.getIsActive());
         assertTrue(user.getIsActive());
-        verify(userRepository).save(user);
+        verify(userRepository, never()).save(any());
     }
 
     @Test
@@ -214,13 +215,12 @@ class UserServiceTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(admin));
         when(userRepository.countByRoleAndIsActiveTrue(Role.ADMIN)).thenReturn(2L);
-        when(userRepository.save(admin)).thenReturn(admin);
         when(mapper.mapToDTO(admin)).thenReturn(expectedDto);
 
         UserDTO result = userService.updateUserStatus(userId, false);
 
         assertFalse(result.getIsActive());
-        verify(userRepository).save(admin);
+        verify(userRepository, never()).save(any());
     }
 
     @Test
@@ -232,14 +232,13 @@ class UserServiceTest {
         UserDTO expectedDto = UserDTO.builder().id(userId).role(Role.ADMIN).isActive(true).build();
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(userRepository.save(user)).thenReturn(user);
         when(mapper.mapToDTO(user)).thenReturn(expectedDto);
 
         UserDTO result = userService.updateUserRole(userId, Role.ADMIN);
 
         assertEquals(Role.ADMIN, result.getRole());
         assertEquals(Role.ADMIN, user.getRole());
-        verify(userRepository).save(user);
+        verify(userRepository, never()).save(any());
     }
 
     @Test

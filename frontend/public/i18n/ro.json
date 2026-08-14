@@ -64,7 +64,13 @@
     "title": "Gestionare rol",
     "platformRole": "ROL PLATFORMĂ",
     "cancel": "Anulează",
-    "save": "Salvează modificările"
+    "save": "Salvează modificările",
+    "successMessage": "Rolul a fost actualizat cu succes",
+    "errorMessage": "Actualizarea rolului a eșuat",
+    "confirmTitle": "Confirmă modificarea rolului",
+    "confirmPrompt": "Sigur dorești să modifici rolul acestui utilizator în",
+    "no": "Nu",
+    "yes": "Da"
   },
   "notifications": {
     "confirmRoleChange": "Ești sigur că vrei să schimbi rolul pentru {{email}} în {{role}}?",

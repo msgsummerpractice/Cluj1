@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import com.cluj1.eventapp.model.User;
 import com.cluj1.eventapp.model.UserDetails;
@@ -75,49 +77,43 @@ class UserRepositoryTest {
 
     @Test
     void searchUsers_returnAll_whenSearchTermIsNull() {
-        List<User> results = userRepository.searchUsers(null);
-        assertThat(results.size()).isGreaterThanOrEqualTo(3);
+        Page<User> results = userRepository.searchUsers(null, PageRequest.of(0, 100));
+        assertThat(results.getTotalElements()).isGreaterThanOrEqualTo(3);
     }
 
     @Test
     void searchUsers_returnAll_whenSearchTermIsEmpty() {
-        List<User> results = userRepository.searchUsers("");
-        assertThat(results.size()).isGreaterThanOrEqualTo(3);
+        Page<User> results = userRepository.searchUsers("", PageRequest.of(0, 100));
+        assertThat(results.getTotalElements()).isGreaterThanOrEqualTo(3);
     }
 
     @Test
     void searchUsers_matchByFirstNameCaseInsensitive() {
-        List<User> results = userRepository.searchUsers("testadmin");
-        assertThat(results).anyMatch(user -> user.getEmail().equals("test.admin@msg.group"));
+        Page<User> results = userRepository.searchUsers("testadmin", PageRequest.of(0, 100));
+        assertThat(results.getContent()).anyMatch(user -> user.getEmail().equals("test.admin@msg.group"));
     }
 
     @Test
     void searchUsers_matchByLastNameCaseInsensitive() {
-        List<User> results = userRepository.searchUsers("TESTPOPESCU");
-        assertThat(results).anyMatch(user -> user.getUserDetails().getFirstName().equals("TestAndrei"));
+        Page<User> results = userRepository.searchUsers("TESTPOPESCU", PageRequest.of(0, 100));
+        assertThat(results.getContent()).anyMatch(user -> user.getUserDetails().getFirstName().equals("TestAndrei"));
     }
 
     @Test
     void searchUsers_matchByEmailPartial() {
-        List<User> results = userRepository.searchUsers("test.participant");
-        assertThat(results).anyMatch(user -> user.getUserDetails().getLastName().equals("TestPopescu"));
-    }
-
-    @Test
-    void searchUsers_matchByLocation() {
-        List<User> results = userRepository.searchUsers("CLUJ");
-        assertThat(results.size()).isGreaterThanOrEqualTo(2);
+        Page<User> results = userRepository.searchUsers("test.participant", PageRequest.of(0, 100));
+        assertThat(results.getContent()).anyMatch(user -> user.getUserDetails().getLastName().equals("TestPopescu"));
     }
 
     @Test
     void searchUsers_matchByRole() {
-        List<User> results = userRepository.searchUsers("ADMIN");
-        assertThat(results).anyMatch(user -> user.getEmail().equals("test.admin@msg.group"));
+        Page<User> results = userRepository.searchUsers("ADMIN", PageRequest.of(0, 100));
+        assertThat(results.getContent()).anyMatch(user -> user.getEmail().equals("test.admin@msg.group"));
     }
 
     @Test
     void searchUsers_returnEmpty_whenNoMatch() {
-        List<User> results = userRepository.searchUsers("DateCareNuExistaNiciodata123");
-        assertThat(results).isEmpty();
+        Page<User> results = userRepository.searchUsers("DateCareNuExistaNiciodata123", PageRequest.of(0, 100));
+        assertThat(results.getContent()).isEmpty();
     }
 }

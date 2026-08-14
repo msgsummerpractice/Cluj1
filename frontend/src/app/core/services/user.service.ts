@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../models/user.model';
 import { RegisterDto } from '../models/register-dto';
+import { Page } from '../models/page.model';
 
 @Injectable({
   providedIn: 'root',
@@ -11,12 +12,13 @@ export class UserService {
   private apiUrl: string = 'http://localhost:8080/api/users';
   private http = inject(HttpClient);
 
-  getUsers(searchTerm?: string): Observable<User[]> {
-    let params = new HttpParams();
+  getUsers(searchTerm?: string, page: number = 0, size: number = 10): Observable<Page<User>> {
+    let params = new HttpParams().set('page', page.toString()).set('size', size.toString());
+
     if (searchTerm) {
       params = params.set('search', searchTerm);
     }
-    return this.http.get<User[]>(this.apiUrl, { params });
+    return this.http.get<Page<User>>(this.apiUrl, { params });
   }
 
   registerUser(userData: RegisterDto): Observable<any> {

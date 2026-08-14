@@ -41,7 +41,7 @@ public class SecurityConfig {
                         .authenticationEntryPoint((request, response, authException) -> response
                                 .sendError(HttpStatus.UNAUTHORIZED.value(), authException.getMessage())))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/auth/logout", "/api/users/register").permitAll()
+                        .requestMatchers("/api/auth/login", "/api/users/register").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

@@ -14,7 +14,7 @@
   </div>
 
   <div class="table-container">
-    <table mat-table [dataSource]="users" class="w-full min-w-[800px]">
+    <table mat-table [dataSource]="users()" class="w-full min-w-[800px]">
       <ng-container matColumnDef="firstName">
         <th mat-header-cell *matHeaderCellDef class="table-header">
           {{ 'userList.colFirstName' | transloco }}
@@ -68,7 +68,7 @@
           <div class="status-wrapper">
             <mat-slide-toggle
               [checked]="user.isActive"
-              (change)="toggleStatus(user)"
+              (change)="toggleStatus(user, $event)"
               class="custom-warn-toggle"
             >
             </mat-slide-toggle>
@@ -108,5 +108,14 @@
         </td>
       </tr>
     </table>
+
+    <mat-paginator
+      [length]="totalUsers()"
+      [pageSize]="pageSize()"
+      [pageSizeOptions]="[5, 10, 25, 100]"
+      (page)="onPageChange($event)"
+      aria-label="Select page"
+    >
+    </mat-paginator>
   </div>
 </div>
