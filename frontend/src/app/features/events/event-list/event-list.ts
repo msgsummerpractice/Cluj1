@@ -18,6 +18,7 @@ import { MatSort, MatSortModule, Sort, SortDirection } from '@angular/material/s
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
+import { TranslocoModule } from '@jsverse/transloco';
 import { EventSortField, shouldShowEventEndDate, sortEvents } from './event-list.utils';
 
 @Component({
@@ -29,6 +30,7 @@ import { EventSortField, shouldShowEventEndDate, sortEvents } from './event-list
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
+    TranslocoModule,
   ],
   templateUrl: './event-list.html',
   styleUrl: './event-list.css',

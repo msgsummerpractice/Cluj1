@@ -37,6 +37,22 @@
     "passwordLabel": "Password",
     "forgotPassword": "Forgot password?"
   },
+  "events": {
+    "eventPageTitle": "Event Management",
+    "eventNameColumn": "Name",
+    "eventDateColumn": "Date",
+    "eventStatusColumn": "Status",
+    "eventTypeColumn": "Type",
+    "eventActionsColumn": "Actions",
+    "eventStatusPublished": "Published",
+    "eventStatusDraft": "Draft",
+    "eventStatusCompleted": "Completed",
+    "eventTypeInternal": "Internal",
+    "eventTypeExternal": "External",
+    "eventTypeLocal": "Local",
+    "eventViewButton": "View",
+    "noData": "No events found"
+  },
   "register": {
     "title": "Register an account",
     "firstName": "First Name",
@@ -68,21 +84,6 @@
       "passwordPattern": "Must contain at least 1 uppercase, 1 lowercase, 1 number and 1 special character.",
       "confirmPasswordRequired": "Please confirm your password.",
       "passwordMismatch": "Passwords do not match."
-    },
-    "events": {
-      "eventPageTitle ": "Event Management",
-      "eventNameColumn": "Name",
-      "eventDateColumn": "Date",
-      "eventStatusColumn": "Status",
-      "eventTypeColumn": "Type",
-      "eventActionsColumn": "Actions",
-      "eventStatusPublished": "Published",
-      "eventStatusDraft": "Draft",
-      "eventStatusCompleted": "Completed",
-      "eventTypeInternal": "Internal",
-      "eventTypeExternal": "External",
-      "eventTypeLocal": "Local",
-      "eventViewButton": "View"
     }
   }
 }
