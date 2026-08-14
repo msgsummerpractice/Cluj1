@@ -1,6 +1,8 @@
 <div class="user-list-wrapper">
-  <div class="user-list-header">
-    <h2 class="user-list-title">{{ 'userList.title' | transloco }}</h2>
+  <div class="user-list-header flex justify-between items-center mb-6">
+    <h2 class="user-list-title text-3xl font-bold text-gray-800 m-0">
+      {{ 'userList.title' | transloco }}
+    </h2>
 
     <mat-form-field appearance="outline" class="w-full sm:w-80">
       <mat-label>{{ 'userList.searchLabel' | transloco }}</mat-label>
@@ -14,102 +16,59 @@
   </div>
 
   <div class="table-container">
-    <table mat-table [dataSource]="users()" class="w-full min-w-[800px]">
-      <ng-container matColumnDef="firstName">
-        <th mat-header-cell *matHeaderCellDef class="table-header">
-          {{ 'userList.colFirstName' | transloco }}
-        </th>
-        <td mat-cell *matCellDef="let user">{{ user.firstName }}</td>
-      </ng-container>
+    <app-data-table
+      [data]="users()"
+      [columns]="tableColumns"
+      [showPaginator]="false"
+      [noDataLabel]="'userList.noData'"
+      [noDataDetail]="searchControl.value || ''"
+    >
+      <ng-template appDataTableCellDef="role" let-user>
+        <span
+          class="role-badge"
+          [ngClass]="{
+            'role-admin': user.role === 'ADMIN',
+            'role-standard': user.role !== 'ADMIN',
+          }"
+        >
+          {{ user.role.replace('_', ' ') | titlecase }}
+        </span>
+      </ng-template>
 
-      <ng-container matColumnDef="lastName">
-        <th mat-header-cell *matHeaderCellDef class="table-header">
-          {{ 'userList.colLastName' | transloco }}
-        </th>
-        <td mat-cell *matCellDef="let user">{{ user.lastName }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef class="table-header">
-          {{ 'userList.colEmail' | transloco }}
-        </th>
-        <td mat-cell *matCellDef="let user" class="text-secondary">{{ user.email }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="role">
-        <th mat-header-cell *matHeaderCellDef class="table-header">
-          {{ 'userList.colRole' | transloco }}
-        </th>
-        <td mat-cell *matCellDef="let user">
+      <!-- Custom Status Toggle -->
+      <ng-template appDataTableCellDef="isActive" let-user>
+        <div class="status-wrapper">
+          <mat-slide-toggle
+            [checked]="user.isActive"
+            (change)="toggleStatus(user, $event)"
+            class="custom-warn-toggle"
+          >
+          </mat-slide-toggle>
           <span
-            class="role-badge"
             [ngClass]="{
-              'role-admin': user.role === 'ADMIN',
-              'role-standard': user.role !== 'ADMIN',
+              'status-text-active': user.isActive,
+              'status-text-inactive': !user.isActive,
             }"
           >
-            {{ user.role.replace('_', ' ') | titlecase }}
+            {{
+              user.isActive
+                ? ('userList.statusActive' | transloco)
+                : ('userList.statusInactive' | transloco)
+            }}
           </span>
-        </td>
-      </ng-container>
+        </div>
+      </ng-template>
 
-      <ng-container matColumnDef="location">
-        <th mat-header-cell *matHeaderCellDef class="table-header">
-          {{ 'userList.colLocation' | transloco }}
-        </th>
-        <td mat-cell *matCellDef="let user">{{ user.location | titlecase }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="isActive">
-        <th mat-header-cell *matHeaderCellDef class="table-header">
-          {{ 'userList.colStatus' | transloco }}
-        </th>
-        <td mat-cell *matCellDef="let user">
-          <div class="status-wrapper">
-            <mat-slide-toggle
-              [checked]="user.isActive"
-              (change)="toggleStatus(user, $event)"
-              class="custom-warn-toggle"
-            >
-            </mat-slide-toggle>
-            <span
-              [ngClass]="{
-                'status-text-active': user.isActive,
-                'status-text-inactive': !user.isActive,
-              }"
-            >
-              {{
-                user.isActive
-                  ? ('userList.statusActive' | transloco)
-                  : ('userList.statusInactive' | transloco)
-              }}
-            </span>
-          </div>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef class="table-header-actions">
-          {{ 'userList.colActions' | transloco }}
-        </th>
-        <td mat-cell *matCellDef="let user" class="table-cell-actions">
-          <button mat-stroked-button (click)="manageRole(user)" class="manage-role-btn">
-            {{ 'userList.manageRole' | transloco }}
-          </button>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns" class="table-row-hover"></tr>
-
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell text-center py-8 text-gray-500" colspan="7">
-          {{ 'userList.noData' | transloco }} "{{ searchControl.value }}"
-        </td>
-      </tr>
-    </table>
+      <!-- Custom Actions -->
+      <ng-template appDataTableCellDef="actions" let-user>
+        <button mat-stroked-button (click)="manageRole(user)" class="manage-role-btn">
+          {{ 'userList.manageRole' | transloco }}
+        </button>
+      </ng-template>
+    </app-data-table>
 
     <mat-paginator
+      class="border border-gray-200 border-t-0 rounded-b-lg"
       [length]="totalUsers()"
       [pageSize]="pageSize()"
       [pageSizeOptions]="[5, 10, 25, 100]"

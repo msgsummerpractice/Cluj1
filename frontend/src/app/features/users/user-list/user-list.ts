@@ -2,23 +2,25 @@ import { Component, OnInit, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs';
 import { User } from '../../../core/models/user.model';
 import { UserService } from '../../../core/services/user.service';
 import { Page } from '../../../core/models/page.model';
 
-import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatSlideToggleModule, MatSlideToggleChange } from '@angular/material/slide-toggle';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { RoleManageDialogComponent } from '../role-manage-dialog/role-manage-dialog';
+
+import { DataTableComponent } from '../../../shared/components/data-table/data-table';
+import { DataTableColumn } from '../../../shared/components/data-table/data-table.model';
+import { DataTableCellDefDirective } from '../../../shared/components/data-table/data-table-cell-def.directive';
 
 @Component({
   selector: 'app-user-list',
@@ -28,16 +30,16 @@ import { RoleManageDialogComponent } from '../role-manage-dialog/role-manage-dia
     FormsModule,
     ReactiveFormsModule,
     TranslocoModule,
-    MatTableModule,
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
     MatIconModule,
-    MatChipsModule,
     MatSlideToggleModule,
     MatDialogModule,
     MatSnackBarModule,
     MatPaginatorModule,
+    DataTableComponent,
+    DataTableCellDefDirective,
   ],
   templateUrl: './user-list.html',
   styleUrl: './user-list.css',
@@ -48,14 +50,14 @@ export class UserListComponent implements OnInit {
   pageSize = signal<number>(10);
   currentPage = signal<number>(0);
 
-  displayedColumns: string[] = [
-    'firstName',
-    'lastName',
-    'email',
-    'role',
-    'location',
-    'isActive',
-    'actions',
+  tableColumns: DataTableColumn[] = [
+    { key: 'firstName', label: 'userList.colFirstName' },
+    { key: 'lastName', label: 'userList.colLastName' },
+    { key: 'email', label: 'userList.colEmail' },
+    { key: 'role', label: 'userList.colRole' },
+    { key: 'location', label: 'userList.colLocation' },
+    { key: 'isActive', label: 'userList.colStatus' },
+    { key: 'actions', label: 'userList.colActions' },
   ];
 
   searchControl = new FormControl('');
@@ -70,7 +72,12 @@ export class UserListComponent implements OnInit {
     this.fetchUsers();
 
     this.searchControl.valueChanges
-      .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        debounceTime(300),
+        map((term) => (term || '').trim()),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe((term) => {
         this.currentPage.set(0);
         this.fetchUsers(term || '');

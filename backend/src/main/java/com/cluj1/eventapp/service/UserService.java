@@ -32,7 +32,11 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Page<UserDTO> getAllUsers(String searchTerm, Pageable pageable) {
-        Page<User> users = userRepository.searchUsers(searchTerm, pageable);
+        String sanitizedSearch = (searchTerm != null && !searchTerm.trim().isEmpty())
+                ? searchTerm.trim()
+                : null;
+
+        Page<User> users = userRepository.searchUsers(sanitizedSearch, pageable);
         return users.map(mapper::mapToDTO);
     }
 

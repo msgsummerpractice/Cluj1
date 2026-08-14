@@ -23,12 +23,16 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             ":search IS NULL OR :search = '' OR " +
             "LOWER(ud.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
             "LOWER(ud.lastName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-            "LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%'))", countQuery = "SELECT COUNT(u) FROM User u LEFT JOIN u.userDetails ud WHERE "
+            "LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(CAST(u.role AS string)) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+            "LOWER(CAST(ud.location AS string)) LIKE LOWER(CONCAT('%', :search, '%'))", countQuery = "SELECT COUNT(u) FROM User u LEFT JOIN u.userDetails ud WHERE "
                     +
                     ":search IS NULL OR :search = '' OR " +
                     "LOWER(ud.firstName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
                     "LOWER(ud.lastName) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
-                    "LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%'))")
+                    "LOWER(u.email) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+                    "LOWER(CAST(u.role AS string)) LIKE LOWER(CONCAT('%', :search, '%')) OR " +
+                    "LOWER(CAST(ud.location AS string)) LIKE LOWER(CONCAT('%', :search, '%'))")
     Page<User> searchUsers(@Param("search") String search, Pageable pageable);
 
     boolean existsByEmail(String email);
