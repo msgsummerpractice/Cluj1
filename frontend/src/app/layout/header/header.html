@@ -9,7 +9,7 @@
   </div>
 
   <div class="flex items-center gap-4">
-    <nav class="hidden md:flex items-center gap-2">
+    <nav *ngIf="showHeader()" class="hidden md:flex items-center gap-2">
       <a
         mat-button
         class="nav-button"
@@ -32,6 +32,17 @@
 
       <a mat-button class="nav-button" routerLink="/events" routerLinkActive="active" disableRipple>
         {{ 'nav.events' | transloco }}
+      </a>
+
+      <a
+        *ngIf="authService.isAdmin()"
+        mat-button
+        class="nav-button"
+        routerLink="/admin/users"
+        routerLinkActive="active"
+        disableRipple
+      >
+        {{ 'nav.users' | transloco }}
       </a>
     </nav>
 
@@ -58,11 +69,16 @@
         <mat-icon>calendar_today</mat-icon>
         <span>{{ 'nav.events' | transloco }}</span>
       </a>
+      <a mat-menu-item routerLink="/admin/users" *ngIf="authService.isAdmin()">
+        <mat-icon>user</mat-icon>
+        <span>{{ 'nav.users' | transloco }}</span>
+      </a>
     </mat-menu>
 
     <app-language-switcher />
 
     <button
+      *ngIf="showHeader()"
       mat-icon-button
       class="nav-icon-button"
       [matMenuTriggerFor]="userMenu"
@@ -82,12 +98,12 @@
 
         <button mat-menu-item (click)="authService.logout()">
           <mat-icon>logout</mat-icon>
-          <span>Log out</span>
+          <span>{{ 'user.logout' | transloco }}</span>
         </button>
       } @else {
         <a mat-menu-item routerLink="/login">
           <mat-icon>login</mat-icon>
-          <span>Log in</span>
+          <span>{{ 'user.login' | transloco }}</span>
         </a>
       }
     </mat-menu>

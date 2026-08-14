@@ -1,12 +1,9 @@
 package com.cluj1.eventapp.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import com.cluj1.eventapp.dto.UserRegistrationDto;
-import com.cluj1.eventapp.exception.EmailAlreadyRegisteredException;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +29,8 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> registerUser(@RequestBody @Valid UserRegistrationDto userRegistrationDto){
-        if(!userRegistrationDto.getPassword().equals(userRegistrationDto.getConfirmPassword())){
+    public ResponseEntity<Void> registerUser(@RequestBody @Valid UserRegistrationDto userRegistrationDto) {
+        if (!userRegistrationDto.getPassword().equals(userRegistrationDto.getConfirmPassword())) {
             throw new IllegalArgumentException("Passwords do not match");
         }
 

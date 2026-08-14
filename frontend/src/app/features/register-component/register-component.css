@@ -1,0 +1,15 @@
+:host {
+  display: block;
+  height: 100dvh;
+  overflow-y: auto;
+}
+
+::ng-deep .mat-mdc-form-field-error-wrapper {
+  position: relative !important;
+}
+
+/* suppress the browser's built-in password-reveal button */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}

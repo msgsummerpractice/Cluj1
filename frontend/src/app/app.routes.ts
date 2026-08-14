@@ -46,6 +46,13 @@ export const routes: Routes = [
       import('./features/users/user-list/user-list').then((m) => m.UserListComponent),
   },
   {
+    path: 'events',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN'] },
+    loadComponent: () =>
+      import('./features/events/event-list/event-list').then((m) => m.EventListComponent),
+  },
+  {
     path: '**',
     redirectTo: 'login',
   },

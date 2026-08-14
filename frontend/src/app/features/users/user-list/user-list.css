@@ -1,0 +1,5 @@
+.user-manage-button {
+  background-color: var(--dark-red-dot) !important;
+  color: white !important;
+  border-radius: 8px !important;
+}

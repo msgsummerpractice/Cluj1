@@ -186,4 +186,8 @@ export class AuthService {
   }): Observable<string> {
     return this.http.post(`${this.apiUrl}/reset-password`, payload, { responseType: 'text' });
   }
+
+  isAdmin(): boolean {
+    return this.currentRole() === 'ADMIN';
+  }
 }

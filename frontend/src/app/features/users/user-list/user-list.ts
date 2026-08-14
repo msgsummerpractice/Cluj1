@@ -6,7 +6,6 @@ import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { User } from '../../../core/models/user.model';
 import { UserService } from '../../../core/services/user.service';
 
-import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +13,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { ChangeDetectorRef } from '@angular/core';
 import { TranslocoModule } from '@jsverse/transloco';
+import { DataTableComponent } from '../../../shared/components/data-table/data-table';
+import { DataTableCellDefDirective } from '../../../shared/components/data-table/data-table-cell-def.directive';
+import { DataTableColumn } from '../../../shared/components/data-table/data-table.model';
 
 @Component({
   selector: 'app-user-list',
@@ -21,26 +23,32 @@ import { TranslocoModule } from '@jsverse/transloco';
     CommonModule,
     FormsModule,
     TranslocoModule,
-    MatTableModule,
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
+    DataTableComponent,
+    DataTableCellDefDirective,
   ],
   templateUrl: './user-list.html',
   styleUrl: './user-list.css',
 })
 export class UserListComponent implements OnInit {
   users: User[] = [];
-  displayedColumns: string[] = [
-    'firstName',
-    'lastName',
-    'email',
-    'role',
-    'location',
-    'isActive',
-    'actions',
+  readonly columns: readonly DataTableColumn[] = [
+    { key: 'firstName', label: 'userList.colFirstName' },
+    { key: 'lastName', label: 'userList.colLastName' },
+    { key: 'email', label: 'userList.colEmail', cellClass: 'text-gray-600' },
+    { key: 'role', label: 'userList.colRole' },
+    { key: 'location', label: 'userList.colLocation' },
+    { key: 'isActive', label: 'userList.colStatus' },
+    {
+      key: 'actions',
+      label: 'userList.colActions',
+      headerClass: 'text-center',
+      cellClass: 'text-center',
+    },
   ];
   searchTerm: string = '';
   searchSubject: Subject<string> = new Subject<string>();
