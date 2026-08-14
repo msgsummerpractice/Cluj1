@@ -5,10 +5,11 @@ import { Event } from '../../../core/models/event.model';
 import { EventDetails } from '../../../core/models/event-detail.models';
 import { EventService } from '../../../core/services/event.service';
 import { TranslocoModule } from '@jsverse/transloco';
+import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 
 @Component({
   selector: 'app-event-details',
-  imports: [CommonModule, TranslocoModule],
+  imports: [CommonModule, TranslocoModule, BackButtonComponent],
   templateUrl: './event-details.html',
   styleUrl: './event-details.css',
 })

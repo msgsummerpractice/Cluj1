@@ -1,51 +1,96 @@
 @if (event(); as event) {
-  <div class="p-8 bg-white min-h-screen">
-    <h1 class="text-2xl font-semibold mb-6">{{ event.name }}</h1>
-
-    <dl class="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <div>
-        <dt class="font-medium">{{ 'eventDetails.status' | transloco }}</dt>
-        <dd>{{ event.status | titlecase }}</dd>
-      </div>
-      <div>
-        <dt class="font-medium">{{ 'eventDetails.type' | transloco }}</dt>
-        <dd>{{ event.type | titlecase }}</dd>
-      </div>
-      <div>
-        <dt class="font-medium">{{ 'eventDetails.location' | transloco }}</dt>
-        <dd>{{ event.location ? (event.location | titlecase) : '-' }}</dd>
-      </div>
-      <div>
-        <dt class="font-medium">{{ 'eventDetails.registrationEndDate' | transloco }}</dt>
-        <dd>
-          {{ event.registrationEndDate ? (event.registrationEndDate | date: 'medium') : '-' }}
-        </dd>
-      </div>
-      <div>
-        <dt class="font-medium">{{ 'eventDetails.startDate' | transloco }}</dt>
-        <dd>{{ event.startDate | date: 'medium' }}</dd>
-      </div>
-      <div>
-        <dt class="font-medium">{{ 'eventDetails.endDate' | transloco }}</dt>
-        <dd>{{ event.endDate ? (event.endDate | date: 'medium') : '-' }}</dd>
-      </div>
-
-      @if (eventDetails(); as details) {
+  <main class="event-page">
+    <div class="event-shell">
+      <header class="page-heading">
         <div>
-          <dt class="font-medium">{{ 'eventDetails.foodProvided' | transloco }}</dt>
-          <dd>{{ details.foodProvided ? 'Yes' : 'No' }}</dd>
+          <div class="title-row">
+            <app-back-button />
+            <h1>{{ event.name }}</h1>
+          </div>
+          <div class="event-date">
+            <span class="material-symbols-outlined" aria-hidden="true">calendar_month</span>
+            <span
+              >{{ event.startDate | date: 'MMM d, y HH:mm' }}
+              @if (
+                event.endDate &&
+                (event.endDate | date: 'yyyy-MM-dd') !== (event.startDate | date: 'yyyy-MM-dd')
+              ) {
+                - {{ event.endDate | date: 'MMM d, y HH:mm' }}
+              } @else if (event.endDate) {
+                - {{ event.endDate | date: 'HH:mm' }}
+              }
+            </span>
+          </div>
         </div>
-        <div>
-          <dt class="font-medium">{{ 'eventDetails.eventCode' | transloco }}</dt>
-          <dd>{{ details.eventCode || '-' }}</dd>
+      </header>
+
+      <div class="event-layout">
+        <div class="event-content">
+          <section class="event-card event-overview">
+            <div class="poster-placeholder" aria-label="Event poster placeholder">
+              <span class="material-symbols-outlined" aria-hidden="true">image</span>
+            </div>
+            <div class="event-card-body">
+              <div class="heading-tags">
+                <span class="type-pill">{{ event.type | titlecase }}</span>
+                <span class="status-pill status-{{ event.status | lowercase }}">
+                  <span class="status-dot"></span>{{ event.status | titlecase }}
+                </span>
+              </div>
+              <div class="meta-row">
+                <div class="meta-item">
+                  <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+                  <span>{{ event.location ? (event.location | titlecase) : '-' }}</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          @if (eventDetails(); as details) {
+            <section class="about-card">
+              @if (details.description) {
+                <p class="section-kicker">{{ 'eventDetails.description' | transloco }}</p>
+                <p class="description">{{ details.description }}</p>
+              }
+
+              <div class="info-tiles">
+                @if (event.type | lowercase; as eventType) {
+                  @if (eventType !== 'external') {
+                    <div class="info-tile">
+                      <span class="material-symbols-outlined" aria-hidden="true">restaurant</span>
+                      <div>
+                        <p class="tile-label">{{ 'eventDetails.foodProvided' | transloco }}</p>
+                        <p class="tile-value">{{ details.foodProvided ? 'Yes' : 'No' }}</p>
+                      </div>
+                    </div>
+                  }
+                }
+                @if (details.eventCode) {
+                  <div class="info-tile">
+                    <span class="material-symbols-outlined" aria-hidden="true"
+                      >confirmation_number</span
+                    >
+                    <div>
+                      <p class="tile-label">{{ 'eventDetails.eventCode' | transloco }}</p>
+                      <p class="tile-value">{{ details.eventCode }}</p>
+                    </div>
+                  </div>
+                }
+              </div>
+            </section>
+          }
         </div>
-        <div class="md:col-span-2">
-          <dt class="font-medium">{{ 'eventDetails.description' | transloco }}</dt>
-          <dd>{{ details.description || '-' }}</dd>
-        </div>
-      }
-    </dl>
-  </div>
+
+        <aside class="registration-card">
+          <p class="section-kicker">{{ 'eventDetails.registrationEndDate' | transloco }}</p>
+          <p class="registration-date">
+            <span class="material-symbols-outlined" aria-hidden="true">event_available</span>
+            {{ event.registrationEndDate ? (event.registrationEndDate | date: 'medium') : '-' }}
+          </p>
+        </aside>
+      </div>
+    </div>
+  </main>
 } @else {
-  <div class="p-8">Loading event...</div>
+  <div class="loading-state">Loading event...</div>
 }

@@ -14,6 +14,7 @@ import { DataTableComponent } from '../../../shared/components/data-table/data-t
 import { DataTableCellDefDirective } from '../../../shared/components/data-table/data-table-cell-def.directive';
 import { DataTableFilterDefDirective } from '../../../shared/components/data-table/data-table-filter-def.directive';
 import { DataTableColumn } from '../../../shared/components/data-table/data-table.model';
+import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 import { EventSortField, displayEventEndDate, sortEvents } from './event-list.utils';
 
 @Component({
@@ -28,6 +29,7 @@ import { EventSortField, displayEventEndDate, sortEvents } from './event-list.ut
     DataTableComponent,
     DataTableCellDefDirective,
     DataTableFilterDefDirective,
+    BackButtonComponent,
   ],
   templateUrl: './event-list.html',
   styleUrl: './event-list.css',
