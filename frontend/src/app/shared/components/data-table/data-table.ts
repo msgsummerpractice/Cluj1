@@ -27,7 +27,7 @@ import { DataTableFilterDefDirective } from './data-table-filter-def.directive';
 export class DataTableComponent<T> {
   readonly columns = input.required<readonly DataTableColumn[]>();
   readonly data = input<readonly T[]>([]);
-  readonly title = input('');
+  readonly tableTitle = input('');
   readonly noDataLabel = input('');
   /** Extra text rendered in quotes after the empty state label, e.g. the active search term. */
   readonly noDataDetail = input('');
