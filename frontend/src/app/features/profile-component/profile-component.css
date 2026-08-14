@@ -1,0 +1,10 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+  overflow-y: auto;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
