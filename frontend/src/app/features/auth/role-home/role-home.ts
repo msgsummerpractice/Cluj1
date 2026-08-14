@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { TranslocoService, TranslocoModule } from '@jsverse/transloco';
 import { AuthService } from '../../../core/services/auth.service';
-import { LanguageService } from '../../../core/services/language-service';
+import { LanguageService } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-role-home',
