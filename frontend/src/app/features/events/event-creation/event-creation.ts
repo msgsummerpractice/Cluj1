@@ -1,20 +1,19 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators,
-  AbstractControl,
-  ValidationErrors,
-} from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { EventService } from '../../../core/services/event.service';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatRadioModule } from '@angular/material/radio';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatTimepickerModule } from '@angular/material/timepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-event-creation',
@@ -22,11 +21,17 @@ import { MatFormFieldModule } from '@angular/material/form-field';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterLink,
+    TranslocoModule,
     MatButtonModule,
     MatInputModule,
     MatSelectModule,
-    MatRadioModule,
+    MatSlideToggleModule,
+    MatIconModule,
     MatFormFieldModule,
+    MatDatepickerModule,
+    MatTimepickerModule,
+    MatNativeDateModule,
   ],
   templateUrl: './event-creation.html',
   styleUrl: './event-creation.css',
@@ -35,20 +40,23 @@ export class EventCreationComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly eventService = inject(EventService);
   private readonly router = inject(Router);
+  private readonly translocoService = inject(TranslocoService);
 
   readonly locations = ['CLUJ', 'TIMISOARA', 'MURES'];
   readonly selectedFile = signal<File | null>(null);
+  readonly filePreview = signal<string | null>(null);
   readonly fileError = signal<string | null>(null);
   readonly isSubmitting = signal(false);
 
   form = this.fb.group({
     name: ['', Validators.required],
     description: [''],
-    startDate: ['', Validators.required],
-    endDate: ['', Validators.required],
+    date: ['', Validators.required],
+    startTime: ['', Validators.required],
+    endTime: ['', Validators.required],
     type: ['', Validators.required],
     location: [{ value: '', disabled: true }, Validators.required],
-    foodProvided: [{ value: null, disabled: true }],
+    foodProvided: [{ value: false, disabled: true }],
   });
 
   ngOnInit() {
@@ -66,7 +74,7 @@ export class EventCreationComponent implements OnInit {
     } else if (type === 'EXTERNAL') {
       if (locationCtrl?.value === 'ALL') locationCtrl?.setValue(null);
       locationCtrl?.enable();
-      foodCtrl?.setValue(null);
+      foodCtrl?.setValue(false);
       foodCtrl?.disable();
     } else if (type === 'LOCAL') {
       if (locationCtrl?.value === 'ALL') locationCtrl?.setValue(null);
@@ -79,18 +87,29 @@ export class EventCreationComponent implements OnInit {
     const file = event.target.files[0];
     this.fileError.set(null);
     this.selectedFile.set(null);
+    this.filePreview.set(null);
 
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        this.fileError.set('File size must be under 5MB.');
+        this.fileError.set(this.translocoService.translate('createEvent.errors.fileSize'));
         return;
       }
       if (!['image/jpeg', 'image/png'].includes(file.type)) {
-        this.fileError.set('Only JPEG/PNG files are allowed.');
+        this.fileError.set(this.translocoService.translate('createEvent.errors.fileType'));
         return;
       }
       this.selectedFile.set(file);
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.filePreview.set(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
+  }
+
+  discard() {
+    this.router.navigate(['/events']);
   }
 
   onSubmit() {
@@ -100,12 +119,39 @@ export class EventCreationComponent implements OnInit {
     }
 
     this.isSubmitting.set(true);
-    const formValue = this.form.getRawValue();
+    const formValue = this.form.getRawValue() as any;
+    const dateObj = new Date(formValue.date);
 
-    this.eventService.createEvent(formValue, this.selectedFile() || undefined).subscribe({
+    const startDate = new Date(dateObj);
+    if (formValue.startTime instanceof Date) {
+      startDate.setHours(formValue.startTime.getHours(), formValue.startTime.getMinutes(), 0);
+    } else if (typeof formValue.startTime === 'string') {
+      const [startHour, startMin] = formValue.startTime.split(':');
+      startDate.setHours(Number(startHour), Number(startMin), 0);
+    }
+
+    const endDate = new Date(dateObj);
+    if (formValue.endTime instanceof Date) {
+      endDate.setHours(formValue.endTime.getHours(), formValue.endTime.getMinutes(), 0);
+    } else if (typeof formValue.endTime === 'string') {
+      const [endHour, endMin] = formValue.endTime.split(':');
+      endDate.setHours(Number(endHour), Number(endMin), 0);
+    }
+
+    const payload = {
+      name: formValue.name,
+      description: formValue.description,
+      type: formValue.type,
+      location: formValue.location,
+      foodProvided: formValue.foodProvided,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+    };
+
+    this.eventService.createEvent(payload, this.selectedFile() || undefined).subscribe({
       next: () => {
         this.isSubmitting.set(false);
-        this.router.navigate(['/admin/events']);
+        this.router.navigate(['/events']);
       },
       error: (err) => {
         this.isSubmitting.set(false);

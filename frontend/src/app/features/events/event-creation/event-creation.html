@@ -1,75 +1,293 @@
-<div class="p-6 max-w-3xl mx-auto">
-  <h1 class="text-2xl font-bold mb-6">Create New Event</h1>
-
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
-    <mat-form-field appearance="outline">
-      <mat-label>Event Name</mat-label>
-      <input matInput formControlName="name" placeholder="Enter event name" />
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Description</mat-label>
-      <textarea matInput formControlName="description" rows="3"></textarea>
-    </mat-form-field>
-
-    <div class="grid grid-cols-2 gap-4">
-      <mat-form-field appearance="outline">
-        <mat-label>Start Date</mat-label>
-        <input matInput type="datetime-local" formControlName="startDate" />
-      </mat-form-field>
-
-      <mat-form-field appearance="outline">
-        <mat-label>End Date</mat-label>
-        <input matInput type="datetime-local" formControlName="endDate" />
-      </mat-form-field>
-    </div>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Event Type</mat-label>
-      <mat-select formControlName="type">
-        <mat-option value="LOCAL">LOCAL</mat-option>
-        <mat-option value="INTERNAL">INTERNAL</mat-option>
-        <mat-option value="EXTERNAL">EXTERNAL</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field appearance="outline" *ngIf="form.get('type')?.value">
-      <mat-label>Location</mat-label>
-      <mat-select formControlName="location">
-        <mat-option *ngIf="form.get('type')?.value === 'INTERNAL'" value="ALL">ALL</mat-option>
-        <ng-container *ngIf="form.get('type')?.value !== 'INTERNAL'">
-          <mat-option *ngFor="let loc of locations" [value]="loc">{{ loc }}</mat-option>
-        </ng-container>
-      </mat-select>
-    </mat-form-field>
-
+<!-- src/app/features/events/event-creation/event-creation.html -->
+<div class="min-h-screen bg-gray-50 p-4 md:p-8 flex justify-center font-sans">
+  <form
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    class="w-full max-w-[1400px] grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8"
+  >
     <div
-      class="mb-4"
-      *ngIf="form.get('type')?.value === 'LOCAL' || form.get('type')?.value === 'INTERNAL'"
+      class="col-span-1 lg:col-span-12 flex flex-col md:flex-row justify-between items-start md:items-center mb-2"
     >
-      <label class="block font-medium mb-2">Food Provided?</label>
-      <mat-radio-group formControlName="foodProvided" class="flex gap-4">
-        <mat-radio-button [value]="true">Yes</mat-radio-button>
-        <mat-radio-button [value]="false">No</mat-radio-button>
-      </mat-radio-group>
-    </div>
-
-    <div class="mb-4 flex flex-col gap-2">
-      <label class="font-medium">Event Poster (Max 5MB, JPEG/PNG)</label>
-      <input type="file" accept="image/jpeg, image/png" (change)="onFileChange($event)" />
-      <span class="text-red-600 text-sm" *ngIf="fileError()">{{ fileError() }}</span>
-    </div>
-
-    <div class="flex justify-end gap-4 mt-4">
-      <button mat-button type="button" routerLink="/admin/events">Cancel</button>
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
+          {{ 'createEvent.title' | transloco }}
+        </h1>
+        <p class="text-gray-500 mt-1 text-sm">{{ 'createEvent.subtitle' | transloco }}</p>
+      </div>
       <button
-        mat-flat-button
-        color="primary"
-        type="submit"
-        [disabled]="form.invalid || isSubmitting() || !!fileError()"
+        mat-stroked-button
+        type="button"
+        routerLink="/events"
+        class="mt-4 md:mt-0 bg-white shadow-sm border-gray-300 rounded-full px-6"
       >
-        {{ isSubmitting() ? 'Saving...' : 'Save as Draft' }}
+        {{ 'createEvent.cancel' | transloco }}
       </button>
+    </div>
+
+    <div class="col-span-1 lg:col-span-8 flex flex-col gap-6">
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 lg:p-8">
+        <h2 class="text-lg font-bold text-gray-900 mb-1">
+          {{ 'createEvent.basicsTitle' | transloco }}
+        </h2>
+        <p class="text-gray-500 text-sm mb-6">{{ 'createEvent.basicsSubtitle' | transloco }}</p>
+
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium text-gray-700">{{
+              'createEvent.eventTitleLabel' | transloco
+            }}</label>
+            <mat-form-field appearance="outline" class="w-full h-[75px]">
+              <input
+                matInput
+                formControlName="name"
+                [placeholder]="'createEvent.eventTitlePlaceholder' | transloco"
+              />
+            </mat-form-field>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-gray-700">{{
+                'createEvent.eventTypeLabel' | transloco
+              }}</label>
+              <mat-form-field appearance="outline" class="w-full h-[75px]">
+                <mat-select
+                  formControlName="type"
+                  [placeholder]="'createEvent.selectTypePlaceholder' | transloco"
+                >
+                  <mat-option value="INTERNAL">{{
+                    'events.eventTypeInternal' | transloco
+                  }}</mat-option>
+                  <mat-option value="EXTERNAL">{{
+                    'events.eventTypeExternal' | transloco
+                  }}</mat-option>
+                  <mat-option value="LOCAL">{{ 'events.eventTypeLocal' | transloco }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-gray-700">{{
+                'createEvent.statusLabel' | transloco
+              }}</label>
+              <mat-form-field appearance="outline" class="w-full h-[75px]">
+                <input matInput [value]="'createEvent.statusDraft' | transloco" disabled />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium text-gray-700">{{
+              'createEvent.descriptionLabel' | transloco
+            }}</label>
+            <mat-form-field appearance="outline" class="w-full">
+              <textarea
+                matInput
+                formControlName="description"
+                rows="4"
+                [placeholder]="'createEvent.descriptionPlaceholder' | transloco"
+              ></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 lg:p-8">
+        <h2 class="text-lg font-bold text-gray-900 mb-6">
+          {{ 'createEvent.scheduleTitle' | transloco }}
+        </h2>
+
+        <div class="flex flex-col gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-gray-700">{{
+                'createEvent.dateLabel' | transloco
+              }}</label>
+              <mat-form-field appearance="outline" class="w-full h-[75px]">
+                <input
+                  matInput
+                  [matDatepicker]="picker"
+                  formControlName="date"
+                  [placeholder]="'createEvent.datePlaceholder' | transloco"
+                  (click)="picker.open()"
+                />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-gray-700">{{
+                'createEvent.startLabel' | transloco
+              }}</label>
+              <mat-form-field appearance="outline" class="w-full h-[75px]">
+                <input
+                  matInput
+                  [matTimepicker]="startPicker"
+                  formControlName="startTime"
+                  [placeholder]="'createEvent.startPlaceholder' | transloco"
+                  (click)="startPicker.open()"
+                />
+                <mat-timepicker-toggle matSuffix [for]="startPicker"></mat-timepicker-toggle>
+                <mat-timepicker #startPicker></mat-timepicker>
+              </mat-form-field>
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-sm font-medium text-gray-700">{{
+                'createEvent.endLabel' | transloco
+              }}</label>
+              <mat-form-field appearance="outline" class="w-full h-[75px]">
+                <input
+                  matInput
+                  [matTimepicker]="endPicker"
+                  formControlName="endTime"
+                  [placeholder]="'createEvent.endPlaceholder' | transloco"
+                  (click)="endPicker.open()"
+                />
+                <mat-timepicker-toggle matSuffix [for]="endPicker"></mat-timepicker-toggle>
+                <mat-timepicker #endPicker></mat-timepicker>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label class="text-sm font-medium text-gray-700">{{
+              'createEvent.locationLabel' | transloco
+            }}</label>
+            <mat-form-field appearance="outline" class="w-full h-[75px]">
+              <mat-select
+                formControlName="location"
+                [placeholder]="'createEvent.selectLocationPlaceholder' | transloco"
+              >
+                <mat-option *ngIf="form.get('type')?.value === 'INTERNAL'" value="ALL"
+                  >ALL</mat-option
+                >
+                <ng-container *ngIf="form.get('type')?.value !== 'INTERNAL'">
+                  <mat-option *ngFor="let loc of locations" [value]="loc">{{
+                    loc | titlecase
+                  }}</mat-option>
+                </ng-container>
+              </mat-select>
+              <mat-icon matPrefix class="mr-2 text-gray-400">location_on</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 lg:p-8">
+        <h2 class="text-lg font-bold text-gray-900 mb-1">
+          {{ 'createEvent.registrationTitle' | transloco }}
+        </h2>
+        <p class="text-gray-500 text-sm mb-6">
+          {{ 'createEvent.registrationSubtitle' | transloco }}
+        </p>
+
+        <div
+          class="flex flex-col gap-0 border border-gray-100 rounded-lg overflow-hidden divide-y divide-gray-100"
+        >
+          <div
+            class="flex justify-between items-center p-4 bg-gray-50/50 hover:bg-gray-50 transition-colors"
+            [class.opacity-50]="form.get('foodProvided')?.disabled"
+          >
+            <div>
+              <p class="font-medium text-gray-900">
+                {{ 'createEvent.foodProvidedLabel' | transloco }}
+              </p>
+              <p class="text-sm text-gray-500">
+                {{ 'createEvent.foodProvidedSubtitle' | transloco }}
+              </p>
+            </div>
+            <mat-slide-toggle formControlName="foodProvided" color="primary"></mat-slide-toggle>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-span-1 lg:col-span-4 flex flex-col gap-6">
+      <!-- Cover Image Card -->
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+        <h2 class="text-lg font-bold text-gray-900 mb-4">
+          {{ 'createEvent.coverImageTitle' | transloco }}
+        </h2>
+
+        <div
+          class="border-2 border-dashed border-gray-300 rounded-xl bg-gray-50 p-6 flex flex-col items-center justify-center text-center relative hover:bg-gray-100 transition-colors cursor-pointer overflow-hidden min-h-[200px]"
+        >
+          <input
+            type="file"
+            accept="image/jpeg, image/png"
+            (change)="onFileChange($event)"
+            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+            title=""
+          />
+
+          <div *ngIf="!filePreview()" class="flex flex-col items-center pointer-events-none">
+            <mat-icon class="text-gray-400 mb-2 transform scale-150">add_photo_alternate</mat-icon>
+            <p class="text-sm font-medium text-gray-900 mb-1">
+              {{ 'createEvent.uploadPoster' | transloco }}
+            </p>
+            <p class="text-xs text-gray-500 mb-4 px-2">
+              {{ 'createEvent.uploadHint' | transloco }}
+            </p>
+            <div
+              class="px-4 py-1.5 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 flex items-center shadow-sm"
+            >
+              <mat-icon class="text-gray-500 mr-2 text-[18px] h-[18px] w-[18px]"
+                >file_upload</mat-icon
+              >
+              {{ 'createEvent.chooseFile' | transloco }}
+            </div>
+          </div>
+
+          <div *ngIf="filePreview()" class="w-full h-full absolute inset-0 z-0">
+            <img
+              [src]="filePreview()"
+              class="w-full h-full object-cover opacity-80"
+              alt="Preview"
+            />
+            <div
+              class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
+            >
+              <span
+                class="text-white font-medium flex items-center bg-black/50 px-3 py-1 rounded-full"
+                ><mat-icon class="mr-1 text-[18px] h-[18px] w-[18px]">edit</mat-icon>
+                {{ 'createEvent.changeFile' | transloco }}</span
+              >
+            </div>
+          </div>
+        </div>
+        <span class="text-red-600 text-xs mt-2 block" *ngIf="fileError()">{{ fileError() }}</span>
+      </div>
+
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 sticky top-6">
+        <div class="flex flex-col gap-3">
+          <button
+            type="submit"
+            mat-flat-button
+            class="w-full !rounded-md !py-6 text-base font-semibold shadow-sm text-white"
+            [disabled]="form.invalid || isSubmitting() || !!fileError()"
+            style="background-color: #a01441"
+          >
+            <mat-icon class="mr-1">save</mat-icon>
+            {{
+              isSubmitting()
+                ? ('createEvent.saving' | transloco)
+                : ('createEvent.saveDraft' | transloco)
+            }}
+          </button>
+
+          <button
+            type="button"
+            mat-stroked-button
+            class="w-full !rounded-md !py-6 text-base font-medium text-gray-700 bg-gray-50 border-gray-300"
+            (click)="discard()"
+          >
+            {{ 'createEvent.discard' | transloco }}
+          </button>
+        </div>
+        <p class="text-xs text-gray-500 text-center mt-4 px-4 leading-relaxed">
+          {{ 'createEvent.publishHint' | transloco }}
+        </p>
+      </div>
     </div>
   </form>
 </div>

@@ -24,7 +24,9 @@ export class EventService {
     if (poster) {
       formData.append('poster', poster);
     }
-    return this.http.post<Event>(this.apiUrl, formData);
+    return this.http.post<Event>(this.apiUrl, formData, {
+      withCredentials: true,
+    });
   }
 
   updateEvent(id: string, eventData: Partial<Event>, poster?: File): Observable<Event> {
@@ -33,6 +35,8 @@ export class EventService {
     if (poster) {
       formData.append('poster', poster);
     }
-    return this.http.put<Event>(`${this.apiUrl}/${id}`, formData);
+    return this.http.put<Event>(`${this.apiUrl}/${id}`, formData, {
+      withCredentials: true,
+    });
   }
 }

@@ -36,7 +36,7 @@ public class EventController {
 	}
 
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@PreAuthorize("hasRole('MARKETING_ORGANIZER')")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
 	public ResponseEntity<EventDto> createEvent(
 			@RequestPart("event") EventDto eventDto,
 			@RequestPart(value = "poster", required = false) MultipartFile poster) {
@@ -44,7 +44,7 @@ public class EventController {
 	}
 
 	@PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@PreAuthorize("hasRole('MARKETING_ORGANIZER')")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
 	public ResponseEntity<EventDto> updateEvent(
 			@PathVariable UUID id,
 			@RequestPart("event") EventDto eventDto,
