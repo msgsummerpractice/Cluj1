@@ -19,7 +19,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
 	@Bean
@@ -38,7 +41,7 @@ public class SecurityConfig {
 						.authenticationEntryPoint((request, response, authException) -> response
 								.sendError(HttpStatus.UNAUTHORIZED.value(), authException.getMessage())))
 				.authorizeHttpRequests(auth -> auth
-						.requestMatchers("/api/auth/login", "/api/auth/logout", "/api/users/register", "/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
+						.requestMatchers("/api/auth/login", "/api/users/register", "/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
 						.anyRequest().authenticated())
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

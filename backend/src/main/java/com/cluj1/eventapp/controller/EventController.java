@@ -21,7 +21,7 @@ public class EventController {
 	private final EventService eventService;
 
 	@GetMapping
-	@PreAuthorize("hasAnyRole('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
 	public ResponseEntity<List<EventDto>> getAllEvents() {
 		return ResponseEntity.ok(eventService.getAllEvents());
 	}
