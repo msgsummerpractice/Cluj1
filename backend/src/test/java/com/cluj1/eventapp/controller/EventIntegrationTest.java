@@ -12,17 +12,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -173,5 +179,32 @@ class EventIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].location").value("TIMISOARA"))
                 .andExpect(jsonPath("$[0].type").value("EXTERNAL"));
+    }
+
+    @Test
+    @WithMockUser(username = "organizer.test@msg.group", roles = "MARKETING_ORGANIZER")
+    void shouldCreateEventSuccessfully() throws Exception {
+        String eventJson = """
+                    {
+                        "name": "Integration Test Event",
+                        "type": "LOCAL",
+                        "location": "TIMISOARA",
+                        "foodProvided": true
+                    }
+                """;
+
+        MockMultipartFile eventPart = new MockMultipartFile("event", "", MediaType.APPLICATION_JSON_VALUE,
+                eventJson.getBytes());
+        MockMultipartFile posterPart = new MockMultipartFile("poster", "poster.png", "image/png",
+                "dummy-image-data".getBytes());
+
+        mockMvc.perform(multipart("/api/events")
+                .file(eventPart)
+                .file(posterPart)
+                .with(csrf())
+                .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("Integration Test Event"))
+                .andExpect(jsonPath("$.status").value("DRAFT"));
     }
 }

@@ -1,9 +1,11 @@
-export type Event = {
+export interface Event {
   id: string;
   name: string;
+  description?: string;
   startDate: string;
   endDate: string;
-  location: string | null;
-  status: string;
-  type: string;
-};
+  type: 'INTERNAL' | 'EXTERNAL' | 'LOCAL';
+  location: 'ALL' | 'CLUJ' | 'TIMISOARA' | 'MURES' | null;
+  status: 'DRAFT' | 'PUBLISHED' | 'COMPLETED';
+  foodProvided?: boolean;
+}

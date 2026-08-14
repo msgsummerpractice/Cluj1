@@ -1,0 +1,75 @@
+<div class="p-6 max-w-3xl mx-auto">
+  <h1 class="text-2xl font-bold mb-6">Create New Event</h1>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+    <mat-form-field appearance="outline">
+      <mat-label>Event Name</mat-label>
+      <input matInput formControlName="name" placeholder="Enter event name" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="3"></textarea>
+    </mat-form-field>
+
+    <div class="grid grid-cols-2 gap-4">
+      <mat-form-field appearance="outline">
+        <mat-label>Start Date</mat-label>
+        <input matInput type="datetime-local" formControlName="startDate" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>End Date</mat-label>
+        <input matInput type="datetime-local" formControlName="endDate" />
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Event Type</mat-label>
+      <mat-select formControlName="type">
+        <mat-option value="LOCAL">LOCAL</mat-option>
+        <mat-option value="INTERNAL">INTERNAL</mat-option>
+        <mat-option value="EXTERNAL">EXTERNAL</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" *ngIf="form.get('type')?.value">
+      <mat-label>Location</mat-label>
+      <mat-select formControlName="location">
+        <mat-option *ngIf="form.get('type')?.value === 'INTERNAL'" value="ALL">ALL</mat-option>
+        <ng-container *ngIf="form.get('type')?.value !== 'INTERNAL'">
+          <mat-option *ngFor="let loc of locations" [value]="loc">{{ loc }}</mat-option>
+        </ng-container>
+      </mat-select>
+    </mat-form-field>
+
+    <div
+      class="mb-4"
+      *ngIf="form.get('type')?.value === 'LOCAL' || form.get('type')?.value === 'INTERNAL'"
+    >
+      <label class="block font-medium mb-2">Food Provided?</label>
+      <mat-radio-group formControlName="foodProvided" class="flex gap-4">
+        <mat-radio-button [value]="true">Yes</mat-radio-button>
+        <mat-radio-button [value]="false">No</mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    <div class="mb-4 flex flex-col gap-2">
+      <label class="font-medium">Event Poster (Max 5MB, JPEG/PNG)</label>
+      <input type="file" accept="image/jpeg, image/png" (change)="onFileChange($event)" />
+      <span class="text-red-600 text-sm" *ngIf="fileError()">{{ fileError() }}</span>
+    </div>
+
+    <div class="flex justify-end gap-4 mt-4">
+      <button mat-button type="button" routerLink="/admin/events">Cancel</button>
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        [disabled]="form.invalid || isSubmitting() || !!fileError()"
+      >
+        {{ isSubmitting() ? 'Saving...' : 'Save as Draft' }}
+      </button>
+    </div>
+  </form>
+</div>

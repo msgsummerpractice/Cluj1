@@ -2,6 +2,7 @@ package com.cluj1.eventapp.controller;
 
 import com.cluj1.eventapp.config.SecurityConfig;
 import com.cluj1.eventapp.dto.EventDto;
+import com.cluj1.eventapp.model.enums.EventLocation;
 import com.cluj1.eventapp.model.enums.EventStatus;
 import com.cluj1.eventapp.model.enums.EventType;
 import com.cluj1.eventapp.security.JwtAuthenticationFilter;
@@ -100,7 +101,7 @@ class EventControllerTest {
         EventDto dto = EventDto.builder()
                 .id(UUID.randomUUID())
                 .name("Summer Fest")
-                .location("CLUJ")
+                .location(EventLocation.CLUJ)
                 .type(EventType.LOCAL)
                 .status(EventStatus.DRAFT)
                 .startDate(OffsetDateTime.parse("2026-09-01T10:00:00+00:00"))
