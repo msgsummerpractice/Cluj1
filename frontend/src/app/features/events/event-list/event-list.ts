@@ -174,7 +174,7 @@ export class EventListComponent implements OnInit {
   }
 
   manageEvent(eventId: string): void {
-    this.router.navigate(['/admin/events', eventId, 'manage']);
+    this.router.navigate(['/events', eventId]);
   }
 
   isDateYearSelected(year: string): boolean {

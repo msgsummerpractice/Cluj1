@@ -53,7 +53,7 @@ export const routes: Routes = [
       import('./features/events/event-list/event-list').then((m) => m.EventListComponent),
   },
   {
-    path: 'events/:eventId',
+    path: 'events/:id',
     canActivate: [authGuard],
     loadComponent: () =>
       import('./features/events/event-details/event-details').then((m) => m.EventDetailsComponent),

@@ -113,5 +113,16 @@
       "confirmPasswordRequired": "Please confirm your password.",
       "passwordMismatch": "Passwords do not match."
     }
+  },
+  "eventDetails": {
+    "description": "About this event",
+    "status": "Status",
+    "type": "Type",
+    "location": "Location",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "registrationEndDate": "Registration end date",
+    "foodProvided": "Food provided",
+    "eventCode": "Event code"
   }
 }

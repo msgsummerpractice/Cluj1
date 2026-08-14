@@ -16,6 +16,7 @@ public class EventDto {
     private String name;
     private OffsetDateTime startDate;
     private OffsetDateTime endDate;
+    private OffsetDateTime registrationEndDate;
     private String location;
     private EventType type;
     private EventStatus status;

@@ -1,0 +1,51 @@
+@if (event(); as event) {
+  <div class="p-8 bg-white min-h-screen">
+    <h1 class="text-2xl font-semibold mb-6">{{ event.name }}</h1>
+
+    <dl class="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <div>
+        <dt class="font-medium">{{ 'eventDetails.status' | transloco }}</dt>
+        <dd>{{ event.status | titlecase }}</dd>
+      </div>
+      <div>
+        <dt class="font-medium">{{ 'eventDetails.type' | transloco }}</dt>
+        <dd>{{ event.type | titlecase }}</dd>
+      </div>
+      <div>
+        <dt class="font-medium">{{ 'eventDetails.location' | transloco }}</dt>
+        <dd>{{ event.location ? (event.location | titlecase) : '-' }}</dd>
+      </div>
+      <div>
+        <dt class="font-medium">{{ 'eventDetails.registrationEndDate' | transloco }}</dt>
+        <dd>
+          {{ event.registrationEndDate ? (event.registrationEndDate | date: 'medium') : '-' }}
+        </dd>
+      </div>
+      <div>
+        <dt class="font-medium">{{ 'eventDetails.startDate' | transloco }}</dt>
+        <dd>{{ event.startDate | date: 'medium' }}</dd>
+      </div>
+      <div>
+        <dt class="font-medium">{{ 'eventDetails.endDate' | transloco }}</dt>
+        <dd>{{ event.endDate ? (event.endDate | date: 'medium') : '-' }}</dd>
+      </div>
+
+      @if (eventDetails(); as details) {
+        <div>
+          <dt class="font-medium">{{ 'eventDetails.foodProvided' | transloco }}</dt>
+          <dd>{{ details.foodProvided ? 'Yes' : 'No' }}</dd>
+        </div>
+        <div>
+          <dt class="font-medium">{{ 'eventDetails.eventCode' | transloco }}</dt>
+          <dd>{{ details.eventCode || '-' }}</dd>
+        </div>
+        <div class="md:col-span-2">
+          <dt class="font-medium">{{ 'eventDetails.description' | transloco }}</dt>
+          <dd>{{ details.description || '-' }}</dd>
+        </div>
+      }
+    </dl>
+  </div>
+} @else {
+  <div class="p-8">Loading event...</div>
+}

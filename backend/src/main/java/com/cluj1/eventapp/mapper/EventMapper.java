@@ -13,6 +13,7 @@ public class EventMapper {
                 .name(event.getName())
                 .startDate(event.getEventStartDate())
                 .endDate(event.getEventEndTime())
+                .registrationEndDate(event.getRegistrationEndDate())
                 .location(event.getLocation() != null ? event.getLocation().name() : null)
                 .type(event.getType())
                 .status(event.getStatus())

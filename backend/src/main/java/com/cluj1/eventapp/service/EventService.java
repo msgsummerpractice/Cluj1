@@ -1,6 +1,8 @@
 package com.cluj1.eventapp.service;
 
 import java.util.List;
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,5 +24,12 @@ public class EventService {
         return eventRepository.findAll().stream()
                 .map(eventMapper::toDto)
                 .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public EventDto getEventById(UUID id) {
+        return eventRepository.findById(id)
+                .map(eventMapper::toDto)
+                .orElseThrow(() -> new RuntimeException("Event not found for id: " + id));
     }
 }

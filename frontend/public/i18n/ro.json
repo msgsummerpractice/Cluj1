@@ -114,5 +114,16 @@
       "confirmPasswordRequired": "Te rugam sa confirmi parola.",
       "passwordMismatch": "Parolele nu coincid."
     }
+  },
+  "eventDetails": {
+    "description": "Despre acest eveniment",
+    "status": "Stare",
+    "type": "Tip",
+    "location": "Locație",
+    "startDate": "Data de început",
+    "endDate": "Data de sfârșit",
+    "registrationEndDate": "Data limită pentru înregistrare",
+    "foodProvided": "Mâncare oferită",
+    "eventCode": "Cod eveniment"
   }
 }

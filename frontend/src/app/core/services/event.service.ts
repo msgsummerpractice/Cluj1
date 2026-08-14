@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Event } from '../models/event.model';
+import { EventDetails } from '../models/event-detail.models';
 
 @Injectable({
   providedIn: 'root',
@@ -17,5 +18,15 @@ export class EventService {
       params = params.set('search', searchTerm);
     }
     return this.http.get<Event[]>(this.apiUrl, { params });
+  }
+
+  getEventById(eventId: string): Observable<Event> {
+    const url = `${this.apiUrl}/${eventId}`;
+    return this.http.get<Event>(url);
+  }
+
+  getEventDetails(eventId: string): Observable<EventDetails> {
+    const url = `${this.apiUrl}/${eventId}/details`;
+    return this.http.get<EventDetails>(url);
   }
 }
