@@ -78,6 +78,25 @@
       "PARTICIPANT": "View your event space and continue the actions available for your account."
     }
   },
+  "events": {
+    "eventPageTitle": "Event Management",
+    "eventNameColumn": "Name",
+    "eventDateColumn": "Date",
+    "eventStatusColumn": "Status",
+    "eventTypeColumn": "Type",
+    "eventActionsColumn": "Actions",
+    "eventStatusPublished": "Published",
+    "eventStatusDraft": "Draft",
+    "eventStatusCompleted": "Completed",
+    "eventDateYear": "Year",
+    "eventDateMonth": "Month",
+    "eventTypeInternal": "Internal",
+    "eventTypeExternal": "External",
+    "eventTypeLocal": "Local",
+    "eventViewButton": "View",
+    "clearFilters": "Clear filters",
+    "noData": "No events found"
+  },
   "register": {
     "title": "Register an account",
     "subtitle": "Create an account to participate in our events, connect with the community, and manage your registrations.",

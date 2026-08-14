@@ -1,0 +1,103 @@
+<div class="p-8 bg-white min-h-screen">
+  <app-data-table
+    [columns]="columns"
+    [data]="visibleEvents()"
+    tableTitle="events.eventPageTitle"
+    noDataLabel="events.noData"
+    [showPaginator]="true"
+    [pageSizeOptions]="[5, 10, 25, 100]"
+    (sortChange)="handleSortChange($event)"
+  >
+    <button
+      dataTableActions
+      mat-button
+      class="filter-button"
+      type="button"
+      (click)="clearFilters()"
+      [disabled]="!hasActiveFilters()"
+      aria-label="Clear event filters"
+    >
+      {{ 'events.clearFilters' | transloco }}
+    </button>
+
+    <ng-template appDataTableFilterDef="name">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'events.eventNameColumn' | transloco }}</mat-label>
+        <input matInput [value]="nameFilter()" (input)="setNameFilter($any($event.target).value)" />
+      </mat-form-field>
+    </ng-template>
+
+    <ng-template appDataTableFilterDef="date">
+      <span class="filter-menu-label">{{ 'events.eventDateYear' | transloco }}</span>
+      @for (year of dateYearOptions(); track year) {
+        <mat-checkbox
+          [checked]="isDateYearSelected(year)"
+          (change)="toggleDateYearFilter(year, $event.checked)"
+        >
+          {{ year }}
+        </mat-checkbox>
+      }
+      <span class="filter-menu-label">{{ 'events.eventDateMonth' | transloco }}</span>
+      @for (month of dateMonthOptions(); track month) {
+        <mat-checkbox
+          [checked]="isDateMonthSelected(month)"
+          (change)="toggleDateMonthFilter(month, $event.checked)"
+        >
+          {{ getMonthLabel(month) | date: 'MMMM' }}
+        </mat-checkbox>
+      }
+    </ng-template>
+
+    <ng-template appDataTableFilterDef="status">
+      @for (status of statusOptions(); track status) {
+        <mat-checkbox
+          [checked]="isStatusSelected(status)"
+          (change)="toggleStatusFilter(status, $event.checked)"
+        >
+          {{ 'events.eventStatus' + (status | titlecase) | transloco }}
+        </mat-checkbox>
+      }
+    </ng-template>
+
+    <ng-template appDataTableFilterDef="type">
+      @for (type of typeOptions(); track type) {
+        <mat-checkbox
+          [checked]="isTypeSelected(type)"
+          (change)="toggleTypeFilter(type, $event.checked)"
+        >
+          {{ 'events.eventType' + (type | titlecase) | transloco }}
+        </mat-checkbox>
+      }
+    </ng-template>
+
+    <ng-template appDataTableCellDef="date" let-event>
+      {{ event.startDate | date: 'mediumDate' }}
+      @if (displayEventEndDate(event)) {
+        <span> - {{ event.endDate | date: 'mediumDate' }} </span>
+      }
+    </ng-template>
+
+    <ng-template appDataTableCellDef="status" let-event>
+      <span
+        class="status-badge px-3 py-1.5 text-xs font-medium rounded-full border inline-block whitespace-nowrap"
+        [ngClass]="getStatusBadgeClass(event.status)"
+      >
+        {{ 'events.eventStatus' + (event.status | titlecase) | transloco }}
+      </span>
+    </ng-template>
+
+    <ng-template appDataTableCellDef="type" let-event>
+      {{ 'events.eventType' + (event.type | titlecase) | transloco }}
+    </ng-template>
+
+    <ng-template appDataTableCellDef="actions" let-event>
+      <button
+        mat-stroked-button
+        (click)="manageEvent(event.id)"
+        class="event-view-button transition-colors whitespace-nowrap"
+      >
+        {{ 'events.eventViewButton' | transloco }}
+      </button>
+    </ng-template>
+  </app-data-table>
+</div>

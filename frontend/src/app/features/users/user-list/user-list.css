@@ -102,3 +102,9 @@
   color: #8a1538 !important;
   background-color: rgba(138, 21, 56, 0.05) !important;
 }
+
+.user-manage-button {
+  background-color: var(--dark-red-dot) !important;
+  color: white !important;
+  border-radius: 8px !important;
+}

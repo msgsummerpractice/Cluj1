@@ -17,18 +17,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User{
-
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(nullable = false, unique = true)
-    @Pattern(
-            regexp = "^[a-zA-Z0-9]+\\.[a-zA-Z0-9]+@msg.group",
-            message = "Invalid email format"
-    )
+    @Pattern(regexp = "^[a-zA-Z0-9]+\\.[a-zA-Z0-9]+@msg.group", message = "Invalid email format")
     private String email;
 
     @ToString.Exclude

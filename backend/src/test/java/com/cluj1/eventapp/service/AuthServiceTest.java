@@ -2,8 +2,6 @@ package com.cluj1.eventapp.service;
 
 import com.cluj1.eventapp.dto.AuthResponse;
 import com.cluj1.eventapp.dto.LogInRequest;
-import com.cluj1.eventapp.dto.UserRegistrationDto;
-import com.cluj1.eventapp.exception.EmailAlreadyRegisteredException;
 import com.cluj1.eventapp.mapper.UserMapper;
 import com.cluj1.eventapp.model.User;
 import com.cluj1.eventapp.model.enums.Role;
@@ -25,7 +23,6 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
