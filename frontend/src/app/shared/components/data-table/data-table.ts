@@ -1,10 +1,19 @@
-import { Component, TemplateRef, computed, contentChildren, input, output } from '@angular/core';
+import {
+  Component,
+  TemplateRef,
+  computed,
+  contentChildren,
+  input,
+  linkedSignal,
+  output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { TranslocoModule } from '@jsverse/transloco';
 import { DataTableColumn } from './data-table.model';
 import { DataTableCellDefDirective } from './data-table-cell-def.directive';
@@ -19,6 +28,7 @@ import { DataTableFilterDefDirective } from './data-table-filter-def.directive';
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
+    MatPaginatorModule,
     TranslocoModule,
   ],
   templateUrl: './data-table.html',
@@ -29,12 +39,35 @@ export class DataTableComponent<T> {
   readonly data = input<readonly T[]>([]);
   readonly tableTitle = input('');
   readonly noDataLabel = input('');
-  /** Extra text rendered in quotes after the empty state label, e.g. the active search term. */
   readonly noDataDetail = input('');
+  readonly showPaginator = input(false);
+  readonly pageSizeOptions = input<number[]>([5, 10, 25, 100]);
 
   readonly sortChange = output<Sort>();
 
   readonly displayedColumns = computed(() => this.columns().map((column) => column.key));
+
+  readonly pageSize = linkedSignal(() => this.pageSizeOptions()[0] ?? 10);
+  readonly pageIndex = linkedSignal<readonly T[], number>({
+    source: () => this.data(),
+    computation: (_data, previous) => {
+      const lastPageIndex = Math.max(Math.ceil(this.data().length / this.pageSize()) - 1, 0);
+      return Math.min(previous?.value ?? 0, lastPageIndex);
+    },
+  });
+  readonly visibleRows = computed(() => {
+    if (!this.showPaginator()) {
+      return this.data();
+    }
+
+    const start = this.pageIndex() * this.pageSize();
+    return this.data().slice(start, start + this.pageSize());
+  });
+
+  handlePageChange(event: PageEvent): void {
+    this.pageSize.set(event.pageSize);
+    this.pageIndex.set(event.pageIndex);
+  }
 
   private readonly cellDefs = contentChildren(DataTableCellDefDirective, { descendants: true });
   private readonly filterDefs = contentChildren(DataTableFilterDefDirective, { descendants: true });

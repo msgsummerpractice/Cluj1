@@ -14,7 +14,7 @@ import { DataTableComponent } from '../../../shared/components/data-table/data-t
 import { DataTableCellDefDirective } from '../../../shared/components/data-table/data-table-cell-def.directive';
 import { DataTableFilterDefDirective } from '../../../shared/components/data-table/data-table-filter-def.directive';
 import { DataTableColumn } from '../../../shared/components/data-table/data-table.model';
-import { EventSortField, shouldShowEventEndDate, sortEvents } from './event-list.utils';
+import { EventSortField, displayEventEndDate, sortEvents } from './event-list.utils';
 
 @Component({
   selector: 'app-event-list',
@@ -146,8 +146,8 @@ export class EventListComponent implements OnInit {
     this.selectedTypes.set([]);
   }
 
-  shouldShowEndDate(event: Event): boolean {
-    return shouldShowEventEndDate(event);
+  displayEventEndDate(event: Event): boolean {
+    return displayEventEndDate(event);
   }
 
   getStatusBadgeClass(status: string): string {

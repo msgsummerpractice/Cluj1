@@ -4,6 +4,8 @@
     [data]="visibleEvents()"
     tableTitle="events.eventPageTitle"
     noDataLabel="events.noData"
+    [showPaginator]="true"
+    [pageSizeOptions]="[5, 10, 25, 100]"
     (sortChange)="handleSortChange($event)"
   >
     <button
@@ -70,7 +72,7 @@
 
     <ng-template appDataTableCellDef="date" let-event>
       {{ event.startDate | date: 'mediumDate' }}
-      @if (shouldShowEndDate(event)) {
+      @if (displayEventEndDate(event)) {
         <span> - {{ event.endDate | date: 'mediumDate' }} </span>
       }
     </ng-template>

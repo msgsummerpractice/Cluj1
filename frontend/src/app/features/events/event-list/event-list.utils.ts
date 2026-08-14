@@ -20,7 +20,7 @@ export function sortEvents(
   );
 }
 
-export function shouldShowEventEndDate(event: Event): boolean {
+export function displayEventEndDate(event: Event): boolean {
   const startDateValue = new Date(event.startDate);
   const endDateValue = new Date(event.endDate);
 

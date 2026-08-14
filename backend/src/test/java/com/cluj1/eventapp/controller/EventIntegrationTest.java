@@ -57,7 +57,7 @@ class EventIntegrationTest {
         userRepository.deleteAll();
 
         savedUser = userRepository.save(User.builder()
-                .email("organizer.test@msg.com")
+                .email("organizer.test@msg.group")
                 .passwordHash(passwordEncoder.encode("Password123!"))
                 .role(Role.MARKETING_ORGANIZER)
                 .isActive(true)
@@ -75,7 +75,7 @@ class EventIntegrationTest {
     }
 
     @Test
-    void getAllEvents_shouldReturnEmptyArrayWhenNoEventsExist() throws Exception {
+    void getAllEventsReturnEmptyArrayWhenNoEventsExist() throws Exception {
         mockMvc.perform(get("/api/events")
                 .with(user("marketingUser").roles("MARKETING_ORGANIZER")))
                 .andExpect(status().isOk())
@@ -83,7 +83,7 @@ class EventIntegrationTest {
     }
 
     @Test
-    void getAllEvents_shouldReturnAllSavedEvents() throws Exception {
+    void getAllEventsReturnAllSavedEvents() throws Exception {
         eventRepository.save(buildEvent("Event 1"));
         eventRepository.save(buildEvent("Event 2"));
         eventRepository.save(buildEvent("Event 3"));
@@ -95,7 +95,7 @@ class EventIntegrationTest {
     }
 
     @Test
-    void getAllEvents_shouldMapAllDtoFieldsCorrectly() throws Exception {
+    void getAllEventsMapAllDtoFieldsCorrectly() throws Exception {
         eventRepository.save(buildEvent("Summer Fest"));
 
         mockMvc.perform(get("/api/events")
@@ -109,7 +109,7 @@ class EventIntegrationTest {
     }
 
     @Test
-    void getAllEvents_shouldReturnNullDatesWhenNotSet() throws Exception {
+    void getAllEventsReturnNullDatesWhenNotSet() throws Exception {
         eventRepository.save(buildEvent("No Date Event"));
 
         mockMvc.perform(get("/api/events")
@@ -120,7 +120,7 @@ class EventIntegrationTest {
     }
 
     @Test
-    void getAllEvents_shouldReturnDatesWhenSet() throws Exception {
+    void getAllEventsReturnDatesWhenSet() throws Exception {
         OffsetDateTime start = OffsetDateTime.parse("2026-09-01T10:00:00+00:00");
         OffsetDateTime end = OffsetDateTime.parse("2026-09-01T18:00:00+00:00");
 
@@ -142,7 +142,7 @@ class EventIntegrationTest {
     }
 
     @Test
-    void getAllEvents_shouldReflectDifferentEventStatuses() throws Exception {
+    void getAllEventsReflectDifferentEventStatuses() throws Exception {
         eventRepository.save(buildEvent("Draft Event"));
         eventRepository.save(Event.builder()
                 .name("Published Event")
@@ -159,7 +159,7 @@ class EventIntegrationTest {
     }
 
     @Test
-    void getAllEvents_shouldReflectDifferentLocationsAndTypes() throws Exception {
+    void getAllEventsReflectDifferentLocationsAndTypes() throws Exception {
         eventRepository.save(Event.builder()
                 .name("External Event")
                 .location(EventLocation.TIMISOARA)

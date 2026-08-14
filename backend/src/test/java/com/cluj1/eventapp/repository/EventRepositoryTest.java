@@ -26,147 +26,150 @@ import com.cluj1.eventapp.model.enums.UserLocation;
 @ActiveProfiles("test")
 public class EventRepositoryTest {
 
-    @Autowired
-    private EventRepository eventRepository;
+        @Autowired
+        private EventRepository eventRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+        @Autowired
+        private UserRepository userRepository;
 
-    @Test
-    void save_ShouldPersistEventWithAllFields() {
-        User organizer = createAndSaveUser("john.doe@msg.group", "John", "Doe", Role.MARKETING_ORGANIZER);
-        OffsetDateTime start = OffsetDateTime.parse("2026-09-01T10:00:00+00:00");
-        OffsetDateTime end = OffsetDateTime.parse("2026-09-01T18:00:00+00:00");
+        @Test
+        void savePersistEventWithAllFields() {
+                User organizer = createAndSaveUser("john.doe@msg.group", "John", "Doe", Role.MARKETING_ORGANIZER);
+                OffsetDateTime start = OffsetDateTime.parse("2026-09-01T10:00:00+00:00");
+                OffsetDateTime end = OffsetDateTime.parse("2026-09-01T18:00:00+00:00");
 
-        Event event = Event.builder()
-                .name("Summer Fest")
-                .location(EventLocation.CLUJ)
-                .type(EventType.LOCAL)
-                .status(EventStatus.PUBLISHED)
-                .eventStartDate(start)
-                .eventEndTime(end)
-                .createdBy(organizer)
-                .build();
+                Event event = Event.builder()
+                                .name("Summer Fest")
+                                .location(EventLocation.CLUJ)
+                                .type(EventType.LOCAL)
+                                .status(EventStatus.PUBLISHED)
+                                .eventStartDate(start)
+                                .eventEndTime(end)
+                                .createdBy(organizer)
+                                .build();
 
-        Event saved = eventRepository.saveAndFlush(event);
+                Event saved = eventRepository.saveAndFlush(event);
 
-        assertThat(saved.getId()).isNotNull();
-        assertThat(saved.getName()).isEqualTo("Summer Fest");
-        assertThat(saved.getLocation()).isEqualTo(EventLocation.CLUJ);
-        assertThat(saved.getType()).isEqualTo(EventType.LOCAL);
-        assertThat(saved.getStatus()).isEqualTo(EventStatus.PUBLISHED);
-        assertThat(saved.getEventStartDate()).isEqualTo(start);
-        assertThat(saved.getEventEndTime()).isEqualTo(end);
-    }
+                assertThat(saved.getId()).isNotNull();
+                assertThat(saved.getName()).isEqualTo("Summer Fest");
+                assertThat(saved.getLocation()).isEqualTo(EventLocation.CLUJ);
+                assertThat(saved.getType()).isEqualTo(EventType.LOCAL);
+                assertThat(saved.getStatus()).isEqualTo(EventStatus.PUBLISHED);
+                assertThat(saved.getEventStartDate()).isEqualTo(start);
+                assertThat(saved.getEventEndTime()).isEqualTo(end);
+        }
 
-    @Test
-    void findById_ShouldReturnPersistedEvent() {
-        User organizer = createAndSaveUser("jane.doe@msg.group", "Jane", "Doe", Role.HR_USER);
+        @Test
+        void findByIdReturnPersistedEvent() {
+                User organizer = createAndSaveUser("jane.doe@msg.group", "Jane", "Doe", Role.HR_USER);
 
-        Event saved = eventRepository.saveAndFlush(Event.builder()
-                .name("HR Summit")
-                .location(EventLocation.TIMISOARA)
-                .type(EventType.INTERNAL)
-                .status(EventStatus.DRAFT)
-                .createdBy(organizer)
-                .build());
+                Event saved = eventRepository.saveAndFlush(Event.builder()
+                                .name("HR Summit")
+                                .location(EventLocation.TIMISOARA)
+                                .type(EventType.INTERNAL)
+                                .status(EventStatus.DRAFT)
+                                .createdBy(organizer)
+                                .build());
 
-        Event found = eventRepository.findById(saved.getId()).orElse(null);
+                Event found = eventRepository.findById(saved.getId()).orElse(null);
 
-        assertThat(found).isNotNull();
-        assertThat(found.getId()).isEqualTo(saved.getId());
-        assertThat(found.getName()).isEqualTo("HR Summit");
-        assertThat(found.getLocation()).isEqualTo(EventLocation.TIMISOARA);
-        assertThat(found.getType()).isEqualTo(EventType.INTERNAL);
-        assertThat(found.getStatus()).isEqualTo(EventStatus.DRAFT);
-    }
+                assertThat(found).isNotNull();
+                assertThat(found.getId()).isEqualTo(saved.getId());
+                assertThat(found.getName()).isEqualTo("HR Summit");
+                assertThat(found.getLocation()).isEqualTo(EventLocation.TIMISOARA);
+                assertThat(found.getType()).isEqualTo(EventType.INTERNAL);
+                assertThat(found.getStatus()).isEqualTo(EventStatus.DRAFT);
+        }
 
-    @Test
-    void findAll_ShouldReturnAllSavedEvents() {
-        User organizer = createAndSaveUser("alex.pop@msg.group", "Alex", "Pop", Role.ADMIN);
+        @Test
+        void findAllReturnAllSavedEvents() {
+                User organizer = createAndSaveUser("alex.pop@msg.group", "Alex", "Pop", Role.ADMIN);
 
-        eventRepository.save(Event.builder()
-                .name("Event One")
-                .location(EventLocation.CLUJ)
-                .type(EventType.LOCAL)
-                .status(EventStatus.DRAFT)
-                .createdBy(organizer)
-                .build());
+                eventRepository.save(Event.builder()
+                                .name("Event One")
+                                .location(EventLocation.CLUJ)
+                                .type(EventType.LOCAL)
+                                .status(EventStatus.DRAFT)
+                                .createdBy(organizer)
+                                .build());
 
-        eventRepository.save(Event.builder()
-                .name("Event Two")
-                .location(EventLocation.MURES)
-                .type(EventType.EXTERNAL)
-                .status(EventStatus.PUBLISHED)
-                .createdBy(organizer)
-                .build());
+                eventRepository.save(Event.builder()
+                                .name("Event Two")
+                                .location(EventLocation.MURES)
+                                .type(EventType.EXTERNAL)
+                                .status(EventStatus.PUBLISHED)
+                                .createdBy(organizer)
+                                .build());
 
-        eventRepository.flush();
+                eventRepository.flush();
 
-        List<Event> events = eventRepository.findAll();
+                List<Event> events = eventRepository.findAll();
 
-        assertThat(events).hasSize(2);
-        assertThat(events).extracting(Event::getName).containsExactlyInAnyOrder("Event One", "Event Two");
-    }
+                assertThat(events).hasSize(2);
+                assertThat(events).extracting(Event::getName).containsExactlyInAnyOrder("Event One", "Event Two");
+        }
 
-    @Test
-    void save_ShouldUpdateExistingEvent() {
-        User organizer = createAndSaveUser("maria.ionescu@msg.group", "Maria", "Ionescu", Role.MARKETING_ORGANIZER);
+        @Test
+        void savePersistUpdateExistingEvent() {
+                User organizer = createAndSaveUser("maria.ionescu@msg.group", "Maria", "Ionescu",
+                                Role.MARKETING_ORGANIZER);
 
-        Event saved = eventRepository.saveAndFlush(Event.builder()
-                .name("Launch Day")
-                .location(EventLocation.CLUJ)
-                .type(EventType.LOCAL)
-                .status(EventStatus.DRAFT)
-                .createdBy(organizer)
-                .build());
+                Event saved = eventRepository.saveAndFlush(Event.builder()
+                                .name("Launch Day")
+                                .location(EventLocation.CLUJ)
+                                .type(EventType.LOCAL)
+                                .status(EventStatus.DRAFT)
+                                .createdBy(organizer)
+                                .build());
 
-        UUID eventId = saved.getId();
-        saved.setStatus(EventStatus.COMPLETED);
-        saved.setRegistrationEndDate(OffsetDateTime.parse("2026-08-15T12:00:00+00:00"));
-        eventRepository.saveAndFlush(saved);
+                UUID eventId = saved.getId();
+                saved.setStatus(EventStatus.COMPLETED);
+                saved.setRegistrationEndDate(OffsetDateTime.parse("2026-08-15T12:00:00+00:00"));
+                eventRepository.saveAndFlush(saved);
 
-        Event updated = eventRepository.findById(eventId).orElseThrow();
+                Event updated = eventRepository.findById(eventId).orElseThrow();
 
-        assertThat(updated.getStatus()).isEqualTo(EventStatus.COMPLETED);
-        assertThat(updated.getRegistrationEndDate()).isEqualTo(OffsetDateTime.parse("2026-08-15T12:00:00+00:00"));
-    }
+                assertThat(updated.getStatus()).isEqualTo(EventStatus.COMPLETED);
+                assertThat(updated.getRegistrationEndDate())
+                                .isEqualTo(OffsetDateTime.parse("2026-08-15T12:00:00+00:00"));
+        }
 
-    @Test
-    void deleteById_ShouldRemoveEvent() {
-        User organizer = createAndSaveUser("mihai.popescu@msg.group", "Mihai", "Popescu", Role.MARKETING_ORGANIZER);
+        @Test
+        void deleteByIdRemoveEvent() {
+                User organizer = createAndSaveUser("mihai.popescu@msg.group", "Mihai", "Popescu",
+                                Role.MARKETING_ORGANIZER);
 
-        Event saved = eventRepository.saveAndFlush(Event.builder()
-                .name("Delete Me")
-                .location(EventLocation.TIMISOARA)
-                .type(EventType.INTERNAL)
-                .status(EventStatus.DRAFT)
-                .createdBy(organizer)
-                .build());
+                Event saved = eventRepository.saveAndFlush(Event.builder()
+                                .name("Delete Me")
+                                .location(EventLocation.TIMISOARA)
+                                .type(EventType.INTERNAL)
+                                .status(EventStatus.DRAFT)
+                                .createdBy(organizer)
+                                .build());
 
-        eventRepository.deleteById(saved.getId());
-        eventRepository.flush();
+                eventRepository.deleteById(saved.getId());
+                eventRepository.flush();
 
-        assertThat(eventRepository.findById(saved.getId())).isEmpty();
-    }
+                assertThat(eventRepository.findById(saved.getId())).isEmpty();
+        }
 
-    private User createAndSaveUser(String email, String firstName, String lastName, Role role) {
-        User user = User.builder()
-                .email(email)
-                .passwordHash("hash")
-                .role(role)
-                .isActive(true)
-                .build();
+        private User createAndSaveUser(String email, String firstName, String lastName, Role role) {
+                User user = User.builder()
+                                .email(email)
+                                .passwordHash("hash")
+                                .role(role)
+                                .isActive(true)
+                                .build();
 
-        UserDetails details = UserDetails.builder()
-                .user(user)
-                .firstName(firstName)
-                .lastName(lastName)
-                .location(UserLocation.CLUJ)
-                .build();
-        user.setUserDetails(details);
+                UserDetails details = UserDetails.builder()
+                                .user(user)
+                                .firstName(firstName)
+                                .lastName(lastName)
+                                .location(UserLocation.CLUJ)
+                                .build();
+                user.setUserDetails(details);
 
-        return userRepository.saveAndFlush(user);
-    }
+                return userRepository.saveAndFlush(user);
+        }
 
 }

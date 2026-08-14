@@ -9,7 +9,7 @@
   <table
     mat-table
     matSort
-    [dataSource]="data()"
+    [dataSource]="visibleRows()"
     (matSortChange)="sortChange.emit($event)"
     class="w-full"
   >
@@ -66,6 +66,16 @@
       </td>
     </tr>
   </table>
+
+  @if (showPaginator()) {
+    <mat-paginator
+      [length]="data().length"
+      [pageSize]="pageSize()"
+      [pageIndex]="pageIndex()"
+      [pageSizeOptions]="pageSizeOptions()"
+      (page)="handlePageChange($event)"
+    ></mat-paginator>
+  }
 </div>
 
 <ng-template #headerContent let-column>

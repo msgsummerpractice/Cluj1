@@ -63,7 +63,7 @@ class EventControllerTest {
     private EventService eventService;
 
     @Test
-    void getAllEvents_shouldReturnOkForMarketingOrganizer() throws Exception {
+    void getAllEventsReturnOkForMarketingOrganizer() throws Exception {
         when(eventService.getAllEvents()).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/api/events")
@@ -74,7 +74,7 @@ class EventControllerTest {
     }
 
     @Test
-    void getAllEvents_shouldReturnOkForHrUser() throws Exception {
+    void getAllEventsReturnOkForHrUser() throws Exception {
         when(eventService.getAllEvents()).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/api/events")
@@ -83,20 +83,20 @@ class EventControllerTest {
     }
 
     @Test
-    void getAllEvents_shouldReturnForbiddenForParticipantRole() throws Exception {
+    void getAllEventsReturnForbiddenForParticipantRole() throws Exception {
         mockMvc.perform(get("/api/events")
                 .with(user("regularUser").roles("PARTICIPANT")))
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    void getAllEvents_shouldReturnUnauthorizedForUnauthenticatedUser() throws Exception {
+    void getAllEventsReturnUnauthorizedForUnauthenticatedUser() throws Exception {
         mockMvc.perform(get("/api/events"))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void getAllEvents_shouldMapAllDtoFieldsCorrectly() throws Exception {
+    void getAllEventsMapAllDtoFieldsCorrectly() throws Exception {
         EventDto dto = EventDto.builder()
                 .id(UUID.randomUUID())
                 .name("Summer Fest")

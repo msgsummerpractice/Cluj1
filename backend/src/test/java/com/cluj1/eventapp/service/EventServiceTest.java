@@ -32,7 +32,7 @@ class EventServiceTest {
 	private EventService eventService;
 
 	@Test
-	void getAllEvents_returnsMappedEventsInRepositoryOrder() {
+	void getAllEventsReturnsMappedEventsInRepositoryOrder() {
 		Event firstEvent = Event.builder()
 				.id(UUID.randomUUID())
 				.name("Opening Ceremony")
@@ -64,7 +64,7 @@ class EventServiceTest {
 	}
 
 	@Test
-	void getAllEvents_whenRepositoryIsEmpty_returnsEmptyList() {
+	void getAllEventsWhenRepositoryIsEmptyReturnsEmptyList() {
 		when(eventRepository.findAll()).thenReturn(List.of());
 
 		List<EventDto> result = eventService.getAllEvents();
