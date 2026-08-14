@@ -37,6 +37,7 @@ public class UserService {
     }
 
     public void registerUser(UserRegistrationDto registrationDto) {
+        registrationDto.setEmail(registrationDto.getEmail().toLowerCase());
         if (userRepository.existsByEmail(registrationDto.getEmail())) {
             throw new EmailAlreadyRegisteredException();
         }

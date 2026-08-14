@@ -60,7 +60,7 @@ export class LoginComponent {
 
     this.authService
       .login({
-        email: credentials.email.trim(),
+        email: credentials.email.trim().toLowerCase(),
         password: credentials.password,
       })
       .pipe(finalize(() => this.isSubmitting.set(false)))
@@ -70,7 +70,7 @@ export class LoginComponent {
           void this.router.navigateByUrl(nextUrl);
         },
         error: (error) => {
-          if (error.status === 401) {
+          if (error.status !== 0) {
             this.errorMessage.set('Invalid email or password.');
             return;
           }

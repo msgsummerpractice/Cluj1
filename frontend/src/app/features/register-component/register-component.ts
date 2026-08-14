@@ -13,8 +13,17 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
+import {
+  MatCard,
+  MatCardContent,
+  MatCardHeader,
+  MatCardSubtitle,
+  MatCardTitle,
+} from '@angular/material/card';
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-register-component',
   imports: [
@@ -24,9 +33,16 @@ import { UserService } from '../../core/services/user.service';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatIconModule,
+    MatCardContent,
+    MatCardSubtitle,
+    MatCardTitle,
+    MatCard,
+    MatCardHeader,
+    RouterLink,
   ],
   templateUrl: './register-component.html',
-  styleUrls: [],
+  styleUrls: ['./register-component.css'],
 })
 export class RegisterComponent {
   private readonly _formBuilder: NonNullableFormBuilder = inject(NonNullableFormBuilder);
@@ -34,7 +50,17 @@ export class RegisterComponent {
   private readonly router: Router = inject(Router);
   private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
-  formMessage: string = '';
+  readonly locations = [
+    { value: 'CLUJ', labelKey: 'register.locations.cluj' },
+    { value: 'TIMISOARA', labelKey: 'register.locations.timisoara' },
+    { value: 'MURES', labelKey: 'register.locations.mures' },
+    { value: 'REMOTE', labelKey: 'register.locations.remote' },
+  ] as const;
+
+  successMessage: string = '';
+  errorMessage: string = '';
+  hidePassword = true;
+  hideConfirmPassword = true;
 
   registerForm = this._formBuilder.group(
     {
@@ -73,24 +99,23 @@ export class RegisterComponent {
     if (this.registerForm.valid) {
       const { firstName, lastName, userLocation, email, password, confirmPassword } =
         this.registerForm.getRawValue();
-      console.log(firstName, lastName, userLocation, email, password, confirmPassword);
       this.userService
         .registerUser({ firstName, lastName, userLocation, email, password, confirmPassword })
         .subscribe({
           next: () => {
-            this.formMessage = 'User registered successfully!';
+            this.successMessage = 'User registered successfully!';
             this.cdr.detectChanges();
             this.registerForm.reset();
-            setTimeout(() => {
-              this.router.navigate(['/login']);
-            }, 1500);
+            this.router.navigate(['/login']);
           },
           error: (err) => {
             const errorMessage =
-              err.error?.error || err.error || 'An error occurred during registration.';
-            this.formMessage = errorMessage;
+              err.error?.message ||
+              err.error?.error ||
+              err.message ||
+              'An error occurred during registration.';
+            this.errorMessage = errorMessage;
             this.cdr.detectChanges();
-            console.error(err);
           },
         });
     }

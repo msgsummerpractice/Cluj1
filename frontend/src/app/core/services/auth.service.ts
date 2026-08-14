@@ -174,4 +174,8 @@ export class AuthService {
     localStorage.removeItem(this.storageKey);
     this.authUserState.set(null);
   }
+
+  isAdmin(): boolean {
+    return this.currentRole() === 'ADMIN';
+  }
 }

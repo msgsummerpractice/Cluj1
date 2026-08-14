@@ -20,7 +20,28 @@
     "emailLabel": "Email",
     "passwordLabel": "Parolă",
     "forgotPassword": "Ai uitat parola?",
-    "openMenu": "Deschide meniul"
+    "openMenu": "Deschide meniul",
+    "description": "Accesează spațiul de lucru și uneltele disponibile pentru rolul tău de participant, marketing, resurse umane sau administrator.",
+    "sessionInfo": "Sesiunea ta va rămâne activă până la deconectare sau expirare.",
+    "submitting": "Se autentifică...",
+    "noAccount": "Nu ai un cont?",
+    "signUp": "Înregistrează-te"
+  },
+  "roles": {
+    "welcome": "Bun revenit",
+    "workspace": "spațiu de lucru",
+    "labels": {
+      "MARKETING_ORGANIZER": "Organizator Marketing",
+      "HR_USER": "Utilizator HR",
+      "ADMIN": "Administrator",
+      "PARTICIPANT": "Participant"
+    },
+    "summaries": {
+      "MARKETING_ORGANIZER": "Planifică comunicarea, coordonează promovarea și menține campaniile pentru evenimente în mișcare.",
+      "HR_USER": "Monitorizează informațiile despre personal și gestionează fluxurile de lucru orientate spre oameni.",
+      "ADMIN": "Gestionează aplicația și controlează accesul în cadrul platformei de evenimente.",
+      "PARTICIPANT": "Vizualizează spațiul tău pentru evenimente și continuă acțiunile disponibile pentru contul tău."
+    }
   },
   "openMenu": "Deschide meniul",
   "userList": {
@@ -54,7 +75,8 @@
     "errorUpdatingStatus": "Eroare la actualizarea stării"
   },
   "register": {
-    "title": "Inregistreaza un cont nou",
+    "title": "Înregistrează un cont nou",
+    "subtitle": "Creează un cont pentru a participa la evenimentele noastre, pentru a te conecta cu comunitatea și pentru a-ți gestiona înscrierile.",
     "firstName": "Prenume",
     "firstNamePlaceholder": "Prenume",
     "lastName": "Nume de familie",
@@ -64,14 +86,17 @@
     "locations": {
       "cluj": "Cluj-Napoca",
       "timisoara": "Timișoara",
-      "mures": "Târgu Mureș"
+      "mures": "Târgu Mureș",
+      "remote": "Remote"
     },
     "email": "Email",
-    "emailPlaceholder": "Prenume.Nume@msg",
+    "emailPlaceholder": "Prenume.Nume@msg.group",
     "password": "Parola",
     "passwordPlaceholder": "Introdu parola",
     "confirmPassword": "Confirma parola",
     "confirmPasswordPlaceholder": "Confirma parola",
+    "alreadyHaveAccount": "Ai deja un cont?",
+    "signin": "Autentificare",
     "submit": "Inregistreaza",
     "errors": {
       "firstNameRequired": "Prenumele este obligatoriu.",
