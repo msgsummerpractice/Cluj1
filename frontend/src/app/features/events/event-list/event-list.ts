@@ -1,53 +1,50 @@
-import {
-  AfterViewInit,
-  Component,
-  computed,
-  effect,
-  inject,
-  OnInit,
-  signal,
-  ViewChild,
-} from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Event } from '../../../core/models/event.model';
 import { EventService } from '../../../core/services/event.service';
 
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatSort, MatSortModule, Sort, SortDirection } from '@angular/material/sort';
+import { Sort, SortDirection } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatMenuModule } from '@angular/material/menu';
 import { TranslocoModule } from '@jsverse/transloco';
+import { DataTableComponent } from '../../../shared/components/data-table/data-table';
+import { DataTableCellDefDirective } from '../../../shared/components/data-table/data-table-cell-def.directive';
+import { DataTableFilterDefDirective } from '../../../shared/components/data-table/data-table-filter-def.directive';
+import { DataTableColumn } from '../../../shared/components/data-table/data-table.model';
 import { EventSortField, shouldShowEventEndDate, sortEvents } from './event-list.utils';
 
 @Component({
   selector: 'app-event-list',
   imports: [
     CommonModule,
-    MatTableModule,
-    MatSortModule,
     MatButtonModule,
     MatCheckboxModule,
-    MatIconModule,
     MatInputModule,
-    MatChipsModule,
     MatFormFieldModule,
-    MatMenuModule,
     TranslocoModule,
+    DataTableComponent,
+    DataTableCellDefDirective,
+    DataTableFilterDefDirective,
   ],
   templateUrl: './event-list.html',
   styleUrl: './event-list.css',
 })
-export class EventListComponent implements OnInit, AfterViewInit {
-  @ViewChild(MatSort) private sort?: MatSort;
-
-  readonly displayedColumns: string[] = ['name', 'date', 'status', 'type', 'actions'];
-  readonly dataSource = new MatTableDataSource<Event>([]);
+export class EventListComponent implements OnInit {
+  readonly columns: readonly DataTableColumn[] = [
+    { key: 'name', label: 'events.eventNameColumn', sortKey: 'name' },
+    { key: 'date', label: 'events.eventDateColumn', sortKey: 'startDate' },
+    { key: 'status', label: 'events.eventStatusColumn', sortKey: 'status' },
+    { key: 'type', label: 'events.eventTypeColumn', sortKey: 'type', cellClass: 'text-gray-600' },
+    {
+      key: 'actions',
+      label: 'events.eventActionsColumn',
+      headerClass: 'text-center',
+      cellClass: 'text-center',
+    },
+  ];
   readonly events = signal<readonly Event[]>([]);
   readonly nameFilter = signal('');
   readonly selectedDateYears = signal<readonly string[]>([]);
@@ -110,18 +107,8 @@ export class EventListComponent implements OnInit, AfterViewInit {
   private readonly eventService = inject(EventService);
   private readonly router = inject(Router);
 
-  private readonly syncDataSource = effect(() => {
-    this.dataSource.data = this.visibleEvents();
-  });
-
   ngOnInit(): void {
     this.fetchEvents();
-  }
-
-  ngAfterViewInit(): void {
-    if (this.sort !== undefined) {
-      this.dataSource.sort = this.sort;
-    }
   }
 
   handleSortChange(sort: Sort): void {

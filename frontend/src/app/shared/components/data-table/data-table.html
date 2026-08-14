@@ -1,0 +1,88 @@
+@if (title() !== '') {
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-gray-800 m-0">{{ title() | transloco }}</h2>
+    <ng-content select="[dataTableActions]"></ng-content>
+  </div>
+}
+
+<div class="data-table-scroll mat-elevation-z2 rounded-lg border border-gray-200">
+  <table
+    mat-table
+    matSort
+    [dataSource]="data()"
+    (matSortChange)="sortChange.emit($event)"
+    class="w-full"
+  >
+    @for (column of columns(); track column.key) {
+      <ng-container [matColumnDef]="column.key">
+        @if (column.sortKey) {
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            [mat-sort-header]="column.sortKey"
+            class="font-semibold text-gray-700 bg-gray-50"
+            [ngClass]="column.headerClass ?? ''"
+          >
+            <ng-container
+              *ngTemplateOutlet="headerContent; context: { $implicit: column }"
+            ></ng-container>
+          </th>
+        } @else {
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="font-semibold text-gray-700 bg-gray-50"
+            [ngClass]="column.headerClass ?? ''"
+          >
+            <ng-container
+              *ngTemplateOutlet="headerContent; context: { $implicit: column }"
+            ></ng-container>
+          </th>
+        }
+
+        <td mat-cell *matCellDef="let row" [ngClass]="column.cellClass ?? ''">
+          @if (cellTemplate(column.key); as cellDef) {
+            <ng-container *ngTemplateOutlet="cellDef; context: { $implicit: row }"></ng-container>
+          } @else {
+            {{ getCellValue(row, column.key) }}
+          }
+        </td>
+      </ng-container>
+    }
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns()"
+      class="hover:bg-gray-50 transition-colors"
+    ></tr>
+
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell text-center py-8 text-gray-500" [attr.colspan]="columns().length">
+        {{ noDataLabel() | transloco }}
+        @if (noDataDetail() !== '') {
+          <span>"{{ noDataDetail() }}"</span>
+        }
+      </td>
+    </tr>
+  </table>
+</div>
+
+<ng-template #headerContent let-column>
+  <span>{{ column.label | transloco }}</span>
+  @if (filterTemplate(column.key); as filterDef) {
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="filterMenu"
+      (click)="$event.stopPropagation()"
+      [attr.aria-label]="'Filter by ' + column.key"
+    >
+      <mat-icon>filter_list</mat-icon>
+    </button>
+    <mat-menu #filterMenu="matMenu">
+      <div class="filter-menu-content" (click)="$event.stopPropagation()">
+        <ng-container *ngTemplateOutlet="filterDef"></ng-container>
+      </div>
+    </mat-menu>
+  }
+</ng-template>

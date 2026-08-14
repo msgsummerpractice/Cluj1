@@ -1,9 +1,13 @@
 <div class="p-8 bg-white min-h-screen">
-  <div class="flex justify-between items-center mb-6">
-    <h2 class="text-3xl font-bold text-gray-800 m-0">
-      {{ 'events.eventPageTitle' | transloco }}
-    </h2>
+  <app-data-table
+    [columns]="columns"
+    [data]="visibleEvents()"
+    title="events.eventPageTitle"
+    noDataLabel="events.noData"
+    (sortChange)="handleSortChange($event)"
+  >
     <button
+      dataTableActions
       mat-button
       class="filter-button"
       type="button"
@@ -13,172 +17,85 @@
     >
       {{ 'events.clearFilters' | transloco }}
     </button>
-  </div>
 
-  <div class="event-table-scroll mat-elevation-z2 rounded-lg border border-gray-200">
-    <table
-      mat-table
-      matSort
-      [dataSource]="dataSource"
-      (matSortChange)="handleSortChange($event)"
-      class="w-full"
-    >
-      <ng-container matColumnDef="name">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header="name"
-          class="font-semibold text-gray-700 bg-gray-50"
+    <ng-template appDataTableFilterDef="name">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ 'events.eventNameColumn' | transloco }}</mat-label>
+        <input matInput [value]="nameFilter()" (input)="setNameFilter($any($event.target).value)" />
+      </mat-form-field>
+    </ng-template>
+
+    <ng-template appDataTableFilterDef="date">
+      <span class="filter-menu-label">{{ 'events.eventDateYear' | transloco }}</span>
+      @for (year of dateYearOptions(); track year) {
+        <mat-checkbox
+          [checked]="isDateYearSelected(year)"
+          (change)="toggleDateYearFilter(year, $event.checked)"
         >
-          <span>{{ 'events.eventNameColumn' | transloco }}</span>
-          <button mat-icon-button [matMenuTriggerFor]="nameFilterMenu" (click)="$event.stopPropagation()" aria-label="Filter by event name">
-            <mat-icon>filter_list</mat-icon>
-          </button>
-        </th>
-        <td mat-cell *matCellDef="let event">{{ event.name }}</td>
-      </ng-container>
-
-      <mat-menu #nameFilterMenu="matMenu">
-        <div class="filter-menu-content" (click)="$event.stopPropagation()">
-          <mat-form-field appearance="outline">
-            <mat-label>{{ 'events.eventNameColumn' | transloco }}</mat-label>
-            <input matInput [value]="nameFilter()" (input)="setNameFilter($any($event.target).value)" />
-          </mat-form-field>
-        </div>
-      </mat-menu>
-
-      <ng-container matColumnDef="date">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header="startDate"
-          class="font-semibold text-gray-700 bg-gray-50"
+          {{ year }}
+        </mat-checkbox>
+      }
+      <span class="filter-menu-label">{{ 'events.eventDateMonth' | transloco }}</span>
+      @for (month of dateMonthOptions(); track month) {
+        <mat-checkbox
+          [checked]="isDateMonthSelected(month)"
+          (change)="toggleDateMonthFilter(month, $event.checked)"
         >
-          <span>{{ 'events.eventDateColumn' | transloco }}</span>
-          <button
-            mat-icon-button
-            [matMenuTriggerFor]="dateFilterMenu"
-            (click)="$event.stopPropagation()"
-            aria-label="Filter by event date"
-          >
-            <mat-icon>filter_list</mat-icon>
-          </button>
-        </th>
-        <td mat-cell *matCellDef="let event">
-          {{ event.startDate | date: 'mediumDate' }}
-          @if (shouldShowEndDate(event)) {
-            <span> - {{ event.endDate | date: 'mediumDate' }} </span>
-          }
-        </td>
-      </ng-container>
+          {{ getMonthLabel(month) | date: 'MMMM' }}
+        </mat-checkbox>
+      }
+    </ng-template>
 
-      <mat-menu #dateFilterMenu="matMenu">
-        <div class="filter-menu-content" (click)="$event.stopPropagation()">
-          <span class="filter-menu-label">{{ 'events.eventDateYear' | transloco }}</span>
-          @for (year of dateYearOptions(); track year) {
-            <mat-checkbox [checked]="isDateYearSelected(year)" (change)="toggleDateYearFilter(year, $event.checked)">
-              {{ year }}
-            </mat-checkbox>
-          }
-          <span class="filter-menu-label">{{ 'events.eventDateMonth' | transloco }}</span>
-          @for (month of dateMonthOptions(); track month) {
-            <mat-checkbox [checked]="isDateMonthSelected(month)" (change)="toggleDateMonthFilter(month, $event.checked)">
-              {{ getMonthLabel(month) | date: 'MMMM' }}
-            </mat-checkbox>
-          }
-        </div>
-      </mat-menu>
-
-      <ng-container matColumnDef="status">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header="status"
-          class="font-semibold text-gray-700 bg-gray-50"
+    <ng-template appDataTableFilterDef="status">
+      @for (status of statusOptions(); track status) {
+        <mat-checkbox
+          [checked]="isStatusSelected(status)"
+          (change)="toggleStatusFilter(status, $event.checked)"
         >
-          <span>{{ 'events.eventStatusColumn' | transloco }}</span>
-          <button mat-icon-button [matMenuTriggerFor]="statusFilterMenu" (click)="$event.stopPropagation()" aria-label="Filter by event status">
-            <mat-icon>filter_list</mat-icon>
-          </button>
-        </th>
-        <td mat-cell *matCellDef="let event">
-          <span
-            class="status-badge px-3 py-1.5 text-xs font-medium rounded-full border inline-block whitespace-nowrap"
-            [ngClass]="getStatusBadgeClass(event.status)"
-          >
-            {{ 'events.eventStatus' + (event.status | titlecase) | transloco }}
-          </span>
-        </td>
-      </ng-container>
+          {{ 'events.eventStatus' + (status | titlecase) | transloco }}
+        </mat-checkbox>
+      }
+    </ng-template>
 
-      <mat-menu #statusFilterMenu="matMenu">
-        <div class="filter-menu-content" (click)="$event.stopPropagation()">
-          @for (status of statusOptions(); track status) {
-            <mat-checkbox [checked]="isStatusSelected(status)" (change)="toggleStatusFilter(status, $event.checked)">
-              {{ 'events.eventStatus' + (status | titlecase) | transloco }}
-            </mat-checkbox>
-          }
-        </div>
-      </mat-menu>
-
-      <ng-container matColumnDef="type">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header="type"
-          class="font-semibold text-gray-700 bg-gray-50"
+    <ng-template appDataTableFilterDef="type">
+      @for (type of typeOptions(); track type) {
+        <mat-checkbox
+          [checked]="isTypeSelected(type)"
+          (change)="toggleTypeFilter(type, $event.checked)"
         >
-          <span>{{ 'events.eventTypeColumn' | transloco }}</span>
-          <button mat-icon-button [matMenuTriggerFor]="typeFilterMenu" (click)="$event.stopPropagation()" aria-label="Filter by event type">
-            <mat-icon>filter_list</mat-icon>
-          </button>
-        </th>
-        <td mat-cell *matCellDef="let event" class="text-gray-600">
-          {{ 'events.eventType' + (event.type | titlecase) | transloco }}
-        </td>
-      </ng-container>
+          {{ 'events.eventType' + (type | titlecase) | transloco }}
+        </mat-checkbox>
+      }
+    </ng-template>
 
-      <mat-menu #typeFilterMenu="matMenu">
-        <div class="filter-menu-content" (click)="$event.stopPropagation()">
-          @for (type of typeOptions(); track type) {
-            <mat-checkbox [checked]="isTypeSelected(type)" (change)="toggleTypeFilter(type, $event.checked)">
-              {{ 'events.eventType' + (type | titlecase) | transloco }}
-            </mat-checkbox>
-          }
-        </div>
-      </mat-menu>
+    <ng-template appDataTableCellDef="date" let-event>
+      {{ event.startDate | date: 'mediumDate' }}
+      @if (shouldShowEndDate(event)) {
+        <span> - {{ event.endDate | date: 'mediumDate' }} </span>
+      }
+    </ng-template>
 
-      <ng-container matColumnDef="actions">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          class="text-center font-semibold text-gray-700 bg-gray-50"
-        >
-          {{ 'events.eventActionsColumn' | transloco }}
-        </th>
-        <td mat-cell *matCellDef="let event" class="text-center">
-          <button
-            mat-stroked-button
-            (click)="manageEvent(event.id)"
-            class="event-view-button transition-colors whitespace-nowrap"
-          >
-            {{ 'events.eventViewButton' | transloco }}
-          </button>
-        </td>
-      </ng-container>
+    <ng-template appDataTableCellDef="status" let-event>
+      <span
+        class="status-badge px-3 py-1.5 text-xs font-medium rounded-full border inline-block whitespace-nowrap"
+        [ngClass]="getStatusBadgeClass(event.status)"
+      >
+        {{ 'events.eventStatus' + (event.status | titlecase) | transloco }}
+      </span>
+    </ng-template>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr
-        mat-row
-        *matRowDef="let row; columns: displayedColumns"
-        class="hover:bg-gray-50 transition-colors"
-      ></tr>
+    <ng-template appDataTableCellDef="type" let-event>
+      {{ 'events.eventType' + (event.type | titlecase) | transloco }}
+    </ng-template>
 
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell text-center py-8 text-gray-500" colspan="5">
-          {{ 'events.noData' | transloco }}
-        </td>
-      </tr>
-    </table>
-  </div>
+    <ng-template appDataTableCellDef="actions" let-event>
+      <button
+        mat-stroked-button
+        (click)="manageEvent(event.id)"
+        class="event-view-button transition-colors whitespace-nowrap"
+      >
+        {{ 'events.eventViewButton' | transloco }}
+      </button>
+    </ng-template>
+  </app-data-table>
 </div>

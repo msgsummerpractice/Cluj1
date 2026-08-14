@@ -14,36 +14,6 @@
   display: inline-block;
 }
 
-.event-table-scroll {
-  overflow-x: auto;
-  overflow-y: hidden;
-}
-
-table[mat-table] {
-  width: 100%;
-  min-width: 48rem;
-  table-layout: fixed;
-}
-
-th[mat-header-cell] {
-  white-space: nowrap;
-}
-
-th[mat-header-cell] button {
-  vertical-align: middle;
-}
-
-.filter-menu-content {
-  display: flex;
-  flex-direction: column;
-  padding: 0.75rem;
-  min-width: 12rem;
-}
-
-.filter-menu-content mat-checkbox {
-  padding: 0.25rem 0;
-}
-
 .status-draft {
   background-color: #fef3c7;
   color: #92400e;
@@ -78,11 +48,4 @@ th[mat-header-cell] button {
 
 .filter-button:not(:disabled):hover {
   background-color: rgba(138, 21, 56, 0.12) !important;
-}
-
-@media (max-width: 768px), (hover: none) {
-  ::ng-deep th[mat-header-cell] .mat-sort-header-arrow {
-    opacity: 1 !important;
-    transform: translateY(0) !important;
-  }
 }

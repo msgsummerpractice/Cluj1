@@ -1,8 +1,12 @@
 <div class="p-8 bg-white min-h-screen">
-  <div class="flex justify-between items-center mb-6">
-    <h2 class="text-3xl font-bold text-gray-800 m-0">{{ 'userList.title' | transloco }}</h2>
-
-    <mat-form-field appearance="outline" class="w-80">
+  <app-data-table
+    [columns]="columns"
+    [data]="users"
+    title="userList.title"
+    noDataLabel="userList.noData"
+    [noDataDetail]="searchTerm"
+  >
+    <mat-form-field dataTableActions appearance="outline" class="w-80">
       <mat-label>{{ 'userList.searchLabel' | transloco }}</mat-label>
       <input
         matInput
@@ -12,97 +16,37 @@
       />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
-  </div>
 
-  <div class="mat-elevation-z2 rounded-lg overflow-hidden border border-gray-200">
-    <table mat-table [dataSource]="users" class="w-full">
-      <ng-container matColumnDef="firstName">
-        <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50">
-          {{ 'userList.colFirstName' | transloco }}
-        </th>
-        <td mat-cell *matCellDef="let user">{{ user.firstName }}</td>
-      </ng-container>
+    <ng-template appDataTableCellDef="role" let-user>
+      <mat-chip-set>
+        <mat-chip highlighted color="primary">{{ user.role }}</mat-chip>
+      </mat-chip-set>
+    </ng-template>
 
-      <ng-container matColumnDef="lastName">
-        <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50">
-          {{ 'userList.colLastName' | transloco }}
-        </th>
-        <td mat-cell *matCellDef="let user">{{ user.lastName }}</td>
-      </ng-container>
+    <ng-template appDataTableCellDef="location" let-user>
+      {{ user.location | titlecase }}
+    </ng-template>
 
-      <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50">
-          {{ 'userList.colEmail' | transloco }}
-        </th>
-        <td mat-cell *matCellDef="let user" class="text-gray-600">{{ user.email }}</td>
-      </ng-container>
+    <ng-template appDataTableCellDef="isActive" let-user>
+      <span
+        [ngClass]="{
+          'text-green-600 font-medium': user.isActive,
+          'text-red-500 font-medium': !user.isActive,
+        }"
+      >
+        {{
+          user.isActive
+            ? ('userList.statusActive' | transloco)
+            : ('userList.statusInactive' | transloco)
+        }}
+      </span>
+    </ng-template>
 
-      <ng-container matColumnDef="role">
-        <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50">
-          {{ 'userList.colRole' | transloco }}
-        </th>
-        <td mat-cell *matCellDef="let user">
-          <mat-chip-set>
-            <mat-chip highlighted color="primary">{{ user.role }}</mat-chip>
-          </mat-chip-set>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="location">
-        <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50">
-          {{ 'userList.colLocation' | transloco }}
-        </th>
-        <td mat-cell *matCellDef="let user">{{ user.location | titlecase }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="isActive">
-        <th mat-header-cell *matHeaderCellDef class="font-semibold text-gray-700 bg-gray-50">
-          {{ 'userList.colStatus' | transloco }}
-        </th>
-        <td mat-cell *matCellDef="let user">
-          <span
-            [ngClass]="{
-              'text-green-600 font-medium': user.isActive,
-              'text-red-500 font-medium': !user.isActive,
-            }"
-          >
-            {{
-              user.isActive
-                ? ('userList.statusActive' | transloco)
-                : ('userList.statusInactive' | transloco)
-            }}
-          </span>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="actions">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          class="text-center font-semibold text-gray-700 bg-gray-50"
-        >
-          {{ 'userList.colActions' | transloco }}
-        </th>
-        <td mat-cell *matCellDef="let user" class="text-center">
-          <button mat-flat-button (click)="manageRole(user.id)" class="user-manage-button">
-            <mat-icon>manage_accounts</mat-icon>
-            {{ 'userList.manageRole' | transloco }}
-          </button>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr
-        mat-row
-        *matRowDef="let row; columns: displayedColumns"
-        class="hover:bg-gray-50 transition-colors"
-      ></tr>
-
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell text-center py-8 text-gray-500" colspan="7">
-          {{ 'userList.noData' | transloco }} "{{ searchTerm }}"
-        </td>
-      </tr>
-    </table>
-  </div>
+    <ng-template appDataTableCellDef="actions" let-user>
+      <button mat-flat-button (click)="manageRole(user.id)" class="user-manage-button">
+        <mat-icon>manage_accounts</mat-icon>
+        {{ 'userList.manageRole' | transloco }}
+      </button>
+    </ng-template>
+  </app-data-table>
 </div>
