@@ -11,6 +11,16 @@
     "logout": "Log out",
     "login": "Log in"
   },
+  "profile": {
+    "title": "My Profile",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "location": "Location",
+    "role": "Role",
+    "save changes": "Save Changes",
+    "details": "Personal details"
+  },
   "account": "User account",
   "openMenu": "Open navigation menu",
   "userList": {

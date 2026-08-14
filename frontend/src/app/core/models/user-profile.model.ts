@@ -4,6 +4,6 @@ export interface UserProfile {
   email: string;
   role: string;
   userLocation: string | null;
-  profilePicture: string | null;
+  profilePicture: Blob | null;
 
 }

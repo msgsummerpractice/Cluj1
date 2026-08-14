@@ -56,22 +56,22 @@ public class UserService {
 
     @Transactional
     public void updateUserProfile(String email, UserProfileUpdateDto updateDto) throws IOException {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found with id: " + email));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + email));
         UserDetails details = user.getUserDetails();
-        if(details == null) {
+        if (details == null) {
             details = new UserDetails();
             details.setUser(user);
+            details.setFirstName("");
+            details.setLastName("");
             user.setUserDetails(details);
         }
-        if(updateDto.getUserLocation() != null) {
+        if (updateDto.getUserLocation() != null) {
             details.setLocation(updateDto.getUserLocation());
         }
-        if(updateDto.getProfilePicture() != null && !updateDto.getProfilePicture().isEmpty()) {
+        if (updateDto.getProfilePicture() != null && !updateDto.getProfilePicture().isEmpty()) {
             details.setProfilePicture(updateDto.getProfilePicture().getBytes());
         }
-
-        user.setUpdatedAt(java.time.OffsetDateTime.now());
-        userRepository.save(user);
 
     }
 }

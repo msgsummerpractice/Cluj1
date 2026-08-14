@@ -17,6 +17,7 @@ import {
 import { UserService } from '../../core/services/user.service';
 import { UserProfile } from '../../core/models/user-profile.model';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { TranslocoPipe } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-profile-component',
@@ -34,6 +35,7 @@ import { MatSlideToggle } from '@angular/material/slide-toggle';
     MatCardTitle,
     MatCardSubtitle,
     MatSlideToggle,
+    TranslocoPipe,
   ],
   templateUrl: './profile-component.html',
   styleUrls: ['./profile-component.css'],

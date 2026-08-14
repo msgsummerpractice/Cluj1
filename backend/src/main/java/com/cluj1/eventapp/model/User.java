@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.cluj1.eventapp.model.enums.Role;
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "users")
+@DynamicUpdate
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,15 +26,15 @@ public class User{
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, updatable = false)
     @Pattern(
-            regexp = "^[a-zA-Z0-9]+\\.[a-zA-Z0-9]+@msg.group",
+            regexp = "^[a-zA-Z0-9]+\\.[a-zA-Z0-9]+@msg\\.group$",
             message = "Invalid email format"
     )
     private String email;
 
     @ToString.Exclude
-    @Column(name = "password_hash", nullable = false)
+    @Column(name = "password_hash", nullable = false, length = 255, updatable = false)
     private String passwordHash;
 
     @Enumerated(EnumType.STRING)
