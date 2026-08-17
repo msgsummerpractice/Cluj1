@@ -176,5 +176,27 @@
       "confirmPasswordRequired": "Te rugam sa confirmi parola.",
       "passwordMismatch": "Parolele nu coincid."
     }
+  },
+  "forgotPassword": {
+    "title": "Ai uitat parola",
+    "description": "Introdu adresa ta de email de la companie și îți vom trimite un link pentru a-ți reseta parola.",
+    "emailLabel": "Email",
+    "emailRequired": "Emailul este obligatoriu.",
+    "emailPattern": "Te rugăm să introduci o adresă de email validă de companie (@msg.group).",
+    "submit": "Trimite linkul de resetare",
+    "submitting": "Se trimite...",
+    "backToLogin": "Înapoi la autentificare"
+  },
+  "resetPassword": {
+    "title": "Resetează parola",
+    "subtitle": "Te rugăm să introduci noua parolă mai jos.",
+    "newPasswordLabel": "Parolă nouă",
+    "confirmPasswordLabel": "Confirmă parola",
+    "passwordRequired": "Parola este obligatorie.",
+    "passwordError": "Parola trebuie să conțină cel puțin 8 caractere și să includă literă mare, literă mică, cifră și caracter special.",
+    "confirmPasswordRequired": "Te rugăm să confirmi parola.",
+    "redirecting": "Se redirecționează către autentificare...",
+    "submit": "Resetează parola",
+    "submitting": "Se resetează..."
   }
 }
