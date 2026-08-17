@@ -210,5 +210,40 @@
     "redirecting": "Se redirecționează către autentificare...",
     "submit": "Resetează parola",
     "submitting": "Se resetează..."
+  },
+  "checkin": {
+    "title": "Check-In Eveniment",
+    "scan_instructions": "Poziționează codul QR în cadru pentru a face check-in.",
+    "manual_instructions": "Introdu codul de 6 cifre al evenimentului pentru a face check-in.",
+    "manual_placeholder": "000000",
+    "submit_btn": "Check-In",
+    "switch_to_manual": "Introdu codul manual",
+    "switch_to_scan": "Scanează cod QR",
+    "success": "Ai făcut check-in cu succes la eveniment!",
+    "toast": {
+      "success": "Succes",
+      "error": "Eroare"
+    },
+    "error": {
+      "code": {
+        "required": "Codul evenimentului este obligatoriu.",
+        "invalid": "Codul evenimentului trebuie să aibă exact 6 caractere."
+      },
+      "method": {
+        "required": "Metoda de check-in este obligatorie."
+      },
+      "event": {
+        "notfound": "Evenimentul nu a putut fi găsit.",
+        "completed": "Acest eveniment a fost deja finalizat.",
+        "expired": "Check-in-ul este închis deoarece timpul alocat evenimentului a expirat."
+      },
+      "user": {
+        "notfound": "Contul de utilizator nu a putut fi găsit.",
+        "notregistered": "Nu ești înregistrat la acest eveniment.",
+        "alreadycheckedin": "Ai făcut deja check-in la acest eveniment."
+      },
+      "no_camera": "Nu a fost detectată nicio cameră pe acest dispozitiv.",
+      "general": "A apărut o eroare neașteptată în timpul check-in-ului."
+    }
   }
 }

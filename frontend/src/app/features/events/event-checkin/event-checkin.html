@@ -1,0 +1,54 @@
+<div class="checkin-container flex flex-col items-center p-4">
+  <h2 class="text-2xl font-bold mb-4">{{ 'checkin.title' | translate }}</h2>
+
+  <div class="scanner-view w-full max-w-md" *ngIf="mode === 'SCAN'">
+    <div class="rounded overflow-hidden shadow-lg mb-4 bg-black">
+      <zxing-scanner
+        (scanSuccess)="onCodeResult($event)"
+        (camerasFound)="onCamerasFound($event)"
+        [formats]="allowedFormats"
+      >
+      </zxing-scanner>
+    </div>
+
+    <p class="text-center text-gray-600 mb-4" *ngIf="hasDevices">
+      {{ 'checkin.scan_instructions' | translate }}
+    </p>
+    <p class="text-center text-red-500 mb-4" *ngIf="!hasDevices">
+      {{ 'checkin.error.no_camera' | translate }}
+    </p>
+  </div>
+
+  <div class="manual-view w-full max-w-md flex flex-col gap-4" *ngIf="mode === 'MANUAL'">
+    <p class="text-center text-gray-600">{{ 'checkin.manual_instructions' | translate }}</p>
+
+    <input
+      type="text"
+      maxlength="6"
+      [(ngModel)]="manualCode"
+      [placeholder]="'checkin.manual_placeholder' | translate"
+      [disabled]="isProcessing"
+      class="w-full text-center text-2xl tracking-widest uppercase border border-gray-300 p-3 rounded"
+    />
+
+    <button
+      (click)="submitManual()"
+      [disabled]="isProcessing || manualCode.length !== 6"
+      class="w-full bg-blue-600 text-white font-semibold p-3 rounded disabled:bg-gray-400 disabled:cursor-not-allowed"
+    >
+      {{ 'checkin.submit_btn' | translate }}
+    </button>
+  </div>
+
+  <button
+    (click)="toggleMode()"
+    [disabled]="isProcessing"
+    class="mt-4 text-blue-600 hover:underline disabled:text-gray-400 disabled:no-underline"
+  >
+    {{
+      mode === 'SCAN'
+        ? ('checkin.switch_to_manual' | translate)
+        : ('checkin.switch_to_scan' | translate)
+    }}
+  </button>
+</div>
