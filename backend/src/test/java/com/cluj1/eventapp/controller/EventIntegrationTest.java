@@ -12,7 +12,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -20,9 +23,13 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.time.OffsetDateTime;
 
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -77,7 +84,8 @@ class EventIntegrationTest {
     @Test
     void getAllEventsReturnEmptyArrayWhenNoEventsExist() throws Exception {
         mockMvc.perform(get("/api/events")
-                .with(user("marketingUser").roles("MARKETING_ORGANIZER")))
+                .with(user("marketingUser")
+                        .authorities(new SimpleGrantedAuthority("MARKETING_ORGANIZER"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(0));
     }
@@ -89,7 +97,8 @@ class EventIntegrationTest {
         eventRepository.save(buildEvent("Event 3"));
 
         mockMvc.perform(get("/api/events")
-                .with(user("marketingUser").roles("MARKETING_ORGANIZER")))
+                .with(user("marketingUser")
+                        .authorities(new SimpleGrantedAuthority("MARKETING_ORGANIZER"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(3));
     }
@@ -99,7 +108,8 @@ class EventIntegrationTest {
         eventRepository.save(buildEvent("Summer Fest"));
 
         mockMvc.perform(get("/api/events")
-                .with(user("marketingUser").roles("MARKETING_ORGANIZER")))
+                .with(user("marketingUser")
+                        .authorities(new SimpleGrantedAuthority("MARKETING_ORGANIZER"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").isNotEmpty())
                 .andExpect(jsonPath("$[0].name").value("Summer Fest"))
@@ -113,7 +123,8 @@ class EventIntegrationTest {
         eventRepository.save(buildEvent("No Date Event"));
 
         mockMvc.perform(get("/api/events")
-                .with(user("marketingUser").roles("MARKETING_ORGANIZER")))
+                .with(user("marketingUser")
+                        .authorities(new SimpleGrantedAuthority("MARKETING_ORGANIZER"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].startDate").doesNotExist())
                 .andExpect(jsonPath("$[0].endDate").doesNotExist());
@@ -135,7 +146,8 @@ class EventIntegrationTest {
                 .build());
 
         mockMvc.perform(get("/api/events")
-                .with(user("marketingUser").roles("MARKETING_ORGANIZER")))
+                .with(user("marketingUser")
+                        .authorities(new SimpleGrantedAuthority("MARKETING_ORGANIZER"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].startDate").isNotEmpty())
                 .andExpect(jsonPath("$[0].endDate").isNotEmpty());
@@ -153,7 +165,8 @@ class EventIntegrationTest {
                 .build());
 
         mockMvc.perform(get("/api/events")
-                .with(user("marketingUser").roles("MARKETING_ORGANIZER")))
+                .with(user("marketingUser")
+                        .authorities(new SimpleGrantedAuthority("MARKETING_ORGANIZER"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2));
     }
@@ -169,9 +182,36 @@ class EventIntegrationTest {
                 .build());
 
         mockMvc.perform(get("/api/events")
-                .with(user("hrUser").roles("HR_USER")))
+                .with(user("hrUser").authorities(new SimpleGrantedAuthority("HR_USER"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].location").value("TIMISOARA"))
                 .andExpect(jsonPath("$[0].type").value("EXTERNAL"));
+    }
+
+    @Test
+    @WithMockUser(username = "organizer.test@msg.group", authorities = "MARKETING_ORGANIZER")
+    void shouldCreateEventSuccessfully() throws Exception {
+        String eventJson = """
+                    {
+                        "name": "Integration Test Event",
+                        "type": "LOCAL",
+                        "location": "TIMISOARA",
+                        "foodProvided": true
+                    }
+                """;
+
+        MockMultipartFile eventPart = new MockMultipartFile("event", "", MediaType.APPLICATION_JSON_VALUE,
+                eventJson.getBytes());
+        MockMultipartFile posterPart = new MockMultipartFile("poster", "poster.png", "image/png",
+                "dummy-image-data".getBytes());
+
+        mockMvc.perform(multipart("/api/events")
+                .file(eventPart)
+                .file(posterPart)
+                .with(csrf())
+                .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("Integration Test Event"))
+                .andExpect(jsonPath("$.status").value("DRAFT"));
     }
 }

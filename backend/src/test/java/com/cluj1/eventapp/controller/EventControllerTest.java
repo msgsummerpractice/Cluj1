@@ -2,6 +2,7 @@ package com.cluj1.eventapp.controller;
 
 import com.cluj1.eventapp.config.SecurityConfig;
 import com.cluj1.eventapp.dto.EventDto;
+import com.cluj1.eventapp.model.enums.EventLocation;
 import com.cluj1.eventapp.model.enums.EventStatus;
 import com.cluj1.eventapp.model.enums.EventType;
 import com.cluj1.eventapp.security.JwtAuthenticationFilter;
@@ -28,6 +29,8 @@ import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -67,7 +70,7 @@ class EventControllerTest {
         when(eventService.getAllEvents()).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/api/events")
-                .with(user("marketingUser").roles("MARKETING_ORGANIZER"))
+                .with(user("marketingUser").authorities(new SimpleGrantedAuthority("MARKETING_ORGANIZER")))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json("[]"));
@@ -78,14 +81,14 @@ class EventControllerTest {
         when(eventService.getAllEvents()).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/api/events")
-                .with(user("hrUser").roles("HR_USER")))
+                .with(user("hrUser").authorities(new SimpleGrantedAuthority("HR_USER"))))
                 .andExpect(status().isOk());
     }
 
     @Test
     void getAllEventsReturnForbiddenForParticipantRole() throws Exception {
         mockMvc.perform(get("/api/events")
-                .with(user("regularUser").roles("PARTICIPANT")))
+                .with(user("regularUser").authorities(new SimpleGrantedAuthority("PARTICIPANT"))))
                 .andExpect(status().isForbidden());
     }
 
@@ -100,7 +103,7 @@ class EventControllerTest {
         EventDto dto = EventDto.builder()
                 .id(UUID.randomUUID())
                 .name("Summer Fest")
-                .location("CLUJ")
+                .location(EventLocation.CLUJ)
                 .type(EventType.LOCAL)
                 .status(EventStatus.DRAFT)
                 .startDate(OffsetDateTime.parse("2026-09-01T10:00:00+00:00"))
@@ -110,7 +113,7 @@ class EventControllerTest {
         when(eventService.getAllEvents()).thenReturn(List.of(dto));
 
         mockMvc.perform(get("/api/events")
-                .with(user("marketingUser").roles("MARKETING_ORGANIZER")))
+                .with(user("marketingUser").authorities(new SimpleGrantedAuthority("MARKETING_ORGANIZER"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").isNotEmpty())
                 .andExpect(jsonPath("$[0].name").value("Summer Fest"))
