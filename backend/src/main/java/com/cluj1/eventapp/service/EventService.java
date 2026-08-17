@@ -23,6 +23,8 @@ import com.cluj1.eventapp.exception.InvalidEventOperationException;
 
 import lombok.RequiredArgsConstructor;
 
+import java.time.OffsetDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class EventService {
@@ -33,13 +35,16 @@ public class EventService {
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
+    public int getUpcomingRegisteredEventsCountPerUserByEmail(String email){
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new IllegalArgumentException("User not found"));
+        return eventRepository.countUpcomingEventsForUsers(OffsetDateTime.now(), user.getId());
+    }
     @Transactional(readOnly = true)
     public List<EventDto> getAllEvents() {
         return eventRepository.findAll().stream()
                 .map(eventMapper::toDto)
                 .toList();
     }
-
     @Transactional
     public EventDto createEvent(EventDto eventDto, MultipartFile poster) {
         validatePoster(poster);

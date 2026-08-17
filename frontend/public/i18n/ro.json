@@ -12,6 +12,18 @@
     "logout": "Deconectare",
     "login": "Autentificare"
   },
+  "profile": {
+    "title": "Profilul meu",
+    "firstName": "Prenume",
+    "lastName": "Nume de familie",
+    "email": "Email",
+    "location": "Locație",
+    "role": "Rol",
+    "save changes": "Salvează modificările",
+    "details": "Detalii personale",
+    "registrations": "Inregistrari",
+    "upcoming": "Urmatoare"
+  },
   "account": "Cont utilizator",
   "openMenu": "Deschide meniul de navigare",
   "auth": {

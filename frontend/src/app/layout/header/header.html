@@ -121,6 +121,10 @@
               {{ user.email }}
             </div>
           }
+          <button mat-menu-item routerLink="/profile">
+            <mat-icon>account_circle</mat-icon>
+            <span>My Profile</span>
+          </button>
 
           <button mat-menu-item (click)="authService.logout()">
             <mat-icon>logout</mat-icon>

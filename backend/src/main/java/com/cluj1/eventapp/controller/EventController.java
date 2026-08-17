@@ -3,6 +3,9 @@ package com.cluj1.eventapp.controller;
 import java.util.List;
 import java.util.UUID;
 
+import com.cluj1.eventapp.service.EventService;
+import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,16 +21,22 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.cluj1.eventapp.service.EventService;
+import java.security.Principal;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/events")
 @RequiredArgsConstructor
+@RequestMapping("/api/events")
 public class EventController {
 
 	private final EventService eventService;
+
+    @GetMapping("/countRegistrationPerUser")
+    public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal){
+        String email = principal.getName();
+        return ResponseEntity.ok(eventService.getUpcomingRegisteredEventsCountPerUserByEmail(email));
+    }
 
 	@GetMapping
 	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")

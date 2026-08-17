@@ -39,8 +39,10 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
+
     @Mock
     private UserMapper mapper;
+
 
     @Test
     void getAllUsers_returnMappedUsers_whenUsersExist() {
@@ -139,7 +141,6 @@ class UserServiceTest {
         verify(mapper, never()).mapToEntity(any());
         verify(userRepository, never()).save(any());
     }
-
     @Test
     void updateUserStatus_deactivateUser_whenCurrentlyActive() {
         UUID userId = UUID.randomUUID();

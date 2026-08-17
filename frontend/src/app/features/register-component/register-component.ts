@@ -14,7 +14,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { AuthService } from '../../core/services/auth.service';
 import { UserService } from '../../core/services/user.service';
 import {
   MatCard,

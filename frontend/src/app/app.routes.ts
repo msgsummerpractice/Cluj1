@@ -1,8 +1,10 @@
 import { Routes } from '@angular/router';
 import { authGuard, guestGuard, roleGuard } from './core/auth/auth.guards';
 import { RegisterComponent } from './features/register-component/register-component';
+import { ProfileComponent } from './features/profile-component/profile-component';
 
 export const routes: Routes = [
+  {path: 'profile', component: ProfileComponent, canActivate: [authGuard]},
   {
     path: 'register',
     component: RegisterComponent,

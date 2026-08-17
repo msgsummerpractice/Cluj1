@@ -5,6 +5,7 @@ import lombok.*;
 import java.util.UUID;
 
 import com.cluj1.eventapp.model.enums.UserLocation;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "user_details")
@@ -34,7 +35,6 @@ public class UserDetails {
     private UserLocation location;
 
     @ToString.Exclude
-    @Lob
-    @Column(name = "profile_picture")
+    @Column(name = "profile_picture", columnDefinition = "BYTEA")
     private byte[] profilePicture;
 }
