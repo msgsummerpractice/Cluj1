@@ -12,6 +12,7 @@ import { User } from '../../../core/models/user.model';
 import { Role } from '../../../core/models/role.enum';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { UserService } from '../../../core/services/user.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-role-manage-dialog-component',
@@ -41,6 +42,7 @@ export class RoleManageDialogComponent {
   private userService = inject(UserService);
   private translocoService = inject(TranslocoService);
   private destroyRef = inject(DestroyRef);
+  private toastService = inject(ToastService);
 
   constructor(
     public dialogRef: MatDialogRef<RoleManageDialogComponent>,
@@ -75,18 +77,14 @@ export class RoleManageDialogComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (updatedUser) => {
-          this.snackBar.open(
-            this.translocoService.translate('roleManageDialog.successMessage'),
-            'Close',
-            { duration: 3000, panelClass: ['success-snackbar'] },
-          );
+          this.toastService.show('success', this.translocoService.translate('roleManageDialog.successMessage'));
           this.dialogRef.close(updatedUser);
         },
         error: (err) => {
           this.isLoading = false;
           const errMsg =
             err.error?.message || this.translocoService.translate('roleManageDialog.errorMessage');
-          this.snackBar.open(errMsg, 'Close', { duration: 4000, panelClass: ['error-snackbar'] });
+          this.toastService.show('error', errMsg);
         },
       });
   }
