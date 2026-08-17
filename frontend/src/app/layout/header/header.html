@@ -42,6 +42,17 @@
         </a>
 
         <a
+          *ngIf="authService.currentUser()?.role === 'MARKETING_ORGANIZER'"
+          mat-button
+          class="nav-button !text-gray-700 hover:!text-gray-900 hover:!bg-gray-100 !rounded-lg"
+          routerLink="/events/create"
+          routerLinkActive="!bg-gray-100 !font-semibold"
+          disableRipple
+        >
+          {{ 'nav.createEvent' | transloco }}
+        </a>
+
+        <a
           *ngIf="authService.isAdmin()"
           mat-button
           class="nav-button !text-gray-700 hover:!text-gray-900 hover:!bg-gray-100 !rounded-lg"
@@ -75,6 +86,14 @@
         <a mat-menu-item routerLink="/events">
           <mat-icon>calendar_today</mat-icon>
           <span>{{ 'nav.events' | transloco }}</span>
+        </a>
+        <a
+          mat-menu-item
+          routerLink="/events/create"
+          *ngIf="authService.currentUser()?.role === 'MARKETING_ORGANIZER'"
+        >
+          <mat-icon>add_circle_outline</mat-icon>
+          <span>{{ 'nav.createEvent' | transloco }}</span>
         </a>
         <a mat-menu-item routerLink="/admin/users" *ngIf="authService.isAdmin()">
           <mat-icon>person</mat-icon>

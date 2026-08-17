@@ -3,6 +3,7 @@
     "home": "Home",
     "checkIn": "Check in",
     "events": "Events",
+    "createEvent": "Create Event",
     "users": "Users"
   },
   "user": {
