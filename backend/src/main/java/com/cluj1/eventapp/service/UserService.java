@@ -1,8 +1,6 @@
 package com.cluj1.eventapp.service;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.cluj1.eventapp.dto.UserRegistrationDto;
 import com.cluj1.eventapp.exception.EmailAlreadyRegisteredException;

@@ -122,7 +122,7 @@ public class EventService {
     }
 
     private Boolean determineFoodProvided(EventDto dto) {
-        return dto.getType() == EventType.EXTERNAL ? null : dto.getFoodProvided();
+        return dto.getType() != EventType.EXTERNAL && Boolean.TRUE.equals(dto.getFoodProvided());
     }
 
     private void validatePoster(MultipartFile poster) {
