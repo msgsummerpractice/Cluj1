@@ -37,7 +37,7 @@ public class EventController {
         String email = principal.getName();
         return ResponseEntity.ok(eventService.getUpcomingRegisteredEventsCountPerUserByEmail(email));
     }
-}
+
 	@GetMapping
 	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
 	public ResponseEntity<List<EventDto>> getAllEvents() {

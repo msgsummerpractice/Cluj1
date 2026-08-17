@@ -43,7 +43,7 @@ public class UserController {
 
     private static final List<String> ALLOWED_CONTENT_TYPE = Arrays.asList("image/jpeg", "image/png", "image/jpg");
 
-    Tika tika = new Tika();
+    private static final Tika tika = new Tika();
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -72,8 +72,6 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUserRole(id, request.getRole()));
     }
 
-}
-
     @PatchMapping("/{id}/status")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<UserDTO> updateUserStatus(
@@ -98,7 +96,7 @@ public class UserController {
                 try(InputStream inputStream = profilePicture.getInputStream()){
                     String trueFileType = tika.detect(inputStream);
 
-                    if(!ALLOWED_CONTENT_TYPE.contains(trueFileType)){
+                    if(!UserController.ALLOWED_CONTENT_TYPE.contains(trueFileType)){
                         return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("Image should be in PNG or JPEG format!");
                     }
                 }
