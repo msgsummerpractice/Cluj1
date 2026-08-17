@@ -73,7 +73,7 @@ public class EventService {
     @Transactional
     public EventDto updateEvent(UUID id, EventDto eventDto, MultipartFile poster) {
         Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+                .orElseThrow(() -> new InvalidEventOperationException("Event not found"));
 
         if (event.getStatus() != EventStatus.DRAFT) {
             throw new InvalidEventOperationException("Only events in DRAFT status can be edited.");
@@ -134,7 +134,7 @@ public class EventService {
         try {
             return (file != null && !file.isEmpty()) ? file.getBytes() : null;
         } catch (IOException e) {
-            throw new RuntimeException("Failed to process poster upload", e);
+            throw new InvalidEventOperationException("Failed to process poster upload");
         }
     }
 }
