@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Event } from '../../../core/models/event.model';
@@ -13,11 +13,12 @@ import { BackButtonComponent } from '../../../shared/components/back-button/back
   templateUrl: './event-details.html',
   styleUrl: './event-details.css',
 })
-export class EventDetailsComponent {
+export class EventDetailsComponent implements OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly eventService = inject(EventService);
   readonly event = signal<Event | null>(null);
   readonly eventDetails = signal<EventDetails | null>(null);
+  readonly posterUrl = signal<string | null>(null);
 
   ngOnInit() {
     const eventId = this.route.snapshot.paramMap.get('id');
@@ -42,5 +43,23 @@ export class EventDetailsComponent {
         console.error('Error fetching event details:', error);
       },
     });
+
+    this.eventService.getEventPoster(eventId).subscribe({
+      next: (poster) => {
+        if (poster.size > 0) {
+          this.posterUrl.set(URL.createObjectURL(poster));
+        }
+      },
+      error: () => {
+        this.posterUrl.set(null);
+      },
+    });
+  }
+
+  ngOnDestroy() {
+    const url = this.posterUrl();
+    if (url) {
+      URL.revokeObjectURL(url);
+    }
   }
 }

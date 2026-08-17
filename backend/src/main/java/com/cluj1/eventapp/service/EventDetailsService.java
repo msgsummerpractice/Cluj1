@@ -3,6 +3,7 @@ package com.cluj1.eventapp.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import com.cluj1.eventapp.dto.EventDetailsDto;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class EventDetailsService {
     private final EventDetailsRepository eventDetailsRepository;
 
@@ -21,7 +23,6 @@ public class EventDetailsService {
                 .orElseThrow(() -> new RuntimeException("Event details not found for id: " + id));
     }
 
-    @Transactional(readOnly = true)
     public EventDetailsDto getEventDetailsByEventId(UUID eventId) {
         EventDetails eventDetails = eventDetailsRepository.findByEventId(eventId)
                 .orElseThrow(() -> new RuntimeException("Event details not found for event id: " + eventId));
@@ -34,5 +35,10 @@ public class EventDetailsService {
                 .eventCode(eventDetails.getEventCode())
                 .qrCodeContent(eventDetails.getQrCodeContent())
                 .build();
+    }
+
+    public Optional<byte[]> getPosterByEventId(UUID eventId) {
+        return eventDetailsRepository.findPosterByEventId(eventId)
+                .filter(poster -> poster.length > 0);
     }
 }

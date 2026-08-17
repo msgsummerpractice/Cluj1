@@ -34,7 +34,6 @@ public class UserDetails {
     private UserLocation location;
 
     @ToString.Exclude
-    @Lob
-    @Column(name = "profile_picture")
+    @Column(name = "profile_picture", columnDefinition = "BYTEA")
     private byte[] profilePicture;
 }

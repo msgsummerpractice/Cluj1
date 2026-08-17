@@ -29,4 +29,9 @@ export class EventService {
     const url = `${this.apiUrl}/${eventId}/details`;
     return this.http.get<EventDetails>(url);
   }
+
+  getEventPoster(eventId: string): Observable<Blob> {
+    const url = `${this.apiUrl}/${eventId}/poster`;
+    return this.http.get(url, { responseType: 'blob' });
+  }
 }

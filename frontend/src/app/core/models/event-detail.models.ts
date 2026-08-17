@@ -5,5 +5,4 @@ export type EventDetails = {
   eventCode: string;
   description: string;
   qrCodeContent: string;
-  poster: Blob;
 };
