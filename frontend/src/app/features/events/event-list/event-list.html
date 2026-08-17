@@ -101,15 +101,18 @@
         >
           {{ 'events.eventViewButton' | transloco }}
         </button>
-        <button
-          *ngIf="
-            authService.currentUser()?.role === 'MARKETING_ORGANIZER' && event.status === 'DRAFT'
-          "
-          mat-stroked-button
-          class="event-view-button transition-colors whitespace-nowrap"
-        >
-          {{ 'events.eventPublishButton' | transloco }}
-        </button>
+
+        @if (
+          authService.currentUser()?.role === 'MARKETING_ORGANIZER' && event.status === 'DRAFT'
+        ) {
+          <button
+            mat-stroked-button
+            (click)="openDialog('0ms', '0ms')"
+            class="event-view-button transition-colors whitespace-nowrap"
+          >
+            {{ 'events.eventPublishButton' | transloco }}
+          </button>
+        }
       </div>
     </ng-template>
   </app-data-table>

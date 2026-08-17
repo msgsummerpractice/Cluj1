@@ -7,6 +7,7 @@ import { EventService } from '../../../core/services/event.service';
 import { Sort, SortDirection } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { TranslocoModule } from '@jsverse/transloco';
@@ -17,6 +18,8 @@ import { DataTableColumn } from '../../../shared/components/data-table/data-tabl
 import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 import { EventSortField, displayEventEndDate, sortEvents } from './event-list.utils';
 import { AuthService } from '../../../core/services/auth.service';
+
+import { PublishEventDialogComponent } from '../../../shared/components/publish-event-dialog/publish-event-dialog';
 
 @Component({
   selector: 'app-event-list',
@@ -109,6 +112,7 @@ export class EventListComponent implements OnInit {
 
   private readonly eventService = inject(EventService);
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
   protected readonly authService = inject(AuthService);
 
   ngOnInit(): void {
@@ -201,6 +205,18 @@ export class EventListComponent implements OnInit {
     return this.selectedTypes().includes(type.trim().toLowerCase());
   }
 
+  openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
+    const dialogRef = this.dialog.open(PublishEventDialogComponent, {
+      width: '400px',
+      enterAnimationDuration,
+      exitAnimationDuration,
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+      }
+    });
+  }
   private toEventSortField(sortField: string): EventSortField | '' {
     switch (sortField) {
       case 'name':

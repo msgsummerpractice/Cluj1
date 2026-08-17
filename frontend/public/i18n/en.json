@@ -109,7 +109,13 @@
     "eventViewButton": "View",
     "eventPublishButton": "Publish",
     "clearFilters": "Clear filters",
-    "noData": "No events found"
+    "noData": "No events found",
+    "publish": {
+      "title": "Confirm Publish",
+      "message": "Are you sure you want to publish this event?",
+      "confirm": "Yes",
+      "cancel": "No"
+    }
   },
   "createEvent": {
     "title": "Create event",

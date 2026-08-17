@@ -74,7 +74,13 @@
     "eventViewButton": "Vizualizează",
     "eventPublishButton": "Publică",
     "clearFilters": "Șterge filtrele",
-    "noData": "Nu s-au găsit evenimente"
+    "noData": "Nu s-au găsit evenimente",
+    "publish": {
+      "title": "Confirmă publicarea",
+      "message": "Ești sigur că vrei să publici acest eveniment?",
+      "confirm": "Da",
+      "cancel": "Nu"
+    }
   },
   "createEvent": {
     "title": "Creare eveniment",
