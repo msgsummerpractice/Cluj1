@@ -1,0 +1,16 @@
+<div
+  class="fixed bottom-5 right-5 z-[9999] transition-all duration-300"
+  [style.visibility]="toastService.isVisible() ? 'visible' : 'hidden'"
+  [style.opacity]="toastService.isVisible() ? '1' : '0'">
+
+  @if (toastService.type() === 'success') {
+    <div class="min-w-[250px] px-5 py-4 rounded-lg text-white flex justify-center items-center shadow-lg bg-emerald-500">
+      <span class="font-medium">{{ toastService.message() }}</span>
+    </div>
+  } @else if (toastService.type() === 'error') {
+    <div class="min-w-[250px] px-5 py-4 rounded-lg text-white flex justify-center items-center shadow-lg bg-red-500">
+      <span class="font-medium">{{ toastService.message() }}</span>
+    </div>
+  }
+
+</div>

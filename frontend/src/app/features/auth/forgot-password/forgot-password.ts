@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { TranslocoModule } from '@jsverse/transloco';
 import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -29,10 +30,10 @@ import { AuthService } from '../../../core/services/auth.service';
 export class ForgotPasswordComponent {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
+  private toastService = inject(ToastService);
 
   protected readonly isSubmitting = signal(false);
-  protected readonly errorMessage = signal<string | null>(null);
-  protected readonly successMessage = signal<string | null>(null);
+
 
   protected readonly forgotForm = this.formBuilder.nonNullable.group({
     email: [
@@ -48,8 +49,6 @@ export class ForgotPasswordComponent {
     }
 
     this.isSubmitting.set(true);
-    this.errorMessage.set(null);
-    this.successMessage.set(null);
 
     const email = this.forgotForm.getRawValue().email.trim();
 
@@ -58,10 +57,10 @@ export class ForgotPasswordComponent {
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: (responseMessage) => {
-          this.successMessage.set(responseMessage);
+          this.toastService.show('success', responseMessage);
         },
-        error: () => {
-          this.errorMessage.set('An error occurred. Please try again later.');
+        error: (err) => {
+          this.toastService.show('error', typeof err?.error === 'string' ? err.error : (err?.error?.message || err?.message || 'An error occurred. Please try again later.'));
         },
       });
   }

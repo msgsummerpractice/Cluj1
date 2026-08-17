@@ -15,6 +15,7 @@ import { DataTableCellDefDirective } from '../../../shared/components/data-table
 import { DataTableFilterDefDirective } from '../../../shared/components/data-table/data-table-filter-def.directive';
 import { DataTableColumn } from '../../../shared/components/data-table/data-table.model';
 import { EventSortField, displayEventEndDate, sortEvents } from './event-list.utils';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-event-list',
@@ -106,7 +107,7 @@ export class EventListComponent implements OnInit {
 
   private readonly eventService = inject(EventService);
   private readonly router = inject(Router);
-
+  private readonly toastService = inject(ToastService);
   ngOnInit(): void {
     this.fetchEvents();
   }
@@ -169,7 +170,7 @@ export class EventListComponent implements OnInit {
       next: (data) => {
         this.events.set(data);
       },
-      error: (err) => console.error('Error fetching events', err),
+      error: (err) => this.toastService.show('error', typeof err?.error === 'string' ? err.error : (err?.error?.message || err?.message || 'Failed to fetch events.')),
     });
   }
 
