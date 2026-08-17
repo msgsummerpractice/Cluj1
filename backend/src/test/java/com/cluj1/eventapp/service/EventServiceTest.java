@@ -156,7 +156,7 @@ class EventServiceTest {
 
 		eventService.createEvent(requestDto, null);
 
-		verify(eventRepository).save(argThat(e -> e.getEventDetails().getFoodProvided() == null));
+		verify(eventRepository).save(argThat(e -> e.getEventDetails().getFoodProvided() == false));
 	}
 
 	@Test

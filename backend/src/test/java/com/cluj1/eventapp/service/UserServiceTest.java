@@ -27,7 +27,6 @@ import com.cluj1.eventapp.dto.UserDTO;
 import com.cluj1.eventapp.model.enums.Role;
 import com.cluj1.eventapp.model.enums.UserLocation;
 import com.cluj1.eventapp.model.User;
-import com.cluj1.eventapp.model.UserDetails;
 import com.cluj1.eventapp.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)

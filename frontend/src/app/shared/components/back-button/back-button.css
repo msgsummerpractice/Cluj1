@@ -1,0 +1,7 @@
+.back-button {
+  color: var(--brand-maroon);
+}
+
+.back-button:hover {
+  background-color: var(--brand-maroon-light);
+}

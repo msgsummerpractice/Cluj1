@@ -13,6 +13,11 @@ import java.util.UUID;
 @Repository
 public interface EventDetailsRepository extends JpaRepository<EventDetails, UUID> {
 
+    Optional<EventDetails> findByEventId(UUID eventId);
+
+    @Query("select d.poster from EventDetails d where d.event.id = :eventId")
+    Optional<byte[]> findPosterByEventId(@Param("eventId") UUID eventId);
+
     @Query("SELECT ed.event FROM EventDetails ed WHERE ed.eventCode = :eventCode")
     Optional<Event> findEventByEventCode(@Param("eventCode") String eventCode);
 }
