@@ -135,12 +135,6 @@ class UserIntegrationTest {
     }
 
     @Test
-    void shouldReturn401_WhenUserIsUnauthenticated() throws Exception {
-        mockMvc.perform(get("/api/users"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
     void getUserProfile_Unauthenticated_ShouldReturn401() throws Exception {
         mockMvc.perform(get("/api/users/profile"))
                 .andExpect(status().isUnauthorized());
@@ -165,4 +159,15 @@ class UserIntegrationTest {
         mockMvc.perform(builder.file(realFile))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void shouldReturn401_WhenUserIsUnauthenticated() throws Exception {
+        mockMvc.perform(get("/api/users"))
+                .andExpect(status().isUnauthorized());
+        }
+
+
+
+
+
 }

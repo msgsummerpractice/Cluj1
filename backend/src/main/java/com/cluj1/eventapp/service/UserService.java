@@ -11,14 +11,21 @@ import com.cluj1.eventapp.dto.UserRegistrationDto;
 import com.cluj1.eventapp.exception.EmailAlreadyRegisteredException;
 import com.cluj1.eventapp.mapper.UserMapper;
 import com.cluj1.eventapp.model.UserDetails;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.cluj1.eventapp.dto.UserDTO;
 import com.cluj1.eventapp.model.User;
-
+import com.cluj1.eventapp.model.enums.Role;
 import com.cluj1.eventapp.repository.UserRepository;
 
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,12 +36,13 @@ public class UserService {
     private final UserMapper mapper;
 
     @Transactional(readOnly = true)
-    public List<UserDTO> getAllUsers(String searchTerm) {
-        List<User> users = userRepository.searchUsers(searchTerm);
+    public Page<UserDTO> getAllUsers(String searchTerm, Pageable pageable) {
+        String sanitizedSearch = (searchTerm != null && !searchTerm.trim().isEmpty())
+                ? searchTerm.trim()
+                : null;
 
-        return users.stream()
-                .map(mapper::mapToDTO)
-                .collect(Collectors.toList());
+        Page<User> users = userRepository.searchUsers(sanitizedSearch, pageable);
+        return users.map(mapper::mapToDTO);
     }
 
     public void registerUser(UserRegistrationDto registrationDto) {
@@ -44,6 +52,39 @@ public class UserService {
         }
         User user = mapper.mapToEntity(registrationDto);
         userRepository.save(user);
+    }
+
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public UserDTO updateUserRole(UUID userId, Role newRole) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        if (user.getRole() == Role.ADMIN && newRole != Role.ADMIN) {
+            validateAdminCount();
+        }
+
+        user.setRole(newRole);
+        return mapper.mapToDTO(user);
+    }
+
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public UserDTO updateUserStatus(UUID userId, boolean isActive) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        if (user.getRole() == Role.ADMIN && !isActive) {
+            validateAdminCount();
+        }
+
+        user.setIsActive(isActive);
+        return mapper.mapToDTO(user);
+    }
+
+    private void validateAdminCount() {
+        if (userRepository.countByRoleAndIsActiveTrue(Role.ADMIN) <= 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Cannot remove or deactivate the last active Admin account.");
+        }
     }
 
 
