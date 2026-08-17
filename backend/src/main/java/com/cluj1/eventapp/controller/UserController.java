@@ -6,13 +6,10 @@ import java.io.InputStream;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import com.cluj1.eventapp.dto.UserProfileDto;
 import com.cluj1.eventapp.dto.UserProfileUpdateDto;
 import com.cluj1.eventapp.dto.UserRegistrationDto;
-import com.cluj1.eventapp.exception.EmailAlreadyRegisteredException;
 import com.cluj1.eventapp.model.enums.UserLocation;
 import com.cluj1.eventapp.dto.UpdateRoleRequest;
 import com.cluj1.eventapp.dto.UserDTO;
@@ -28,10 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import com.cluj1.eventapp.dto.UserDTO;
-import com.cluj1.eventapp.service.UserService;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController

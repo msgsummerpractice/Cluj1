@@ -71,7 +71,6 @@ export class LoginComponent {
         },
         error: (error) => {
           if (error.status !== 0) {
-            console.log(error);
             this.errorMessage.set('Invalid email or password.');
             return;
           }

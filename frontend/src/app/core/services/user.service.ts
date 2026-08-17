@@ -45,7 +45,6 @@ export class UserService {
     if (profilePicture) {
 
       formData.append('profilePicture', profilePicture);
-      console.log(profilePicture)
     }
     return this.http.patch<void>(`${this.apiUrl}/profile`, formData);
   }

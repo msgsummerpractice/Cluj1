@@ -9,12 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.OffsetDateTime;
-import java.util.UUID;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, UUID> {
 
-    @Query("SELECT COUNT(e) FROM Event e INNER JOIN Registration r ON e.id = r.event.id INNER JOIN User u ON r.user.id = :user_id WHERE e.eventStartDate > :now")
+    @Query("SELECT COUNT(r) FROM Registration r WHERE r.user.id = :user_id AND r.event.eventStartDate > :now")
     int countUpcomingEventsForUsers(@Param("now")OffsetDateTime now, @Param("user_id")UUID user_id);
 
 }

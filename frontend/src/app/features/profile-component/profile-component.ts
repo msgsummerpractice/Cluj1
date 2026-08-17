@@ -147,7 +147,7 @@ export class ProfileComponent implements OnInit {
         },
         error: (err) => {
           this.saving.set(false);
-          this.errorMessage.set(err?.error?.message || err?.message || 'Failed to update profile.');
+          this.errorMessage.set(typeof err?.error === 'string' ? err.error :(err?.error?.message || err?.message || 'Failed to update profile.'));
         },
       });
   }
