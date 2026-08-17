@@ -14,7 +14,9 @@ import { DataTableComponent } from '../../../shared/components/data-table/data-t
 import { DataTableCellDefDirective } from '../../../shared/components/data-table/data-table-cell-def.directive';
 import { DataTableFilterDefDirective } from '../../../shared/components/data-table/data-table-filter-def.directive';
 import { DataTableColumn } from '../../../shared/components/data-table/data-table.model';
+import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 import { EventSortField, displayEventEndDate, sortEvents } from './event-list.utils';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-event-list',
@@ -28,6 +30,7 @@ import { EventSortField, displayEventEndDate, sortEvents } from './event-list.ut
     DataTableComponent,
     DataTableCellDefDirective,
     DataTableFilterDefDirective,
+    BackButtonComponent,
   ],
   templateUrl: './event-list.html',
   styleUrl: './event-list.css',
@@ -106,7 +109,7 @@ export class EventListComponent implements OnInit {
 
   private readonly eventService = inject(EventService);
   private readonly router = inject(Router);
-
+  private readonly toastService = inject(ToastService);
   ngOnInit(): void {
     this.fetchEvents();
   }
@@ -169,12 +172,12 @@ export class EventListComponent implements OnInit {
       next: (data) => {
         this.events.set(data);
       },
-      error: (err) => console.error('Error fetching events', err),
+      error: (err) => this.toastService.show('error', typeof err?.error === 'string' ? err.error : (err?.error?.message || err?.message || 'Failed to fetch events.')),
     });
   }
 
   manageEvent(eventId: string): void {
-    this.router.navigate(['/admin/events', eventId, 'manage']);
+    this.router.navigate(['/events', eventId]);
   }
 
   isDateYearSelected(year: string): boolean {
