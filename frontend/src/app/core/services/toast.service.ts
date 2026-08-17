@@ -11,16 +11,17 @@ export class ToastService {
   type = signal<'success' | 'error'>('success');
   isVisible = signal<boolean>(false);
 
-  private timeoutId: any;
+  private timeoutId: ReturnType<typeof setTimeout> | null = null;
 
   show(type: 'success' | 'error', message: string) {
     this.type.set(type);
     this.message.set(message);
     this.isVisible.set(true);
 
-    if(this.timeoutId){
+    if (this.timeoutId) {
       clearTimeout(this.timeoutId);
     }
+
     this.timeoutId = setTimeout(() => {
       this.isVisible.set(false);
     }, 3000);
