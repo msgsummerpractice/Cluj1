@@ -15,6 +15,7 @@ import { DataTableCellDefDirective } from '../../../shared/components/data-table
 import { DataTableFilterDefDirective } from '../../../shared/components/data-table/data-table-filter-def.directive';
 import { DataTableColumn } from '../../../shared/components/data-table/data-table.model';
 import { EventSortField, displayEventEndDate, sortEvents } from './event-list.utils';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-event-list',
@@ -247,5 +248,14 @@ export class EventListComponent implements OnInit {
           : [...currentValues, value]
         : currentValues.filter((currentValue) => currentValue !== value),
     );
+  }
+
+  readonly authService = inject(AuthService);
+  isMarketingOrganizer(): boolean {
+    return this.authService.isMarketingOrganizer();
+  }
+
+  editEvent(eventId: string): void {
+    this.router.navigate(['/events', eventId, 'edit']);
   }
 }
