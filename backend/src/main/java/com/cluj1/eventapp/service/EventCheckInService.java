@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.cluj1.eventapp.repository.AttendanceRecordRepository;
+import com.cluj1.eventapp.repository.EventDetailsRepository;
 import com.cluj1.eventapp.repository.EventRepository;
 import com.cluj1.eventapp.repository.RegistrationRepository;
 import com.cluj1.eventapp.repository.UserRepository;
@@ -28,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 public class EventCheckInService {
 
     private final EventRepository eventRepository;
+    private final EventDetailsRepository eventDetailsRepository;
     private final UserRepository userRepository;
     private final RegistrationRepository registrationRepository;
     private final AttendanceRecordRepository attendanceRecordRepository;
@@ -70,7 +72,9 @@ public class EventCheckInService {
                     .orElseThrow(
                             () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "checkin.error.event.notfound"));
         } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "checkin.error.event.notfound");
+            return eventDetailsRepository.findEventByEventCode(code)
+                    .orElseThrow(
+                            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "checkin.error.event.notfound"));
         }
     }
 }
