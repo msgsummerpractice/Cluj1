@@ -1,6 +1,9 @@
 package com.cluj1.eventapp.exception;
 
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.cluj1.eventapp.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -17,6 +20,16 @@ import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<Object> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("timestamp", LocalDateTime.now());
+        body.put("status", HttpStatus.FORBIDDEN.value());
+        body.put("error", "Forbidden");
+        body.put("message", "You do not have the required role to access this resource.");
+        return new ResponseEntity<>(body, HttpStatus.FORBIDDEN);
+    }
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex) {
@@ -53,6 +66,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ErrorResponse> handleResponseStatusException(ResponseStatusException ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .error(ex.getStatusCode().toString())
+                .message(ex.getReason() != null ? ex.getReason() : "An error occurred")
+                .build();
+        return ResponseEntity.status(ex.getStatusCode()).body(errorResponse);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
         ErrorResponse errorResponse = ErrorResponse.builder()
@@ -75,6 +97,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .error("Bad Request")
+                .message(ex.getMessage())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(InvalidEventOperationException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidEventOperationException(InvalidEventOperationException ex) {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .error("Bad Request")
                 .message(ex.getMessage())

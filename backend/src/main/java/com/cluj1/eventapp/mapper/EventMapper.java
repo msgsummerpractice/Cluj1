@@ -11,10 +11,12 @@ public class EventMapper {
         return EventDto.builder()
                 .id(event.getId())
                 .name(event.getName())
+                .description(event.getEventDetails() != null ? event.getEventDetails().getDescription() : null)
+                .foodProvided(event.getEventDetails() != null ? event.getEventDetails().getFoodProvided() : null)
                 .startDate(event.getEventStartDate())
                 .endDate(event.getEventEndTime())
                 .registrationEndDate(event.getRegistrationEndDate())
-                .location(event.getLocation() != null ? event.getLocation().name() : null)
+                .location(event.getLocation())
                 .type(event.getType())
                 .status(event.getStatus())
                 .build();

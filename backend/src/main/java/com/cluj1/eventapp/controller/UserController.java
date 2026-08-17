@@ -1,31 +1,33 @@
 package com.cluj1.eventapp.controller;
 
-import java.util.List;
+import java.util.UUID;
 
 import com.cluj1.eventapp.dto.UserRegistrationDto;
+import com.cluj1.eventapp.dto.UpdateRoleRequest;
+import com.cluj1.eventapp.dto.UserDTO;
+import com.cluj1.eventapp.service.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import com.cluj1.eventapp.dto.UserDTO;
-import com.cluj1.eventapp.service.UserService;
-
-import lombok.RequiredArgsConstructor;
-
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
 
     private final UserService userService;
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<UserDTO>> getUsers(
-            @RequestParam(value = "search", required = false) String search) {
-        return ResponseEntity.ok(userService.getAllUsers(search));
+    public ResponseEntity<Page<UserDTO>> getUsers(
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(userService.getAllUsers(search, PageRequest.of(page, size)));
     }
 
     @PostMapping("/register")
@@ -36,6 +38,21 @@ public class UserController {
 
         userService.registerUser(userRegistrationDto);
         return ResponseEntity.ok().build();
+    }
 
+    @PatchMapping("/{id}/role")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<UserDTO> updateUserRole(
+            @PathVariable UUID id,
+            @RequestBody @Valid UpdateRoleRequest request) {
+        return ResponseEntity.ok(userService.updateUserRole(id, request.getRole()));
+    }
+
+    @PatchMapping("/{id}/status")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<UserDTO> updateUserStatus(
+            @PathVariable UUID id,
+            @RequestParam boolean isActive) {
+        return ResponseEntity.ok(userService.updateUserStatus(id, isActive));
     }
 }

@@ -1,111 +1,138 @@
-<mat-toolbar
-  color="via-white"
-  class="flex items-center justify-between px-8 py-4 h-20 gap-4 font-carnac"
->
-  <div class="flex items-center">
-    <a routerLink="/homepage" class="cursor-pointer">
-      <img src="/images/msg-logo.png" alt="Logo" class="h-10 w-auto" />
-    </a>
-  </div>
-
-  <div class="flex items-center gap-4">
-    <nav *ngIf="showHeader()" class="hidden md:flex items-center gap-2">
-      <a
-        mat-button
-        class="nav-button"
-        routerLink="/homepage"
-        routerLinkActive="active"
-        disableRipple
-      >
-        {{ 'nav.home' | transloco }}
+<!-- src/app/shared/components/header/header.html -->
+<header class="w-full bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
+  <mat-toolbar
+    class="w-full !bg-white !text-gray-900 flex items-center justify-between px-6 md:px-12 py-4 h-20 gap-4 font-sans"
+  >
+    <div class="flex items-center">
+      <a routerLink="/homepage" class="cursor-pointer flex items-center">
+        <img src="/images/msg-logo.png" alt="Logo" class="h-9 w-auto" />
       </a>
+    </div>
 
-      <a
-        mat-button
-        class="nav-button"
-        routerLink="/check-in"
-        routerLinkActive="active"
-        disableRipple
-      >
-        {{ 'nav.checkIn' | transloco }}
-      </a>
-
-      <a mat-button class="nav-button" routerLink="/events" routerLinkActive="active" disableRipple>
-        {{ 'nav.events' | transloco }}
-      </a>
-
-      <a
-        *ngIf="authService.isAdmin()"
-        mat-button
-        class="nav-button"
-        routerLink="/admin/users"
-        routerLinkActive="active"
-        disableRipple
-      >
-        {{ 'nav.users' | transloco }}
-      </a>
-    </nav>
-
-    <button
-      mat-icon-button
-      [matMenuTriggerFor]="mainNav"
-      class="nav-icon-button md:!hidden"
-      aria-label="Open navigation menu"
-      disableRipple
-    >
-      <mat-icon>menu</mat-icon>
-    </button>
-
-    <mat-menu #mainNav="matMenu">
-      <a mat-menu-item routerLink="/homepage">
-        <mat-icon>home</mat-icon>
-        <span>{{ 'nav.home' | transloco }}</span>
-      </a>
-      <a mat-menu-item routerLink="/check-in">
-        <mat-icon>event</mat-icon>
-        <span>{{ 'nav.checkIn' | transloco }}</span>
-      </a>
-      <a mat-menu-item routerLink="/events">
-        <mat-icon>calendar_today</mat-icon>
-        <span>{{ 'nav.events' | transloco }}</span>
-      </a>
-      <a mat-menu-item routerLink="/admin/users" *ngIf="authService.isAdmin()">
-        <mat-icon>user</mat-icon>
-        <span>{{ 'nav.users' | transloco }}</span>
-      </a>
-    </mat-menu>
-
-    <app-language-switcher />
-
-    <button
-      *ngIf="showHeader()"
-      mat-icon-button
-      class="nav-icon-button"
-      [matMenuTriggerFor]="userMenu"
-      aria-label="User account"
-      disableRipple
-    >
-      <mat-icon>account_circle</mat-icon>
-    </button>
-
-    <mat-menu #userMenu="matMenu" xPosition="before">
-      @if (authService.isAuthenticated()) {
-        @if (authService.currentUser(); as user) {
-          <div class="px-4 py-2 text-xs text-slate-500 border-b border-slate-100">
-            {{ user.email }}
-          </div>
-        }
-
-        <button mat-menu-item (click)="authService.logout()">
-          <mat-icon>logout</mat-icon>
-          <span>{{ 'user.logout' | transloco }}</span>
-        </button>
-      } @else {
-        <a mat-menu-item routerLink="/login">
-          <mat-icon>login</mat-icon>
-          <span>{{ 'user.login' | transloco }}</span>
+    <div class="flex items-center gap-4">
+      <nav *ngIf="showHeader()" class="hidden md:flex items-center gap-2">
+        <a
+          mat-button
+          class="nav-button !text-gray-700 hover:!text-gray-900 hover:!bg-gray-100 !rounded-lg"
+          routerLink="/homepage"
+          routerLinkActive="!bg-gray-100 !font-semibold"
+          disableRipple
+        >
+          {{ 'nav.home' | transloco }}
         </a>
-      }
-    </mat-menu>
-  </div>
-</mat-toolbar>
+
+        <a
+          mat-button
+          class="nav-button !text-gray-700 hover:!text-gray-900 hover:!bg-gray-100 !rounded-lg"
+          routerLink="/check-in"
+          routerLinkActive="!bg-gray-100 !font-semibold"
+          disableRipple
+        >
+          {{ 'nav.checkIn' | transloco }}
+        </a>
+
+        <a
+          mat-button
+          class="nav-button !text-gray-700 hover:!text-gray-900 hover:!bg-gray-100 !rounded-lg"
+          routerLink="/events"
+          routerLinkActive="!bg-gray-100 !font-semibold"
+          disableRipple
+        >
+          {{ 'nav.events' | transloco }}
+        </a>
+
+        <a
+          *ngIf="authService.currentUser()?.role === 'MARKETING_ORGANIZER'"
+          mat-button
+          class="nav-button !text-gray-700 hover:!text-gray-900 hover:!bg-gray-100 !rounded-lg"
+          routerLink="/events/create"
+          routerLinkActive="!bg-gray-100 !font-semibold"
+          disableRipple
+        >
+          {{ 'nav.createEvent' | transloco }}
+        </a>
+
+        <a
+          *ngIf="authService.isAdmin()"
+          mat-button
+          class="nav-button !text-gray-700 hover:!text-gray-900 hover:!bg-gray-100 !rounded-lg"
+          routerLink="/admin/users"
+          routerLinkActive="!bg-gray-100 !font-semibold"
+          disableRipple
+        >
+          {{ 'nav.users' | transloco }}
+        </a>
+      </nav>
+
+      <button
+        mat-icon-button
+        [matMenuTriggerFor]="mainNav"
+        class="nav-icon-button md:!hidden text-gray-700"
+        aria-label="Open navigation menu"
+        disableRipple
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <mat-menu #mainNav="matMenu">
+        <a mat-menu-item routerLink="/homepage">
+          <mat-icon>home</mat-icon>
+          <span>{{ 'nav.home' | transloco }}</span>
+        </a>
+        <a mat-menu-item routerLink="/check-in">
+          <mat-icon>event</mat-icon>
+          <span>{{ 'nav.checkIn' | transloco }}</span>
+        </a>
+        <a mat-menu-item routerLink="/events">
+          <mat-icon>calendar_today</mat-icon>
+          <span>{{ 'nav.events' | transloco }}</span>
+        </a>
+        <a
+          mat-menu-item
+          routerLink="/events/create"
+          *ngIf="authService.currentUser()?.role === 'MARKETING_ORGANIZER'"
+        >
+          <mat-icon>add_circle_outline</mat-icon>
+          <span>{{ 'nav.createEvent' | transloco }}</span>
+        </a>
+        <a mat-menu-item routerLink="/admin/users" *ngIf="authService.isAdmin()">
+          <mat-icon>person</mat-icon>
+          <span>{{ 'nav.users' | transloco }}</span>
+        </a>
+      </mat-menu>
+
+      <app-language-switcher />
+
+      <button
+        *ngIf="showHeader()"
+        mat-icon-button
+        class="nav-icon-button text-gray-700"
+        [matMenuTriggerFor]="userMenu"
+        aria-label="User account"
+        disableRipple
+      >
+        <mat-icon>account_circle</mat-icon>
+      </button>
+
+      <mat-menu #userMenu="matMenu" xPosition="before">
+        @if (authService.isAuthenticated()) {
+          @if (authService.currentUser(); as user) {
+            <div class="px-4 py-2 text-xs text-slate-500 border-b border-slate-100">
+              {{ user.email }}
+            </div>
+          }
+
+          <button mat-menu-item (click)="authService.logout()">
+            <mat-icon>logout</mat-icon>
+            <span>{{ 'user.logout' | transloco }}</span>
+          </button>
+        } @else {
+          <a mat-menu-item routerLink="/login">
+            <mat-icon>login</mat-icon>
+            <span>{{ 'user.login' | transloco }}</span>
+          </a>
+        }
+      </mat-menu>
+    </div>
+  </mat-toolbar>
+</header>

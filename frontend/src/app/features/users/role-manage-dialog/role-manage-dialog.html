@@ -1,0 +1,52 @@
+<div class="dialog-container">
+  <button mat-icon-button class="close-button" (click)="dialogRef.close()" [disabled]="isLoading">
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <h2 class="dialog-title">
+    {{
+      isConfirming
+        ? ('roleManageDialog.confirmTitle' | transloco)
+        : ('roleManageDialog.title' | transloco)
+    }}
+  </h2>
+
+  <p class="dialog-subtitle">
+    {{ data.user.firstName }} {{ data.user.lastName }} —
+    <span class="user-email">{{ data.user.email }}</span>
+  </p>
+
+  <ng-container *ngIf="!isConfirming">
+    <mat-form-field appearance="outline" class="role-form-field">
+      <mat-label class="role-label">
+        {{ 'roleManageDialog.platformRole' | transloco }}
+      </mat-label>
+      <mat-select [(ngModel)]="selectedRole" panelClass="custom-select-panel">
+        <mat-option *ngFor="let role of roles" [value]="role">
+          {{ role.replace('_', ' ') | titlecase }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </ng-container>
+
+  <ng-container *ngIf="isConfirming">
+    <p class="confirmation-text">
+      {{ 'roleManageDialog.confirmPrompt' | transloco }}
+      <strong>{{ selectedRole.replace('_', ' ') | titlecase }}</strong
+      >?
+    </p>
+  </ng-container>
+
+  <div class="actions-container">
+    <button mat-stroked-button (click)="onCancel()" class="btn-cancel" [disabled]="isLoading">
+      {{
+        isConfirming ? ('roleManageDialog.no' | transloco) : ('roleManageDialog.cancel' | transloco)
+      }}
+    </button>
+    <button mat-flat-button (click)="onSave()" class="btn-save" [disabled]="isLoading">
+      {{
+        isConfirming ? ('roleManageDialog.yes' | transloco) : ('roleManageDialog.save' | transloco)
+      }}
+    </button>
+  </div>
+</div>
