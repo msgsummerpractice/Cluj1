@@ -104,4 +104,14 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
+
+    @ExceptionHandler(InvalidEventOperationException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidEventOperationException(InvalidEventOperationException ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .error("Bad Request")
+                .message(ex.getMessage())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
 }

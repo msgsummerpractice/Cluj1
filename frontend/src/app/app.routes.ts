@@ -65,6 +65,24 @@ export const routes: Routes = [
       import('./features/events/event-list/event-list').then((m) => m.EventListComponent),
   },
   {
+    path: 'events/create',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['MARKETING_ORGANIZER'] },
+    loadComponent: () =>
+      import('./features/events/event-creation/event-creation').then(
+        (m) => m.EventCreationComponent,
+      ),
+  },
+  {
+    path: 'events/:id/edit',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['MARKETING_ORGANIZER'] },
+    loadComponent: () =>
+      import('./features/events/event-creation/event-creation').then(
+        (m) => m.EventCreationComponent,
+      ),
+  },
+  {
     path: '**',
     redirectTo: 'login',
   },

@@ -190,4 +190,16 @@ export class AuthService {
   isAdmin(): boolean {
     return this.currentRole() === 'ADMIN';
   }
+
+  isMarketingOrganizer(): boolean {
+    return this.currentRole() === 'MARKETING_ORGANIZER';
+  }
+
+  isHrUser(): boolean {
+    return this.currentRole() === 'HR_USER';
+  }
+
+  isParticipant(): boolean {
+    return this.currentRole() === 'PARTICIPANT';
+  }
 }
