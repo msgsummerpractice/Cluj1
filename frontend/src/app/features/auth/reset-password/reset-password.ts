@@ -17,7 +17,6 @@ import { TranslocoModule } from '@jsverse/transloco';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
     MatButtonModule,
     MatCardModule,
     MatFormFieldModule,

@@ -16,6 +16,7 @@ import { DataTableFilterDefDirective } from '../../../shared/components/data-tab
 import { DataTableColumn } from '../../../shared/components/data-table/data-table.model';
 import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 import { EventSortField, displayEventEndDate, sortEvents } from './event-list.utils';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-event-list',
@@ -108,6 +109,7 @@ export class EventListComponent implements OnInit {
 
   private readonly eventService = inject(EventService);
   private readonly router = inject(Router);
+  protected readonly authService = inject(AuthService);
 
   ngOnInit(): void {
     this.fetchEvents();

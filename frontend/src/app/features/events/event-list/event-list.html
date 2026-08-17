@@ -93,13 +93,24 @@
     </ng-template>
 
     <ng-template appDataTableCellDef="actions" let-event>
-      <button
-        mat-stroked-button
-        (click)="manageEvent(event.id)"
-        class="event-view-button transition-colors whitespace-nowrap"
-      >
-        {{ 'events.eventViewButton' | transloco }}
-      </button>
+      <div class="flex gap-2">
+        <button
+          mat-stroked-button
+          (click)="manageEvent(event.id)"
+          class="event-view-button transition-colors whitespace-nowrap"
+        >
+          {{ 'events.eventViewButton' | transloco }}
+        </button>
+        <button
+          *ngIf="
+            authService.currentUser()?.role === 'MARKETING_ORGANIZER' && event.status === 'DRAFT'
+          "
+          mat-stroked-button
+          class="event-view-button transition-colors whitespace-nowrap"
+        >
+          {{ 'events.eventPublishButton' | transloco }}
+        </button>
+      </div>
     </ng-template>
   </app-data-table>
 </div>

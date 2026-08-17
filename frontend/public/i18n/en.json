@@ -107,6 +107,7 @@
     "eventTypeExternal": "External",
     "eventTypeLocal": "Local",
     "eventViewButton": "View",
+    "eventPublishButton": "Publish",
     "clearFilters": "Clear filters",
     "noData": "No events found"
   },
