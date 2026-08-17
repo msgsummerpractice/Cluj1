@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import com.cluj1.eventapp.dto.CheckInCodesDto;
+import com.cluj1.eventapp.repository.EventDetailsRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +33,7 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final EventDetailsRepository eventDetailsReposity;
     private final EventMapper eventMapper;
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -141,5 +144,22 @@ public class EventService {
         } catch (IOException e) {
             throw new InvalidEventOperationException("Failed to process poster upload");
         }
+    }
+
+    @Transactional
+    public CheckInCodesDto generateCheckInCodes(UUID eventId) {
+        Event event = eventRepository.findById(eventId).orElseThrow(()-> new IllegalArgumentException("Event not found"));
+        EventDetails eventDetails = eventDetailsReposity.findByEvent(event);
+
+        if(event.getStatus()!= EventStatus.PUBLISHED){
+            throw new IllegalStateException("Cannot generate codes, Event is not published");
+        }
+
+        if(eventDetails.getEventCode() != null && eventDetails.getQrCodeContent() != null) {
+            return new CheckInCodesDto(eventDetails.getQrCodeContent(), eventDetails.getEventCode());
+        }
+
+
+
     }
 }
