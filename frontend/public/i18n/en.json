@@ -19,7 +19,9 @@
     "location": "Location",
     "role": "Role",
     "save changes": "Save Changes",
-    "details": "Personal details"
+    "details": "Personal details",
+    "registrations": "Registrations",
+    "upcoming": "Upcoming"
   },
   "account": "User account",
   "openMenu": "Open navigation menu",

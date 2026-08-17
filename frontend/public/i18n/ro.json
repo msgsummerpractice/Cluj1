@@ -19,7 +19,9 @@
     "location": "Locație",
     "role": "Rol",
     "save changes": "Salvează modificările",
-    "details": "Detalii personale"
+    "details": "Detalii personale",
+    "registrations": "Inregistrari",
+    "upcoming": "Urmatoare"
   },
   "account": "Cont utilizator",
   "openMenu": "Deschide meniul de navigare",

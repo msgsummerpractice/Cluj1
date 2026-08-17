@@ -1,7 +1,9 @@
 package com.cluj1.eventapp.controller;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -12,6 +14,7 @@ import com.cluj1.eventapp.dto.UserRegistrationDto;
 import com.cluj1.eventapp.exception.EmailAlreadyRegisteredException;
 import com.cluj1.eventapp.model.enums.UserLocation;
 import jakarta.validation.Valid;
+import org.apache.tika.Tika;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +34,10 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserService userService;
+
+    private static final List<String> ALLOWED_CONTENT_TYPE = Arrays.asList("image/jepg", "image/png");
+
+    Tika tika = new Tika();
 
     @GetMapping
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -57,11 +64,20 @@ public class UserController {
     }
 
     @PatchMapping(value = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> updateUserProfile(Principal principal,
+    public ResponseEntity<?> updateUserProfile(Principal principal,
                                                   @RequestParam(value = "userLocation", required = false)UserLocation userLocation,
                                                   @RequestParam (value = "profilePicture", required = false) MultipartFile profilePicture) {
 
         try{
+            if(profilePicture != null && !profilePicture.isEmpty()){
+                try(InputStream inputStream = profilePicture.getInputStream()){
+                    String trueFileType = tika.detect(inputStream);
+
+                    if(!ALLOWED_CONTENT_TYPE.contains(trueFileType)){
+                        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body("Image should be in PNG or JPEG format!");
+                    }
+                }
+            }
             String email = principal.getName();
             userService.updateUserProfile(email, UserProfileUpdateDto.builder()
                     .userLocation(userLocation)
@@ -72,6 +88,5 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
 
 }

@@ -50,7 +50,7 @@
               >
                 <mat-icon class="h-4! w-4! text-[16px]!">photo_camera</mat-icon>
               </button>
-              <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" hidden />
+              <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/png, image/jpeg, image/jpg" hidden />
             </div>
 
             <h2 class="text-xl font-bold text-slate-900">{{ p.firstName }} {{ p.lastName }}</h2>
@@ -70,23 +70,19 @@
           <div class="flex flex-col gap-3 text-sm text-slate-600">
             <div class="flex items-center gap-3">
               <mat-icon class="h-5! w-5! text-slate-400">location_on</mat-icon>
-              <span>{{ displayLocation(p.userLocation) || 'msg Campus, Ismaning' }}</span>
+              <span>{{ displayLocation(p.userLocation) }}</span>
             </div>
           </div>
 
           <!-- Stats Grid -->
-          <div class="mt-2 grid grid-cols-3 gap-2">
+          <div class="mt-2 grid grid-cols-2 gap-2 justify-between">
             <div class="flex flex-col items-center justify-center rounded-lg bg-slate-100 py-3">
               <span class="text-lg font-bold text-slate-900">{{ registrationCount() }}</span>
-              <span class="mt-1 text-center text-[10px] uppercase leading-tight text-slate-500">Events<br>registered</span>
+              <span class="mt-1 text-center text-[10px] uppercase leading-tight text-slate-500">{{'profile.registrations'| transloco }}</span>
             </div>
             <div class="flex flex-col items-center justify-center rounded-lg bg-slate-100 py-3">
-              <span class="text-lg font-bold text-slate-900">9</span>
-              <span class="mt-1 text-center text-[10px] uppercase leading-tight text-slate-500">Attended</span>
-            </div>
-            <div class="flex flex-col items-center justify-center rounded-lg bg-slate-100 py-3">
-              <span class="text-lg font-bold text-slate-900">2</span>
-              <span class="mt-1 text-center text-[10px] uppercase leading-tight text-slate-500">Upcoming</span>
+              <span class="text-lg font-bold text-slate-900">{{futureEvents()}}</span>
+              <span class="mt-1 text-center text-[10px] uppercase leading-tight text-slate-500">{{ 'profile.upcoming'| transloco }}</span>
             </div>
           </div>
         </aside>

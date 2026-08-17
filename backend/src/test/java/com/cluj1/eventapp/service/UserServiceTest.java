@@ -31,12 +31,12 @@ class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private UserMapper mapper;
+
     @InjectMocks
     private UserService userService;
 
-
-    @Mock
-    private UserMapper mapper;
 
     @Test
     void getAllUsers_ShouldReturnMappedUsers_WhenUsersExist() {
@@ -52,7 +52,18 @@ class UserServiceTest {
         user.setIsActive(true);
         user.setUserDetails(details);
 
+        UserDTO dto = UserDTO.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .isActive(true)
+                .firstName("John")
+                .lastName("Doe")
+                .location(UserLocation.values()[0])
+                .build();
+
         when(userRepository.searchUsers("John")).thenReturn(Arrays.asList(user));
+        when(mapper.mapToDTO(user)).thenReturn(dto);
 
         List<UserDTO> result = userService.getAllUsers("John");
 
@@ -75,7 +86,18 @@ class UserServiceTest {
         userWithoutDetails.setIsActive(false);
         userWithoutDetails.setUserDetails(null);
 
+        UserDTO dto = UserDTO.builder()
+                .id(userWithoutDetails.getId())
+                .email(userWithoutDetails.getEmail())
+                .role(userWithoutDetails.getRole())
+                .isActive(false)
+                .firstName(null)
+                .lastName(null)
+                .location(null)
+                .build();
+
         when(userRepository.searchUsers(null)).thenReturn(Arrays.asList(userWithoutDetails));
+        when(mapper.mapToDTO(userWithoutDetails)).thenReturn(dto);
 
         List<UserDTO> result = userService.getAllUsers(null);
 

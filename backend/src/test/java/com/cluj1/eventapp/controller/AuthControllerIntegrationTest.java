@@ -56,7 +56,7 @@ class AuthControllerIntegrationTest {
         userRepository.deleteAll();
 
         User user = User.builder()
-                .email("admin.test@msg.com")
+                .email("admin.test@msg.group")
                 .passwordHash(passwordEncoder.encode("Password123!"))
                 .role(Role.ADMIN)
                 .isActive(true)
@@ -67,22 +67,22 @@ class AuthControllerIntegrationTest {
 
     @Test
     void registerUser_IntegrationSuccess() throws Exception {
-        UserRegistrationDto dto = createUserRegistrationDto("integration.user@example.com", "Password123!");
+        UserRegistrationDto dto = createUserRegistrationDto("integration.user@msg.group", "Password123!");
 
-        mockMvc.perform(post("/auth/register")
+        mockMvc.perform(post("/api/users/register")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
 
-        assertTrue(userRepository.findByEmail("integration.user@example.com").isPresent());
+        assertTrue(userRepository.findByEmail("integration.user@msg.group").isPresent());
     }
     @Test
     void login_validCredentials_returns200AndToken() throws Exception {
-        LogInRequest request = createLoginRequest("admin.test@msg.com", "Password123!");
+        LogInRequest request = createLoginRequest("admin.test@msg.group", "Password123!");
 
         mockMvc.perform(
-                        post("/auth/login")
+                        post("/api/auth/login")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
@@ -93,10 +93,10 @@ class AuthControllerIntegrationTest {
 
     @Test
     void login_invalidPassword_returns401() throws Exception {
-        LogInRequest request = createLoginRequest("admin.test@msg.com", "WrongPassword");
+        LogInRequest request = createLoginRequest("admin.test@msg.group", "WrongPassword");
 
         mockMvc.perform(
-                        post("/auth/login")
+                        post("/api/auth/login")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
@@ -109,7 +109,7 @@ class AuthControllerIntegrationTest {
         LogInRequest request = createLoginRequest("", "");
 
         mockMvc.perform(
-                        post("/auth/login")
+                        post("/api/auth/login")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request))
@@ -128,6 +128,9 @@ class AuthControllerIntegrationTest {
         dto.setEmail(email);
         dto.setPassword(password);
         dto.setConfirmPassword(password);
+        dto.setFirstName("Integration");
+        dto.setLastName("User");
+        dto.setUserLocation(com.cluj1.eventapp.model.enums.UserLocation.CLUJ);
         return dto;
     }
 }

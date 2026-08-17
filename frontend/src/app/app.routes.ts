@@ -4,11 +4,10 @@ import { RegisterComponent } from './features/register-component/register-compon
 import { ProfileComponent } from './features/profile-component/profile-component';
 
 export const routes: Routes = [
-  {path: 'profile', component: ProfileComponent},
+  {path: 'profile', component: ProfileComponent, canActivate: [authGuard]},
   {
     path: 'register',
     component: RegisterComponent,
-    canActivate: [authGuard ],
   },
   {
     path: '',

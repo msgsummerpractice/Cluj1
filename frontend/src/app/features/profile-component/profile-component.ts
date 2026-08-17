@@ -19,6 +19,7 @@ import { UserProfile } from '../../core/models/user-profile.model';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { RegistrationService } from '../../core/services/registration.service';
+import { EventService } from '../../core/services/event.service';
 
 @Component({
   selector: 'app-profile-component',
@@ -44,6 +45,7 @@ import { RegistrationService } from '../../core/services/registration.service';
 export class ProfileComponent implements OnInit {
   private readonly userService: UserService = inject(UserService);
   private readonly registrationService = inject(RegistrationService);
+  private readonly eventService: EventService = inject(EventService);
 
   readonly locations = [
     { value: 'CLUJ', label: 'Cluj-Napoca' },
@@ -58,6 +60,7 @@ export class ProfileComponent implements OnInit {
   errorMessage = signal<string>('');
   previewImage = signal<string | null>(null);
   registrationCount = signal<number | null>(null);
+  futureEvents = signal<number | null>(null);
 
   selectedLocation: string = '';
   selectedFile: File | null = null;
@@ -65,6 +68,7 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
     this.loadProfile();
     this.loadRegistrationCount();
+    this.loadUpcomingEventCount();
   }
 
   loadProfile(): void {
@@ -88,12 +92,39 @@ export class ProfileComponent implements OnInit {
       },
     });
   }
+  loadUpcomingEventCount(): void {
+    this.eventService.getUpcomingRegisteredEventsCountPerUser().subscribe({
+      next: (count) => {
+        this.futureEvents.set(count);
+      },
+      error: (err) => {
+        this.errorMessage.set(err?.error?.message || 'Failed to load registration count.');
+      }
+    })
+  }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) return;
 
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+    if(!allowedTypes.includes(file.type)) {
+      this.errorMessage.set("Invalid file type");
+      this.clearSelectedFile()
+      input.value = '';
+      return
+    }
+
+    const maxSize = 5*1024*1024;
+    if(file.size > maxSize){
+      this.errorMessage.set("Maximum size is 5MB");
+      this.clearSelectedFile()
+      input.value = '';
+      return
+    }
+
+    this.errorMessage.set('');
     this.selectedFile = file;
 
     const reader = new FileReader();

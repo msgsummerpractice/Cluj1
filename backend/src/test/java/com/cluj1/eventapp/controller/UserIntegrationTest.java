@@ -8,12 +8,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.http.HttpMethod;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cluj1.eventapp.model.User;
@@ -21,6 +26,10 @@ import com.cluj1.eventapp.model.UserDetails;
 import com.cluj1.eventapp.model.enums.Role;
 import com.cluj1.eventapp.model.enums.UserLocation;
 import com.cluj1.eventapp.repository.UserRepository;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 import java.util.List;
 
@@ -28,6 +37,7 @@ import java.util.List;
 @ActiveProfiles("test")
 @Transactional
 @EnableMethodSecurity
+@AutoConfigureMockMvc
 class UserIntegrationTest {
 
     @Autowired
@@ -36,8 +46,16 @@ class UserIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private WebApplicationContext context;
+
     @BeforeEach
     void setUp() {
+        this.mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .apply(springSecurity())
+                .build();
+
         userRepository.deleteAll();
 
         User adminUser = User.builder()
@@ -120,5 +138,31 @@ class UserIntegrationTest {
     void shouldReturn401_WhenUserIsUnauthenticated() throws Exception {
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getUserProfile_Unauthenticated_ShouldReturn401() throws Exception {
+        mockMvc.perform(get("/api/users/profile"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithMockUser(username = "integration.participant@msg.group")
+    void updateUserProfile_Integration_SuccessFlow() throws Exception {
+        byte[] pngBytes = new byte[] { (byte)0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+
+        MockMultipartFile realFile = new MockMultipartFile(
+                "profilePicture", "avatar.png", MediaType.IMAGE_PNG_VALUE, pngBytes
+        );
+
+        MockMultipartHttpServletRequestBuilder builder =
+                MockMvcRequestBuilders.multipart("/api/users/profile");
+        builder.with(request -> {
+            request.setMethod(HttpMethod.PATCH.name());
+            return request;
+        });
+
+        mockMvc.perform(builder.file(realFile))
+                .andExpect(status().isOk());
     }
 }
