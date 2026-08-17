@@ -1,10 +1,15 @@
 package com.cluj1.eventapp.service;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
+import com.cluj1.eventapp.dto.UserProfileDto;
+import com.cluj1.eventapp.dto.UserProfileUpdateDto;
 import com.cluj1.eventapp.dto.UserRegistrationDto;
 import com.cluj1.eventapp.exception.EmailAlreadyRegisteredException;
 import com.cluj1.eventapp.mapper.UserMapper;
+import com.cluj1.eventapp.model.UserDetails;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -78,5 +84,34 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Cannot remove or deactivate the last active Admin account.");
         }
+    }
+
+
+    @Transactional(readOnly = true)
+    public UserProfileDto getUserProfileByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + email));
+        return mapper.mapUserToUserProfileDto(user);
+    }
+
+    @Transactional
+    public void updateUserProfile(String email, UserProfileUpdateDto updateDto) throws IOException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + email));
+        UserDetails details = user.getUserDetails();
+        if (details == null) {
+            details = new UserDetails();
+            details.setUser(user);
+            details.setFirstName("");
+            details.setLastName("");
+            user.setUserDetails(details);
+        }
+        if (updateDto.getUserLocation() != null) {
+            details.setLocation(updateDto.getUserLocation());
+        }
+        if (updateDto.getProfilePicture() != null && !updateDto.getProfilePicture().isEmpty()) {
+            details.setProfilePicture(updateDto.getProfilePicture().getBytes());
+        }
+
     }
 }

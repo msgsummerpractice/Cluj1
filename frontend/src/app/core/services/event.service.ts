@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import {  HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Event } from '../models/event.model';
 import { EventDetails } from '../models/event-detail.models';
@@ -8,7 +9,7 @@ import { EventDetails } from '../models/event-detail.models';
   providedIn: 'root',
 })
 export class EventService {
-  private apiUrl = 'http://localhost:8080/api/events';
+  private apiUrl: string = 'http://localhost:8080/api/events';
   private readonly http = inject(HttpClient);
 
   getEvents(searchTerm?: string): Observable<Event[]> {
@@ -32,6 +33,9 @@ export class EventService {
   getEventPoster(eventId: string): Observable<Blob> {
     const url = `${this.apiUrl}/${eventId}/poster`;
     return this.http.get(url, { responseType: 'blob' });
+  }
+  getUpcomingRegisteredEventsCountPerUser(): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/countRegistrationPerUser`);
   }
 
   createEvent(eventData: Partial<Event>, poster?: File): Observable<Event> {

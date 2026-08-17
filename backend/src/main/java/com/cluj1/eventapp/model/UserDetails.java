@@ -5,6 +5,7 @@ import lombok.*;
 import java.util.UUID;
 
 import com.cluj1.eventapp.model.enums.UserLocation;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "user_details")

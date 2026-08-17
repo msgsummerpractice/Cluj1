@@ -1,8 +1,10 @@
 import { Routes } from '@angular/router';
 import { authGuard, guestGuard, roleGuard } from './core/auth/auth.guards';
 import { RegisterComponent } from './features/register-component/register-component';
+import { ProfileComponent } from './features/profile-component/profile-component';
 
 export const routes: Routes = [
+  {path: 'profile', component: ProfileComponent, canActivate: [authGuard]},
   {
     path: 'register',
     component: RegisterComponent,
@@ -16,6 +18,18 @@ export const routes: Routes = [
     path: 'login',
     canActivate: [guestGuard],
     loadComponent: () => import('./features/auth/login/login').then((m) => m.LoginComponent),
+  },
+  {
+    path: 'forgot-password',
+    loadComponent: () =>
+      import('./features/auth/forgot-password/forgot-password').then(
+        (m) => m.ForgotPasswordComponent,
+      ),
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./features/auth/reset-password/reset-password').then((m) => m.ResetPasswordComponent),
   },
   {
     path: 'participant',
