@@ -35,7 +35,7 @@ public class UserController {
 
     private final UserService userService;
 
-    private static final List<String> ALLOWED_CONTENT_TYPE = Arrays.asList("image/jepg", "image/png");
+    private static final List<String> ALLOWED_CONTENT_TYPE = Arrays.asList("image/jpeg", "image/png", "image/jpg");
 
     Tika tika = new Tika();
 

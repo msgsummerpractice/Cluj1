@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 import { User } from '../models/user.model';
 import { RegisterDto } from '../models/register-dto';
 import { UserProfile } from '../models/user-profile.model';
-import { Block } from '@angular/compiler';
 
 @Injectable({
   providedIn: 'root',
@@ -36,7 +35,7 @@ export class UserService {
     }
     if (profilePicture) {
 
-      formData.append('profilePicture', new Blob([JSON.stringify(profilePicture)], { type: 'application/json' }));
+      formData.append('profilePicture', profilePicture);
       console.log(profilePicture)
     }
     return this.http.patch<void>(`${this.apiUrl}/profile`, formData);
