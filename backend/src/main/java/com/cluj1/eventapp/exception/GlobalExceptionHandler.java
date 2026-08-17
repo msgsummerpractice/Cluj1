@@ -2,7 +2,6 @@ package com.cluj1.eventapp.exception;
 
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.cluj1.eventapp.dto.ErrorResponse;

@@ -22,6 +22,7 @@ public class EventDto {
     private String description;
     private OffsetDateTime startDate;
     private OffsetDateTime endDate;
+    private OffsetDateTime registrationEndDate;
     private EventLocation location;
     private EventType type;
     private Boolean foodProvided;

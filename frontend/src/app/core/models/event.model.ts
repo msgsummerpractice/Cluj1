@@ -4,6 +4,7 @@ export interface Event {
   description?: string | null;
   startDate: string;
   endDate: string;
+  registrationEndDate?: string | null;
   type: 'INTERNAL' | 'EXTERNAL' | 'LOCAL';
   location: 'ALL' | 'CLUJ' | 'TIMISOARA' | 'MURES' | null;
   status: 'DRAFT' | 'PUBLISHED' | 'COMPLETED';
