@@ -23,16 +23,19 @@ import com.cluj1.eventapp.mapper.EventMapper;
 import com.cluj1.eventapp.exception.InvalidEventOperationException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.OffsetDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EventService {
 
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final EventMapper eventMapper;
+    private final RecipientPoolService recipientPoolService;
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
