@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { AuthService } from '../../../core/services/auth.service';
+import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-reset-password',
@@ -22,6 +23,7 @@ import { AuthService } from '../../../core/services/auth.service';
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    TranslocoModule,
   ],
   templateUrl: './reset-password.html',
   styleUrl: './reset-password.css',

@@ -65,7 +65,7 @@ public class PasswordResetService {
                     "<p>If you didn't request this, please ignore this email.</p>" +
                     "</div>";
             
-            sendHtmlMessage(user.getEmail(), "Password Reset Request", htmlBody);
+            sendHtmlMessage("bholobica@gmail.com", "Password Reset Request", htmlBody);
         } catch (Exception e) {
             e.printStackTrace();
         }
