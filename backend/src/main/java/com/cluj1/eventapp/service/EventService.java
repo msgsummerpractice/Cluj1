@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,13 +36,14 @@ public class EventService {
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
-    public int getUpcomingRegisteredEventsCountPerUserByEmail(String email){
-        User user = userRepository.findByEmail(email).orElseThrow(()-> new IllegalArgumentException("User not found"));
+    public int getUpcomingRegisteredEventsCountPerUserByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
         return eventRepository.countUpcomingEventsForUsers(OffsetDateTime.now(), user.getId());
     }
+
     @Transactional(readOnly = true)
     public List<EventDto> getAllEvents() {
-        return eventRepository.findAll().stream()
+        return eventRepository.findAll(Sort.by(Sort.Direction.ASC, "createdAt", "id")).stream()
                 .map(eventMapper::toDto)
                 .toList();
     }
@@ -80,6 +82,30 @@ public class EventService {
                 .build();
 
         event.setEventDetails(details);
+        return eventMapper.toDto(eventRepository.save(event));
+    }
+
+    @Transactional
+    public EventDto updateEventStatus(UUID id, String status) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new InvalidEventOperationException("Event not found"));
+
+        EventStatus newStatus;
+        try {
+            newStatus = EventStatus.valueOf(status);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidEventOperationException("Invalid status value: " + status);
+        }
+
+        if (event.getStatus() == EventStatus.DRAFT && newStatus == EventStatus.PUBLISHED) {
+            event.setStatus(EventStatus.PUBLISHED);
+        } else if (event.getStatus() == EventStatus.PUBLISHED && newStatus == EventStatus.COMPLETED) {
+            event.setStatus(EventStatus.COMPLETED);
+        } else {
+            throw new InvalidEventOperationException(
+                    "Invalid status transition from " + event.getStatus() + " to " + newStatus);
+        }
+
         return eventMapper.toDto(eventRepository.save(event));
     }
 

@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import {  HttpParams } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Event } from '../models/event.model';
@@ -58,5 +58,15 @@ export class EventService {
     return this.http.put<Event>(`${this.apiUrl}/${id}`, formData, {
       withCredentials: true,
     });
+  }
+
+  updateEventStatus(id: string, status: 'DRAFT' | 'PUBLISHED' | 'COMPLETED'): Observable<Event> {
+    return this.http.patch<Event>(
+      `${this.apiUrl}/${id}/status`,
+      { status },
+      {
+        withCredentials: true,
+      },
+    );
   }
 }

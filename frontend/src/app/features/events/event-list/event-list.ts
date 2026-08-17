@@ -205,18 +205,29 @@ export class EventListComponent implements OnInit {
     return this.selectedTypes().includes(type.trim().toLowerCase());
   }
 
-  openDialog(enterAnimationDuration: string, exitAnimationDuration: string): void {
+  publishEvent(event: Event): void {
+    this.eventService.updateEventStatus(event.id, 'PUBLISHED').subscribe({
+      next: () => {
+        this.fetchEvents();
+      },
+      error: (err) => {
+        console.error('Failed to publish event', err);
+      },
+    });
+  }
+
+  openDialog(event: Event): void {
     const dialogRef = this.dialog.open(PublishEventDialogComponent, {
       width: '400px',
-      enterAnimationDuration,
-      exitAnimationDuration,
     });
 
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
+        this.publishEvent(event);
       }
     });
   }
+
   private toEventSortField(sortField: string): EventSortField | '' {
     switch (sortField) {
       case 'name':

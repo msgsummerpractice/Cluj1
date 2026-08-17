@@ -13,10 +13,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.cluj1.eventapp.dto.EventDetailsDto;
 import com.cluj1.eventapp.dto.EventDto;
+import com.cluj1.eventapp.dto.UpdateEventStatusRequest;
+
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,11 +40,11 @@ public class EventController {
 	private final EventService eventService;
 	private final EventDetailsService eventDetailsService;
 
-    @GetMapping("/countRegistrationPerUser")
-    public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal){
-        String email = principal.getName();
-        return ResponseEntity.ok(eventService.getUpcomingRegisteredEventsCountPerUserByEmail(email));
-    }
+	@GetMapping("/countRegistrationPerUser")
+	public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal) {
+		String email = principal.getName();
+		return ResponseEntity.ok(eventService.getUpcomingRegisteredEventsCountPerUserByEmail(email));
+	}
 
 	@GetMapping
 	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
@@ -98,5 +103,13 @@ public class EventController {
 			@RequestPart("event") EventDto eventDto,
 			@RequestPart(value = "poster", required = false) MultipartFile poster) {
 		return ResponseEntity.ok(eventService.updateEvent(id, eventDto, poster));
+	}
+
+	@PatchMapping("/{id}/status")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
+	public ResponseEntity<EventDto> updateEventStatus(
+			@PathVariable UUID id,
+			@Valid @RequestBody UpdateEventStatusRequest request) {
+		return ResponseEntity.ok(eventService.updateEventStatus(id, request.getStatus()));
 	}
 }
