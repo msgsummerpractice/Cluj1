@@ -118,7 +118,6 @@ export class EventListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly translocoService = inject(TranslocoService);
-  protected readonly authService = inject(AuthService);
 
   private readonly toastService = inject(ToastService);
   ngOnInit(): void {
@@ -325,5 +324,14 @@ export class EventListComponent implements OnInit {
           : [...currentValues, value]
         : currentValues.filter((currentValue) => currentValue !== value),
     );
+  }
+
+  readonly authService = inject(AuthService);
+  isMarketingOrganizer(): boolean {
+    return this.authService.isMarketingOrganizer();
+  }
+
+  editEvent(eventId: string): void {
+    this.router.navigate(['/events', eventId, 'edit']);
   }
 }

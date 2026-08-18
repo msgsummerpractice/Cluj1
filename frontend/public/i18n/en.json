@@ -108,6 +108,7 @@
     "eventTypeLocal": "Local",
     "eventViewButton": "View",
     "eventPublishButton": "Publish",
+    "eventEditButton": "Edit",
     "clearFilters": "Clear filters",
     "noData": "No events found",
     "fetchError": "Failed to fetch events. Please try again.",
@@ -230,5 +231,41 @@
     "redirecting": "Redirecting to login...",
     "submit": "Reset Password",
     "submitting": "Resetting..."
+  },
+  "checkin": {
+    "title": "Event Check-In",
+    "scan_instructions": "Position the QR code inside the frame to check in.",
+    "manual_instructions": "Enter the 6-digit event code to check in.",
+    "manual_placeholder": "000000",
+    "submit_btn": "Check In",
+    "switch_to_manual": "Enter Code Manually",
+    "switch_to_scan": "Scan QR Code",
+    "success": "You have successfully checked in to the event!",
+    "toast": {
+      "success": "Success",
+      "error": "Error"
+    },
+    "error": {
+      "code": {
+        "required": "Event code is required.",
+        "invalid": "Event code must be exactly 6 characters."
+      },
+      "method": {
+        "required": "Check-in method is required."
+      },
+      "event": {
+        "notfound": "The event could not be found.",
+        "completed": "This event is already completed.",
+        "expired": "Check-in is closed because the event end time has passed."
+      },
+      "user": {
+        "notfound": "User account could not be found.",
+        "notregistered": "You are not registered for this event.",
+        "alreadycheckedin": "You have already checked in to this event."
+      },
+      "no_camera": "No camera detected on this device.",
+      "general": "An unexpected error occurred during check-in.",
+      "invalid_code": "The check-in code you entered is invalid."
+    }
   }
 }

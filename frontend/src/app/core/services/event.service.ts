@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpParams } from '@angular/common/http';
-import { HttpClient } from '@angular/common/http';
+import { HttpParams, HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Event } from '../models/event.model';
+import { CheckInRequest } from '../models/check-in-request.model';
 import { EventDetails } from '../models/event-detail.models';
 
 @Injectable({
@@ -20,9 +20,8 @@ export class EventService {
     return this.http.get<Event[]>(this.apiUrl, { params });
   }
 
-  getEventById(eventId: string): Observable<Event> {
-    const url = `${this.apiUrl}/${eventId}`;
-    return this.http.get<Event>(url);
+  getEventById(id: string): Observable<Event> {
+    return this.http.get<Event>(`${this.apiUrl}/${id}`);
   }
 
   getEventDetails(eventId: string): Observable<EventDetails> {
@@ -61,12 +60,14 @@ export class EventService {
   }
 
   updateEventStatus(id: string, status: 'DRAFT' | 'PUBLISHED' | 'COMPLETED'): Observable<Event> {
-    return this.http.patch<Event>(
-      `${this.apiUrl}/${id}/status/${status}`,
-      null,
-      {
-        withCredentials: true,
-      },
-    );
+    return this.http.patch<Event>(`${this.apiUrl}/${id}/status/${status}`, null, {
+      withCredentials: true,
+    });
+  }
+
+  checkIn(request: CheckInRequest): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/checkin`, request, {
+      withCredentials: true,
+    });
   }
 }

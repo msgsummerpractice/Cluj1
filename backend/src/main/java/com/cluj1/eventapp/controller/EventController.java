@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import com.cluj1.eventapp.service.EventService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +28,6 @@ import com.cluj1.eventapp.service.EventDetailsService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
-
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
