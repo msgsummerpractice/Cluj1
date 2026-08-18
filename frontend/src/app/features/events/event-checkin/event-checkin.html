@@ -1,7 +1,7 @@
 <div class="checkin-container flex flex-col items-center p-4">
   <h2 class="text-2xl font-bold mb-4">{{ 'checkin.title' | transloco }}</h2>
 
-  @if (mode === 'SCAN') {
+  @if (isMobile && mode === 'SCAN') {
     @if (isScannerReady) {
       <div class="scanner-view w-full max-w-md">
         <div class="rounded overflow-hidden shadow-lg mb-4 bg-black">
@@ -40,28 +40,30 @@
         [(ngModel)]="manualCode"
         [placeholder]="'checkin.manual_placeholder' | transloco"
         [disabled]="isProcessing"
-        class="w-full text-center text-2xl tracking-widest uppercase border border-gray-300 p-3 rounded focus:outline-none focus:border-[#a01441] focus:ring-1 focus:ring-[#a01441]"
+        class="w-full text-center text-2xl tracking-widest uppercase border border-gray-300 p-3 rounded focus:outline-none focus:border-[var(--dark-red-dot)] focus:ring-1 focus:ring-[var(--dark-red-dot)]"
       />
 
       <button
         (click)="submitManual()"
         [disabled]="isProcessing || manualCode.length !== 6"
-        class="w-full bg-[#a01441] hover:bg-[#7a0f31] text-white font-semibold p-3 rounded disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+        class="w-full bg-[var(--dark-red-dot)] hover:bg-[var(--brand-maroon)] text-white font-semibold p-3 rounded disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
       >
         {{ 'checkin.submit_btn' | transloco }}
       </button>
     </div>
   }
 
-  <button
-    (click)="toggleMode()"
-    [disabled]="isProcessing"
-    class="mt-4 text-[#a01441] hover:underline disabled:text-gray-400 disabled:no-underline"
-  >
-    @if (mode === 'SCAN') {
-      {{ 'checkin.switch_to_manual' | transloco }}
-    } @else {
-      {{ 'checkin.switch_to_scan' | transloco }}
-    }
-  </button>
+  @if (isMobile) {
+    <button
+      (click)="toggleMode()"
+      [disabled]="isProcessing"
+      class="mt-4 text-[var(--dark-red-dot)] hover:underline disabled:text-gray-400 disabled:no-underline"
+    >
+      @if (mode === 'SCAN') {
+        {{ 'checkin.switch_to_manual' | transloco }}
+      } @else {
+        {{ 'checkin.switch_to_scan' | transloco }}
+      }
+    </button>
+  }
 </div>

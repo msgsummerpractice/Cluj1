@@ -254,7 +254,8 @@
         "alreadycheckedin": "You have already checked in to this event."
       },
       "no_camera": "No camera detected on this device.",
-      "general": "An unexpected error occurred during check-in."
+      "general": "An unexpected error occurred during check-in.",
+      "invalid_code": "The check-in code you entered is invalid."
     }
   }
 }

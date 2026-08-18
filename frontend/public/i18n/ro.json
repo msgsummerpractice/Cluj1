@@ -225,12 +225,12 @@
   },
   "checkin": {
     "title": "Check-In Eveniment",
-    "scan_instructions": "Poziționează codul QR în cadru pentru a face check-in.",
+    "scan_instructions": "Poziționează codul QR în cadru pentru check-in.",
     "manual_instructions": "Introdu codul de 6 cifre al evenimentului pentru a face check-in.",
     "manual_placeholder": "000000",
-    "submit_btn": "Check-In",
-    "switch_to_manual": "Introdu codul manual",
-    "switch_to_scan": "Scanează cod QR",
+    "submit_btn": "Check In",
+    "switch_to_manual": "Introdu Codul Manual",
+    "switch_to_scan": "Scanează Cod QR",
     "success": "Ai făcut check-in cu succes la eveniment!",
     "toast": {
       "success": "Succes",
@@ -246,8 +246,8 @@
       },
       "event": {
         "notfound": "Evenimentul nu a putut fi găsit.",
-        "completed": "Acest eveniment a fost deja finalizat.",
-        "expired": "Check-in-ul este închis deoarece timpul alocat evenimentului a expirat."
+        "completed": "Acest eveniment este deja finalizat.",
+        "expired": "Check-in-ul este închis deoarece evenimentul s-a încheiat."
       },
       "user": {
         "notfound": "Contul de utilizator nu a putut fi găsit.",
@@ -255,7 +255,8 @@
         "alreadycheckedin": "Ai făcut deja check-in la acest eveniment."
       },
       "no_camera": "Nu a fost detectată nicio cameră pe acest dispozitiv.",
-      "general": "A apărut o eroare neașteptată în timpul check-in-ului."
+      "general": "A apărut o eroare neașteptată în timpul check-in-ului.",
+      "invalid_code": "Codul de check-in introdus este invalid."
     }
   }
 }

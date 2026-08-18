@@ -8,7 +8,9 @@ import com.cluj1.eventapp.model.User;
 import com.cluj1.eventapp.model.enums.EventStatus;
 
 import java.time.OffsetDateTime;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class EventCheckInService {
+
+    private static final Pattern UUID_PATTERN = Pattern
+            .compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
 
     private final EventRepository eventRepository;
     private final EventDetailsRepository eventDetailsRepository;
@@ -66,15 +71,20 @@ public class EventCheckInService {
     }
 
     private Event findEventByCode(String code) {
-        try {
-            UUID eventId = UUID.fromString(code);
-            return eventRepository.findById(eventId)
-                    .orElseThrow(
-                            () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "checkin.error.event.notfound"));
-        } catch (IllegalArgumentException e) {
-            return eventDetailsRepository.findEventByEventCode(code)
-                    .orElseThrow(
-                            () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "checkin.error.event.notfound"));
+        if (code == null || code.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "checkin.error.code.invalid");
         }
+
+        String sanitizedCode = code.trim();
+
+        if (UUID_PATTERN.matcher(sanitizedCode).matches()) {
+            Optional<Event> eventById = eventRepository.findById(UUID.fromString(sanitizedCode));
+            if (eventById.isPresent()) {
+                return eventById.get();
+            }
+        }
+
+        return eventDetailsRepository.findEventByEventCode(sanitizedCode)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "checkin.error.event.notfound"));
     }
 }

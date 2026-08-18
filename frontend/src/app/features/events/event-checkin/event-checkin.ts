@@ -1,4 +1,4 @@
-import { Component, inject, AfterViewInit, PLATFORM_ID } from '@angular/core';
+import { Component, inject, AfterViewInit, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { EventService } from '../../../core/services/event.service';
 import { FormsModule } from '@angular/forms';
@@ -6,6 +6,8 @@ import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { BarcodeFormat } from '@zxing/library';
 import { ToastService } from '../../../core/services/toast.service';
+import { Platform } from '@angular/cdk/platform';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-event-checkin',
@@ -19,8 +21,12 @@ export class EventCheckInComponent implements AfterViewInit {
   private readonly translateService = inject(TranslocoService);
   private readonly toastService = inject(ToastService);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly platform = inject(Platform);
+  private readonly cdr = inject(ChangeDetectorRef);
 
-  mode: 'SCAN' | 'MANUAL' = 'SCAN';
+  readonly isMobile = this.platform.ANDROID || this.platform.IOS;
+
+  mode: 'SCAN' | 'MANUAL' = this.isMobile ? 'SCAN' : 'MANUAL';
   manualCode: string = '';
   isProcessing: boolean = false;
   hasDevices: boolean = false;
@@ -37,8 +43,9 @@ export class EventCheckInComponent implements AfterViewInit {
   }
 
   toggleMode(): void {
-    this.mode = this.mode === 'SCAN' ? 'MANUAL' : 'SCAN';
-    this.manualCode = '';
+    if (this.isMobile) {
+      this.mode = this.mode === 'SCAN' ? 'MANUAL' : 'SCAN';
+    }
   }
 
   onCamerasFound(devices: MediaDeviceInfo[]): void {
@@ -60,24 +67,38 @@ export class EventCheckInComponent implements AfterViewInit {
 
   private processCheckIn(code: string, method: 'QR' | 'MANUAL'): void {
     this.isProcessing = true;
+    this.cdr.markForCheck();
 
-    this.eventService.checkIn({ code, method }).subscribe({
-      next: () => {
-        this.showSuccess('checkin.success');
-        this.isProcessing = false;
-        if (method === 'MANUAL') {
-          this.manualCode = '';
-        }
-      },
-      error: (error) => {
-        const errorKey = error.error?.message || 'checkin.error.general';
-        this.showError(errorKey);
-        this.isProcessing = false;
-        if (method === 'MANUAL') {
-          this.manualCode = '';
-        }
-      },
-    });
+    this.eventService
+      .checkIn({ code, method })
+      .pipe(
+        finalize(() => {
+          this.isProcessing = false;
+          if (method === 'MANUAL') {
+            this.manualCode = '';
+          }
+          this.cdr.detectChanges();
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.showSuccess('checkin.success');
+        },
+        error: (error) => {
+          let errorKey = 'checkin.error.general';
+
+          if (error.status === 400 || error.status === 404) {
+            errorKey = 'checkin.error.invalid_code';
+          } else {
+            const rawError = error?.error?.message || error?.error;
+            if (typeof rawError === 'string' && !rawError.includes(' ')) {
+              errorKey = rawError;
+            }
+          }
+
+          this.showError(errorKey);
+        },
+      });
   }
 
   private showSuccess(key: string): void {
