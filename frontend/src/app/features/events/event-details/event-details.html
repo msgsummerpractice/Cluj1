@@ -9,12 +9,12 @@
           </div>
           <div class="event-date">
             <span class="material-symbols-outlined" aria-hidden="true">calendar_month</span>
-            <span
-              >{{ event.startDate | date: 'MMM d, y HH:mm' }}
+            <span>
+              {{ event.startDate | date: 'MMM d, y HH:mm' }}
               @if (
                 event.endDate &&
                 (event.endDate | date: 'yyyy-MM-dd') !== (event.startDate | date: 'yyyy-MM-dd')
-              ) {
+                ) {
                 - {{ event.endDate | date: 'MMM d, y HH:mm' }}
               } @else if (event.endDate) {
                 - {{ event.endDate | date: 'HH:mm' }}
@@ -25,6 +25,8 @@
       </header>
 
       <div class="event-layout">
+
+        <!-- Left Column: Event Overview and About -->
         <div class="event-content">
           <section class="event-card event-overview">
             @if (posterUrl(); as poster) {
@@ -72,15 +74,33 @@
           }
         </div>
 
-        @if (event.registrationEndDate; as registrationEndDate) {
-          <aside class="registration-card">
-            <p class="section-kicker">{{ 'eventDetails.registrationEndDate' | transloco }}</p>
-            <p class="registration-date">
-              <span class="material-symbols-outlined" aria-hidden="true">event_available</span>
-              {{ registrationEndDate | date: 'medium' }}
-            </p>
-          </aside>
-        }
+        <!-- Right Column: Registration and Check-in Codes -->
+        <div class="flex flex-col gap-4 w-full">
+
+          @if (event.registrationEndDate; as registrationEndDate) {
+            <aside class="registration-card">
+              <p class="section-kicker">{{ 'eventDetails.registrationEndDate' | transloco }}</p>
+              <p class="registration-date">
+                <span class="material-symbols-outlined" aria-hidden="true">event_available</span>
+                {{ registrationEndDate | date: 'medium' }}
+              </p>
+            </aside>
+          }
+
+          <!-- Check-in Codes Component -->
+          @if (eventDetails(); as details) {
+           <app-checkincodes-component
+             [eventId]="event.id"
+             [eventStatus]="event.status"
+             [initialQrCodeContent]="details.qrCodeContent"
+             [initialEventCode]="details.eventCode">
+
+           </app-checkincodes-component>
+
+          }
+
+        </div>
+
       </div>
     </div>
   </main>

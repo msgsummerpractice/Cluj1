@@ -3,6 +3,7 @@ package com.cluj1.eventapp.controller;
 import java.util.List;
 import java.util.UUID;
 
+import com.cluj1.eventapp.dto.CheckInCodesDto;
 import com.cluj1.eventapp.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ import com.cluj1.eventapp.service.EventDetailsService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -97,4 +99,10 @@ public class EventController {
 		return ResponseEntity.ok(eventService.updateEvent(id, eventDto, poster));
 	}
 
+
+	@PostMapping("/{id}/checkin-codes")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
+	public ResponseEntity<CheckInCodesDto> generateCheckInCodes(@PathVariable UUID id) {
+		return ResponseEntity.ok(eventService.generateCheckInCodes(id));
+	}
 }
