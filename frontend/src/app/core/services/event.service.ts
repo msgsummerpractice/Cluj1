@@ -64,4 +64,9 @@ export class EventService {
     const url = `${this.apiUrl}/${eventId}/checkin-codes`;
     return this.http.post<CheckInCodes>(url, {});
   }
+  checkIn(request: CheckInRequest): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/checkin`, request, {
+      withCredentials: true,
+    });
+  }
 }
