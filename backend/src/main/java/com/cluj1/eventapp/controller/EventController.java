@@ -100,9 +100,4 @@ public class EventController {
 		return ResponseEntity.ok(eventService.updateEvent(id, eventDto, poster));
 	}
 
-	@GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
-    public ResponseEntity<EventDto> getEventById(@PathVariable UUID id) {
-        return ResponseEntity.ok(eventService.getEventById(id));
-    }
 }
