@@ -161,6 +161,27 @@ public class EventService {
         }
     }
 
+    /**
+     * Returns all events the currently authenticated participant is eligible to
+     * register for.
+     * <p>
+     * An event is eligible when:
+     * <ul>
+     * <li>its status is {@code PUBLISHED}</li>
+     * <li>its {@code registrationEndDate} has not yet passed</li>
+     * <li>its location is {@code ALL}, or matches the participant's own
+     * location</li>
+     * </ul>
+     * Users whose location is {@code REMOTE} or who have no profile details on
+     * record
+     * are shown only {@code ALL}-location events.
+     * <p>
+     * Each returned {@link EventDto} is enriched with {@code isRegistered} and
+     * {@code isCheckedIn} flags reflecting the caller's current participation
+     * state.
+     *
+     * @return list of eligible events, never {@code null}
+     */
     public List<EventDto> getEligibleEventsForCurrentUser() {
         String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(currentUserEmail)

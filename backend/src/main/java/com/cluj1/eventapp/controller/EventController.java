@@ -98,6 +98,18 @@ public class EventController {
 		return ResponseEntity.ok(eventService.updateEvent(id, eventDto, poster));
 	}
 
+	/**
+	 * Returns the list of events the authenticated participant is eligible to
+	 * register for.
+	 * Eligibility is determined by the service based on event status, registration
+	 * deadline,
+	 * and location matching. Each event in the response includes
+	 * {@code isRegistered} and
+	 * {@code isCheckedIn} flags reflecting the caller's current participation
+	 * state.
+	 *
+	 * @return 200 OK with the eligible event list
+	 */
 	@GetMapping("/eligible")
 	@PreAuthorize("hasAuthority('PARTICIPANT')")
 	public ResponseEntity<List<EventDto>> getEligibleEvents() {
