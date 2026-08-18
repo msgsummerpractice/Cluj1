@@ -163,7 +163,7 @@ public class EventService {
         return eventMapper.toDto(event);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public CheckInCodesDto generateCheckInCodes(UUID eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(()-> new IllegalArgumentException("Event not found"));
         EventDetails eventDetails = eventDetailsReposity.findByEvent(event);
@@ -184,8 +184,6 @@ public class EventService {
         eventDetailsReposity.save(eventDetails);
 
         return new CheckInCodesDto(qrCodeConent,eventCode);
-
-
 
     }
     private String generateUniqueEventCode() {

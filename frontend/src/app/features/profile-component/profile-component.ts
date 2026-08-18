@@ -33,7 +33,6 @@ import { TitleCasePipe, UpperCasePipe } from '@angular/common';
     MatButtonModule,
     MatIconModule,
     TranslocoPipe,
-    TitleCasePipe,
     UpperCasePipe,
   ],
   templateUrl: './profile-component.html',
@@ -51,6 +50,8 @@ export class ProfileComponent implements OnInit {
     { value: 'MURES', label: 'Târgu Mureș' },
     { value: 'REMOTE', label: 'Remote' },
   ] as const;
+
+  private readonly maxSize = 5 * 1024 * 1024;
 
   profile = signal<UserProfile | null>(null);
   saving = signal(false);
@@ -114,8 +115,7 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    const maxSize = 5 * 1024 * 1024;
-    if (file.size > maxSize) {
+    if (file.size > this.maxSize) {
       this.toastService.show('error', 'Maximum size is 5MB');
       this.clearSelectedFile();
       input.value = '';

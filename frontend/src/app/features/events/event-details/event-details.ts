@@ -27,7 +27,6 @@ export class EventDetailsComponent implements OnDestroy {
   private cdr = inject(ChangeDetectorRef);
 
   ngOnInit() {
-    this.cdr.detectChanges();
     const eventId = this.route.snapshot.paramMap.get('id');
     if (!eventId) {
       return;
