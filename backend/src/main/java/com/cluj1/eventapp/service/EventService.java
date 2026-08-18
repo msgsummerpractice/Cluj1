@@ -45,6 +45,14 @@ public class EventService {
                 .map(eventMapper::toDto)
                 .toList();
     }
+
+    @Transactional(readOnly = true)
+    public EventDto getEventById(UUID id) {
+        return eventRepository.findById(id)
+                .map(eventMapper::toDto)
+                .orElseThrow(() -> new RuntimeException("Event not found for id: " + id));
+    }
+
     @Transactional
     public EventDto createEvent(EventDto eventDto, MultipartFile poster) {
         validatePoster(poster);
@@ -120,7 +128,7 @@ public class EventService {
     }
 
     private Boolean determineFoodProvided(EventDto dto) {
-        return dto.getType() == EventType.EXTERNAL ? null : dto.getFoodProvided();
+        return dto.getType() != EventType.EXTERNAL && Boolean.TRUE.equals(dto.getFoodProvided());
     }
 
     private void validatePoster(MultipartFile poster) {

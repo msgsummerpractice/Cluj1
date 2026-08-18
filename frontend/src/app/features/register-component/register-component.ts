@@ -23,6 +23,7 @@ import {
   MatCardTitle,
 } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
+import { ToastService } from '../../core/services/toast.service';
 @Component({
   selector: 'app-register-component',
   imports: [
@@ -48,6 +49,7 @@ export class RegisterComponent {
   private readonly userService: UserService = inject(UserService);
   private readonly router: Router = inject(Router);
   private readonly cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private readonly toastService: ToastService = inject(ToastService);
 
   readonly locations = [
     { value: 'CLUJ', labelKey: 'register.locations.cluj' },
@@ -56,8 +58,6 @@ export class RegisterComponent {
     { value: 'REMOTE', labelKey: 'register.locations.remote' },
   ] as const;
 
-  successMessage: string = '';
-  errorMessage: string = '';
   hidePassword = true;
   hideConfirmPassword = true;
 
@@ -102,7 +102,7 @@ export class RegisterComponent {
         .registerUser({ firstName, lastName, userLocation, email, password, confirmPassword })
         .subscribe({
           next: () => {
-            this.successMessage = 'User registered successfully!';
+            this.toastService.show('success', 'User registered successfully!');
             this.cdr.detectChanges();
             this.registerForm.reset();
             this.router.navigate(['/login']);
@@ -113,7 +113,7 @@ export class RegisterComponent {
               err.error?.error ||
               err.message ||
               'An error occurred during registration.';
-            this.errorMessage = errorMessage;
+            this.toastService.show('error', errorMessage);
             this.cdr.detectChanges();
           },
         });

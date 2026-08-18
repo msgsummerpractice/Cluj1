@@ -8,6 +8,8 @@
     [pageSizeOptions]="[5, 10, 25, 100]"
     (sortChange)="handleSortChange($event)"
   >
+    <app-back-button dataTableTitlePrefix />
+
     <button
       dataTableActions
       mat-button

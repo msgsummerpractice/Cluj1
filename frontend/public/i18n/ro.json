@@ -190,6 +190,17 @@
       "passwordMismatch": "Parolele nu coincid."
     }
   },
+  "eventDetails": {
+    "description": "Despre acest eveniment",
+    "status": "Stare",
+    "type": "Tip",
+    "location": "Locație",
+    "startDate": "Data de început",
+    "endDate": "Data de sfârșit",
+    "registrationEndDate": "Data limită pentru înregistrare",
+    "foodProvided": "Mâncare oferită",
+    "eventCode": "Cod eveniment"
+  },
   "forgotPassword": {
     "title": "Ai uitat parola",
     "description": "Introdu adresa ta de email de la companie și îți vom trimite un link pentru a-ți reseta parola.",

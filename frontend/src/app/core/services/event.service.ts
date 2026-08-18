@@ -3,6 +3,7 @@ import { HttpParams } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Event } from '../models/event.model';
+import { EventDetails } from '../models/event-detail.models';
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +24,15 @@ export class EventService {
     return this.http.get<Event>(`${this.apiUrl}/${id}`);
   }
 
+  getEventDetails(eventId: string): Observable<EventDetails> {
+    const url = `${this.apiUrl}/${eventId}/details`;
+    return this.http.get<EventDetails>(url);
+  }
+
+  getEventPoster(eventId: string): Observable<Blob> {
+    const url = `${this.apiUrl}/${eventId}/poster`;
+    return this.http.get(url, { responseType: 'blob' });
+  }
   getUpcomingRegisteredEventsCountPerUser(): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/countRegistrationPerUser`);
   }
