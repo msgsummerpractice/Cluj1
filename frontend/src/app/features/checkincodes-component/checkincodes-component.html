@@ -2,14 +2,21 @@
   <div class="mt-4 bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
 
     <div>
+      @if(hasCodes()){
+        <button (click) = "downloadQrAndEventCode()" class="flex items-center justify-center gap-2 w-full py-3 px-4 bg-slate-800 text-white rounded-md font-semibold text-[0.95rem] transition-colors duration-200 hover:bg-slate-900">
+          <span class="material-symbols-outlined text-xl" aria-hidden="true">download</span>
+          Download PDF
+        </button>
+      } @else {
+
       <button
         (click)="generateCodes()"
-        [disabled]="hasCodes()"
         class="flex items-center justify-center gap-2 w-full py-3 px-4 bg-[#8b0032] text-white rounded-md font-semibold text-[0.95rem] transition-colors duration-200 hover:bg-[#6a0026] disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed"
       >
         <span class="material-symbols-outlined text-xl" aria-hidden="true">qr_code_2</span>
-        {{ hasCodes() ? 'Codes Generated' : ('Generate Check-in Codes') }}
+        Generate Check-in Codes
       </button>
+      }
     </div>
     <div
       class="overflow-hidden transition-all duration-400 ease-out"

@@ -2,6 +2,9 @@ import { Input, Component, inject, input, computed, signal, effect, untracked } 
 import { EventService } from '../../core/services/event.service';
 import { ToastService } from '../../core/services/toast.service';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { jsPDF } from 'jspdf';
+
+
 
 
 @Component({
@@ -41,4 +44,30 @@ export class CheckincodesComponent {
       },
     });
   }
+
+  downloadQrAndEventCode(): void{
+     const qrCode = this.qrCodeContent();
+     const eventCode = this.eventCode();
+
+    if(!qrCode || !eventCode){
+      this.toast.show('error', 'No codes to download');
+      return;
+    }
+
+    const pdf = new jsPDF();
+    const width = 100;
+    const height = 100;
+    const xPos = (pdf.internal.pageSize.getWidth() - width) / 2;
+
+    if(eventCode) {
+      pdf.setFontSize(18);
+      pdf.text(`Event Code: ${eventCode}`, pdf.internal.pageSize.getWidth() / 2, 40, { align: 'center' });
+    }
+    pdf.addImage(qrCode, 'PNG', xPos, 40, width, height);
+    pdf.save(`Event-${this.eventId()}-CheckIn.pdf`);
+
+  }
+
+
+
 }
