@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslocoModule } from '@jsverse/transloco';
 import { DataTableComponent } from '../../../shared/components/data-table/data-table';
 import { DataTableCellDefDirective } from '../../../shared/components/data-table/data-table-cell-def.directive';
@@ -27,6 +28,7 @@ import { EventSortField, displayEventEndDate, sortEvents } from './event-list.ut
     MatCheckboxModule,
     MatInputModule,
     MatFormFieldModule,
+    MatTooltipModule,
     TranslocoModule,
     DataTableComponent,
     DataTableCellDefDirective,
@@ -58,14 +60,12 @@ export class EventListComponent implements OnInit {
       { key: 'type', label: 'events.eventTypeColumn', sortKey: 'type', cellClass: 'text-gray-600' },
     ];
 
-    if (this.viewMode() === 'PARTICIPANT') {
-      baseCols.push({
-        key: 'participantStatus',
-        label: 'events.participantStatusColumn',
-        headerClass: 'text-center',
-        cellClass: 'text-center',
-      });
-    }
+    baseCols.push({
+      key: 'participantStatus',
+      label: 'events.participantStatusColumn',
+      headerClass: 'text-center',
+      cellClass: 'text-center',
+    });
     baseCols.push({
       key: 'actions',
       label: 'events.eventActionsColumn',
@@ -297,6 +297,10 @@ export class EventListComponent implements OnInit {
 
   isMarketingOrganizer(): boolean {
     return this.authService.isMarketingOrganizer();
+  }
+
+  checkIn(eventId: string): void {
+    this.router.navigate(['/events', eventId, 'checkin']);
   }
 
   editEvent(eventId: string): void {

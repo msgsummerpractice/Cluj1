@@ -224,6 +224,33 @@ public class EventService {
         return eventMapper.toDto(event);
     }
 
+    /**
+     * Returns the check-in codes (QR content and event code) for the given event.
+     * Only available for {@code PUBLISHED} events that have had their codes
+     * generated.
+     *
+     * @param eventId the event identifier
+     * @return {@link CheckInCodesDto} containing the QR code and 6-character event
+     *         code
+     * @throws InvalidEventOperationException if the event is not published or codes
+     *                                        have not been generated
+     */
+    public CheckInCodesDto getCheckInDetails(UUID eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new InvalidEventOperationException("Event not found"));
+
+        if (event.getStatus() != EventStatus.PUBLISHED) {
+            throw new InvalidEventOperationException("checkin.error.event.notpublished");
+        }
+
+        EventDetails details = event.getEventDetails();
+        if (details == null || details.getEventCode() == null || details.getQrCodeContent() == null) {
+            throw new InvalidEventOperationException("checkin.error.codes.notgenerated");
+        }
+
+        return new CheckInCodesDto(details.getQrCodeContent(), details.getEventCode());
+    }
+
     @Transactional
     public CheckInCodesDto generateCheckInCodes(UUID eventId) {
         Event event = eventRepository.findById(eventId)

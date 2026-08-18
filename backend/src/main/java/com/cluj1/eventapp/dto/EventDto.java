@@ -29,4 +29,5 @@ public class EventDto {
     private EventStatus status;
     private Boolean isRegistered;
     private Boolean isCheckedIn;
+    private Boolean checkInEnabled;
 }

@@ -69,6 +69,10 @@ export class EventService {
     return this.http.post<CheckInCodes>(url, {});
   }
 
+  getEventCheckInDetails(eventId: string): Observable<CheckInCodes> {
+    return this.http.get<CheckInCodes>(`${this.apiUrl}/${eventId}/checkin`);
+  }
+
   checkIn(request: CheckInRequest): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/checkin`, request, {
       withCredentials: true,

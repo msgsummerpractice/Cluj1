@@ -57,6 +57,12 @@ public class EventController {
 		return ResponseEntity.ok(eventDetailsService.getEventDetailsByEventId(id));
 	}
 
+	@GetMapping("/{id}/checkin")
+	@PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	public ResponseEntity<CheckInCodesDto> getEventCheckInDetails(@PathVariable UUID id) {
+		return ResponseEntity.ok(eventService.getCheckInDetails(id));
+	}
+
 	@GetMapping("/{id}/poster")
 	@PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
 	public ResponseEntity<byte[]> getEventPoster(@PathVariable UUID id) {

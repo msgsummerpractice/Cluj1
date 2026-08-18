@@ -11,4 +11,5 @@ export interface Event {
   foodProvided?: boolean | null;
   isRegistered?: boolean;
   isCheckedIn?: boolean;
+  checkInEnabled?: boolean;
 }
