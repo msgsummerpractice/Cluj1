@@ -1,6 +1,8 @@
 package com.cluj1.eventapp.repository;
 
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 import java.util.UUID;
 import java.util.List;
 
@@ -23,4 +25,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
             "AND e.registrationEndDate >= :now " +
             "AND (e.location = 'ALL' OR e.location = :userLocation)")
     List<Event> findEligibleEvents(@Param("now") OffsetDateTime now, @Param("userLocation") EventLocation userLocation);
+
+    @Query("SELECT e FROM Event e WHERE e.id = CAST(:code AS uuid) OR e.name = :code")
+    Optional<Event> findByCodeOrId(@Param("code") String code);
 }

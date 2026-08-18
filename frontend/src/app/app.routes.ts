@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard, guestGuard, roleGuard } from './core/auth/auth.guards';
 import { RegisterComponent } from './features/register-component/register-component';
 import { ProfileComponent } from './features/profile-component/profile-component';
+import { EventCheckInComponent } from './features/events/event-checkin/event-checkin';
 
 export const routes: Routes = [
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
@@ -89,6 +90,12 @@ export const routes: Routes = [
       import('./features/events/event-creation/event-creation').then(
         (m) => m.EventCreationComponent,
       ),
+  },
+  {
+    path: 'checkin',
+    component: EventCheckInComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT'] },
   },
   {
     path: '**',

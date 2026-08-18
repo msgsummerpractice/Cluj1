@@ -1,9 +1,19 @@
 package com.cluj1.eventapp.service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
+import com.cluj1.eventapp.dto.CheckInCodesDto;
+import com.cluj1.eventapp.repository.EventDetailsRepository;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,14 +37,18 @@ import java.time.OffsetDateTime;
 
 @Service
 @RequiredArgsConstructor
+
+@Transactional(readOnly = true)
 public class EventService {
 
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final EventDetailsRepository eventDetailsReposity;
     private final EventMapper eventMapper;
     private final RegistrationRepository registrationRepository;
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
+    private final Random random = new Random();
 
     public int getUpcomingRegisteredEventsCountPerUserByEmail(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -183,5 +197,61 @@ public class EventService {
                 .orElseThrow(() -> new IllegalArgumentException("Event not found with id: " + id));
 
         return eventMapper.toDto(event);
+    }
+
+    @Transactional
+    public CheckInCodesDto generateCheckInCodes(UUID eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+        EventDetails eventDetails = eventDetailsReposity.findByEvent(event);
+
+        if (event.getStatus() != EventStatus.PUBLISHED) {
+            throw new IllegalStateException("Cannot generate codes, Event is not published");
+        }
+
+        if (eventDetails.getEventCode() != null && eventDetails.getQrCodeContent() != null) {
+            return new CheckInCodesDto(eventDetails.getQrCodeContent(), eventDetails.getEventCode());
+        }
+
+        String eventCode = generateUniqueEventCode();
+        String qrCodeConent = generateQRCodeBase64(event);
+
+        eventDetails.setEventCode(eventCode);
+        eventDetails.setQrCodeContent(qrCodeConent);
+        eventDetailsReposity.save(eventDetails);
+
+        return new CheckInCodesDto(qrCodeConent, eventCode);
+
+    }
+
+    private String generateUniqueEventCode() {
+        String code;
+        boolean isUnique = false;
+
+        do {
+            code = String.format("%06d", random.nextInt(1000000));
+            isUnique = !eventDetailsReposity.existsByEventCode(code);
+        } while (!isUnique);
+
+        return code;
+    }
+
+    private String generateQRCodeBase64(Event event) {
+        try {
+
+            String contentToEncode = String.format("EventID:%s|Name:%s", event.getId().toString(), event.getName());
+
+            QRCodeWriter qrCodeWriter = new QRCodeWriter();
+            BitMatrix bitMatrix = qrCodeWriter.encode(contentToEncode, BarcodeFormat.QR_CODE, 300, 300);
+
+            ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
+            MatrixToImageWriter.writeToStream(bitMatrix, "PNG", pngOutputStream);
+            byte[] pngData = pngOutputStream.toByteArray();
+
+            return "data:image/png;base64," + Base64.getEncoder().encodeToString(pngData);
+
+        } catch (WriterException | IOException e) {
+            throw new RuntimeException("Failed to generate QR Code image", e);
+        }
     }
 }

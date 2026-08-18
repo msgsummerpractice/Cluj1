@@ -21,6 +21,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
 import { RegistrationService } from '../../core/services/registration.service';
 import { EventService } from '../../core/services/event.service';
 import { ToastService } from '../../core/services/toast.service';
+import { TitleCasePipe, UpperCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-profile-component',
@@ -32,6 +33,7 @@ import { ToastService } from '../../core/services/toast.service';
     MatButtonModule,
     MatIconModule,
     TranslocoPipe,
+    UpperCasePipe,
   ],
   templateUrl: './profile-component.html',
   styleUrls: ['./profile-component.css'],
@@ -48,6 +50,8 @@ export class ProfileComponent implements OnInit {
     { value: 'MURES', label: 'Târgu Mureș' },
     { value: 'REMOTE', label: 'Remote' },
   ] as const;
+
+  private readonly MAX_FILE_SIZE = 5 * 1024 * 1024;
 
   profile = signal<UserProfile | null>(null);
   saving = signal(false);
@@ -94,8 +98,8 @@ export class ProfileComponent implements OnInit {
       },
       error: (err) => {
         this.toastService.show('error', err);
-      }
-    })
+      },
+    });
   }
 
   onFileSelected(event: Event): void {
@@ -104,19 +108,18 @@ export class ProfileComponent implements OnInit {
     if (!file) return;
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-    if(!allowedTypes.includes(file.type)) {
+    if (!allowedTypes.includes(file.type)) {
       this.toastService.show('error', 'Invalid file type');
-      this.clearSelectedFile()
+      this.clearSelectedFile();
       input.value = '';
-      return
+      return;
     }
 
-    const maxSize = 5*1024*1024;
-    if(file.size > maxSize){
+    if (file.size > this.MAX_FILE_SIZE) {
       this.toastService.show('error', 'Maximum size is 5MB');
-      this.clearSelectedFile()
+      this.clearSelectedFile();
       input.value = '';
-      return
+      return;
     }
 
     this.errorMessage.set('');
@@ -149,7 +152,12 @@ export class ProfileComponent implements OnInit {
         },
         error: (err) => {
           this.saving.set(false);
-          this.toastService.show('error', typeof err?.error === 'string' ? err.error :(err?.error?.message || err?.message || 'Failed to update profile.'));
+          this.toastService.show(
+            'error',
+            typeof err?.error === 'string'
+              ? err.error
+              : err?.error?.message || err?.message || 'Failed to update profile.',
+          );
         },
       });
   }
@@ -157,5 +165,10 @@ export class ProfileComponent implements OnInit {
   displayLocation(value: string | null | undefined): string {
     if (!value) return 'Location not set';
     return this.locations.find((l) => l.value === value)?.label ?? value;
+  }
+  formatRole(role: string): string {
+    if (!role) return '';
+    const formatted = role.replace(/_/g, ' ').toLowerCase();
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
   }
 }
