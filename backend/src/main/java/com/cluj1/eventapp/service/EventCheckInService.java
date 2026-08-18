@@ -1,7 +1,6 @@
 package com.cluj1.eventapp.service;
 
 import com.cluj1.eventapp.dto.CheckInRequest;
-import com.cluj1.eventapp.exception.InvalidEventOperationException;
 import com.cluj1.eventapp.model.AttendanceRecord;
 import com.cluj1.eventapp.model.Event;
 import com.cluj1.eventapp.model.Registration;
@@ -42,19 +41,20 @@ public class EventCheckInService {
         Event event = findEventByCode(request.getCode());
 
         if (event.getStatus() == EventStatus.COMPLETED) {
-            throw new InvalidEventOperationException("checkin.error.event.completed");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "checkin.error.event.completed");
         }
 
         if (event.getEventEndTime() != null && OffsetDateTime.now().isAfter(event.getEventEndTime())) {
-            throw new InvalidEventOperationException("checkin.error.event.expired");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "checkin.error.event.expired");
         }
 
         Registration registration = registrationRepository.findByUserIdAndEventId(user.getId(), event.getId())
-                .orElseThrow(() -> new InvalidEventOperationException("checkin.error.user.notregistered"));
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "checkin.error.user.notregistered"));
 
         boolean alreadyCheckedIn = attendanceRecordRepository.existsByRegistrationId(registration.getId());
         if (alreadyCheckedIn) {
-            throw new InvalidEventOperationException("checkin.error.user.alreadycheckedin");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "checkin.error.user.alreadycheckedin");
         }
 
         AttendanceRecord attendanceRecord = AttendanceRecord.builder()
@@ -70,11 +70,11 @@ public class EventCheckInService {
             UUID eventId = UUID.fromString(code);
             return eventRepository.findById(eventId)
                     .orElseThrow(
-                            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "checkin.error.event.notfound"));
+                            () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "checkin.error.event.notfound"));
         } catch (IllegalArgumentException e) {
             return eventDetailsRepository.findEventByEventCode(code)
                     .orElseThrow(
-                            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "checkin.error.event.notfound"));
+                            () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "checkin.error.event.notfound"));
         }
     }
 }

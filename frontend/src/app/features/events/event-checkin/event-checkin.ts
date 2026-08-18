@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { BarcodeFormat } from '@zxing/library';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-event-checkin',
@@ -15,8 +16,9 @@ import { BarcodeFormat } from '@zxing/library';
 })
 export class EventCheckInComponent implements AfterViewInit {
   private readonly eventService = inject(EventService);
-  private translateService = inject(TranslocoService);
-  private platformId = inject(PLATFORM_ID);
+  private readonly translateService = inject(TranslocoService);
+  private readonly toastService = inject(ToastService);
+  private readonly platformId = inject(PLATFORM_ID);
 
   mode: 'SCAN' | 'MANUAL' = 'SCAN';
   manualCode: string = '';
@@ -53,7 +55,6 @@ export class EventCheckInComponent implements AfterViewInit {
       this.showError('checkin.error.code.invalid');
       return;
     }
-
     this.processCheckIn(this.manualCode, 'MANUAL');
   }
 
@@ -81,11 +82,11 @@ export class EventCheckInComponent implements AfterViewInit {
 
   private showSuccess(key: string): void {
     const translatedMessage = this.translateService.translate(key);
-    console.log('Success:', translatedMessage);
+    this.toastService.show('success', translatedMessage);
   }
 
   private showError(key: string): void {
     const translatedMessage = this.translateService.translate(key);
-    console.error('Error:', translatedMessage);
+    this.toastService.show('error', translatedMessage);
   }
 }

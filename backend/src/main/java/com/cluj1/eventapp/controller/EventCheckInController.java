@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/events/checkin")
 @RequiredArgsConstructor
 public class EventCheckInController {
+
     private final EventCheckInService checkInService;
 
     @PostMapping
