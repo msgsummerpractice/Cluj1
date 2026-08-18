@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -265,12 +264,24 @@ class EventServiceTest {
 	}
 
 	@Test
-	void getEligibleEventsPassesNullLocationToRepositoryForRemoteUser() {
+	void getEligibleEventsUsesAllLocationQueryForRemoteUser() {
 		mockUserWithLocation(UserLocation.REMOTE);
-		when(eventRepository.findEligibleEvents(any(), isNull())).thenReturn(List.of());
+		when(eventRepository.findAllLocationEligibleEvents(any())).thenReturn(List.of());
 
 		eventService.getEligibleEventsForCurrentUser();
 
-		verify(eventRepository).findEligibleEvents(any(), isNull());
+		verify(eventRepository).findAllLocationEligibleEvents(any());
+		verify(eventRepository, never()).findEligibleEvents(any(), any());
+	}
+
+	@Test
+	void getEligibleEventsUsesAllLocationQueryWhenUserHasNoDetails() {
+		mockSecurityContext();
+		when(eventRepository.findAllLocationEligibleEvents(any())).thenReturn(List.of());
+
+		eventService.getEligibleEventsForCurrentUser();
+
+		verify(eventRepository).findAllLocationEligibleEvents(any());
+		verify(eventRepository, never()).findEligibleEvents(any(), any());
 	}
 }

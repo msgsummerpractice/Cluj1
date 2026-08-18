@@ -26,6 +26,11 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
             "AND (e.location = com.cluj1.eventapp.model.enums.EventLocation.ALL OR e.location = :userLocation)")
     List<Event> findEligibleEvents(@Param("now") OffsetDateTime now, @Param("userLocation") EventLocation userLocation);
 
+    @Query("SELECT e FROM Event e WHERE e.status = com.cluj1.eventapp.model.enums.EventStatus.PUBLISHED " +
+            "AND e.registrationEndDate >= :now " +
+            "AND e.location = com.cluj1.eventapp.model.enums.EventLocation.ALL")
+    List<Event> findAllLocationEligibleEvents(@Param("now") OffsetDateTime now);
+
     @Query("SELECT e FROM Event e WHERE e.id = CAST(:code AS uuid) OR e.name = :code")
     Optional<Event> findByCodeOrId(@Param("code") String code);
 }

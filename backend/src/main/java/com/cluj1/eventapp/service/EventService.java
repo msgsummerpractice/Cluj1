@@ -22,6 +22,7 @@ import com.cluj1.eventapp.repository.RegistrationRepository;
 import com.cluj1.eventapp.model.Event;
 import com.cluj1.eventapp.model.EventDetails;
 import com.cluj1.eventapp.model.User;
+import com.cluj1.eventapp.model.UserDetails;
 import com.cluj1.eventapp.model.enums.EventLocation;
 import com.cluj1.eventapp.model.enums.EventStatus;
 import com.cluj1.eventapp.model.enums.EventType;
@@ -165,14 +166,19 @@ public class EventService {
         User user = userRepository.findByEmail(currentUserEmail)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        EventLocation userEventLocation;
-        try {
-            userEventLocation = EventLocation.valueOf(user.getUserDetails().getLocation().name());
-        } catch (IllegalArgumentException e) {
-            userEventLocation = null;
+        UserDetails userDetails = user.getUserDetails();
+        EventLocation userEventLocation = null;
+        if (userDetails != null && userDetails.getLocation() != null) {
+            try {
+                userEventLocation = EventLocation.valueOf(userDetails.getLocation().name());
+            } catch (IllegalArgumentException ignored) {
+                // UserLocation.REMOTE has no EventLocation equivalent
+            }
         }
 
-        List<Event> eligibleEvents = eventRepository.findEligibleEvents(OffsetDateTime.now(), userEventLocation);
+        List<Event> eligibleEvents = userEventLocation != null
+                ? eventRepository.findEligibleEvents(OffsetDateTime.now(), userEventLocation)
+                : eventRepository.findAllLocationEligibleEvents(OffsetDateTime.now());
 
         return eligibleEvents.stream().map(event -> {
             EventDto dto = eventMapper.toDto(event);
@@ -180,7 +186,6 @@ public class EventService {
             registrationRepository.findByUserIdAndEventId(user.getId(), event.getId())
                     .ifPresentOrElse(registration -> {
                         dto.setIsRegistered(true);
-                        // Check-in is confirmed if the attendanceRecord exists
                         dto.setIsCheckedIn(registration.getAttendanceRecord() != null);
                     }, () -> {
                         dto.setIsRegistered(false);
