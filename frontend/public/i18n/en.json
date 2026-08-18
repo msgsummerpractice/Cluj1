@@ -110,6 +110,7 @@
     "eventViewButton": "View",
     "eventPublishButton": "Publish",
     "eventEditButton": "Edit",
+    "eventCompleteButton": "Complete",
     "eventCheckInButton": "Check-in",
     "clearFilters": "Clear filters",
     "noData": "No events found",
@@ -124,6 +125,15 @@
       "cancel": "No",
       "success": "Event published successfully.",
       "error": "Failed to publish event. Please try again."
+    },
+    "complete": {
+      "title": "Confirm Complete",
+      "message": "Are you sure you want to complete this event?",
+      "confirm": "Yes",
+      "cancel": "No",
+      "error": "Failed to complete event. Please try again.",
+      "success": "Event completed successfully.",
+      "notEnded": "Cannot complete event. The event has not ended yet."
     }
   },
   "createEvent": {
