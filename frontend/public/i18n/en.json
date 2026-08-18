@@ -272,6 +272,7 @@
     "confirmRegistration": "Confirm Registration",
     "registered": "Registered",
     "agreementNotice": "By registering, you agree to comply with the rules and policies established for this event."
+  },
   "checkin": {
     "title": "Event Check-In",
     "active_event": "Active event",

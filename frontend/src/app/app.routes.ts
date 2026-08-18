@@ -7,7 +7,7 @@ import { RubiksCubeComponent } from './features/rubiks-cube-component/rubiks-cub
 
 export const routes: Routes = [
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
-  {path: 'rubik', component: RubiksCubeComponent},
+  { path: 'rubik', component: RubiksCubeComponent },
   {
     path: 'register',
     component: RegisterComponent,
@@ -101,6 +101,8 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('./features/events/event-details/event-details').then((m) => m.EventDetailsComponent),
+  },
+  {
     path: 'events/:id/checkin',
     component: EventCheckInComponent,
     canActivate: [authGuard, roleGuard],

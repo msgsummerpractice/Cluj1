@@ -21,7 +21,6 @@ import com.cluj1.eventapp.dto.EventRegistrationDto;
 
 import com.cluj1.eventapp.model.enums.EventStatus;
 
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,15 +43,15 @@ import java.security.Principal;
 @RequestMapping("/api/events")
 public class EventController {
 
-  private final EventService eventService;
-	private final EventDetailsService eventDetailsService;
-	private final EventCheckInService eventCheckInService;
+    private final EventService eventService;
+    private final EventDetailsService eventDetailsService;
+    private final EventCheckInService eventCheckInService;
 
-	@GetMapping("/countRegistrationPerUser")
-	public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal) {
-		String email = principal.getName();
-		return ResponseEntity.ok(eventService.getUpcomingRegisteredEventsCountPerUserByEmail(email));
-	}
+    @GetMapping("/countRegistrationPerUser")
+    public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal) {
+        String email = principal.getName();
+        return ResponseEntity.ok(eventService.getUpcomingRegisteredEventsCountPerUserByEmail(email));
+    }
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
@@ -134,88 +133,28 @@ public class EventController {
         String userEmail = principal.getName();
         boolean isRegistered = eventService.isUserRegistered(eventId, userEmail);
     
-    return ResponseEntity.ok(isRegistered);
+        return ResponseEntity.ok(isRegistered);
     }
 
-}
-	@GetMapping
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
-	public ResponseEntity<List<EventDto>> getAllEvents() {
-		return ResponseEntity.ok(eventService.getAllEvents());
-	}
+    @GetMapping("/{id}/checkins/recent")
+    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+    public ResponseEntity<List<AttendanceRecordDto>> getRecentCheckins(
+            @PathVariable UUID id,
+            @RequestParam(defaultValue = "4") int limit) {
+        return ResponseEntity.ok(eventCheckInService.getRecentCheckins(id, limit));
+    }
 
-	@GetMapping("/{id}")
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
-	public ResponseEntity<EventDto> getEventById(@PathVariable UUID id) {
-		return ResponseEntity.ok(eventService.getEventById(id));
-	}
+    @PatchMapping("/{id}/status/{status}")
+    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
+    public ResponseEntity<EventDto> updateEventStatus(
+            @PathVariable UUID id,
+            @PathVariable EventStatus status) {
+        return ResponseEntity.ok(eventService.updateEventStatus(id, status));
+    }
 
-	@GetMapping("/{id}/details")
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
-	public ResponseEntity<EventDetailsDto> getEventDetails(@PathVariable UUID id) {
-		return ResponseEntity.ok(eventDetailsService.getEventDetailsByEventId(id));
-	}
-
-	@GetMapping("/{id}/poster")
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
-	public ResponseEntity<byte[]> getEventPoster(@PathVariable UUID id) {
-		return eventDetailsService.getPosterByEventId(id)
-				.map(poster -> ResponseEntity.ok()
-						.contentType(detectImageType(poster))
-						.body(poster))
-				.orElseGet(() -> ResponseEntity.notFound().build());
-	}
-
-	private static MediaType detectImageType(byte[] poster) {
-		if (poster.length >= 3 && (poster[0] & 0xFF) == 0xFF && (poster[1] & 0xFF) == 0xD8) {
-			return MediaType.IMAGE_JPEG;
-		}
-		if (poster.length >= 4 && (poster[0] & 0xFF) == 0x47 && poster[1] == 'I' && poster[2] == 'F') {
-			return MediaType.IMAGE_GIF;
-		}
-		if (poster.length >= 12 && poster[0] == 'R' && poster[1] == 'I' && poster[2] == 'F' && poster[3] == 'F'
-				&& poster[8] == 'W' && poster[9] == 'E' && poster[10] == 'B' && poster[11] == 'P') {
-			return MediaType.valueOf("image/webp");
-		}
-		return MediaType.IMAGE_PNG;
-	}
-
-	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
-	public ResponseEntity<EventDto> createEvent(
-			@RequestPart("event") EventDto eventDto,
-			@RequestPart(value = "poster", required = false) MultipartFile poster) {
-		return ResponseEntity.status(HttpStatus.CREATED).body(eventService.createEvent(eventDto, poster));
-	}
-
-	@PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
-	public ResponseEntity<EventDto> updateEvent(
-			@PathVariable UUID id,
-			@RequestPart("event") EventDto eventDto,
-			@RequestPart(value = "poster", required = false) MultipartFile poster) {
-		return ResponseEntity.ok(eventService.updateEvent(id, eventDto, poster));
-	}
-
-	@GetMapping("/{id}/checkins/recent")
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
-	public ResponseEntity<List<AttendanceRecordDto>> getRecentCheckins(
-			@PathVariable UUID id,
-			@RequestParam(defaultValue = "4") int limit) {
-		return ResponseEntity.ok(eventCheckInService.getRecentCheckins(id, limit));
-	}
-
-	@PatchMapping("/{id}/status/{status}")
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
-	public ResponseEntity<EventDto> updateEventStatus(
-			@PathVariable UUID id,
-			@PathVariable EventStatus status) {
-		return ResponseEntity.ok(eventService.updateEventStatus(id, status));
-	}
-
-	@PostMapping("/{id}/checkin-codes")
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
-	public ResponseEntity<CheckInCodesDto> generateCheckInCodes(@PathVariable UUID id) {
-		return ResponseEntity.ok(eventService.generateCheckInCodes(id));
-	}
+    @PostMapping("/{id}/checkin-codes")
+    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
+    public ResponseEntity<CheckInCodesDto> generateCheckInCodes(@PathVariable UUID id) {
+        return ResponseEntity.ok(eventService.generateCheckInCodes(id));
+    }
 }

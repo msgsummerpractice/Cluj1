@@ -66,6 +66,10 @@ export class EventService {
   registerForEvent(eventId: string, requestData: EventRegistrationRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/${eventId}`, requestData, {
       responseType: 'text',
+      withCredentials: true,
+    });
+  }
+
   updateEventStatus(id: string, status: 'DRAFT' | 'PUBLISHED' | 'COMPLETED'): Observable<Event> {
     return this.http.patch<Event>(`${this.apiUrl}/${id}/status/${status}`, null, {
       withCredentials: true,
@@ -77,10 +81,12 @@ export class EventService {
       withCredentials: true,
     });
   }
+
   generateCheckInCodes(eventId: string): Observable<CheckInCodes> {
     const url = `${this.apiUrl}/${eventId}/checkin-codes`;
-    return this.http.post<CheckInCodes>(url, {});
+    return this.http.post<CheckInCodes>(url, {}, { withCredentials: true });
   }
+
   checkIn(request: CheckInRequest): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/checkin`, request, {
       withCredentials: true,

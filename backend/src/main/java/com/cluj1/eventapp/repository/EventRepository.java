@@ -21,7 +21,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     @Query("SELECT COUNT(r) > 0 FROM Registration r WHERE r.event.id = :eventId AND r.user.id = :userId")
     boolean existsByEventIdAndUserId(@Param("eventId") UUID eventId, @Param("userId") UUID userId);
 
-}
     @Query("SELECT e FROM Event e WHERE e.id = CAST(:code AS uuid) OR e.name = :code")
     Optional<Event> findByCodeOrId(@Param("code") String code);
+
 }

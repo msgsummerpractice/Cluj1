@@ -344,6 +344,8 @@ export class EventListComponent implements OnInit {
     }
 
     return Date.now() > new Date(event.registrationEndDate).getTime();
+  }
+
   navigateToCheckIn(eventId: string): void {
     this.router.navigate(['/events', eventId, 'checkin']);
   }

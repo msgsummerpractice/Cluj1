@@ -243,13 +243,13 @@
     "consentsSubtitle": "Te rugăm să confirmi termenii de mai jos.",
     "gdprLabel": "Sunt de acord cu termenii GDPR",
     "gdprError": "Consimțământul GDPR este obligatoriu pentru acest eveniment.",
-    "photoLabel": "Sunt de acord cunotificarea privind fotografierea",
+    "photoLabel": "Sunt de acord cu notificarea privind fotografierea",
     "photoError": "Consimțământul foto este obligatoriu.",
     "cateringTitle": "Preferințe Catering",
     "cateringSubtitle": "Selectează preferința ta alimentară pentru eveniment.",
     "foodPreferenceLabel": "Preferință Mâncare",
     "foodNone": "Niciuna",
-    "foodVegetarian": " Vegetarian",
+    "foodVegetarian": "Vegetarian",
     "foodVegan": "Vegan",
     "internalTitle": "Opțiuni Eveniment Intern",
     "internalSubtitle": "Detalii despre transport și cazare.",
@@ -273,6 +273,7 @@
     "confirmRegistration": "Confirmă Înregistrarea",
     "registered": "Înregistrat",
     "agreementNotice": "Prin înregistrare, ești de acord să respecți regulile și politicile stabilite pentru acest eveniment."
+  },
   "checkin": {
     "title": "Check-In Eveniment",
     "active_event": "Eveniment activ",
