@@ -21,4 +21,6 @@ public interface EventDetailsRepository extends JpaRepository<EventDetails, UUID
     @Query("select d.poster from EventDetails d where d.event.id = :eventId")
     Optional<byte[]> findPosterByEventId(@Param("eventId") UUID eventId);
     EventDetails findByEvent(Event event);
+
+    boolean existsByEventCode(String code);
 }

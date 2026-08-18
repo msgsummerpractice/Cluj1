@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Event } from '../models/event.model';
 import { EventDetails } from '../models/event-detail.models';
+import {CheckInCodes} from '../models/checkincodes.model';
 
 @Injectable({
   providedIn: 'root',
@@ -58,5 +59,10 @@ export class EventService {
     return this.http.put<Event>(`${this.apiUrl}/${id}`, formData, {
       withCredentials: true,
     });
+  }
+
+  generateCheckInCodes(eventId: string): Observable<CheckInCodes>{
+    const url = `${this.apiUrl}/${eventId}/checkin-codes`;
+    return this.http.post<CheckInCodes>(url, {});
   }
 }
