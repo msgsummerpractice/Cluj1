@@ -1,4 +1,5 @@
 export interface CheckInRequest {
-  code: string;
+  eventId?: string;
+  eventCode?: string;
   method: 'QR' | 'MANUAL';
 }

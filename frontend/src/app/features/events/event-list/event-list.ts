@@ -377,4 +377,8 @@ export class EventListComponent implements OnInit {
     const eventEndDate = new Date(event.endDate);
     return currentDate > eventEndDate;
   }
+
+  navigateToCheckIn(eventId: string): void {
+    this.router.navigate(['/events', eventId, 'checkin']);
+  }
 }

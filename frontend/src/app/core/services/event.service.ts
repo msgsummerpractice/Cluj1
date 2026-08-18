@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Event } from '../models/event.model';
 import { CheckInRequest } from '../models/check-in-request.model';
 import { EventDetails } from '../models/event-detail.models';
+import { AttendanceRecord } from '../models/attendance-record.model';
 import { CheckInCodes } from '../models/checkincodes.model';
 
 @Injectable({
@@ -34,6 +35,7 @@ export class EventService {
     const url = `${this.apiUrl}/${eventId}/poster`;
     return this.http.get(url, { responseType: 'blob' });
   }
+
   getUpcomingRegisteredEventsCountPerUser(): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/countRegistrationPerUser`);
   }
@@ -73,6 +75,13 @@ export class EventService {
   checkIn(request: CheckInRequest): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/checkin`, request, {
       withCredentials: true,
+    });
+  }
+
+  getRecentCheckins(eventId: string, limit: number = 4): Observable<AttendanceRecord[]> {
+    const params = new HttpParams().set('limit', limit.toString());
+    return this.http.get<AttendanceRecord[]>(`${this.apiUrl}/${eventId}/checkins/recent`, {
+      params,
     });
   }
 }
