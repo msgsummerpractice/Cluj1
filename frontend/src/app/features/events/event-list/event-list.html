@@ -93,23 +93,41 @@
     </ng-template>
 
     <ng-template appDataTableCellDef="actions" let-event>
-      <button
-        mat-stroked-button
-        (click)="manageEvent(event.id)"
-        class="event-view-button transition-colors whitespace-nowrap"
-      >
-        {{ 'events.eventViewButton' | transloco }}
-      </button>
-
-      @if (isMarketingOrganizer() && event.status == 'DRAFT') {
+      <div class="flex gap-2">
         <button
           mat-stroked-button
-          (click)="editEvent(event.id)"
-          class="event-edit-button transition-colors whitespace-nowrap"
+          (click)="manageEvent(event.id)"
+          class="event-view-button transition-colors whitespace-nowrap"
         >
-          {{ 'events.eventEditButton' | transloco }}
+          {{ 'events.eventViewButton' | transloco }}
         </button>
-      }
+
+        @if (isMarketingOrganizer() && event.status == 'DRAFT') {
+          <button
+            mat-stroked-button
+            (click)="editEvent(event.id)"
+            class="event-edit-button transition-colors whitespace-nowrap"
+          >
+            {{ 'events.eventEditButton' | transloco }}
+          </button>
+        }
+        @if (
+          authService.currentUser()?.role === 'MARKETING_ORGANIZER' && event.status === 'DRAFT'
+        ) {
+          <button
+            mat-stroked-button
+            (click)="openDialog(event)"
+            [disabled]="isPublishing(event.id)"
+            class="event-view-button transition-colors whitespace-nowrap"
+          >
+            @if (isPublishing(event.id)) {
+              <mat-spinner diameter="18" strokeWidth="2"></mat-spinner>
+            } @else {
+              {{ 'events.eventPublishButton' | transloco }}
+            }
+          </button>
+        }
+      </div>
     </ng-template>
   </app-data-table>
 </div>

@@ -13,10 +13,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.cluj1.eventapp.dto.EventDetailsDto;
 import com.cluj1.eventapp.dto.EventDto;
+import com.cluj1.eventapp.model.enums.EventStatus;
+
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,7 +29,6 @@ import com.cluj1.eventapp.service.EventDetailsService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
-
 
 @RestController
 @RequiredArgsConstructor
@@ -99,6 +103,13 @@ public class EventController {
 		return ResponseEntity.ok(eventService.updateEvent(id, eventDto, poster));
 	}
 
+	@PatchMapping("/{id}/status/{status}")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
+	public ResponseEntity<EventDto> updateEventStatus(
+			@PathVariable UUID id,
+			@PathVariable EventStatus status) {
+		return ResponseEntity.ok(eventService.updateEventStatus(id, status));
+	}
 
 	@PostMapping("/{id}/checkin-codes")
 	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")

@@ -1,0 +1,11 @@
+::ng-deep .cancel-button {
+  border-color: var(--light-gray) !important;
+  background-color: transparent !important;
+  color: var(--dark-gray) !important;
+}
+
+::ng-deep .confirm-button {
+  border-color: var(--brand-maroon) !important;
+  background-color: var(--brand-maroon) !important;
+  color: white !important;
+}
