@@ -177,14 +177,12 @@ export class EventListComponent implements OnInit {
     return 'status-completed';
   }
 
-  fetchEvents(onSettled?: () => void): void {
+  fetchEvents(): void {
     this.eventService.getEvents().subscribe({
       next: (data) => {
         this.events.set(data);
-        onSettled?.();
       },
       error: (err) => {
-        onSettled?.();
         this.toastService.show(
           'error',
           typeof err?.error === 'string'
@@ -234,7 +232,8 @@ export class EventListComponent implements OnInit {
 
     this.eventService.updateEventStatus(event.id, 'PUBLISHED').subscribe({
       next: () => {
-        this.fetchEvents(() => this.clearPublishing(event.id));
+        this.fetchEvents();
+        this.clearPublishing(event.id);
         this.toastService.show(
           'success',
           this.translocoService.translate('events.publish.success'),
