@@ -28,11 +28,7 @@
           {{ 'events.eventNameColumn' | transloco }}
         </mat-label>
 
-        <input
-          matInput
-          [value]="nameFilter()"
-          (input)="setNameFilter($any($event.target).value)"
-        />
+        <input matInput [value]="nameFilter()" (input)="setNameFilter($any($event.target).value)" />
       </mat-form-field>
     </ng-template>
 
@@ -90,9 +86,7 @@
       {{ event.startDate | date: 'mediumDate' }}
 
       @if (displayEventEndDate(event)) {
-        <span>
-          - {{ event.endDate | date: 'mediumDate' }}
-        </span>
+        <span> - {{ event.endDate | date: 'mediumDate' }} </span>
       }
     </ng-template>
 
@@ -116,19 +110,22 @@
           mat-stroked-button
           class="event-view-button transition-colors whitespace-nowrap"
           (click)="manageEvent(event.id)"
+          [matTooltip]="'events.eventViewButton' | transloco"
+          matTooltipPosition="below"
         >
-          {{ 'events.eventViewButton' | transloco }}
+          <mat-icon>visibility</mat-icon>
         </button>
 
         <!-- Register for published event -->
         @if (event.status === 'PUBLISHED') {
           <button
             mat-stroked-button
-            class="event-register-button transition-colors whitespace-nowrap"
-            [disabled]="isRegistrationClosed(event)"
             (click)="openRegistrationModal(event)"
+            class="event-view-button transition-colors whitespace-nowrap"
+            [matTooltip]="'events.eventRegisterButton' | transloco"
+            matTooltipPosition="below"
           >
-            Register
+            {{ 'events.eventRegisterButton' | transloco }}
           </button>
 
           <!-- Check-in for published event -->
@@ -137,6 +134,8 @@
               mat-stroked-button
               class="event-checkin-button transition-colors whitespace-nowrap"
               (click)="navigateToCheckIn(event.id)"
+              [matTooltip]="'events.eventCheckInButton' | transloco"
+              matTooltipPosition="below"
             >
               {{ 'events.eventCheckInButton' | transloco }}
             </button>
@@ -147,26 +146,40 @@
         @if (isMarketingOrganizer() && event.status === 'DRAFT') {
           <button
             mat-stroked-button
-            class="event-edit-button transition-colors whitespace-nowrap"
             (click)="editEvent(event.id)"
+            class="event-view-button transition-colors whitespace-nowrap"
+            [matTooltip]="'events.eventEditButton' | transloco"
+            matTooltipPosition="below"
           >
-            {{ 'events.eventEditButton' | transloco }}
+            <mat-icon>edit</mat-icon>
           </button>
-
+        }
+        @if (isMarketingOrganizer() && event.status === 'DRAFT') {
           <button
             mat-stroked-button
             class="event-view-button transition-colors whitespace-nowrap"
             [disabled]="isPublishing(event.id)"
             (click)="openDialog(event)"
+            [matTooltip]="'events.eventPublishButton' | transloco"
+            matTooltipPosition="below"
           >
             @if (isPublishing(event.id)) {
-              <mat-spinner
-                diameter="18"
-                strokeWidth="2"
-              ></mat-spinner>
+              <mat-spinner diameter="18" strokeWidth="2"></mat-spinner>
             } @else {
-              {{ 'events.eventPublishButton' | transloco }}
+              <mat-icon> publish</mat-icon>
             }
+          </button>
+        }
+        @if (isMarketingOrganizer() && event.status == 'PUBLISHED') {
+          <button
+            mat-stroked-button
+            (click)="completeEvent(event)"
+            [disabled]="!eventHasEnded(event)"
+            class="event-view-button transition-colors whitespace-nowrap"
+            [matTooltip]="'events.eventCompleteButton' | transloco"
+            matTooltipPosition="below"
+          >
+            <mat-icon>done</mat-icon>
           </button>
         }
       </div>

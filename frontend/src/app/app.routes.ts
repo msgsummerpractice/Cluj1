@@ -97,16 +97,16 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'events/:id',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/events/event-details/event-details').then((m) => m.EventDetailsComponent),
-  },
-  {
     path: 'events/:id/checkin',
     component: EventCheckInComponent,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT'] },
+  },
+  {
+    path: 'events/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/events/event-details/event-details').then((m) => m.EventDetailsComponent),
   },
   {
     path: '**',
