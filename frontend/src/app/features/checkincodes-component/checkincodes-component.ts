@@ -3,13 +3,15 @@ import { EventService } from '../../core/services/event.service';
 import { ToastService } from '../../core/services/toast.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { jsPDF } from 'jspdf';
+import { TranslocoPipe } from '@jsverse/transloco';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 
 
 
 @Component({
   selector: 'app-checkincodes-component',
-  imports: [],
+  imports: [TranslocoPipe, MatProgressSpinner],
   templateUrl: './checkincodes-component.html',
   styleUrl: './checkincodes-component.css',
 })
@@ -20,6 +22,8 @@ export class CheckincodesComponent {
   eventId = input.required<string>();
   eventStatus = input.required<string>();
 
+  isGenerating = signal(false);
+
   initialQrCodeContent = input<string | null>(null);
   initialEventCode = input<string | null>(null);
   qrCodeContent = signal<string | null>(null);
@@ -27,6 +31,9 @@ export class CheckincodesComponent {
 
   protected readonly isPublished = computed(() => this.eventStatus() === 'PUBLISHED');
   protected readonly hasCodes = computed(() => !!this.qrCodeContent() && !!this.eventCode());
+
+  protected readonly PDF_WIDTH = 100;
+  protected readonly PDF_HEIGHT = 100;
 
   ngOnInit() {
     this.qrCodeContent.set(this.initialQrCodeContent() || null);
@@ -45,29 +52,35 @@ export class CheckincodesComponent {
     });
   }
 
-  downloadQrAndEventCode(): void{
-     const qrCode = this.qrCodeContent();
-     const eventCode = this.eventCode();
+  downloadQrAndEventCode(): void {
+    this.isGenerating.set(true);
+    const qrCode = this.qrCodeContent();
+    const eventCode = this.eventCode();
 
-    if(!qrCode || !eventCode){
-      this.toast.show('error', 'No codes to download');
+    if (!qrCode || !eventCode) {
+      this.toast.show('error', 'Error downloading codes. Please generate the codes first.');
       return;
     }
 
     const pdf = new jsPDF();
-    const width = 100;
-    const height = 100;
-    const xPos = (pdf.internal.pageSize.getWidth() - width) / 2;
+    const xPos = (pdf.internal.pageSize.getWidth() - this.PDF_WIDTH) / 2;
 
-    if(eventCode) {
+    if (eventCode) {
       pdf.setFontSize(18);
-      pdf.text(`Event Code: ${eventCode}`, pdf.internal.pageSize.getWidth() / 2, 40, { align: 'center' });
+      pdf.text(`Event Code: ${eventCode}`, pdf.internal.pageSize.getWidth() / 2, 40, {
+        align: 'center',
+      });
     }
-    pdf.addImage(qrCode, 'PNG', xPos, 40, width, height);
-    pdf.save(`Event-${this.eventId()}-CheckIn.pdf`);
-
+    setTimeout(() => {
+      try {
+        pdf.addImage(qrCode, 'PNG', xPos, 40, this.PDF_WIDTH, this.PDF_HEIGHT);
+        pdf.save(`Event-${this.eventId()}-CheckIn.pdf`);
+        this.toast.show('success', 'PDF downloaded successfully');
+      } catch (error) {
+        this.toast.show('error', 'Error generating PDF');
+      } finally {
+        this.isGenerating.set(false);
+      }
+    }, 500);
   }
-
-
-
 }

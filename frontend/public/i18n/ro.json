@@ -210,7 +210,10 @@
     "endDate": "Data de sfârșit",
     "registrationEndDate": "Data limită pentru înregistrare",
     "foodProvided": "Mâncare oferită",
-    "eventCode": "Cod eveniment"
+    "eventCode": "Cod eveniment",
+    "downloadPDF": "Descarcă PDF",
+    "enter6digitCode": "Sau introdu acest cod de 6 cifre: ",
+    "generateCodes" : "Generează coduri de check-in"
   },
   "forgotPassword": {
     "title": "Ai uitat parola",
