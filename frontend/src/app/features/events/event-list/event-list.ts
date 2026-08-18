@@ -1,6 +1,8 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
 import { Event } from '../../../core/models/event.model';
 import { EventService } from '../../../core/services/event.service';
 
@@ -8,9 +10,11 @@ import { Sort, SortDirection } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
+import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { DataTableComponent } from '../../../shared/components/data-table/data-table';
 import { DataTableCellDefDirective } from '../../../shared/components/data-table/data-table-cell-def.directive';
@@ -20,23 +24,26 @@ import { BackButtonComponent } from '../../../shared/components/back-button/back
 import { EventSortField, displayEventEndDate, sortEvents } from './event-list.utils';
 import { AuthService } from '../../../core/services/auth.service';
 
-import { PublishEventDialogComponent } from '../../../shared/components/publish-event-dialog/publish-event-dialog';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog';
+import { ConfirmDialogData } from '../../../shared/components/confirm-dialog/confirm-dialog.model';
 import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-event-list',
   imports: [
+    BackButtonComponent,
     CommonModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatProgressSpinnerModule,
-    TranslocoModule,
     DataTableComponent,
     DataTableCellDefDirective,
     DataTableFilterDefDirective,
-    BackButtonComponent,
+    MatButtonModule,
+    MatCheckboxModule,
+    MatIcon,
+    MatInputModule,
+    MatFormFieldModule,
+    MatProgressSpinnerModule,
+    MatTooltip,
+    TranslocoModule,
   ],
   templateUrl: './event-list.html',
   styleUrl: './event-list.css',
@@ -183,14 +190,7 @@ export class EventListComponent implements OnInit {
         this.events.set(data);
       },
       error: (err) => {
-        this.toastService.show(
-          'error',
-          typeof err?.error === 'string'
-            ? err.error
-            : err?.error?.message ||
-                err?.message ||
-                this.translocoService.translate('events.fetchError'),
-        );
+        this.toastService.show('error', this.translocoService.translate('events.fetchError'));
       },
     });
   }
@@ -241,14 +241,7 @@ export class EventListComponent implements OnInit {
       },
       error: (err) => {
         this.clearPublishing(event.id);
-        this.toastService.show(
-          'error',
-          typeof err?.error === 'string'
-            ? err.error
-            : err?.error?.message ||
-                err?.message ||
-                this.translocoService.translate('events.publish.error'),
-        );
+        this.toastService.show('error', this.translocoService.translate('events.publish.error'));
       },
     });
   }
@@ -258,15 +251,42 @@ export class EventListComponent implements OnInit {
       return;
     }
 
-    const dialogRef = this.dialog.open(PublishEventDialogComponent, {
-      width: '400px',
-    });
+    this.openConfirmDialog({
+      titleKey: 'events.publish.title',
+      messageKey: 'events.publish.message',
+      confirmKey: 'events.publish.confirm',
+      cancelKey: 'events.publish.cancel',
+    })
+      .pipe(
+        filter((confirmed): confirmed is true => Boolean(confirmed)),
+        switchMap(() => {
+          this.publishingEventIds.update((ids) => [...ids, event.id]);
+          return this.eventService.updateEventStatus(event.id, 'PUBLISHED');
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.fetchEvents();
+          this.clearPublishing(event.id);
+          this.toastService.show(
+            'success',
+            this.translocoService.translate('events.publish.success'),
+          );
+        },
+        error: () => {
+          this.clearPublishing(event.id);
+          this.toastService.show('error', this.translocoService.translate('events.publish.error'));
+        },
+      });
+  }
 
-    dialogRef.afterClosed().subscribe((confirmed) => {
-      if (confirmed) {
-        this.publishEvent(event);
-      }
-    });
+  private openConfirmDialog(data: ConfirmDialogData): Observable<boolean | undefined> {
+    return this.dialog
+      .open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
+        width: '400px',
+        data,
+      })
+      .afterClosed();
   }
 
   private clearPublishing(eventId: string): void {
@@ -332,6 +352,42 @@ export class EventListComponent implements OnInit {
 
   editEvent(eventId: string): void {
     this.router.navigate(['/events', eventId, 'edit']);
+  }
+
+  completeEvent(event: Event): void {
+    if (!this.eventHasEnded(event)) {
+      this.toastService.show('error', this.translocoService.translate('events.complete.notEnded'));
+      return;
+    }
+
+    this.openConfirmDialog({
+      titleKey: 'events.complete.title',
+      messageKey: 'events.complete.message',
+      confirmKey: 'events.complete.confirm',
+      cancelKey: 'events.complete.cancel',
+    })
+      .pipe(
+        filter((confirmed): confirmed is true => Boolean(confirmed)),
+        switchMap(() => this.eventService.updateEventStatus(event.id, 'COMPLETED')),
+      )
+      .subscribe({
+        next: () => {
+          this.fetchEvents();
+          this.toastService.show(
+            'success',
+            this.translocoService.translate('events.complete.success'),
+          );
+        },
+        error: () => {
+          this.toastService.show('error', this.translocoService.translate('events.complete.error'));
+        },
+      });
+  }
+
+  eventHasEnded(event: Event): boolean {
+    const currentDate = new Date();
+    const eventEndDate = new Date(event.endDate);
+    return currentDate > eventEndDate;
   }
 
   navigateToCheckIn(eventId: string): void {

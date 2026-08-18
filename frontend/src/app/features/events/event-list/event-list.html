@@ -98,17 +98,28 @@
           mat-stroked-button
           (click)="manageEvent(event.id)"
           class="event-view-button transition-colors whitespace-nowrap"
+          [matTooltip]="'events.eventViewButton' | transloco"
+          matTooltipPosition="below"
         >
-          {{ 'events.eventViewButton' | transloco }}
+          <mat-icon>visibility</mat-icon>
         </button>
 
         @if (event.status == 'PUBLISHED') {
           <button
             mat-stroked-button
             (click)="navigateToCheckIn(event.id)"
-            class="event-checkin-button transition-colors whitespace-nowrap"
+            class="event-view-button transition-colors whitespace-nowrap"
+            [matTooltip]="'events.eventCheckInButton' | transloco"
+            matTooltipPosition="below"
           >
-            {{ 'events.eventCheckInButton' | transloco }}
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+              ></path>
+            </svg>
           </button>
         }
 
@@ -116,25 +127,39 @@
           <button
             mat-stroked-button
             (click)="editEvent(event.id)"
-            class="event-edit-button transition-colors whitespace-nowrap"
+            class="event-view-button transition-colors whitespace-nowrap"
+            [matTooltip]="'events.eventEditButton' | transloco"
+            matTooltipPosition="below"
           >
-            {{ 'events.eventEditButton' | transloco }}
+            <mat-icon>edit</mat-icon>
           </button>
         }
-        @if (
-          authService.currentUser()?.role === 'MARKETING_ORGANIZER' && event.status === 'DRAFT'
-        ) {
+        @if (isMarketingOrganizer() && event.status === 'DRAFT') {
           <button
             mat-stroked-button
             (click)="openDialog(event)"
             [disabled]="isPublishing(event.id)"
             class="event-view-button transition-colors whitespace-nowrap"
+            [matTooltip]="'events.eventPublishButton' | transloco"
+            matTooltipPosition="below"
           >
             @if (isPublishing(event.id)) {
               <mat-spinner diameter="18" strokeWidth="2"></mat-spinner>
             } @else {
-              {{ 'events.eventPublishButton' | transloco }}
+              <mat-icon> publish</mat-icon>
             }
+          </button>
+        }
+        @if (isMarketingOrganizer() && event.status == 'PUBLISHED') {
+          <button
+            mat-stroked-button
+            (click)="completeEvent(event)"
+            [disabled]="!eventHasEnded(event)"
+            class="event-view-button transition-colors whitespace-nowrap"
+            [matTooltip]="'events.eventCompleteButton' | transloco"
+            matTooltipPosition="below"
+          >
+            <mat-icon>done</mat-icon>
           </button>
         }
       </div>
