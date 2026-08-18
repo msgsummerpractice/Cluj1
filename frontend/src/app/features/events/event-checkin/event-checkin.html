@@ -1,5 +1,5 @@
 <div class="max-w-[1400px] mx-auto p-4 md:p-8 w-full bg-gray-50 min-h-screen font-sans">
-  <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+  <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
     <div>
       <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ 'checkin.title' | transloco }}</h1>
       @if (activeEvent(); as event) {
@@ -28,8 +28,10 @@
     </button>
   </div>
 
-  <div class="flex flex-col xl:flex-row gap-6 items-start">
-    <div class="flex-1 w-full bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+    <div
+      class="lg:col-span-2 flex flex-col w-full bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8"
+    >
       <div class="mb-8">
         <h2 class="text-lg font-bold text-gray-900 mb-1">
           {{ 'checkin.scan_attendee_qr' | transloco }}
@@ -51,7 +53,7 @@
           @if (!hasDevices()) {
             <div class="text-center text-gray-500 z-10 p-4">
               <svg
-                class="w-12 h-12 mx-auto text-[var(--dark-red-dot)] mb-4"
+                class="w-12 h-12 mx-auto text-[#a01441] mb-4"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -76,12 +78,7 @@
 
       <div>
         <div class="flex items-center gap-2 mb-4">
-          <svg
-            class="w-5 h-5 text-[var(--dark-red-dot)]"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
+          <svg class="w-5 h-5 text-[#a01441]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -100,12 +97,12 @@
             (ngModelChange)="manualCode.set($event)"
             [placeholder]="'checkin.manual_code_placeholder' | transloco"
             [disabled]="isProcessing()"
-            class="flex-1 border border-gray-300 p-3 rounded-md focus:outline-none focus:border-[var(--dark-red-dot)] focus:ring-1 focus:ring-[var(--dark-red-dot)] text-base tracking-widest uppercase transition-colors"
+            class="flex-1 border border-gray-300 p-3 rounded-md focus:outline-none focus:border-[#a01441] focus:ring-1 focus:ring-[#a01441] text-base tracking-widest transition-colors"
           />
           <button
             (click)="submitManual()"
             [disabled]="isProcessing() || manualCode().length !== 6"
-            class="bg-[var(--dark-red-dot)] hover:bg-[var(--brand-maroon)] text-white font-semibold px-10 py-3 rounded-md disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors"
+            class="bg-[#a01441] hover:bg-[#801034] text-white font-semibold px-10 py-3 rounded-md disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors"
           >
             {{ 'checkin.submit_btn' | transloco }}
           </button>
@@ -113,7 +110,7 @@
       </div>
     </div>
 
-    <div class="w-full xl:w-[380px] flex flex-col gap-6">
+    <div class="lg:col-span-1 w-full flex flex-col gap-6">
       <div
         class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col items-center"
       >
@@ -158,7 +155,7 @@
           </p>
           @if (userTicketCode()) {
             <p class="text-3xl font-mono font-bold tracking-[0.25em] text-gray-700">
-              {{ userTicketCode() }}
+              {{ userTicketCode() | slice: 0 : 3 }} {{ userTicketCode() | slice: 3 : 6 }}
             </p>
           } @else {
             <p class="text-sm text-gray-400 mt-1">
@@ -193,13 +190,13 @@
                     />
                   </svg>
                 </div>
-                <span class="text-sm font-medium text-gray-700"
-                  >{{ attendee.user?.firstName }} {{ attendee.user?.lastName }}</span
-                >
+                <span class="text-sm font-medium text-gray-700">
+                  {{ attendee.user?.firstName }} {{ attendee.user?.lastName }}
+                </span>
               </div>
-              <span class="text-xs text-gray-400 font-medium">{{
-                attendee.checkInTime | date: 'HH:mm'
-              }}</span>
+              <span class="text-xs text-gray-400 font-medium">
+                {{ attendee.checkInTime | date: 'HH:mm' }}
+              </span>
             </li>
           } @empty {
             <li class="text-sm text-gray-500">{{ 'checkin.no_recent_checkins' | transloco }}</li>

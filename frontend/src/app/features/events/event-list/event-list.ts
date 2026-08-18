@@ -36,19 +36,12 @@ import { ConfirmDialogData } from '../../../shared/components/confirm-dialog/con
     DataTableComponent,
     DataTableFilterDefDirective,
     MatButtonModule,
-    MatButtonModule,
     MatCheckboxModule,
-    MatCheckboxModule,
-    MatFormFieldModule,
     MatFormFieldModule,
     MatIcon,
     MatInputModule,
-    MatInputModule,
     MatProgressSpinnerModule,
-    MatProgressSpinnerModule,
-    MatTooltip,
     MatTooltipModule,
-    TranslocoModule,
     TranslocoModule,
   ],
   templateUrl: './event-list.html',
@@ -69,29 +62,24 @@ export class EventListComponent implements OnInit {
   );
 
   readonly columns = computed<DataTableColumn[]>(() => {
-    const baseCols: DataTableColumn[] = [
+    return [
       { key: 'name', label: 'events.eventNameColumn', sortKey: 'name' },
       { key: 'date', label: 'events.eventDateColumn', sortKey: 'startDate' },
       { key: 'status', label: 'events.eventStatusColumn', sortKey: 'status' },
       { key: 'type', label: 'events.eventTypeColumn', sortKey: 'type', cellClass: 'text-gray-600' },
-    ];
-
-    if (this.viewMode() === 'PARTICIPANT') {
-      baseCols.push({
+      {
         key: 'participantStatus',
         label: 'events.participantStatusColumn',
         headerClass: 'text-center',
         cellClass: 'text-center',
-      });
-    }
-    baseCols.push({
-      key: 'actions',
-      label: 'events.eventActionsColumn',
-      headerClass: 'text-center',
-      cellClass: 'text-center',
-    });
-
-    return baseCols;
+      },
+      {
+        key: 'actions',
+        label: 'events.eventActionsColumn',
+        headerClass: 'text-center',
+        cellClass: 'text-center',
+      },
+    ];
   });
 
   readonly events = signal<readonly Event[]>([]);
