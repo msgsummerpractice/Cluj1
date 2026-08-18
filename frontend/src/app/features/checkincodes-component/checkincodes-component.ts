@@ -18,7 +18,7 @@ export class CheckincodesComponent {
   eventStatus = input.required<string>();
 
   initialQrCodeContent = input<string | null>(null);
-  initalEventCode = input<string | null>(null);
+  initialEventCode = input<string | null>(null);
   qrCodeContent = signal<string | null>(null);
   eventCode = signal<string | null>(null);
 
@@ -27,7 +27,7 @@ export class CheckincodesComponent {
 
   ngOnInit() {
     this.qrCodeContent.set(this.initialQrCodeContent() || null);
-    this.eventCode.set(this.initalEventCode() || null);
+    this.eventCode.set(this.initialEventCode() || null);
   }
 
   generateCodes(): void {
