@@ -74,9 +74,12 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
   }
 
   private loadUserTicket(eventId: string): void {
-    this.eventService.getEventDetails(eventId).subscribe({
-      next: (details) => {
-        this.userTicketCode.set(details?.eventCode || null);
+    this.eventService.getEventCheckInDetails(eventId).subscribe({
+      next: (codes) => {
+        this.userTicketCode.set(codes?.eventCode || null);
+      },
+      error: () => {
+        this.userTicketCode.set(null);
       },
     });
   }

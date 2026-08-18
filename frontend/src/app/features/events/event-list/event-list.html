@@ -151,7 +151,12 @@
         </svg>
       </button>
 
-      @if (event.checkInEnabled && !event.isCheckedIn) {
+      @if (
+        viewMode() === 'PARTICIPANT' &&
+        event.checkInEnabled &&
+        event.isRegistered &&
+        !event.isCheckedIn
+      ) {
         <button
           mat-icon-button
           (click)="checkIn(event.id)"
