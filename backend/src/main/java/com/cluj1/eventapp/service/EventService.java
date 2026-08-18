@@ -111,6 +111,7 @@ public class EventService {
                 }
                 event.setStatus(EventStatus.PUBLISHED);
                 justPublished = true;
+                break;
             }
             case PUBLISHED -> {
                 if (status != EventStatus.COMPLETED) {
@@ -118,6 +119,7 @@ public class EventService {
                             "Invalid status transition from " + currentStatus + " to " + status);
                 }
                 event.setStatus(EventStatus.COMPLETED);
+                break;
             }
             default -> throw new InvalidEventOperationException(
                     "Invalid status transition from " + currentStatus + " to " + status);

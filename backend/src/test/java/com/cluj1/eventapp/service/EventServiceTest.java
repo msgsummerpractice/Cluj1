@@ -21,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Sort;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -78,45 +79,31 @@ class EventServiceTest {
 
 	@Test
 	void getAllEventsReturnsMappedEventsInRepositoryOrder() {
-		Event firstEvent = Event.builder()
-				.id(UUID.randomUUID())
-				.name("Opening Ceremony")
-				.build();
-		Event secondEvent = Event.builder()
-				.id(UUID.randomUUID())
-				.name("Closing Ceremony")
-				.build();
-
-		EventDto firstDto = EventDto.builder()
-				.id(firstEvent.getId())
-				.name(firstEvent.getName())
-				.build();
-		EventDto secondDto = EventDto.builder()
-				.id(secondEvent.getId())
-				.name(secondEvent.getName())
-				.build();
-
-		when(eventRepository.findAll()).thenReturn(List.of(firstEvent, secondEvent));
-		when(eventMapper.toDto(firstEvent)).thenReturn(firstDto);
-		when(eventMapper.toDto(secondEvent)).thenReturn(secondDto);
+		Event event1 = Event.builder().id(UUID.randomUUID()).name("Event 1").build();
+		Event event2 = Event.builder().id(UUID.randomUUID()).name("Event 2").build();
+		when(eventRepository.findAll(any(Sort.class))).thenReturn(List.of(event1, event2));
+		when(eventMapper.toDto(event1)).thenReturn(EventDto.builder().id(event1.getId()).name("Event 1").build());
+		when(eventMapper.toDto(event2)).thenReturn(EventDto.builder().id(event2.getId()).name("Event 2").build());
 
 		List<EventDto> result = eventService.getAllEvents();
 
-		assertThat(result).containsExactly(firstDto, secondDto);
-		verify(eventRepository).findAll();
-		verify(eventMapper).toDto(firstEvent);
-		verify(eventMapper).toDto(secondEvent);
+		assertThat(result).hasSize(2);
+		assertThat(result.get(0).getName()).isEqualTo("Event 1");
+		assertThat(result.get(1).getName()).isEqualTo("Event 2");
+		verify(eventRepository).findAll(any(Sort.class));
+		verify(eventMapper).toDto(event1);
+		verify(eventMapper).toDto(event2);
 	}
 
 	@Test
 	void getAllEventsWhenRepositoryIsEmptyReturnsEmptyList() {
-		when(eventRepository.findAll()).thenReturn(List.of());
+		when(eventRepository.findAll(any(Sort.class))).thenReturn(List.of());
 
 		List<EventDto> result = eventService.getAllEvents();
 
 		assertThat(result).isEmpty();
-		verify(eventRepository).findAll();
-		verify(eventMapper, never()).toDto(org.mockito.ArgumentMatchers.any(Event.class));
+		verify(eventRepository).findAll(any(Sort.class));
+		verify(eventMapper, never()).toDto(any());
 	}
 
 	@Test

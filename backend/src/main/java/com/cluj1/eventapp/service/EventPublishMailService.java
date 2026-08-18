@@ -22,6 +22,14 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+/**
+ * Sends bilingual HTML notifications when an event is published.
+ *
+ * <p>
+ * Event posters are embedded inline in the message when their detected MIME
+ * type is PNG or JPEG. Other poster formats are ignored.
+ * </p>
+ */
 public class EventPublishMailService {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMMM yyyy");
@@ -40,11 +48,28 @@ public class EventPublishMailService {
     @Value("${app.event-url:http://localhost:4200/events}")
     private String eventUrl;
 
+    /**
+     * Resolves the recipients for an event location and notifies each recipient.
+     *
+     * @param event the published event to include in the notification
+     */
     public void notifyRecipients(Event event) {
         List<User> recipients = recipientPoolService.resolveRecipients(event.getLocation());
         recipients.forEach(recipient -> sendEventPublishedEmail(recipient.getEmail(), event));
     }
 
+    /**
+     * Builds and sends a bilingual event-published email to one recipient.
+     *
+     * <p>
+     * Missing event details cause an {@link IllegalArgumentException}. Mail
+     * delivery failures are logged and do not propagate to the caller.
+     * </p>
+     *
+     * @param recipientEmail the email address that should receive the message
+     * @param event          the published event to include in the message
+     * @throws IllegalArgumentException if the event has no details
+     */
     public void sendEventPublishedEmail(String recipientEmail, Event event) {
         EventDetails details = event.getEventDetails();
         if (details == null) {
@@ -73,6 +98,16 @@ public class EventPublishMailService {
         }
     }
 
+    /**
+     * Creates the HTML body containing English and Romanian event information.
+     *
+     * @param event     the event whose information is displayed
+     * @param eventLink the URL used by both registration links
+     * @param startDate the already formatted event date
+     * @param poster    the validated poster bytes, or {@code null} when no poster
+     *                  is available
+     * @return the HTML email body
+     */
     private String buildEmail(Event event, String eventLink, String startDate, byte[] poster) {
         StringBuilder htmlBody = new StringBuilder();
         htmlBody.append("<div style=\"font-family: Arial, sans-serif; padding: 20px;\">")
@@ -104,6 +139,13 @@ public class EventPublishMailService {
         return htmlBody.toString();
     }
 
+    /**
+     * Detects whether poster bytes use a MIME type supported for inline display.
+     *
+     * @param poster the poster bytes to inspect
+     * @return {@code image/png} or {@code image/jpeg} when supported; otherwise
+     *         {@code null}
+     */
     private String detectPosterMimeType(byte[] poster) {
         if (poster == null || poster.length == 0) {
             return null;
@@ -112,6 +154,18 @@ public class EventPublishMailService {
         return SUPPORTED_POSTER_TYPES.contains(detected) ? detected : null;
     }
 
+    /**
+     * Sends an HTML email and optionally attaches a poster as an inline resource.
+     *
+     * @param to             the recipient email address
+     * @param subject        the email subject
+     * @param htmlBody       the HTML message body
+     * @param poster         poster bytes to embed, or {@code null} when no poster
+     *                       should be embedded
+     * @param posterMimeType the poster MIME type, or {@code null} when no poster is
+     *                       supplied
+     * @throws MessagingException if the mail message cannot be created or sent
+     */
     public void sendHtmlMessage(String to, String subject, String htmlBody, byte[] poster, String posterMimeType)
             throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
@@ -129,6 +183,12 @@ public class EventPublishMailService {
         mailSender.send(message);
     }
 
+    /**
+     * Escapes user-provided text before inserting it into HTML markup.
+     *
+     * @param value the text to escape
+     * @return escaped text, or an empty string for {@code null}
+     */
     private String escapeHtml(String value) {
         if (value == null) {
             return "";
