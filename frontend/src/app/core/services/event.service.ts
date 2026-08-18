@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpParams } from '@angular/common/http';
-import { HttpClient } from '@angular/common/http';
+import { HttpParams, HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Event } from '../models/event.model';
+import { CheckInRequest } from '../models/check-in-request.model';
 import { EventDetails } from '../models/event-detail.models';
 import {CheckInCodes} from '../models/checkincodes.model';
 
