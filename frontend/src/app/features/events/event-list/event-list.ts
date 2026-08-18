@@ -10,7 +10,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { DataTableComponent } from '../../../shared/components/data-table/data-table';
 import { DataTableCellDefDirective } from '../../../shared/components/data-table/data-table-cell-def.directive';
 import { DataTableFilterDefDirective } from '../../../shared/components/data-table/data-table-filter-def.directive';
@@ -114,6 +114,7 @@ export class EventListComponent implements OnInit {
   private readonly eventService = inject(EventService);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
+  private readonly translocoService = inject(TranslocoService);
   protected readonly authService = inject(AuthService);
 
   private readonly toastService = inject(ToastService);
@@ -184,7 +185,9 @@ export class EventListComponent implements OnInit {
           'error',
           typeof err?.error === 'string'
             ? err.error
-            : err?.error?.message || err?.message || 'Failed to fetch events.',
+            : err?.error?.message ||
+                err?.message ||
+                this.translocoService.translate('events.fetchError'),
         ),
     });
   }
@@ -217,14 +220,19 @@ export class EventListComponent implements OnInit {
     this.eventService.updateEventStatus(event.id, 'PUBLISHED').subscribe({
       next: () => {
         this.fetchEvents();
-        this.toastService.show('success', 'Event published successfully.');
+        this.toastService.show(
+          'success',
+          this.translocoService.translate('events.publish.success'),
+        );
       },
       error: (err) => {
         this.toastService.show(
           'error',
           typeof err?.error === 'string'
             ? err.error
-            : err?.error?.message || err?.message || 'Failed to publish event.',
+            : err?.error?.message ||
+                err?.message ||
+                this.translocoService.translate('events.publish.error'),
         );
       },
     });
