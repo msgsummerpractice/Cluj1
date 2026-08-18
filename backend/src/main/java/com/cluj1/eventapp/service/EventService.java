@@ -142,4 +142,11 @@ public class EventService {
             throw new InvalidEventOperationException("Failed to process poster upload");
         }
     }
+
+    public EventDto getEventById(UUID id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found with id: " + id));
+        
+        return eventMapper.toDto(event); 
+    }
 }

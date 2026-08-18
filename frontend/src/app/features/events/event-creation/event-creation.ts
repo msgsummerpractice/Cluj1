@@ -73,26 +73,23 @@ export class EventCreationComponent implements OnInit {
   }
 
   loadEventData(id: string) {
-    this.eventService.getEvents().subscribe({
-      next: (events) => {
-        const event = events.find((e) => e.id === id);
-        if (event) {
-          const startDate = new Date(event.startDate);
-          const endDate = new Date(event.endDate);
+    this.eventService.getEventById(id).subscribe({
+      next: (event) => {
+        const startDate = new Date(event.startDate);
+        const endDate = new Date(event.endDate);
 
-          this.form.patchValue({
-            name: event.name,
-            description: event.description || '',
-            date: startDate,
-            startTime: startDate,
-            endTime: endDate,
-            type: event.type,
-            location: event.location,
-            foodProvided: event.foodProvided || false,
-          });
+        this.form.patchValue({
+          name: event.name,
+          description: event.description || '',
+          date: startDate,
+          startTime: startDate,
+          endTime: endDate,
+          type: event.type,
+          location: event.location,
+          foodProvided: event.foodProvided || false,
+        });
 
-          this.handleTypeChange(event.type);
-        }
+        this.handleTypeChange(event.type);
       },
       error: (err) => console.error('Error loading event for edit', err),
     });

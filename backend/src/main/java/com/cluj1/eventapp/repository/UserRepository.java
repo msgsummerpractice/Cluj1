@@ -10,6 +10,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -38,4 +39,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     boolean existsByEmail(String email);
 
     long countByRoleAndIsActiveTrue(Role role);
+    @Modifying
+    @Query("UPDATE User u SET u.passwordHash = :passwordHash WHERE u.id = :userId")
+    void updatePasswordHash(@Param("userId") UUID userId, @Param("passwordHash") String passwordHash);
 }

@@ -110,11 +110,9 @@ public class PasswordResetService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         String encodedPassword = passwordEncoder.encode(newPassword);
-        entityManager.createQuery("UPDATE User u SET u.passwordHash = :passwordHash WHERE u.id = :userId")
-            .setParameter("passwordHash", encodedPassword)
-            .setParameter("userId", user.getId())
-            .executeUpdate();
-        entityManager.flush();
+        userRepo.updatePasswordHash(user.getId(), encodedPassword);
+        userRepo.flush();
+        
         user.setPasswordHash(encodedPassword);
 
         resetToken.setUsedAt(OffsetDateTime.now());

@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import {  HttpParams } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Event } from '../models/event.model';
@@ -17,6 +17,10 @@ export class EventService {
       params = params.set('search', searchTerm);
     }
     return this.http.get<Event[]>(this.apiUrl, { params });
+  }
+
+  getEventById(id: string): Observable<Event> {
+    return this.http.get<Event>(`${this.apiUrl}/${id}`);
   }
 
   getUpcomingRegisteredEventsCountPerUser(): Observable<number> {
