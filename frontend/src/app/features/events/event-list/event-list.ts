@@ -337,38 +337,50 @@ export class EventListComponent implements OnInit {
   }
 
   completeEvent(eventId: string): void {
-    const event = this.events().find((e) => e.id === eventId);
-    if (!event) {
-      this.toastService.show('error', this.translocoService.translate('events.complete.error'));
-      return;
-    }
-    if (!this.eventHasEnded(event)) {
-      this.toastService.show('error', this.translocoService.translate('events.complete.notEnded'));
-      return;
-    }
-
-    this.openConfirmDialog({
-      titleKey: 'events.complete.title',
-      messageKey: 'events.complete.message',
-      confirmKey: 'events.complete.confirm',
-      cancelKey: 'events.complete.cancel',
-    }).subscribe((confirmed) => {
-      if (!confirmed) {
-        return;
-      }
-
-      this.eventService.updateEventStatus(eventId, 'COMPLETED').subscribe({
-        next: () => {
-          this.fetchEvents();
-          this.toastService.show(
-            'success',
-            this.translocoService.translate('events.complete.success'),
-          );
-        },
-        error: (err) => {
+    this.eventService.getEventById(eventId).subscribe({
+      next: (event) => {
+        if (!event) {
           this.toastService.show('error', this.translocoService.translate('events.complete.error'));
-        },
-      });
+          return;
+        }
+        if (!this.eventHasEnded(event)) {
+          this.toastService.show(
+            'error',
+            this.translocoService.translate('events.complete.notEnded'),
+          );
+          return;
+        }
+
+        this.openConfirmDialog({
+          titleKey: 'events.complete.title',
+          messageKey: 'events.complete.message',
+          confirmKey: 'events.complete.confirm',
+          cancelKey: 'events.complete.cancel',
+        }).subscribe((confirmed) => {
+          if (!confirmed) {
+            return;
+          }
+
+          this.eventService.updateEventStatus(eventId, 'COMPLETED').subscribe({
+            next: () => {
+              this.fetchEvents();
+              this.toastService.show(
+                'success',
+                this.translocoService.translate('events.complete.success'),
+              );
+            },
+            error: (err) => {
+              this.toastService.show(
+                'error',
+                this.translocoService.translate('events.complete.error'),
+              );
+            },
+          });
+        });
+      },
+      error: (err) => {
+        this.toastService.show('error', this.translocoService.translate('events.complete.error'));
+      },
     });
   }
 
