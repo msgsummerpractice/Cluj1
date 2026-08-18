@@ -43,7 +43,7 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
-    private final EventDetailsRepository eventDetailsReposity;
+    private final EventDetailsRepository eventDetailsRepository;
     private final EventMapper eventMapper;
     private final RegistrationRepository registrationRepository;
 
@@ -160,7 +160,6 @@ public class EventService {
         }
     }
 
-    @Transactional(readOnly = true)
     public List<EventDto> getEligibleEventsForCurrentUser() {
         String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(currentUserEmail)
@@ -203,7 +202,7 @@ public class EventService {
     public CheckInCodesDto generateCheckInCodes(UUID eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
-        EventDetails eventDetails = eventDetailsReposity.findByEvent(event);
+        EventDetails eventDetails = eventDetailsRepository.findByEvent(event);
 
         if (event.getStatus() != EventStatus.PUBLISHED) {
             throw new IllegalStateException("Cannot generate codes, Event is not published");
@@ -218,7 +217,7 @@ public class EventService {
 
         eventDetails.setEventCode(eventCode);
         eventDetails.setQrCodeContent(qrCodeConent);
-        eventDetailsReposity.save(eventDetails);
+        eventDetailsRepository.save(eventDetails);
 
         return new CheckInCodesDto(qrCodeConent, eventCode);
 
@@ -230,7 +229,7 @@ public class EventService {
 
         do {
             code = String.format("%06d", random.nextInt(1000000));
-            isUnique = !eventDetailsReposity.existsByEventCode(code);
+            isUnique = !eventDetailsRepository.existsByEventCode(code);
         } while (!isUnique);
 
         return code;

@@ -99,7 +99,7 @@ public class EventController {
 	}
 
 	@GetMapping("/eligible")
-	@PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	@PreAuthorize("hasAuthority('PARTICIPANT')")
 	public ResponseEntity<List<EventDto>> getEligibleEvents() {
 		return ResponseEntity.ok(eventService.getEligibleEventsForCurrentUser());
 	}

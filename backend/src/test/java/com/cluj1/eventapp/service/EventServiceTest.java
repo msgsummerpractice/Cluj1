@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -34,7 +36,13 @@ import com.cluj1.eventapp.model.User;
 import com.cluj1.eventapp.model.enums.EventLocation;
 import com.cluj1.eventapp.model.enums.EventStatus;
 import com.cluj1.eventapp.model.enums.EventType;
+import com.cluj1.eventapp.model.AttendanceRecord;
+import com.cluj1.eventapp.model.Registration;
+import com.cluj1.eventapp.model.UserDetails;
+import com.cluj1.eventapp.model.enums.UserLocation;
+import com.cluj1.eventapp.repository.EventDetailsRepository;
 import com.cluj1.eventapp.repository.EventRepository;
+import com.cluj1.eventapp.repository.RegistrationRepository;
 import com.cluj1.eventapp.repository.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -48,6 +56,12 @@ class EventServiceTest {
 
 	@Mock
 	private EventMapper eventMapper;
+
+	@Mock
+	private EventDetailsRepository eventDetailsRepository;
+
+	@Mock
+	private RegistrationRepository registrationRepository;
 
 	@InjectMocks
 	private EventService eventService;
@@ -174,5 +188,89 @@ class EventServiceTest {
 		MockMultipartFile file = new MockMultipartFile("poster", "test.jpg", "image/jpeg", largeContent);
 
 		assertThrows(InvalidEventOperationException.class, () -> eventService.createEvent(requestDto, file));
+	}
+
+	private void mockUserWithLocation(UserLocation location) {
+		UserDetails userDetails = UserDetails.builder().location(location).build();
+		mockUser.setUserDetails(userDetails);
+		mockSecurityContext();
+	}
+
+	@Test
+	void getEligibleEventsReturnsEmptyListWhenRepositoryReturnsNoEvents() {
+		mockUserWithLocation(UserLocation.CLUJ);
+		when(eventRepository.findEligibleEvents(any(), eq(EventLocation.CLUJ))).thenReturn(List.of());
+
+		List<EventDto> result = eventService.getEligibleEventsForCurrentUser();
+
+		assertThat(result).isEmpty();
+	}
+
+	@Test
+	void getEligibleEventsSetsFalseRegistrationStatusWhenUserNotRegistered() {
+		mockUserWithLocation(UserLocation.CLUJ);
+		Event event = Event.builder().id(UUID.randomUUID()).name("ClujFest").build();
+		EventDto dto = EventDto.builder().id(event.getId()).name(event.getName()).build();
+
+		when(eventRepository.findEligibleEvents(any(), eq(EventLocation.CLUJ))).thenReturn(List.of(event));
+		when(eventMapper.toDto(event)).thenReturn(dto);
+		when(registrationRepository.findByUserIdAndEventId(mockUser.getId(), event.getId()))
+				.thenReturn(Optional.empty());
+
+		List<EventDto> result = eventService.getEligibleEventsForCurrentUser();
+
+		assertThat(result).hasSize(1);
+		assertThat(result.get(0).getIsRegistered()).isFalse();
+		assertThat(result.get(0).getIsCheckedIn()).isFalse();
+	}
+
+	@Test
+	void getEligibleEventsSetsIsRegisteredTrueWhenUserHasRegistration() {
+		mockUserWithLocation(UserLocation.CLUJ);
+		Event event = Event.builder().id(UUID.randomUUID()).name("ClujFest").build();
+		EventDto dto = EventDto.builder().id(event.getId()).name(event.getName()).build();
+		Registration registration = Registration.builder().id(UUID.randomUUID()).build();
+
+		when(eventRepository.findEligibleEvents(any(), eq(EventLocation.CLUJ))).thenReturn(List.of(event));
+		when(eventMapper.toDto(event)).thenReturn(dto);
+		when(registrationRepository.findByUserIdAndEventId(mockUser.getId(), event.getId()))
+				.thenReturn(Optional.of(registration));
+
+		List<EventDto> result = eventService.getEligibleEventsForCurrentUser();
+
+		assertThat(result.get(0).getIsRegistered()).isTrue();
+		assertThat(result.get(0).getIsCheckedIn()).isFalse();
+	}
+
+	@Test
+	void getEligibleEventsSetsIsCheckedInTrueWhenAttendanceRecordExists() {
+		mockUserWithLocation(UserLocation.CLUJ);
+		Event event = Event.builder().id(UUID.randomUUID()).name("ClujFest").build();
+		EventDto dto = EventDto.builder().id(event.getId()).name(event.getName()).build();
+		AttendanceRecord attendanceRecord = AttendanceRecord.builder().id(UUID.randomUUID()).build();
+		Registration registration = Registration.builder()
+				.id(UUID.randomUUID())
+				.attendanceRecord(attendanceRecord)
+				.build();
+
+		when(eventRepository.findEligibleEvents(any(), eq(EventLocation.CLUJ))).thenReturn(List.of(event));
+		when(eventMapper.toDto(event)).thenReturn(dto);
+		when(registrationRepository.findByUserIdAndEventId(mockUser.getId(), event.getId()))
+				.thenReturn(Optional.of(registration));
+
+		List<EventDto> result = eventService.getEligibleEventsForCurrentUser();
+
+		assertThat(result.get(0).getIsRegistered()).isTrue();
+		assertThat(result.get(0).getIsCheckedIn()).isTrue();
+	}
+
+	@Test
+	void getEligibleEventsPassesNullLocationToRepositoryForRemoteUser() {
+		mockUserWithLocation(UserLocation.REMOTE);
+		when(eventRepository.findEligibleEvents(any(), isNull())).thenReturn(List.of());
+
+		eventService.getEligibleEventsForCurrentUser();
+
+		verify(eventRepository).findEligibleEvents(any(), isNull());
 	}
 }
