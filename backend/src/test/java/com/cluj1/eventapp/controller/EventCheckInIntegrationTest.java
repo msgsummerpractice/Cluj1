@@ -30,6 +30,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -108,8 +109,12 @@ class EventCheckInIntegrationTest {
 
         private CheckInRequest request(String code, CheckInMethod method) {
                 CheckInRequest req = new CheckInRequest();
-                req.setCode(code);
                 req.setMethod(method);
+                if (method == CheckInMethod.QR) {
+                        req.setEventId(UUID.fromString(code));
+                } else {
+                        req.setEventCode(code);
+                }
                 return req;
         }
 
@@ -243,7 +248,7 @@ class EventCheckInIntegrationTest {
         @WithMockUser(username = "john.doe@msg.group", roles = "PARTICIPANT")
         void checkIn_nullMethod_returns400() throws Exception {
                 CheckInRequest req = new CheckInRequest();
-                req.setCode("ABC123");
+                req.setEventCode("ABC123");
                 req.setMethod(null);
 
                 mockMvc.perform(post("/api/events/checkin")

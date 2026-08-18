@@ -102,6 +102,16 @@
           {{ 'events.eventViewButton' | transloco }}
         </button>
 
+        @if (event.status == 'PUBLISHED') {
+          <button
+            mat-stroked-button
+            (click)="navigateToCheckIn(event.id)"
+            class="event-checkin-button transition-colors whitespace-nowrap"
+          >
+            {{ 'events.eventCheckInButton' | transloco }}
+          </button>
+        }
+
         @if (isMarketingOrganizer() && event.status == 'DRAFT') {
           <button
             mat-stroked-button

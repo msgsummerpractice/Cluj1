@@ -333,4 +333,8 @@ export class EventListComponent implements OnInit {
   editEvent(eventId: string): void {
     this.router.navigate(['/events', eventId, 'edit']);
   }
+
+  navigateToCheckIn(eventId: string): void {
+    this.router.navigate(['/events', eventId, 'checkin']);
+  }
 }
