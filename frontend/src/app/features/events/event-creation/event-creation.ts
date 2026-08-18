@@ -14,6 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-event-creation',
@@ -41,6 +42,7 @@ export class EventCreationComponent implements OnInit {
   private readonly eventService = inject(EventService);
   private readonly router = inject(Router);
   private readonly translocoService = inject(TranslocoService);
+  private readonly toastService = inject(ToastService);
 
   readonly locations = ['CLUJ', 'TIMISOARA', 'MURES'];
   readonly selectedFile = signal<File | null>(null);
@@ -155,7 +157,7 @@ export class EventCreationComponent implements OnInit {
       },
       error: (err) => {
         this.isSubmitting.set(false);
-        console.error(err);
+        this.toastService.show('error', typeof err?.error === 'string' ? err.error :(err?.error?.message || err?.message || 'Failed to create event.'));
       },
     });
   }
