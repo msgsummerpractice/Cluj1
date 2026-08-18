@@ -1,6 +1,5 @@
-import { isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Component, inject, OnInit, signal, AfterViewInit, PLATFORM_ID } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EventService } from '../../../core/services/event.service';
 import { FormsModule } from '@angular/forms';
@@ -21,22 +20,17 @@ import { AttendanceRecord } from '../../../core/models/attendance-record.model';
   templateUrl: './event-checkin.html',
   styleUrls: ['./event-checkin.css'],
 })
-export class EventCheckInComponent implements OnInit, AfterViewInit {
+export class EventCheckInComponent implements OnInit {
   private readonly eventService = inject(EventService);
   private readonly translateService = inject(TranslocoService);
   private readonly toastService = inject(ToastService);
   private readonly route = inject(ActivatedRoute);
   private readonly platform = inject(Platform);
-  private readonly platformId = inject(PLATFORM_ID);
   private readonly router = inject(Router);
 
   readonly isMobile = this.platform.ANDROID || this.platform.IOS;
 
-  manualCode: string = '';
-  isLoading: boolean = false;
-  isScannerReady: boolean = false;
-
-  eventId: string = '';
+  readonly manualCode = signal('');
   readonly isProcessing = signal(false);
   readonly hasDevices = signal(false);
   readonly ALLOWED_FORMATS = [BarcodeFormat.QR_CODE];
@@ -49,14 +43,6 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     const eventId = this.route.snapshot.paramMap.get('id')!;
     this.loadEvent(eventId);
-  }
-
-  ngAfterViewInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      setTimeout(() => {
-        this.isScannerReady = true;
-      }, 100);
-    }
   }
 
   private loadEvent(eventId: string): void {
@@ -101,11 +87,11 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
   }
 
   submitManual(): void {
-    if (this.manualCode.length !== 6) {
+    if (this.manualCode().length !== 6) {
       this.toastService.showError(this.translateService.translate('checkin.error.code.invalid'));
       return;
     }
-    this.processCheckIn({ eventCode: this.manualCode, method: 'MANUAL' });
+    this.processCheckIn({ eventCode: this.manualCode(), method: 'MANUAL' });
   }
 
   private processCheckIn(request: CheckInRequest): void {
@@ -117,7 +103,7 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
         finalize(() => {
           this.isProcessing.set(false);
           if (request.method === 'MANUAL') {
-            this.manualCode = '';
+            this.manualCode.set('');
           }
         }),
       )

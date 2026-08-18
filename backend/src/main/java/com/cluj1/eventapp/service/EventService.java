@@ -4,8 +4,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Sort;
 import com.cluj1.eventapp.dto.CheckInCodesDto;
@@ -22,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cluj1.eventapp.repository.RegistrationRepository;
 import com.cluj1.eventapp.model.Event;
 import com.cluj1.eventapp.model.EventDetails;
+import com.cluj1.eventapp.model.Registration;
 import com.cluj1.eventapp.model.User;
 import com.cluj1.eventapp.model.UserDetails;
 import com.cluj1.eventapp.model.enums.EventLocation;
@@ -234,7 +238,7 @@ public class EventService {
     public List<EventDto> getEligibleEventsForCurrentUser() {
         String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(currentUserEmail)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         UserDetails userDetails = user.getUserDetails();
         EventLocation userEventLocation = null;
@@ -250,18 +254,24 @@ public class EventService {
                 ? eventRepository.findEligibleEvents(OffsetDateTime.now(), userEventLocation)
                 : eventRepository.findAllLocationEligibleEvents(OffsetDateTime.now());
 
+        Set<UUID> eventIds = eligibleEvents.stream()
+                .map(Event::getId)
+                .collect(Collectors.toSet());
+        Map<UUID, Registration> registrationsByEventId = registrationRepository
+                .findByUserIdAndEventIdIn(user.getId(), eventIds)
+                .stream()
+                .collect(Collectors.toMap(r -> r.getEvent().getId(), r -> r));
+
         return eligibleEvents.stream().map(event -> {
             EventDto dto = eventMapper.toDto(event);
-
-            registrationRepository.findByUserIdAndEventId(user.getId(), event.getId())
-                    .ifPresentOrElse(registration -> {
-                        dto.setIsRegistered(true);
-                        dto.setIsCheckedIn(registration.getAttendanceRecord() != null);
-                    }, () -> {
-                        dto.setIsRegistered(false);
-                        dto.setIsCheckedIn(false);
-                    });
-
+            Registration registration = registrationsByEventId.get(event.getId());
+            if (registration != null) {
+                dto.setIsRegistered(true);
+                dto.setIsCheckedIn(registration.getAttendanceRecord() != null);
+            } else {
+                dto.setIsRegistered(false);
+                dto.setIsCheckedIn(false);
+            }
             return dto;
         }).toList();
     }

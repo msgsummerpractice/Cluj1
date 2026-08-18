@@ -96,14 +96,15 @@
           <input
             type="text"
             maxlength="6"
-            [(ngModel)]="manualCode"
+            [ngModel]="manualCode()"
+            (ngModelChange)="manualCode.set($event)"
             [placeholder]="'checkin.manual_code_placeholder' | transloco"
             [disabled]="isProcessing()"
             class="flex-1 border border-gray-300 p-3 rounded-md focus:outline-none focus:border-[var(--dark-red-dot)] focus:ring-1 focus:ring-[var(--dark-red-dot)] text-base tracking-widest uppercase transition-colors"
           />
           <button
             (click)="submitManual()"
-            [disabled]="isProcessing() || manualCode.length !== 6"
+            [disabled]="isProcessing() || manualCode().length !== 6"
             class="bg-[var(--dark-red-dot)] hover:bg-[var(--brand-maroon)] text-white font-semibold px-10 py-3 rounded-md disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed transition-colors"
           >
             {{ 'checkin.submit_btn' | transloco }}

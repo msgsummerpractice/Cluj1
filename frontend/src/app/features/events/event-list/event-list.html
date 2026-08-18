@@ -25,7 +25,12 @@
     <ng-template appDataTableFilterDef="name">
       <mat-form-field appearance="outline">
         <mat-label>{{ 'events.eventNameColumn' | transloco }}</mat-label>
-        <input matInput [value]="nameFilter()" (input)="setNameFilter($any($event.target).value)" />
+        <input
+          matInput
+          #nameFilterInput
+          [value]="nameFilter()"
+          (input)="setNameFilter(nameFilterInput.value)"
+        />
       </mat-form-field>
     </ng-template>
 
@@ -174,7 +179,7 @@
         </button>
       }
 
-      @if (isMarketingOrganizer() && event.status == 'DRAFT') {
+      @if (isMarketingOrganizer() && event.status === 'DRAFT') {
         <button
           mat-icon-button
           (click)="editEvent(event.id)"
@@ -192,25 +197,16 @@
         </button>
       }
 
-      @if (isMarketingOrganizer() && event.status == 'PUBLISHED') {
+      @if (isMarketingOrganizer() && event.status === 'PUBLISHED') {
         <button
           mat-stroked-button
-          (click)="navigateToCheckIn(event.id)"
+          (click)="checkIn(event.id)"
           class="event-checkin-button transition-colors whitespace-nowrap"
         >
           {{ 'events.eventCheckInButton' | transloco }}
         </button>
       }
 
-      @if (isMarketingOrganizer() && event.status == 'DRAFT') {
-        <button
-          mat-stroked-button
-          (click)="editEvent(event.id)"
-          class="event-edit-button transition-colors whitespace-nowrap"
-        >
-          {{ 'events.eventEditButton' | transloco }}
-        </button>
-      }
       @if (isMarketingOrganizer() && event.status === 'DRAFT') {
         <button
           mat-stroked-button

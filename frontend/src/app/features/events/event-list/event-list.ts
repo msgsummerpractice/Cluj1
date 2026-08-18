@@ -63,12 +63,14 @@ export class EventListComponent implements OnInit {
       { key: 'type', label: 'events.eventTypeColumn', sortKey: 'type', cellClass: 'text-gray-600' },
     ];
 
-    baseCols.push({
-      key: 'participantStatus',
-      label: 'events.participantStatusColumn',
-      headerClass: 'text-center',
-      cellClass: 'text-center',
-    });
+    if (this.viewMode() === 'PARTICIPANT') {
+      baseCols.push({
+        key: 'participantStatus',
+        label: 'events.participantStatusColumn',
+        headerClass: 'text-center',
+        cellClass: 'text-center',
+      });
+    }
     baseCols.push({
       key: 'actions',
       label: 'events.eventActionsColumn',
@@ -368,9 +370,5 @@ export class EventListComponent implements OnInit {
 
   editEvent(eventId: string): void {
     this.router.navigate(['/events', eventId, 'edit']);
-  }
-
-  navigateToCheckIn(eventId: string): void {
-    this.router.navigate(['/events', eventId, 'checkin']);
   }
 }
