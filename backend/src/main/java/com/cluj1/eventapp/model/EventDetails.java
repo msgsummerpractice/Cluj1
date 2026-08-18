@@ -25,8 +25,7 @@ public class EventDetails {
     private String description;
 
     @ToString.Exclude
-    @Column(name = "poster")
-    @Lob
+    @Column(name = "poster", columnDefinition = "BYTEA")
     private byte[] poster;
 
     @Column(name = "food_provided", nullable = false)

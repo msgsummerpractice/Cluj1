@@ -21,6 +21,7 @@ import { RoleManageDialogComponent } from '../role-manage-dialog/role-manage-dia
 import { DataTableComponent } from '../../../shared/components/data-table/data-table';
 import { DataTableColumn } from '../../../shared/components/data-table/data-table.model';
 import { DataTableCellDefDirective } from '../../../shared/components/data-table/data-table-cell-def.directive';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-user-list',
@@ -67,6 +68,7 @@ export class UserListComponent implements OnInit {
   private snackBar = inject(MatSnackBar);
   private translocoService = inject(TranslocoService);
   private destroyRef = inject(DestroyRef);
+  private toastService = inject(ToastService);
 
   ngOnInit(): void {
     this.fetchUsers();
@@ -94,7 +96,7 @@ export class UserListComponent implements OnInit {
           this.users.set(data.content);
           this.totalUsers.set(data.totalElements);
         },
-        error: (err) => console.error('Error fetching users', err),
+        error: (err) => this.toastService.show('error', this.translocoService.translate('notifications.errorFetchingUsers')),
       });
   }
 
@@ -149,16 +151,12 @@ export class UserListComponent implements OnInit {
           const messageKey = newStatus
             ? 'notifications.userActivated'
             : 'notifications.userDeactivated';
-          this.showNotification(this.translocoService.translate(messageKey));
+          this.toastService.show('success', messageKey);
         },
         error: (err) => {
           event.source.checked = user.isActive;
 
-          this.showNotification(
-            err.error?.message ||
-              this.translocoService.translate('notifications.errorUpdatingStatus'),
-            'error',
-          );
+          this.toastService.show('error', this.translocoService.translate('notifications.errorUpdatingStatus'));
         },
       });
   }
@@ -169,10 +167,4 @@ export class UserListComponent implements OnInit {
     return formatted.charAt(0).toUpperCase() + formatted.slice(1);
   }
 
-  private showNotification(message: string, type: 'success' | 'error' = 'success'): void {
-    this.snackBar.open(message, 'Close', {
-      duration: 4000,
-      panelClass: type === 'error' ? ['bg-red-500', 'text-white'] : ['bg-green-600', 'text-white'],
-    });
-  }
 }

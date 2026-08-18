@@ -15,6 +15,7 @@ public class EventMapper {
                 .foodProvided(event.getEventDetails() != null ? event.getEventDetails().getFoodProvided() : null)
                 .startDate(event.getEventStartDate())
                 .endDate(event.getEventEndTime())
+                .registrationEndDate(event.getRegistrationEndDate())
                 .location(event.getLocation())
                 .type(event.getType())
                 .status(event.getStatus())

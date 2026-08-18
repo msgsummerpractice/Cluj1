@@ -3,7 +3,6 @@ package com.cluj1.eventapp.service;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.cluj1.eventapp.dto.UserProfileDto;
 import com.cluj1.eventapp.dto.UserProfileUpdateDto;
