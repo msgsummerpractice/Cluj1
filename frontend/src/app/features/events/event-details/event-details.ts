@@ -44,20 +44,21 @@ export class EventDetailsComponent implements OnDestroy {
     this.eventService.getEventDetails(eventId).subscribe({
       next: (details) => {
         this.eventDetails.set(details);
+        if (details.hasPoster) {
+          this.eventService.getEventPoster(eventId).subscribe({
+            next: (poster) => {
+              if (poster.size > 0) {
+                this.posterUrl.set(URL.createObjectURL(poster));
+              }
+            },
+            error: () => {
+              this.posterUrl.set(null);
+            },
+          });
+        }
       },
       error: (error) => {
         this.toast.show('error', error);
-      },
-    });
-
-    this.eventService.getEventPoster(eventId).subscribe({
-      next: (poster) => {
-        if (poster.size > 0) {
-          this.posterUrl.set(URL.createObjectURL(poster));
-        }
-      },
-      error: () => {
-        this.posterUrl.set(null);
       },
     });
   }

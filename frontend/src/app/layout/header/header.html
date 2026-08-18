@@ -10,49 +10,53 @@
     </div>
 
     <div class="flex items-center gap-4">
-      <nav *ngIf="showHeader()" class="hidden md:flex items-center gap-2">
-        <a
-          mat-button
-          class="nav-button !text-gray-700 hover:!text-gray-900 hover:!bg-gray-100 !rounded-lg"
-          routerLink="/homepage"
-          routerLinkActive="!bg-gray-100 !font-semibold"
-          disableRipple
-        >
-          {{ 'nav.home' | transloco }}
-        </a>
+      @if (showHeader()) {
+        <nav class="hidden md:flex items-center gap-2">
+          <a
+            mat-button
+            class="nav-button !text-gray-700 hover:!text-gray-900 hover:!bg-gray-100 !rounded-lg"
+            routerLink="/homepage"
+            routerLinkActive="!bg-gray-100 !font-semibold"
+            disableRipple
+          >
+            {{ 'nav.home' | transloco }}
+          </a>
 
-        <a
-          mat-button
-          class="nav-button !text-gray-700 hover:!text-gray-900 hover:!bg-gray-100 !rounded-lg"
-          routerLink="/events"
-          routerLinkActive="!bg-gray-100 !font-semibold"
-          disableRipple
-        >
-          {{ 'nav.events' | transloco }}
-        </a>
+          <a
+            mat-button
+            class="nav-button !text-gray-700 hover:!text-gray-900 hover:!bg-gray-100 !rounded-lg"
+            routerLink="/events"
+            routerLinkActive="!bg-gray-100 !font-semibold"
+            disableRipple
+          >
+            {{ 'nav.events' | transloco }}
+          </a>
 
-        <a
-          *ngIf="authService.currentUser()?.role === 'MARKETING_ORGANIZER'"
-          mat-button
-          class="nav-button !text-gray-700 hover:!text-gray-900 hover:!bg-gray-100 !rounded-lg"
-          routerLink="/events/create"
-          routerLinkActive="!bg-gray-100 !font-semibold"
-          disableRipple
-        >
-          {{ 'nav.createEvent' | transloco }}
-        </a>
+          @if (authService.currentUser()?.role === 'MARKETING_ORGANIZER') {
+            <a
+              mat-button
+              class="nav-button !text-gray-700 hover:!text-gray-900 hover:!bg-gray-100 !rounded-lg"
+              routerLink="/events/create"
+              routerLinkActive="!bg-gray-100 !font-semibold"
+              disableRipple
+            >
+              {{ 'nav.createEvent' | transloco }}
+            </a>
+          }
 
-        <a
-          *ngIf="authService.isAdmin()"
-          mat-button
-          class="nav-button !text-gray-700 hover:!text-gray-900 hover:!bg-gray-100 !rounded-lg"
-          routerLink="/admin/users"
-          routerLinkActive="!bg-gray-100 !font-semibold"
-          disableRipple
-        >
-          {{ 'nav.users' | transloco }}
-        </a>
-      </nav>
+          @if (authService.isAdmin()) {
+            <a
+              mat-button
+              class="nav-button !text-gray-700 hover:!text-gray-900 hover:!bg-gray-100 !rounded-lg"
+              routerLink="/admin/users"
+              routerLinkActive="!bg-gray-100 !font-semibold"
+              disableRipple
+            >
+              {{ 'nav.users' | transloco }}
+            </a>
+          }
+        </nav>
+      }
 
       <button
         mat-icon-button
@@ -73,32 +77,33 @@
           <mat-icon>calendar_today</mat-icon>
           <span>{{ 'nav.events' | transloco }}</span>
         </a>
-        <a
-          mat-menu-item
-          routerLink="/events/create"
-          *ngIf="authService.currentUser()?.role === 'MARKETING_ORGANIZER'"
-        >
-          <mat-icon>add_circle_outline</mat-icon>
-          <span>{{ 'nav.createEvent' | transloco }}</span>
-        </a>
-        <a mat-menu-item routerLink="/admin/users" *ngIf="authService.isAdmin()">
-          <mat-icon>person</mat-icon>
-          <span>{{ 'nav.users' | transloco }}</span>
-        </a>
+        @if (authService.currentUser()?.role === 'MARKETING_ORGANIZER') {
+          <a mat-menu-item routerLink="/events/create">
+            <mat-icon>add_circle_outline</mat-icon>
+            <span>{{ 'nav.createEvent' | transloco }}</span>
+          </a>
+        }
+        @if (authService.isAdmin()) {
+          <a mat-menu-item routerLink="/admin/users">
+            <mat-icon>person</mat-icon>
+            <span>{{ 'nav.users' | transloco }}</span>
+          </a>
+        }
       </mat-menu>
 
       <app-language-switcher />
 
-      <button
-        *ngIf="showHeader()"
-        mat-icon-button
-        class="nav-icon-button text-gray-700"
-        [matMenuTriggerFor]="userMenu"
-        aria-label="User account"
-        disableRipple
-      >
-        <mat-icon>account_circle</mat-icon>
-      </button>
+      @if (showHeader()) {
+        <button
+          mat-icon-button
+          class="nav-icon-button text-gray-700"
+          [matMenuTriggerFor]="userMenu"
+          aria-label="User account"
+          disableRipple
+        >
+          <mat-icon>account_circle</mat-icon>
+        </button>
+      }
 
       <mat-menu #userMenu="matMenu" xPosition="before">
         @if (authService.isAuthenticated()) {

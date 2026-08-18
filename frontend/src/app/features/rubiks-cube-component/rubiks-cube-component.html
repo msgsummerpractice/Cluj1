@@ -1,0 +1,25 @@
+<div class="scene">
+  <div class="cube">
+    @for (c of cubies; track c.id) {
+
+      <!-- Outer wrapper: Handles Vertical (X-axis) column moves -->
+      <div class="col-wrapper" [class]="c.colClass">
+
+        <!-- Inner wrapper: Handles Horizontal (Y-axis) row moves -->
+        <div class="row-wrapper" [class]="c.rowClass">
+
+          <div class="cubie" [style.transform]="'translate3d(' + (c.x * 66) + 'px, ' + (c.y * 66) + 'px, ' + (c.z * 66) + 'px)'">
+            <div class="face front"><div class="sticker">{{ c.letter }}</div></div>
+            <div class="face back"><div class="sticker"></div></div>
+            <div class="face right"><div class="sticker"></div></div>
+            <div class="face left"><div class="sticker"></div></div>
+            <div class="face top"><div class="sticker">{{ c.topLetter }}</div></div>
+            <div class="face bottom"><div class="sticker"></div></div>
+          </div>
+
+        </div>
+      </div>
+
+    }
+  </div>
+</div>

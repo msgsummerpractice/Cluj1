@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import org.springframework.data.domain.Sort;
 import com.cluj1.eventapp.dto.CheckInCodesDto;
 import com.cluj1.eventapp.repository.EventDetailsRepository;
 import com.google.zxing.BarcodeFormat;
@@ -28,17 +29,21 @@ import com.cluj1.eventapp.model.enums.EventStatus;
 import com.cluj1.eventapp.model.enums.EventType;
 import com.cluj1.eventapp.repository.EventRepository;
 import com.cluj1.eventapp.repository.UserRepository;
+
+import jakarta.persistence.EntityNotFoundException;
+
 import com.cluj1.eventapp.dto.EventDto;
 import com.cluj1.eventapp.mapper.EventMapper;
 import com.cluj1.eventapp.exception.InvalidEventOperationException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.OffsetDateTime;
 
 @Service
 @RequiredArgsConstructor
-
+@Slf4j
 @Transactional(readOnly = true)
 public class EventService {
 
@@ -47,6 +52,7 @@ public class EventService {
     private final EventDetailsRepository eventDetailsRepository;
     private final EventMapper eventMapper;
     private final RegistrationRepository registrationRepository;
+    private final EventPublishMailService eventPublishMailService;
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
     private final Random random = new Random();
@@ -56,9 +62,8 @@ public class EventService {
         return eventRepository.countUpcomingEventsForUsers(OffsetDateTime.now(), user.getId());
     }
 
-    @Transactional(readOnly = true)
     public List<EventDto> getAllEvents() {
-        return eventRepository.findAll().stream()
+        return eventRepository.findAll(Sort.by(Sort.Direction.ASC, "createdAt", "id")).stream()
                 .map(eventMapper::toDto)
                 .toList();
     }
@@ -91,6 +96,50 @@ public class EventService {
 
         event.setEventDetails(details);
         return eventMapper.toDto(eventRepository.save(event));
+    }
+
+    @Transactional
+    public EventDto updateEventStatus(UUID id, EventStatus status) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Event not found"));
+
+        boolean justPublished = false;
+        EventStatus currentStatus = event.getStatus();
+
+        if (currentStatus == null) {
+            throw new InvalidEventOperationException(
+                    "Invalid status transition from null to " + status);
+        }
+
+        switch (currentStatus) {
+            case DRAFT -> {
+                if (status != EventStatus.PUBLISHED) {
+                    throw new InvalidEventOperationException(
+                            "Invalid status transition from " + currentStatus + " to " + status);
+                }
+                event.setStatus(EventStatus.PUBLISHED);
+                justPublished = true;
+                break;
+            }
+            case PUBLISHED -> {
+                if (status != EventStatus.COMPLETED) {
+                    throw new InvalidEventOperationException(
+                            "Invalid status transition from " + currentStatus + " to " + status);
+                }
+                event.setStatus(EventStatus.COMPLETED);
+                break;
+            }
+            default -> throw new InvalidEventOperationException(
+                    "Invalid status transition from " + currentStatus + " to " + status);
+        }
+
+        Event saved = eventRepository.save(event);
+
+        if (justPublished) {
+            eventPublishMailService.notifyRecipients(saved);
+        }
+
+        return eventMapper.toDto(saved);
     }
 
     @Transactional

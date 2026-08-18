@@ -79,8 +79,12 @@ class EventCheckInServiceTest {
 
         private CheckInRequest buildRequest(String code, CheckInMethod method) {
                 CheckInRequest req = new CheckInRequest();
-                req.setCode(code);
                 req.setMethod(method);
+                if (method == CheckInMethod.QR) {
+                        req.setEventId(UUID.fromString(code));
+                } else {
+                        req.setEventCode(code);
+                }
                 return req;
         }
 
