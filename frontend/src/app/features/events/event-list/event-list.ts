@@ -10,6 +10,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { DataTableComponent } from '../../../shared/components/data-table/data-table';
 import { DataTableCellDefDirective } from '../../../shared/components/data-table/data-table-cell-def.directive';
@@ -30,6 +31,7 @@ import { ToastService } from '../../../core/services/toast.service';
     MatCheckboxModule,
     MatInputModule,
     MatFormFieldModule,
+    MatProgressSpinnerModule,
     TranslocoModule,
     DataTableComponent,
     DataTableCellDefDirective,
@@ -53,6 +55,7 @@ export class EventListComponent implements OnInit {
     },
   ];
   readonly events = signal<readonly Event[]>([]);
+  readonly publishingEventIds = signal<readonly string[]>([]);
   readonly nameFilter = signal('');
   readonly selectedDateYears = signal<readonly string[]>([]);
   readonly selectedDateMonths = signal<readonly string[]>([]);
@@ -175,12 +178,14 @@ export class EventListComponent implements OnInit {
     return 'status-completed';
   }
 
-  fetchEvents(): void {
+  fetchEvents(onSettled?: () => void): void {
     this.eventService.getEvents().subscribe({
       next: (data) => {
         this.events.set(data);
+        onSettled?.();
       },
-      error: (err) =>
+      error: (err) => {
+        onSettled?.();
         this.toastService.show(
           'error',
           typeof err?.error === 'string'
@@ -188,7 +193,8 @@ export class EventListComponent implements OnInit {
             : err?.error?.message ||
                 err?.message ||
                 this.translocoService.translate('events.fetchError'),
-        ),
+        );
+      },
     });
   }
 
@@ -216,16 +222,27 @@ export class EventListComponent implements OnInit {
     return this.selectedTypes().includes(type.trim().toLowerCase());
   }
 
+  isPublishing(eventId: string): boolean {
+    return this.publishingEventIds().includes(eventId);
+  }
+
   publishEvent(event: Event): void {
+    if (this.isPublishing(event.id)) {
+      return;
+    }
+
+    this.publishingEventIds.update((ids) => [...ids, event.id]);
+
     this.eventService.updateEventStatus(event.id, 'PUBLISHED').subscribe({
       next: () => {
-        this.fetchEvents();
+        this.fetchEvents(() => this.clearPublishing(event.id));
         this.toastService.show(
           'success',
           this.translocoService.translate('events.publish.success'),
         );
       },
       error: (err) => {
+        this.clearPublishing(event.id);
         this.toastService.show(
           'error',
           typeof err?.error === 'string'
@@ -239,6 +256,10 @@ export class EventListComponent implements OnInit {
   }
 
   openDialog(event: Event): void {
+    if (this.isPublishing(event.id)) {
+      return;
+    }
+
     const dialogRef = this.dialog.open(PublishEventDialogComponent, {
       width: '400px',
     });
@@ -248,6 +269,10 @@ export class EventListComponent implements OnInit {
         this.publishEvent(event);
       }
     });
+  }
+
+  private clearPublishing(eventId: string): void {
+    this.publishingEventIds.update((ids) => ids.filter((id) => id !== eventId));
   }
 
   private toEventSortField(sortField: string): EventSortField | '' {

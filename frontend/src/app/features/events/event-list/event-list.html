@@ -108,9 +108,14 @@
           <button
             mat-stroked-button
             (click)="openDialog(event)"
+            [disabled]="isPublishing(event.id)"
             class="event-view-button transition-colors whitespace-nowrap"
           >
-            {{ 'events.eventPublishButton' | transloco }}
+            @if (isPublishing(event.id)) {
+              <mat-spinner diameter="18" strokeWidth="2"></mat-spinner>
+            } @else {
+              {{ 'events.eventPublishButton' | transloco }}
+            }
           </button>
         }
       </div>
