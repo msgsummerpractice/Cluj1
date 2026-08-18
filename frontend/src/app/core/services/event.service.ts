@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import {  HttpParams } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Event } from '../models/event.model';
@@ -21,9 +21,8 @@ export class EventService {
     return this.http.get<Event[]>(this.apiUrl, { params });
   }
 
-  getEventById(eventId: string): Observable<Event> {
-    const url = `${this.apiUrl}/${eventId}`;
-    return this.http.get<Event>(url);
+  getEventById(id: string): Observable<Event> {
+    return this.http.get<Event>(`${this.apiUrl}/${id}`);
   }
 
   getEventDetails(eventId: string): Observable<EventDetails> {

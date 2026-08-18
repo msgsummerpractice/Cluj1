@@ -99,6 +99,7 @@ public class EventController {
 		return ResponseEntity.ok(eventService.updateEvent(id, eventDto, poster));
 	}
 
+
 	@PostMapping("/{id}/checkin-codes")
 	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
 	public ResponseEntity<CheckInCodesDto> generateCheckInCodes(@PathVariable UUID id) {

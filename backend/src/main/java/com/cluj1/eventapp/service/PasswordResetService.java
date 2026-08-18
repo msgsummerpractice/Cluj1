@@ -3,6 +3,8 @@ package com.cluj1.eventapp.service;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 import com.cluj1.eventapp.model.User;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -32,12 +34,16 @@ public class PasswordResetService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Value("${spring.mail.username}")
     private String sender;
 
     @Value("${app.password-reset-url:http://localhost:4200/reset-password}")
     private String passwordResetUrl;
 
+    @Transactional
     public void createPasswordResetToken(String email){
         User user = userRepo.findByEmail(email).orElse(null);
         if (user == null){
@@ -65,7 +71,7 @@ public class PasswordResetService {
                     "<p>If you didn't request this, please ignore this email.</p>" +
                     "</div>";
             
-            sendHtmlMessage("bholobica@gmail.com", "Password Reset Request", htmlBody);
+            sendHtmlMessage(user.getEmail(), "Password Reset Request", htmlBody);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -98,11 +104,19 @@ public class PasswordResetService {
             throw new IllegalArgumentException("This reset link has expired");
         }
 
-        User user = resetToken.getUser();
-        user.setPasswordHash(passwordEncoder.encode(newPassword));
-        userRepo.save(user);
+        User tokenUser = resetToken.getUser();
+        
+        User user = userRepo.findById(tokenUser.getId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        userRepo.updatePasswordHash(user.getId(), encodedPassword);
+        userRepo.flush();
+        
+        user.setPasswordHash(encodedPassword);
 
         resetToken.setUsedAt(OffsetDateTime.now());
         tokenRepo.save(resetToken);
+        tokenRepo.flush();
     }
 }

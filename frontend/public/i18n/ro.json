@@ -72,6 +72,7 @@
     "eventTypeExternal": "Extern",
     "eventTypeLocal": "Local",
     "eventViewButton": "Vizualizează",
+    "eventEditButton": "Editează",
     "clearFilters": "Șterge filtrele",
     "noData": "Nu s-au găsit evenimente"
   },
