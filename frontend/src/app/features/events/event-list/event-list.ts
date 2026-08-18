@@ -20,6 +20,7 @@ import { EventSortField, displayEventEndDate, sortEvents } from './event-list.ut
 import { AuthService } from '../../../core/services/auth.service';
 
 import { PublishEventDialogComponent } from '../../../shared/components/publish-event-dialog/publish-event-dialog';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-event-list',
@@ -115,6 +116,7 @@ export class EventListComponent implements OnInit {
   private readonly dialog = inject(MatDialog);
   protected readonly authService = inject(AuthService);
 
+  private readonly toastService = inject(ToastService);
   ngOnInit(): void {
     this.fetchEvents();
   }
@@ -177,7 +179,13 @@ export class EventListComponent implements OnInit {
       next: (data) => {
         this.events.set(data);
       },
-      error: (err) => console.error('Error fetching events', err),
+      error: (err) =>
+        this.toastService.show(
+          'error',
+          typeof err?.error === 'string'
+            ? err.error
+            : err?.error?.message || err?.message || 'Failed to fetch events.',
+        ),
     });
   }
 
