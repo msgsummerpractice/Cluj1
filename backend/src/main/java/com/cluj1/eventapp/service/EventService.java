@@ -35,7 +35,7 @@ public class EventService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final EventMapper eventMapper;
-    private final RecipientPoolService recipientPoolService;
+    private final EventPublishMailService eventPublishMailService;
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -100,8 +100,10 @@ public class EventService {
             throw new InvalidEventOperationException("Invalid status value: " + status);
         }
 
+        boolean justPublished = false;
         if (event.getStatus() == EventStatus.DRAFT && newStatus == EventStatus.PUBLISHED) {
             event.setStatus(EventStatus.PUBLISHED);
+            justPublished = true;
         } else if (event.getStatus() == EventStatus.PUBLISHED && newStatus == EventStatus.COMPLETED) {
             event.setStatus(EventStatus.COMPLETED);
         } else {
@@ -109,7 +111,13 @@ public class EventService {
                     "Invalid status transition from " + event.getStatus() + " to " + newStatus);
         }
 
-        return eventMapper.toDto(eventRepository.save(event));
+        Event saved = eventRepository.save(event);
+
+        if (justPublished) {
+            eventPublishMailService.notifyRecipients(saved);
+        }
+
+        return eventMapper.toDto(saved);
     }
 
     @Transactional

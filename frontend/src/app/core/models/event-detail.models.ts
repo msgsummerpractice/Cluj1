@@ -5,4 +5,5 @@ export type EventDetails = {
   eventCode: string;
   description: string;
   qrCodeContent: string;
+  hasPoster: boolean;
 };
