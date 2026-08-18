@@ -1,0 +1,41 @@
+@if (isPublished()) {
+  <div class="mt-4 bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
+
+    <div>
+      <button
+        (click)="generateCodes()"
+        [disabled]="hasCodes()"
+        class="flex items-center justify-center gap-2 w-full py-3 px-4 bg-[#8b0032] text-white rounded-md font-semibold text-[0.95rem] transition-colors duration-200 hover:bg-[#6a0026] disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed"
+      >
+        <span class="material-symbols-outlined text-xl" aria-hidden="true">qr_code_2</span>
+        {{ hasCodes() ? 'Codes Generated' : ('Generate Check-in Codes') }}
+      </button>
+    </div>
+    <div
+      class="overflow-hidden transition-all duration-400 ease-out"
+      [class.max-h-0]="!hasCodes()"
+      [class.max-h-[500px]]="hasCodes()"
+      [class.mt-5]="hasCodes()"
+    >
+      @if (hasCodes()) {
+        <div class="flex flex-col items-center border-t border-slate-200 pt-5">
+
+          <div class="bg-slate-50 p-3 rounded-lg mb-5 border border-slate-200">
+            <img [src]="qrCodeContent()" alt="Event QR Code" class="w-40 h-40 block" />
+          </div>
+
+          <div class="text-center w-full">
+            <p class="text-sm text-slate-500 mb-2">Or enter this 6-digit code:</p>
+            <div class="bg-slate-100 py-3 px-4 rounded-md border border-dashed border-slate-300 inline-block">
+              <span class="font-mono text-3xl font-bold tracking-[0.5rem] text-slate-800 -mr-[0.5rem]">
+                {{ eventCode() }}
+              </span>
+            </div>
+          </div>
+
+        </div>
+      }
+    </div>
+
+  </div>
+}

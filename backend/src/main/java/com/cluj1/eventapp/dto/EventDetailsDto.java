@@ -14,4 +14,5 @@ public class EventDetailsDto {
     private Boolean foodProvided;
     private String eventCode;
     private String qrCodeContent;
+    private Boolean hasPoster;
 }

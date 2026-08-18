@@ -72,10 +72,20 @@
     "eventTypeExternal": "Extern",
     "eventTypeLocal": "Local",
     "eventViewButton": "Vizualizează",
+    "eventPublishButton": "Publică",
     "eventEditButton": "Editează",
     "eventCheckInButton": "Check-in",
     "clearFilters": "Șterge filtrele",
-    "noData": "Nu s-au găsit evenimente"
+    "noData": "Nu s-au găsit evenimente",
+    "fetchError": "Preluarea evenimentelor a eșuat. Te rugăm să încerci din nou.",
+    "publish": {
+      "title": "Confirmă publicarea",
+      "message": "Ești sigur că vrei să publici acest eveniment?",
+      "confirm": "Da",
+      "cancel": "Nu",
+      "success": "Evenimentul a fost publicat cu succes.",
+      "error": "Publicarea evenimentului a eșuat. Te rugăm să încerci din nou."
+    }
   },
   "createEvent": {
     "title": "Creare eveniment",

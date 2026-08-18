@@ -107,10 +107,20 @@
     "eventTypeExternal": "External",
     "eventTypeLocal": "Local",
     "eventViewButton": "View",
+    "eventPublishButton": "Publish",
     "eventEditButton": "Edit",
     "eventCheckInButton": "Check-in",
     "clearFilters": "Clear filters",
-    "noData": "No events found"
+    "noData": "No events found",
+    "fetchError": "Failed to fetch events. Please try again.",
+    "publish": {
+      "title": "Confirm Publish",
+      "message": "Are you sure you want to publish this event?",
+      "confirm": "Yes",
+      "cancel": "No",
+      "success": "Event published successfully.",
+      "error": "Failed to publish event. Please try again."
+    }
   },
   "createEvent": {
     "title": "Create event",

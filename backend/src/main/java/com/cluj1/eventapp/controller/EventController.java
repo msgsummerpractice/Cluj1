@@ -3,6 +3,7 @@ package com.cluj1.eventapp.controller;
 import java.util.List;
 import java.util.UUID;
 
+import com.cluj1.eventapp.dto.CheckInCodesDto;
 import com.cluj1.eventapp.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,10 +14,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import com.cluj1.eventapp.dto.AttendanceRecordDto;
 import com.cluj1.eventapp.dto.EventDetailsDto;
 import com.cluj1.eventapp.dto.EventDto;
+import com.cluj1.eventapp.model.enums.EventStatus;
+
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -110,4 +116,17 @@ public class EventController {
 		return ResponseEntity.ok(eventCheckInService.getRecentCheckins(id, limit));
 	}
 
+	@PatchMapping("/{id}/status/{status}")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
+	public ResponseEntity<EventDto> updateEventStatus(
+			@PathVariable UUID id,
+			@PathVariable EventStatus status) {
+		return ResponseEntity.ok(eventService.updateEventStatus(id, status));
+	}
+
+	@PostMapping("/{id}/checkin-codes")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
+	public ResponseEntity<CheckInCodesDto> generateCheckInCodes(@PathVariable UUID id) {
+		return ResponseEntity.ok(eventService.generateCheckInCodes(id));
+	}
 }
