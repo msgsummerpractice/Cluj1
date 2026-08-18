@@ -16,4 +16,7 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     @Query("SELECT COUNT(r) FROM Registration r WHERE r.user.id = :user_id AND r.event.eventStartDate > :now")
     int countUpcomingEventsForUsers(@Param("now")OffsetDateTime now, @Param("user_id")UUID user_id);
 
+    @Query("SELECT COUNT(r) > 0 FROM Registration r WHERE r.event.id = :eventId AND r.user.id = :userId")
+    boolean existsByEventIdAndUserId(@Param("eventId") UUID eventId, @Param("userId") UUID userId);
+
 }

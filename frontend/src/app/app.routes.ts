@@ -4,7 +4,7 @@ import { RegisterComponent } from './features/register-component/register-compon
 import { ProfileComponent } from './features/profile-component/profile-component';
 
 export const routes: Routes = [
-  {path: 'profile', component: ProfileComponent, canActivate: [authGuard]},
+  { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
   {
     path: 'register',
     component: RegisterComponent,
@@ -76,10 +76,13 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'events/:id',
-    canActivate: [authGuard],
+    path: 'events/:id/register',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'USER', 'PARTICIPANT'] },
     loadComponent: () =>
-      import('./features/events/event-details/event-details').then((m) => m.EventDetailsComponent),
+      import('./features/events/event-registration/event-registration').then(
+        (m) => m.EventRegistration,
+      ),
   },
   {
     path: 'events/:id/edit',
@@ -89,6 +92,12 @@ export const routes: Routes = [
       import('./features/events/event-creation/event-creation').then(
         (m) => m.EventCreationComponent,
       ),
+  },
+  {
+    path: 'events/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/events/event-details/event-details').then((m) => m.EventDetailsComponent),
   },
   {
     path: '**',

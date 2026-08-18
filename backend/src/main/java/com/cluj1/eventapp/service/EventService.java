@@ -11,13 +11,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cluj1.eventapp.model.Event;
 import com.cluj1.eventapp.model.EventDetails;
+import com.cluj1.eventapp.model.Registration;
+import com.cluj1.eventapp.model.TransportationDetails;
 import com.cluj1.eventapp.model.User;
 import com.cluj1.eventapp.model.enums.EventLocation;
 import com.cluj1.eventapp.model.enums.EventStatus;
 import com.cluj1.eventapp.model.enums.EventType;
 import com.cluj1.eventapp.repository.EventRepository;
+import com.cluj1.eventapp.repository.RegistrationRepository;
 import com.cluj1.eventapp.repository.UserRepository;
 import com.cluj1.eventapp.dto.EventDto;
+import com.cluj1.eventapp.dto.EventRegistrationDto;
 import com.cluj1.eventapp.mapper.EventMapper;
 import com.cluj1.eventapp.exception.InvalidEventOperationException;
 
@@ -31,6 +35,7 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final RegistrationRepository registrationRepository;
     private final EventMapper eventMapper;
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -39,6 +44,7 @@ public class EventService {
         User user = userRepository.findByEmail(email).orElseThrow(()-> new IllegalArgumentException("User not found"));
         return eventRepository.countUpcomingEventsForUsers(OffsetDateTime.now(), user.getId());
     }
+
     @Transactional(readOnly = true)
     public List<EventDto> getAllEvents() {
         return eventRepository.findAll().stream()
@@ -149,5 +155,81 @@ public class EventService {
                 .orElseThrow(() -> new IllegalArgumentException("Event not found with id: " + id));
         
         return eventMapper.toDto(event); 
+    }
+
+    @Transactional
+    public Registration registerUser(UUID eventId, String userEmail, EventRegistrationDto dto) {
+        User user = userRepository.findByEmail(userEmail.toLowerCase())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+
+        if (event.getRegistrationEndDate() != null && event.getRegistrationEndDate().isBefore(OffsetDateTime.now())) {
+            throw new InvalidEventOperationException("Registration is closed for this event.");
+        }
+
+        if (eventRepository.existsByEventIdAndUserId(eventId, user.getId())) {
+            return registrationRepository.findByEventIdAndUserId(eventId, user.getId())
+                    .orElseThrow(() -> new IllegalStateException("Registration exists but could not be loaded."));
+        }
+
+        if (dto.getPhotoConsent() == null || !dto.getPhotoConsent()) {
+            throw new InvalidEventOperationException("Photo consent is required for registration.");
+        }
+
+        if (event.getType() != EventType.EXTERNAL && (dto.getGdprConsent() == null || !dto.getGdprConsent())) {
+            throw new InvalidEventOperationException("GDPR consent is required for this event type.");
+        }
+
+        if (event.getType() == EventType.INTERNAL) {
+            validateInternalRegistration(dto);
+        }
+
+        Registration registration = Registration.builder()
+                .user(user)
+                .event(event)
+                .gdprConsent(Boolean.TRUE.equals(dto.getGdprConsent()))
+                .photoConsent(Boolean.TRUE.equals(dto.getPhotoConsent()))
+                .foodPreference(dto.getFoodPreference())
+                .transportationNeeded(dto.getTransportationNeeded() != null ? dto.getTransportationNeeded() : false)
+                .accommodationNeeded(dto.getAccommodationNeeded() != null ? dto.getAccommodationNeeded() : false)
+                .accommodationDays(dto.getAccommodationDays())
+                .build();
+
+        if (event.getType() == EventType.INTERNAL && Boolean.TRUE.equals(dto.getTransportationNeeded())) {
+            TransportationDetails transportDetails = TransportationDetails.builder()
+                    .registration(registration)
+                    .driverName(dto.getDriverName())
+                    .driverPhoneNumber(dto.getDriverPhone())
+                    .build();
+            registration.setTransportationDetails(transportDetails);
+        }
+
+        return registrationRepository.save(registration);
+    }
+
+    private void validateInternalRegistration(EventRegistrationDto dto) {
+        if (Boolean.TRUE.equals(dto.getTransportationNeeded())) {
+            if (dto.getDriverName() == null || dto.getDriverName().isBlank()) {
+                throw new InvalidEventOperationException("Driver name is required when transportation is needed.");
+            }
+
+            if (dto.getDriverPhone() == null || dto.getDriverPhone().isBlank()) {
+                throw new InvalidEventOperationException("Driver phone is required when transportation is needed.");
+            }
+        }
+
+        if (Boolean.TRUE.equals(dto.getAccommodationNeeded())
+                && (dto.getAccommodationDays() == null || dto.getAccommodationDays() < 1)) {
+            throw new InvalidEventOperationException("Accommodation days must be provided when accommodation is needed.");
+        }
+    }
+
+    public boolean isUserRegistered(UUID eventId, String userEmail) {
+        User user = userRepository.findByEmail(userEmail.toLowerCase())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                
+        return eventRepository.existsByEventIdAndUserId(eventId, user.getId());
     }
 }

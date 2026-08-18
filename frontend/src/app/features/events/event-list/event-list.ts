@@ -1,6 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Event } from '../../../core/models/event.model';
 import { EventService } from '../../../core/services/event.service';
 
@@ -173,7 +173,13 @@ export class EventListComponent implements OnInit {
       next: (data) => {
         this.events.set(data);
       },
-      error: (err) => this.toastService.show('error', typeof err?.error === 'string' ? err.error : (err?.error?.message || err?.message || 'Failed to fetch events.')),
+      error: (err) =>
+        this.toastService.show(
+          'error',
+          typeof err?.error === 'string'
+            ? err.error
+            : err?.error?.message || err?.message || 'Failed to fetch events.',
+        ),
     });
   }
 
@@ -260,5 +266,17 @@ export class EventListComponent implements OnInit {
 
   editEvent(eventId: string): void {
     this.router.navigate(['/events', eventId, 'edit']);
+  }
+
+  openRegistrationModal(event: any) {
+    this.router.navigate(['/events', event.id, 'register']);
+  }
+
+  isRegistrationClosed(event: Event): boolean {
+    if (!event.registrationEndDate) {
+      return false;
+    }
+
+    return Date.now() > new Date(event.registrationEndDate).getTime();
   }
 }

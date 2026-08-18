@@ -101,6 +101,17 @@
         {{ 'events.eventViewButton' | transloco }}
       </button>
 
+      @if (event.status === 'PUBLISHED') {
+        <button
+          mat-stroked-button
+          (click)="openRegistrationModal(event)"
+          class="event-register-button transition-colors whitespace-nowrap"
+          [disabled]="isRegistrationClosed(event)"
+        >
+          Register
+        </button>
+      }
+
       @if (isMarketingOrganizer() && event.status == 'DRAFT') {
         <button
           mat-stroked-button

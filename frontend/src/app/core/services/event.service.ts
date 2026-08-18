@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Event } from '../models/event.model';
 import { EventDetails } from '../models/event-detail.models';
+import { EventRegistrationRequest } from '../models/event-registration.model';
 
 @Injectable({
   providedIn: 'root',
@@ -55,6 +56,19 @@ export class EventService {
       formData.append('poster', poster);
     }
     return this.http.put<Event>(`${this.apiUrl}/${id}`, formData, {
+      withCredentials: true,
+    });
+  }
+
+  registerForEvent(eventId: string, requestData: EventRegistrationRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${eventId}`, requestData, {
+      responseType: 'text',
+      withCredentials: true,
+    });
+  }
+
+  checkIfAlreadyRegistered(eventId: string): Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiUrl}/${eventId}/check`, {
       withCredentials: true,
     });
   }
