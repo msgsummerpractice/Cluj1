@@ -185,7 +185,8 @@ class EventServiceTest {
 	@Test
 	void getEligibleEventsReturnsEmptyListWhenRepositoryReturnsNoEvents() {
 		mockUserWithLocation(UserLocation.CLUJ);
-		when(eventRepository.findEligibleEvents(any(), eq(EventLocation.CLUJ))).thenReturn(List.of());
+		when(eventRepository.findEligibleEvents(any(), eq(EventLocation.CLUJ), eq(EventStatus.PUBLISHED)))
+				.thenReturn(List.of());
 
 		List<EventDto> result = eventService.getEligibleEventsForCurrentUser();
 
@@ -198,7 +199,8 @@ class EventServiceTest {
 		Event event = Event.builder().id(UUID.randomUUID()).name("ClujFest").build();
 		EventDto dto = EventDto.builder().id(event.getId()).name(event.getName()).build();
 
-		when(eventRepository.findEligibleEvents(any(), eq(EventLocation.CLUJ))).thenReturn(List.of(event));
+		when(eventRepository.findEligibleEvents(any(), eq(EventLocation.CLUJ), eq(EventStatus.PUBLISHED)))
+				.thenReturn(List.of(event));
 		when(eventMapper.toDto(event)).thenReturn(dto);
 		when(registrationRepository.findByUserIdAndEventId(mockUser.getId(), event.getId()))
 				.thenReturn(Optional.empty());
@@ -217,7 +219,8 @@ class EventServiceTest {
 		EventDto dto = EventDto.builder().id(event.getId()).name(event.getName()).build();
 		Registration registration = Registration.builder().id(UUID.randomUUID()).build();
 
-		when(eventRepository.findEligibleEvents(any(), eq(EventLocation.CLUJ))).thenReturn(List.of(event));
+		when(eventRepository.findEligibleEvents(any(), eq(EventLocation.CLUJ), eq(EventStatus.PUBLISHED)))
+				.thenReturn(List.of(event));
 		when(eventMapper.toDto(event)).thenReturn(dto);
 		when(registrationRepository.findByUserIdAndEventId(mockUser.getId(), event.getId()))
 				.thenReturn(Optional.of(registration));
@@ -239,7 +242,8 @@ class EventServiceTest {
 				.attendanceRecord(attendanceRecord)
 				.build();
 
-		when(eventRepository.findEligibleEvents(any(), eq(EventLocation.CLUJ))).thenReturn(List.of(event));
+		when(eventRepository.findEligibleEvents(any(), eq(EventLocation.CLUJ), eq(EventStatus.PUBLISHED)))
+				.thenReturn(List.of(event));
 		when(eventMapper.toDto(event)).thenReturn(dto);
 		when(registrationRepository.findByUserIdAndEventId(mockUser.getId(), event.getId()))
 				.thenReturn(Optional.of(registration));
@@ -258,7 +262,7 @@ class EventServiceTest {
 		eventService.getEligibleEventsForCurrentUser();
 
 		verify(eventRepository).findAllLocationEligibleEvents(any());
-		verify(eventRepository, never()).findEligibleEvents(any(), any());
+		verify(eventRepository, never()).findEligibleEvents(any(), any(), any());
 	}
 
 	@Test
@@ -269,6 +273,6 @@ class EventServiceTest {
 		eventService.getEligibleEventsForCurrentUser();
 
 		verify(eventRepository).findAllLocationEligibleEvents(any());
-		verify(eventRepository, never()).findEligibleEvents(any(), any());
+		verify(eventRepository, never()).findEligibleEvents(any(), any(), any());
 	}
 }

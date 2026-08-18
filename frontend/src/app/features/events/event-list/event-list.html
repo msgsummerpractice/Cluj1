@@ -1,4 +1,3 @@
-<!-- event-list.html -->
 <div class="p-8 bg-white min-h-screen">
   <app-data-table
     [columns]="columns()"
@@ -101,7 +100,7 @@
     <ng-template appDataTableCellDef="participantStatus" let-event>
       @if (event.isCheckedIn) {
         <span
-          class="flex items-center justify-center gap-1 text-green-600 font-medium"
+          class="flex justify-start gap-1 text-green-600 font-medium"
           [title]="'events.checkedIn' | transloco"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,28 +113,11 @@
           </svg>
           {{ 'events.checkedIn' | transloco }}
         </span>
-      } @else if (event.isRegistered) {
-        <span
-          class="flex items-center justify-center gap-1 text-blue-600 font-medium"
-          [title]="'events.registered' | transloco"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-            ></path>
-          </svg>
-          {{ 'events.registered' | transloco }}
-        </span>
-      } @else {
-        <span class="text-gray-400">-</span>
       }
     </ng-template>
 
     <ng-template appDataTableCellDef="actions" let-event>
-      <div class="flex items-center justify-center gap-2">
+      <div class="flex justify-start gap-2">
         <button
           mat-icon-button
           (click)="manageEvent(event.id)"
@@ -158,26 +140,15 @@
           </svg>
         </button>
 
-        @if (event.status === 'PUBLISHED') {
-          @if (!event.isRegistered) {
-            <button
-              mat-stroked-button
-              color="primary"
-              class="whitespace-nowrap"
-              (click)="register(event.id)"
-            >
-              {{ 'events.registerButton' | transloco }}
-            </button>
-          } @else if (!event.isCheckedIn) {
-            <button
-              mat-flat-button
-              class="whitespace-nowrap font-medium"
-              style="background-color: #a01441; color: white"
-              (click)="navigateToCheckIn(event.id)"
-            >
-              {{ 'events.checkInButton' | transloco }}
-            </button>
-          }
+        @if (event.status === 'PUBLISHED' && !event.isCheckedIn) {
+          <button
+            mat-icon-button
+            (click)="navigateToCheckIn(event.id)"
+            [matTooltip]="'events.eventCheckInButton' | transloco"
+            aria-label="Check in to event"
+          >
+            <mat-icon>qr_code_scanner</mat-icon>
+          </button>
         }
 
         @if (isMarketingOrganizer() && event.status === 'DRAFT') {
@@ -198,7 +169,7 @@
           </button>
 
           <button
-            mat-stroked-button
+            mat-icon-button
             (click)="openDialog(event)"
             [disabled]="isPublishing(event.id)"
             class="event-view-button transition-colors whitespace-nowrap"
@@ -215,7 +186,7 @@
 
         @if (isMarketingOrganizer() && event.status == 'PUBLISHED') {
           <button
-            mat-stroked-button
+            mat-icon-button
             (click)="completeEvent(event)"
             [disabled]="!eventHasEnded(event)"
             class="event-view-button transition-colors whitespace-nowrap"

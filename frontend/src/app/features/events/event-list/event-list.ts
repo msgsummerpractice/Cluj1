@@ -16,7 +16,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { DataTableComponent } from '../../../shared/components/data-table/data-table';
 import { DataTableCellDefDirective } from '../../../shared/components/data-table/data-table-cell-def.directive';

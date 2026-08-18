@@ -99,12 +99,6 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT'] },
   },
-  // {
-  //   path: 'checkin',
-  //   component: EventCheckInComponent,
-  //   canActivate: [authGuard, roleGuard],
-  //   data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT'] },
-  // },
   {
     path: '**',
     redirectTo: 'login',

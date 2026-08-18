@@ -60,7 +60,7 @@ public class EventController {
 	}
 
 	@GetMapping("/{id}/details")
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT')")
 	public ResponseEntity<EventDetailsDto> getEventDetails(@PathVariable UUID id) {
 		return ResponseEntity.ok(eventDetailsService.getEventDetailsByEventId(id));
 	}

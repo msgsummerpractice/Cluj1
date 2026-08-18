@@ -251,7 +251,7 @@ public class EventService {
         }
 
         List<Event> eligibleEvents = userEventLocation != null
-                ? eventRepository.findEligibleEvents(OffsetDateTime.now(), userEventLocation)
+                ? eventRepository.findEligibleEvents(OffsetDateTime.now(), userEventLocation, EventStatus.PUBLISHED)
                 : eventRepository.findAllLocationEligibleEvents(OffsetDateTime.now());
 
         Set<UUID> eventIds = eligibleEvents.stream()
