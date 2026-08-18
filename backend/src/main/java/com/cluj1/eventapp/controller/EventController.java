@@ -99,4 +99,5 @@ public class EventController {
 			@RequestPart(value = "poster", required = false) MultipartFile poster) {
 		return ResponseEntity.ok(eventService.updateEvent(id, eventDto, poster));
 	}
+
 }
