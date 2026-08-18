@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Event } from '../models/event.model';
 import { CheckInRequest } from '../models/check-in-request.model';
 import { EventDetails } from '../models/event-detail.models';
+import { CheckInCodes } from '../models/checkincodes.model';
 
 @Injectable({
   providedIn: 'root',
@@ -65,6 +66,10 @@ export class EventService {
     });
   }
 
+  generateCheckInCodes(eventId: string): Observable<CheckInCodes> {
+    const url = `${this.apiUrl}/${eventId}/checkin-codes`;
+    return this.http.post<CheckInCodes>(url, {});
+  }
   checkIn(request: CheckInRequest): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/checkin`, request, {
       withCredentials: true,

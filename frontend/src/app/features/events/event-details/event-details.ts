@@ -1,4 +1,4 @@
-import { Component, OnDestroy, inject, signal } from '@angular/core';
+import { Component, OnDestroy, inject, signal, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Event } from '../../../core/models/event.model';
@@ -6,10 +6,13 @@ import { EventDetails } from '../../../core/models/event-detail.models';
 import { EventService } from '../../../core/services/event.service';
 import { TranslocoModule } from '@jsverse/transloco';
 import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
+import {CheckincodesComponent} from '../../checkincodes-component/checkincodes-component';
+import { ToastService } from '../../../core/services/toast.service';
+import{ChangeDetectorRef} from '@angular/core';
 
 @Component({
   selector: 'app-event-details',
-  imports: [CommonModule, TranslocoModule, BackButtonComponent],
+  imports: [CommonModule, TranslocoModule, BackButtonComponent, CheckincodesComponent],
   templateUrl: './event-details.html',
   styleUrl: './event-details.css',
 })
@@ -19,6 +22,9 @@ export class EventDetailsComponent implements OnDestroy {
   readonly event = signal<Event | null>(null);
   readonly eventDetails = signal<EventDetails | null>(null);
   readonly posterUrl = signal<string | null>(null);
+
+  private toast = inject(ToastService);
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit() {
     const eventId = this.route.snapshot.paramMap.get('id');
@@ -31,7 +37,7 @@ export class EventDetailsComponent implements OnDestroy {
         this.event.set(event);
       },
       error: (error) => {
-        console.error('Error fetching event:', error);
+        this.toast.show('error', error);
       },
     });
 
@@ -52,7 +58,7 @@ export class EventDetailsComponent implements OnDestroy {
         }
       },
       error: (error) => {
-        console.error('Error fetching event details:', error);
+        this.toast.show('error', error);
       },
     });
   }
