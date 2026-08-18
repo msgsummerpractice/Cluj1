@@ -1,7 +1,6 @@
 package com.cluj1.eventapp.repository;
 
 import com.cluj1.eventapp.model.Registration;
-import org.hibernate.boot.models.JpaAnnotations;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,4 +14,5 @@ public interface RegistrationRepository extends JpaRepository<Registration, UUID
     int countTotalRegistrationsPerUser(@Param("userId") UUID userId);
 
     Optional<Registration> findByEventIdAndUserId(UUID eventId, UUID userId);
+    Optional<Registration> findByUserIdAndEventId(UUID userId, UUID eventId);
 }

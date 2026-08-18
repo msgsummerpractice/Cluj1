@@ -34,6 +34,7 @@ public class EventDetailsService {
                 .foodProvided(eventDetails.getFoodProvided())
                 .eventCode(eventDetails.getEventCode())
                 .qrCodeContent(eventDetails.getQrCodeContent())
+                .hasPoster(eventDetails.getPoster() != null && eventDetails.getPoster().length > 0)
                 .build();
     }
 

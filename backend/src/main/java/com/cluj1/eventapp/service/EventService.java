@@ -1,9 +1,20 @@
 package com.cluj1.eventapp.service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
+import org.springframework.data.domain.Sort;
+import com.cluj1.eventapp.dto.CheckInCodesDto;
+import com.cluj1.eventapp.repository.EventDetailsRepository;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,34 +31,43 @@ import com.cluj1.eventapp.model.enums.EventType;
 import com.cluj1.eventapp.repository.EventRepository;
 import com.cluj1.eventapp.repository.RegistrationRepository;
 import com.cluj1.eventapp.repository.UserRepository;
+
+import jakarta.persistence.EntityNotFoundException;
+
 import com.cluj1.eventapp.dto.EventDto;
 import com.cluj1.eventapp.dto.EventRegistrationDto;
 import com.cluj1.eventapp.mapper.EventMapper;
 import com.cluj1.eventapp.exception.InvalidEventOperationException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.OffsetDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
+@Transactional(readOnly = true)
 public class EventService {
 
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final RegistrationRepository registrationRepository;
+    private final EventDetailsRepository eventDetailsReposity;
     private final EventMapper eventMapper;
+    private final EventPublishMailService eventPublishMailService;
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
+    private final Random random = new Random();
 
-    public int getUpcomingRegisteredEventsCountPerUserByEmail(String email){
-        User user = userRepository.findByEmail(email).orElseThrow(()-> new IllegalArgumentException("User not found"));
+    public int getUpcomingRegisteredEventsCountPerUserByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
         return eventRepository.countUpcomingEventsForUsers(OffsetDateTime.now(), user.getId());
     }
 
     @Transactional(readOnly = true)
     public List<EventDto> getAllEvents() {
-        return eventRepository.findAll().stream()
+        return eventRepository.findAll(Sort.by(Sort.Direction.ASC, "createdAt", "id")).stream()
                 .map(eventMapper::toDto)
                 .toList();
     }
@@ -80,6 +100,50 @@ public class EventService {
 
         event.setEventDetails(details);
         return eventMapper.toDto(eventRepository.save(event));
+    }
+
+    @Transactional
+    public EventDto updateEventStatus(UUID id, EventStatus status) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Event not found"));
+
+        boolean justPublished = false;
+        EventStatus currentStatus = event.getStatus();
+
+        if (currentStatus == null) {
+            throw new InvalidEventOperationException(
+                    "Invalid status transition from null to " + status);
+        }
+
+        switch (currentStatus) {
+            case DRAFT -> {
+                if (status != EventStatus.PUBLISHED) {
+                    throw new InvalidEventOperationException(
+                            "Invalid status transition from " + currentStatus + " to " + status);
+                }
+                event.setStatus(EventStatus.PUBLISHED);
+                justPublished = true;
+                break;
+            }
+            case PUBLISHED -> {
+                if (status != EventStatus.COMPLETED) {
+                    throw new InvalidEventOperationException(
+                            "Invalid status transition from " + currentStatus + " to " + status);
+                }
+                event.setStatus(EventStatus.COMPLETED);
+                break;
+            }
+            default -> throw new InvalidEventOperationException(
+                    "Invalid status transition from " + currentStatus + " to " + status);
+        }
+
+        Event saved = eventRepository.save(event);
+
+        if (justPublished) {
+            eventPublishMailService.notifyRecipients(saved);
+        }
+
+        return eventMapper.toDto(saved);
     }
 
     @Transactional
@@ -153,8 +217,64 @@ public class EventService {
     public EventDto getEventById(UUID id) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found with id: " + id));
-        
-        return eventMapper.toDto(event); 
+
+        return eventMapper.toDto(event);
+    }
+
+    @Transactional
+    public CheckInCodesDto generateCheckInCodes(UUID eventId) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+        EventDetails eventDetails = eventDetailsReposity.findByEvent(event);
+
+        if (event.getStatus() != EventStatus.PUBLISHED) {
+            throw new IllegalStateException("Cannot generate codes, Event is not published");
+        }
+
+        if (eventDetails.getEventCode() != null && eventDetails.getQrCodeContent() != null) {
+            return new CheckInCodesDto(eventDetails.getQrCodeContent(), eventDetails.getEventCode());
+        }
+
+        String eventCode = generateUniqueEventCode();
+        String qrCodeConent = generateQRCodeBase64(event);
+
+        eventDetails.setEventCode(eventCode);
+        eventDetails.setQrCodeContent(qrCodeConent);
+        eventDetailsReposity.save(eventDetails);
+
+        return new CheckInCodesDto(qrCodeConent, eventCode);
+
+    }
+
+    private String generateUniqueEventCode() {
+        String code;
+        boolean isUnique = false;
+
+        do {
+            code = String.format("%06d", random.nextInt(1000000));
+            isUnique = !eventDetailsReposity.existsByEventCode(code);
+        } while (!isUnique);
+
+        return code;
+    }
+
+    private String generateQRCodeBase64(Event event) {
+        try {
+
+            String contentToEncode = String.format("EventID:%s|Name:%s", event.getId().toString(), event.getName());
+
+            QRCodeWriter qrCodeWriter = new QRCodeWriter();
+            BitMatrix bitMatrix = qrCodeWriter.encode(contentToEncode, BarcodeFormat.QR_CODE, 300, 300);
+
+            ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
+            MatrixToImageWriter.writeToStream(bitMatrix, "PNG", pngOutputStream);
+            byte[] pngData = pngOutputStream.toByteArray();
+
+            return "data:image/png;base64," + Base64.getEncoder().encodeToString(pngData);
+
+        } catch (WriterException | IOException e) {
+            throw new RuntimeException("Failed to generate QR Code image", e);
+        }
     }
 
     @Transactional

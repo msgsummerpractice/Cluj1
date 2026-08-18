@@ -107,9 +107,20 @@
     "eventTypeExternal": "External",
     "eventTypeLocal": "Local",
     "eventViewButton": "View",
+    "eventPublishButton": "Publish",
     "eventEditButton": "Edit",
+    "eventCheckInButton": "Check-in",
     "clearFilters": "Clear filters",
-    "noData": "No events found"
+    "noData": "No events found",
+    "fetchError": "Failed to fetch events. Please try again.",
+    "publish": {
+      "title": "Confirm Publish",
+      "message": "Are you sure you want to publish this event?",
+      "confirm": "Yes",
+      "cancel": "No",
+      "success": "Event published successfully.",
+      "error": "Failed to publish event. Please try again."
+    }
   },
   "createEvent": {
     "title": "Create event",
@@ -261,5 +272,55 @@
     "confirmRegistration": "Confirm Registration",
     "registered": "Registered",
     "agreementNotice": "By registering, you agree to comply with the rules and policies established for this event."
+  "checkin": {
+    "title": "Event Check-In",
+    "active_event": "Active event",
+    "loading_active_event": "Loading active event...",
+    "show_my_ticket": "Show my ticket",
+    "scan_attendee_qr": "Scan attendee QR ticket",
+    "scan_instructions": "Position the QR code inside the frame to check in.",
+    "camera_preview": "Camera preview",
+    "awaiting_device_permission": "Awaiting device permission...",
+    "manual_checkin": "Manual check-in",
+    "manual_instructions": "Enter the 6-digit event code to check in.",
+    "manual_code_placeholder": "6-digit attendee code",
+    "manual_placeholder": "000000",
+    "submit_btn": "Check In",
+    "your_ticket": "Your ticket",
+    "loading_event": "Loading event...",
+    "download_pdf": "Download PDF",
+    "manual_checkin_code": "Manual check-in code",
+    "ticket_not_available": "Ticket not available",
+    "recent_checkins": "Recent check-ins",
+    "no_recent_checkins": "No recent check-ins.",
+    "switch_to_manual": "Enter Code Manually",
+    "switch_to_scan": "Scan QR Code",
+    "success": "You have successfully checked in to the event!",
+    "toast": {
+      "success": "Success",
+      "error": "Error"
+    },
+    "error": {
+      "code": {
+        "required": "Event code is required.",
+        "invalid": "Event code must be exactly 6 characters."
+      },
+      "method": {
+        "required": "Check-in method is required."
+      },
+      "event": {
+        "notfound": "The event could not be found.",
+        "completed": "This event is already completed.",
+        "expired": "Check-in is closed because the event end time has passed."
+      },
+      "user": {
+        "notfound": "User account could not be found.",
+        "notregistered": "You are not registered for this event.",
+        "alreadycheckedin": "You have already checked in to this event."
+      },
+      "no_camera": "No camera detected on this device.",
+      "general": "An unexpected error occurred during check-in.",
+      "invalid_code": "The check-in code you entered is invalid."
+    }
   }
 }

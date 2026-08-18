@@ -72,9 +72,20 @@
     "eventTypeExternal": "Extern",
     "eventTypeLocal": "Local",
     "eventViewButton": "Vizualizează",
+    "eventPublishButton": "Publică",
     "eventEditButton": "Editează",
+    "eventCheckInButton": "Check-in",
     "clearFilters": "Șterge filtrele",
-    "noData": "Nu s-au găsit evenimente"
+    "noData": "Nu s-au găsit evenimente",
+    "fetchError": "Preluarea evenimentelor a eșuat. Te rugăm să încerci din nou.",
+    "publish": {
+      "title": "Confirmă publicarea",
+      "message": "Ești sigur că vrei să publici acest eveniment?",
+      "confirm": "Da",
+      "cancel": "Nu",
+      "success": "Evenimentul a fost publicat cu succes.",
+      "error": "Publicarea evenimentului a eșuat. Te rugăm să încerci din nou."
+    }
   },
   "createEvent": {
     "title": "Creare eveniment",
@@ -262,5 +273,55 @@
     "confirmRegistration": "Confirmă Înregistrarea",
     "registered": "Înregistrat",
     "agreementNotice": "Prin înregistrare, ești de acord să respecți regulile și politicile stabilite pentru acest eveniment."
+  "checkin": {
+    "title": "Check-In Eveniment",
+    "active_event": "Eveniment activ",
+    "loading_active_event": "Se încarcă evenimentul activ...",
+    "show_my_ticket": "Arată biletul meu",
+    "scan_attendee_qr": "Scanează codul QR al participantului",
+    "scan_instructions": "Poziționează codul QR în cadru pentru check-in.",
+    "camera_preview": "Previzualizare cameră",
+    "awaiting_device_permission": "Se așteaptă permisiunea dispozitivului...",
+    "manual_checkin": "Check-in manual",
+    "manual_instructions": "Introdu codul de 6 cifre al evenimentului pentru a face check-in.",
+    "manual_code_placeholder": "Cod participant din 6 cifre",
+    "manual_placeholder": "000000",
+    "submit_btn": "Check In",
+    "your_ticket": "Biletul tău",
+    "loading_event": "Se încarcă evenimentul...",
+    "download_pdf": "Descarcă PDF",
+    "manual_checkin_code": "Cod check-in manual",
+    "ticket_not_available": "Bilet indisponibil",
+    "recent_checkins": "Check-in-uri recente",
+    "no_recent_checkins": "Nu există check-in-uri recente.",
+    "switch_to_manual": "Introdu Codul Manual",
+    "switch_to_scan": "Scanează Cod QR",
+    "success": "Ai făcut check-in cu succes la eveniment!",
+    "toast": {
+      "success": "Succes",
+      "error": "Eroare"
+    },
+    "error": {
+      "code": {
+        "required": "Codul evenimentului este obligatoriu.",
+        "invalid": "Codul evenimentului trebuie să aibă exact 6 caractere."
+      },
+      "method": {
+        "required": "Metoda de check-in este obligatorie."
+      },
+      "event": {
+        "notfound": "Evenimentul nu a putut fi găsit.",
+        "completed": "Acest eveniment este deja finalizat.",
+        "expired": "Check-in-ul este închis deoarece evenimentul s-a încheiat."
+      },
+      "user": {
+        "notfound": "Contul de utilizator nu a putut fi găsit.",
+        "notregistered": "Nu ești înregistrat la acest eveniment.",
+        "alreadycheckedin": "Ai făcut deja check-in la acest eveniment."
+      },
+      "no_camera": "Nu a fost detectată nicio cameră pe acest dispozitiv.",
+      "general": "A apărut o eroare neașteptată în timpul check-in-ului.",
+      "invalid_code": "Codul de check-in introdus este invalid."
+    }
   }
 }

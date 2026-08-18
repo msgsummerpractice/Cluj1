@@ -1,10 +1,12 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpParams } from '@angular/common/http';
-import { HttpClient } from '@angular/common/http';
+import { HttpParams, HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Event } from '../models/event.model';
+import { CheckInRequest } from '../models/check-in-request.model';
 import { EventDetails } from '../models/event-detail.models';
 import { EventRegistrationRequest } from '../models/event-registration.model';
+import { AttendanceRecord } from '../models/attendance-record.model';
+import { CheckInCodes } from '../models/checkincodes.model';
 
 @Injectable({
   providedIn: 'root',
@@ -34,6 +36,7 @@ export class EventService {
     const url = `${this.apiUrl}/${eventId}/poster`;
     return this.http.get(url, { responseType: 'blob' });
   }
+
   getUpcomingRegisteredEventsCountPerUser(): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/countRegistrationPerUser`);
   }
@@ -63,6 +66,8 @@ export class EventService {
   registerForEvent(eventId: string, requestData: EventRegistrationRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/${eventId}`, requestData, {
       responseType: 'text',
+  updateEventStatus(id: string, status: 'DRAFT' | 'PUBLISHED' | 'COMPLETED'): Observable<Event> {
+    return this.http.patch<Event>(`${this.apiUrl}/${id}/status/${status}`, null, {
       withCredentials: true,
     });
   }
@@ -70,6 +75,22 @@ export class EventService {
   checkIfAlreadyRegistered(eventId: string): Observable<boolean> {
     return this.http.get<boolean>(`${this.apiUrl}/${eventId}/check`, {
       withCredentials: true,
+    });
+  }
+  generateCheckInCodes(eventId: string): Observable<CheckInCodes> {
+    const url = `${this.apiUrl}/${eventId}/checkin-codes`;
+    return this.http.post<CheckInCodes>(url, {});
+  }
+  checkIn(request: CheckInRequest): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/checkin`, request, {
+      withCredentials: true,
+    });
+  }
+
+  getRecentCheckins(eventId: string, limit: number = 4): Observable<AttendanceRecord[]> {
+    const params = new HttpParams().set('limit', limit.toString());
+    return this.http.get<AttendanceRecord[]>(`${this.apiUrl}/${eventId}/checkins/recent`, {
+      params,
     });
   }
 }

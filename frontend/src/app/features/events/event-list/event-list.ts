@@ -7,9 +7,11 @@ import { EventService } from '../../../core/services/event.service';
 import { Sort, SortDirection } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { TranslocoModule } from '@jsverse/transloco';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { DataTableComponent } from '../../../shared/components/data-table/data-table';
 import { DataTableCellDefDirective } from '../../../shared/components/data-table/data-table-cell-def.directive';
 import { DataTableFilterDefDirective } from '../../../shared/components/data-table/data-table-filter-def.directive';
@@ -17,6 +19,8 @@ import { DataTableColumn } from '../../../shared/components/data-table/data-tabl
 import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 import { EventSortField, displayEventEndDate, sortEvents } from './event-list.utils';
 import { AuthService } from '../../../core/services/auth.service';
+
+import { PublishEventDialogComponent } from '../../../shared/components/publish-event-dialog/publish-event-dialog';
 import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
@@ -27,6 +31,7 @@ import { ToastService } from '../../../core/services/toast.service';
     MatCheckboxModule,
     MatInputModule,
     MatFormFieldModule,
+    MatProgressSpinnerModule,
     TranslocoModule,
     DataTableComponent,
     DataTableCellDefDirective,
@@ -50,6 +55,7 @@ export class EventListComponent implements OnInit {
     },
   ];
   readonly events = signal<readonly Event[]>([]);
+  readonly publishingEventIds = signal<readonly string[]>([]);
   readonly nameFilter = signal('');
   readonly selectedDateYears = signal<readonly string[]>([]);
   readonly selectedDateMonths = signal<readonly string[]>([]);
@@ -110,6 +116,9 @@ export class EventListComponent implements OnInit {
 
   private readonly eventService = inject(EventService);
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
+  private readonly translocoService = inject(TranslocoService);
+
   private readonly toastService = inject(ToastService);
   ngOnInit(): void {
     this.fetchEvents();
@@ -173,13 +182,16 @@ export class EventListComponent implements OnInit {
       next: (data) => {
         this.events.set(data);
       },
-      error: (err) =>
+      error: (err) => {
         this.toastService.show(
           'error',
           typeof err?.error === 'string'
             ? err.error
-            : err?.error?.message || err?.message || 'Failed to fetch events.',
-        ),
+            : err?.error?.message ||
+                err?.message ||
+                this.translocoService.translate('events.fetchError'),
+        );
+      },
     });
   }
 
@@ -205,6 +217,60 @@ export class EventListComponent implements OnInit {
 
   isTypeSelected(type: string): boolean {
     return this.selectedTypes().includes(type.trim().toLowerCase());
+  }
+
+  isPublishing(eventId: string): boolean {
+    return this.publishingEventIds().includes(eventId);
+  }
+
+  publishEvent(event: Event): void {
+    if (this.isPublishing(event.id)) {
+      return;
+    }
+
+    this.publishingEventIds.update((ids) => [...ids, event.id]);
+
+    this.eventService.updateEventStatus(event.id, 'PUBLISHED').subscribe({
+      next: () => {
+        this.fetchEvents();
+        this.clearPublishing(event.id);
+        this.toastService.show(
+          'success',
+          this.translocoService.translate('events.publish.success'),
+        );
+      },
+      error: (err) => {
+        this.clearPublishing(event.id);
+        this.toastService.show(
+          'error',
+          typeof err?.error === 'string'
+            ? err.error
+            : err?.error?.message ||
+                err?.message ||
+                this.translocoService.translate('events.publish.error'),
+        );
+      },
+    });
+  }
+
+  openDialog(event: Event): void {
+    if (this.isPublishing(event.id)) {
+      return;
+    }
+
+    const dialogRef = this.dialog.open(PublishEventDialogComponent, {
+      width: '400px',
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) {
+        this.publishEvent(event);
+      }
+    });
+  }
+
+  private clearPublishing(eventId: string): void {
+    this.publishingEventIds.update((ids) => ids.filter((id) => id !== eventId));
   }
 
   private toEventSortField(sortField: string): EventSortField | '' {
@@ -278,5 +344,7 @@ export class EventListComponent implements OnInit {
     }
 
     return Date.now() > new Date(event.registrationEndDate).getTime();
+  navigateToCheckIn(eventId: string): void {
+    this.router.navigate(['/events', eventId, 'checkin']);
   }
 }

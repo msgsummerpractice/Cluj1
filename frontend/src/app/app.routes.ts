@@ -2,9 +2,12 @@ import { Routes } from '@angular/router';
 import { authGuard, guestGuard, roleGuard } from './core/auth/auth.guards';
 import { RegisterComponent } from './features/register-component/register-component';
 import { ProfileComponent } from './features/profile-component/profile-component';
+import { EventCheckInComponent } from './features/events/event-checkin/event-checkin';
+import { RubiksCubeComponent } from './features/rubiks-cube-component/rubiks-cube-component';
 
 export const routes: Routes = [
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
+  {path: 'rubik', component: RubiksCubeComponent},
   {
     path: 'register',
     component: RegisterComponent,
@@ -62,7 +65,7 @@ export const routes: Routes = [
   {
     path: 'events',
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN'] },
+    data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT'] },
     loadComponent: () =>
       import('./features/events/event-list/event-list').then((m) => m.EventListComponent),
   },
@@ -98,6 +101,10 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('./features/events/event-details/event-details').then((m) => m.EventDetailsComponent),
+    path: 'events/:id/checkin',
+    component: EventCheckInComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT'] },
   },
   {
     path: '**',
