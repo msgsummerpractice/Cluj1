@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpParams } from '@angular/common/http';
-import { HttpClient } from '@angular/common/http';
+import { HttpParams, HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Event } from '../models/event.model';
+import { CheckInRequest } from '../models/check-in-request.model';
 import { EventDetails } from '../models/event-detail.models';
 
 @Injectable({
@@ -55,6 +55,12 @@ export class EventService {
       formData.append('poster', poster);
     }
     return this.http.put<Event>(`${this.apiUrl}/${id}`, formData, {
+      withCredentials: true,
+    });
+  }
+
+  checkIn(request: CheckInRequest): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/checkin`, request, {
       withCredentials: true,
     });
   }

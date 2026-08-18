@@ -1,0 +1,90 @@
+package com.cluj1.eventapp.service;
+
+import com.cluj1.eventapp.dto.CheckInRequest;
+import com.cluj1.eventapp.model.AttendanceRecord;
+import com.cluj1.eventapp.model.Event;
+import com.cluj1.eventapp.model.Registration;
+import com.cluj1.eventapp.model.User;
+import com.cluj1.eventapp.model.enums.EventStatus;
+
+import java.time.OffsetDateTime;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.regex.Pattern;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.cluj1.eventapp.repository.AttendanceRecordRepository;
+import com.cluj1.eventapp.repository.EventDetailsRepository;
+import com.cluj1.eventapp.repository.EventRepository;
+import com.cluj1.eventapp.repository.RegistrationRepository;
+import com.cluj1.eventapp.repository.UserRepository;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class EventCheckInService {
+
+    private static final Pattern UUID_PATTERN = Pattern
+            .compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$");
+
+    private final EventRepository eventRepository;
+    private final EventDetailsRepository eventDetailsRepository;
+    private final UserRepository userRepository;
+    private final RegistrationRepository registrationRepository;
+    private final AttendanceRecordRepository attendanceRecordRepository;
+
+    @Transactional
+    public void processCheckIn(String userEmail, CheckInRequest request) {
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "checkin.error.user.notfound"));
+
+        Event event = findEventByCode(request.getCode());
+
+        if (event.getStatus() == EventStatus.COMPLETED) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "checkin.error.event.completed");
+        }
+
+        if (event.getEventEndTime() != null && OffsetDateTime.now().isAfter(event.getEventEndTime())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "checkin.error.event.expired");
+        }
+
+        Registration registration = registrationRepository.findByUserIdAndEventId(user.getId(), event.getId())
+                .orElseThrow(
+                        () -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "checkin.error.user.notregistered"));
+
+        boolean alreadyCheckedIn = attendanceRecordRepository.existsByRegistrationId(registration.getId());
+        if (alreadyCheckedIn) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "checkin.error.user.alreadycheckedin");
+        }
+
+        AttendanceRecord attendanceRecord = AttendanceRecord.builder()
+                .registration(registration)
+                .checkInMethod(request.getMethod())
+                .checkInTime(OffsetDateTime.now())
+                .build();
+        attendanceRecordRepository.save(attendanceRecord);
+    }
+
+    private Event findEventByCode(String code) {
+        if (code == null || code.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "checkin.error.code.invalid");
+        }
+
+        String sanitizedCode = code.trim();
+
+        if (UUID_PATTERN.matcher(sanitizedCode).matches()) {
+            Optional<Event> eventById = eventRepository.findById(UUID.fromString(sanitizedCode));
+            if (eventById.isPresent()) {
+                return eventById.get();
+            }
+        }
+
+        return eventDetailsRepository.findEventByEventCode(sanitizedCode)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "checkin.error.event.notfound"));
+    }
+}

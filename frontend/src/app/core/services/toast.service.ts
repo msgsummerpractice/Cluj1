@@ -1,11 +1,8 @@
 import { Injectable, signal } from '@angular/core';
 
-
-
 @Injectable({
   providedIn: 'root',
 })
-
 export class ToastService {
   message = signal<string>('');
   type = signal<'success' | 'error'>('success');
@@ -26,5 +23,4 @@ export class ToastService {
       this.isVisible.set(false);
     }, 3000);
   }
-
 }
