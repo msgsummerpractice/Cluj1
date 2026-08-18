@@ -1,6 +1,7 @@
 package com.cluj1.eventapp.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cluj1.eventapp.model.enums.EventLocation;
 import com.cluj1.eventapp.model.enums.UserLocation;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class RecipientPoolService {
     private final UserDetailsRepository userDetailsRepository;
 

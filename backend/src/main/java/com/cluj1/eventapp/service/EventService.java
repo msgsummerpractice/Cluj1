@@ -18,6 +18,9 @@ import com.cluj1.eventapp.model.enums.EventStatus;
 import com.cluj1.eventapp.model.enums.EventType;
 import com.cluj1.eventapp.repository.EventRepository;
 import com.cluj1.eventapp.repository.UserRepository;
+
+import jakarta.persistence.EntityNotFoundException;
+
 import com.cluj1.eventapp.dto.EventDto;
 import com.cluj1.eventapp.mapper.EventMapper;
 import com.cluj1.eventapp.exception.InvalidEventOperationException;
@@ -30,6 +33,7 @@ import java.time.OffsetDateTime;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class EventService {
 
     private final EventRepository eventRepository;
@@ -44,14 +48,12 @@ public class EventService {
         return eventRepository.countUpcomingEventsForUsers(OffsetDateTime.now(), user.getId());
     }
 
-    @Transactional(readOnly = true)
     public List<EventDto> getAllEvents() {
         return eventRepository.findAll(Sort.by(Sort.Direction.ASC, "createdAt", "id")).stream()
                 .map(eventMapper::toDto)
                 .toList();
     }
 
-    @Transactional(readOnly = true)
     public EventDto getEventById(UUID id) {
         return eventRepository.findById(id)
                 .map(eventMapper::toDto)
@@ -89,26 +91,36 @@ public class EventService {
     }
 
     @Transactional
-    public EventDto updateEventStatus(UUID id, String status) {
+    public EventDto updateEventStatus(UUID id, EventStatus status) {
         Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new InvalidEventOperationException("Event not found"));
-
-        EventStatus newStatus;
-        try {
-            newStatus = EventStatus.valueOf(status);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidEventOperationException("Invalid status value: " + status);
-        }
+                .orElseThrow(() -> new EntityNotFoundException("Event not found"));
 
         boolean justPublished = false;
-        if (event.getStatus() == EventStatus.DRAFT && newStatus == EventStatus.PUBLISHED) {
-            event.setStatus(EventStatus.PUBLISHED);
-            justPublished = true;
-        } else if (event.getStatus() == EventStatus.PUBLISHED && newStatus == EventStatus.COMPLETED) {
-            event.setStatus(EventStatus.COMPLETED);
-        } else {
+        EventStatus currentStatus = event.getStatus();
+
+        if (currentStatus == null) {
             throw new InvalidEventOperationException(
-                    "Invalid status transition from " + event.getStatus() + " to " + newStatus);
+                    "Invalid status transition from null to " + status);
+        }
+
+        switch (currentStatus) {
+            case DRAFT -> {
+                if (status != EventStatus.PUBLISHED) {
+                    throw new InvalidEventOperationException(
+                            "Invalid status transition from " + currentStatus + " to " + status);
+                }
+                event.setStatus(EventStatus.PUBLISHED);
+                justPublished = true;
+            }
+            case PUBLISHED -> {
+                if (status != EventStatus.COMPLETED) {
+                    throw new InvalidEventOperationException(
+                            "Invalid status transition from " + currentStatus + " to " + status);
+                }
+                event.setStatus(EventStatus.COMPLETED);
+            }
+            default -> throw new InvalidEventOperationException(
+                    "Invalid status transition from " + currentStatus + " to " + status);
         }
 
         Event saved = eventRepository.save(event);

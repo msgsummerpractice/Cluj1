@@ -13,7 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.cluj1.eventapp.dto.EventDetailsDto;
 import com.cluj1.eventapp.dto.EventDto;
-import com.cluj1.eventapp.dto.UpdateEventStatusRequest;
+import com.cluj1.eventapp.model.enums.EventStatus;
 
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -105,11 +105,11 @@ public class EventController {
 		return ResponseEntity.ok(eventService.updateEvent(id, eventDto, poster));
 	}
 
-	@PatchMapping("/{id}/status")
+	@PatchMapping("/{id}/status/{status}")
 	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
 	public ResponseEntity<EventDto> updateEventStatus(
 			@PathVariable UUID id,
-			@Valid @RequestBody UpdateEventStatusRequest request) {
-		return ResponseEntity.ok(eventService.updateEventStatus(id, request.getStatus()));
+			@PathVariable EventStatus status) {
+		return ResponseEntity.ok(eventService.updateEventStatus(id, status));
 	}
 }

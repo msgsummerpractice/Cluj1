@@ -62,8 +62,8 @@ export class EventService {
 
   updateEventStatus(id: string, status: 'DRAFT' | 'PUBLISHED' | 'COMPLETED'): Observable<Event> {
     return this.http.patch<Event>(
-      `${this.apiUrl}/${id}/status`,
-      { status },
+      `${this.apiUrl}/${id}/status/${status}`,
+      null,
       {
         withCredentials: true,
       },
