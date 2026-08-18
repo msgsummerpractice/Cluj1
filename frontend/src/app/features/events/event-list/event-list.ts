@@ -2,6 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
 import { Event } from '../../../core/models/event.model';
 import { EventService } from '../../../core/services/event.service';
 
@@ -30,7 +31,11 @@ import { ToastService } from '../../../core/services/toast.service';
 @Component({
   selector: 'app-event-list',
   imports: [
+    BackButtonComponent,
     CommonModule,
+    DataTableComponent,
+    DataTableCellDefDirective,
+    DataTableFilterDefDirective,
     MatButtonModule,
     MatCheckboxModule,
     MatIcon,
@@ -39,10 +44,6 @@ import { ToastService } from '../../../core/services/toast.service';
     MatProgressSpinnerModule,
     MatTooltip,
     TranslocoModule,
-    DataTableComponent,
-    DataTableCellDefDirective,
-    DataTableFilterDefDirective,
-    BackButtonComponent,
   ],
   templateUrl: './event-list.html',
   styleUrl: './event-list.css',
@@ -255,11 +256,28 @@ export class EventListComponent implements OnInit {
       messageKey: 'events.publish.message',
       confirmKey: 'events.publish.confirm',
       cancelKey: 'events.publish.cancel',
-    }).subscribe((confirmed) => {
-      if (confirmed) {
-        this.publishEvent(event);
-      }
-    });
+    })
+      .pipe(
+        filter((confirmed): confirmed is true => Boolean(confirmed)),
+        switchMap(() => {
+          this.publishingEventIds.update((ids) => [...ids, event.id]);
+          return this.eventService.updateEventStatus(event.id, 'PUBLISHED');
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.fetchEvents();
+          this.clearPublishing(event.id);
+          this.toastService.show(
+            'success',
+            this.translocoService.translate('events.publish.success'),
+          );
+        },
+        error: () => {
+          this.clearPublishing(event.id);
+          this.toastService.show('error', this.translocoService.translate('events.publish.error'));
+        },
+      });
   }
 
   private openConfirmDialog(data: ConfirmDialogData): Observable<boolean | undefined> {
@@ -336,52 +354,34 @@ export class EventListComponent implements OnInit {
     this.router.navigate(['/events', eventId, 'edit']);
   }
 
-  completeEvent(eventId: string): void {
-    this.eventService.getEventById(eventId).subscribe({
-      next: (event) => {
-        if (!event) {
-          this.toastService.show('error', this.translocoService.translate('events.complete.error'));
-          return;
-        }
-        if (!this.eventHasEnded(event)) {
+  completeEvent(event: Event): void {
+    if (!this.eventHasEnded(event)) {
+      this.toastService.show('error', this.translocoService.translate('events.complete.notEnded'));
+      return;
+    }
+
+    this.openConfirmDialog({
+      titleKey: 'events.complete.title',
+      messageKey: 'events.complete.message',
+      confirmKey: 'events.complete.confirm',
+      cancelKey: 'events.complete.cancel',
+    })
+      .pipe(
+        filter((confirmed): confirmed is true => Boolean(confirmed)),
+        switchMap(() => this.eventService.updateEventStatus(event.id, 'COMPLETED')),
+      )
+      .subscribe({
+        next: () => {
+          this.fetchEvents();
           this.toastService.show(
-            'error',
-            this.translocoService.translate('events.complete.notEnded'),
+            'success',
+            this.translocoService.translate('events.complete.success'),
           );
-          return;
-        }
-
-        this.openConfirmDialog({
-          titleKey: 'events.complete.title',
-          messageKey: 'events.complete.message',
-          confirmKey: 'events.complete.confirm',
-          cancelKey: 'events.complete.cancel',
-        }).subscribe((confirmed) => {
-          if (!confirmed) {
-            return;
-          }
-
-          this.eventService.updateEventStatus(eventId, 'COMPLETED').subscribe({
-            next: () => {
-              this.fetchEvents();
-              this.toastService.show(
-                'success',
-                this.translocoService.translate('events.complete.success'),
-              );
-            },
-            error: (err) => {
-              this.toastService.show(
-                'error',
-                this.translocoService.translate('events.complete.error'),
-              );
-            },
-          });
-        });
-      },
-      error: (err) => {
-        this.toastService.show('error', this.translocoService.translate('events.complete.error'));
-      },
-    });
+        },
+        error: () => {
+          this.toastService.show('error', this.translocoService.translate('events.complete.error'));
+        },
+      });
   }
 
   eventHasEnded(event: Event): boolean {
