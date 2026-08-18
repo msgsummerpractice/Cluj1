@@ -110,6 +110,16 @@
           {{ 'events.eventEditButton' | transloco }}
         </button>
       }
+
+      @if (event.status == 'PUBLISHED') {
+        <button
+          mat-stroked-button
+          (click)="navigateToCheckIn(event.id)"
+          class="event-checkin-button transition-colors whitespace-nowrap"
+        >
+          {{ 'events.eventCheckInButton' | transloco }}
+        </button>
+      }
     </ng-template>
   </app-data-table>
 </div>

@@ -23,4 +23,12 @@ export class ToastService {
       this.isVisible.set(false);
     }, 3000);
   }
+
+  showSuccess(message: string) {
+    this.show('success', message);
+  }
+
+  showError(message: string) {
+    this.show('error', message);
+  }
 }

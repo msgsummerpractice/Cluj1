@@ -173,7 +173,13 @@ export class EventListComponent implements OnInit {
       next: (data) => {
         this.events.set(data);
       },
-      error: (err) => this.toastService.show('error', typeof err?.error === 'string' ? err.error : (err?.error?.message || err?.message || 'Failed to fetch events.')),
+      error: (err) =>
+        this.toastService.show(
+          'error',
+          typeof err?.error === 'string'
+            ? err.error
+            : err?.error?.message || err?.message || 'Failed to fetch events.',
+        ),
     });
   }
 
@@ -260,5 +266,9 @@ export class EventListComponent implements OnInit {
 
   editEvent(eventId: string): void {
     this.router.navigate(['/events', eventId, 'edit']);
+  }
+
+  navigateToCheckIn(eventId: string): void {
+    this.router.navigate(['/events', eventId, 'checkin']);
   }
 }

@@ -63,7 +63,7 @@ export const routes: Routes = [
   {
     path: 'events',
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN'] },
+    data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT'] },
     loadComponent: () =>
       import('./features/events/event-list/event-list').then((m) => m.EventListComponent),
   },
@@ -92,7 +92,7 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'checkin',
+    path: 'events/:id/checkin',
     component: EventCheckInComponent,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT'] },

@@ -2,18 +2,31 @@ package com.cluj1.eventapp.dto;
 
 import com.cluj1.eventapp.model.enums.CheckInMethod;
 
-import jakarta.validation.constraints.NotBlank;
+import java.util.UUID;
+
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
 public class CheckInRequest {
 
-    @NotBlank(message = "checkin.error.code.required")
-    @Size(min = 6, max = 255, message = "checkin.error.code.invalid")
-    private String code;
+    private UUID eventId;
+
+    private String eventCode;
 
     @NotNull(message = "checkin.error.method.required")
     private CheckInMethod method;
+
+    @AssertTrue(message = "checkin.error.code.invalid")
+    public boolean hasValidIdentifier() {
+        if (method == null) {
+            return true;
+        }
+
+        return switch (method) {
+            case QR -> eventId != null && eventCode == null;
+            case MANUAL -> eventId == null && eventCode != null && eventCode.trim().length() == 6;
+        };
+    }
 }
