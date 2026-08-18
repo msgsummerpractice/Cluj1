@@ -20,8 +20,6 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 
-@Service
-@RequiredArgsConstructor
 /**
  * Sends bilingual HTML notifications when an event is published.
  *
@@ -30,6 +28,8 @@ import lombok.RequiredArgsConstructor;
  * type is PNG or JPEG. Other poster formats are ignored.
  * </p>
  */
+@Service
+@RequiredArgsConstructor
 public class EventPublishMailService {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMMM yyyy");

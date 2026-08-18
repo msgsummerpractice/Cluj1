@@ -109,6 +109,7 @@ public class EventController {
 			@PathVariable UUID id,
 			@PathVariable EventStatus status) {
 		return ResponseEntity.ok(eventService.updateEventStatus(id, status));
+	}
 
 	@PostMapping("/{id}/checkin-codes")
 	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
