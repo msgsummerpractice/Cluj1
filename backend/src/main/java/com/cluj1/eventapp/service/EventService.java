@@ -37,6 +37,8 @@ import java.time.OffsetDateTime;
 
 @Service
 @RequiredArgsConstructor
+
+@Transactional(readOnly = true)
 public class EventService {
 
     private final EventRepository eventRepository;
@@ -163,7 +165,7 @@ public class EventService {
         return eventMapper.toDto(event);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public CheckInCodesDto generateCheckInCodes(UUID eventId) {
         Event event = eventRepository.findById(eventId).orElseThrow(()-> new IllegalArgumentException("Event not found"));
         EventDetails eventDetails = eventDetailsReposity.findByEvent(event);

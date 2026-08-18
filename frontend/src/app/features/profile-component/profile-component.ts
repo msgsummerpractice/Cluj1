@@ -51,7 +51,7 @@ export class ProfileComponent implements OnInit {
     { value: 'REMOTE', label: 'Remote' },
   ] as const;
 
-  private readonly maxSize = 5 * 1024 * 1024;
+  private readonly MAX_FILE_SIZE = 5 * 1024 * 1024;
 
   profile = signal<UserProfile | null>(null);
   saving = signal(false);
@@ -115,7 +115,7 @@ export class ProfileComponent implements OnInit {
       return;
     }
 
-    if (file.size > this.maxSize) {
+    if (file.size > this.MAX_FILE_SIZE) {
       this.toastService.show('error', 'Maximum size is 5MB');
       this.clearSelectedFile();
       input.value = '';
