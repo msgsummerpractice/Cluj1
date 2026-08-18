@@ -1,7 +1,7 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { EventService } from '../../../core/services/event.service';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
@@ -41,6 +41,7 @@ export class EventCreationComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly eventService = inject(EventService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly translocoService = inject(TranslocoService);
   private readonly toastService = inject(ToastService);
 
@@ -50,12 +51,14 @@ export class EventCreationComponent implements OnInit {
   readonly fileError = signal<string | null>(null);
   readonly isSubmitting = signal(false);
 
+  readonly eventId = signal<string | null>(null);
+
   form = this.fb.group({
     name: ['', Validators.required],
     description: [''],
-    date: ['', Validators.required],
-    startTime: ['', Validators.required],
-    endTime: ['', Validators.required],
+    date: [<Date | string | null>'', Validators.required],
+    startTime: [<Date | string | null>'', Validators.required],
+    endTime: [<Date | string | null>'', Validators.required],
     type: ['', Validators.required],
     location: [{ value: '', disabled: true }, Validators.required],
     foodProvided: [{ value: false, disabled: true }],
@@ -63,6 +66,35 @@ export class EventCreationComponent implements OnInit {
 
   ngOnInit() {
     this.form.get('type')?.valueChanges.subscribe((type) => this.handleTypeChange(type));
+
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.eventId.set(id);
+      this.loadEventData(id);
+    }
+  }
+
+  loadEventData(id: string) {
+    this.eventService.getEventById(id).subscribe({
+      next: (event) => {
+        const startDate = new Date(event.startDate);
+        const endDate = new Date(event.endDate);
+
+        this.form.patchValue({
+          name: event.name,
+          description: event.description || '',
+          date: startDate,
+          startTime: startDate,
+          endTime: endDate,
+          type: event.type,
+          location: event.location,
+          foodProvided: event.foodProvided || false,
+        });
+
+        this.handleTypeChange(event.type);
+      },
+      error: (err) => console.error('Error loading event for edit', err),
+    });
   }
 
   handleTypeChange(type: string | null) {
@@ -145,12 +177,18 @@ export class EventCreationComponent implements OnInit {
       description: formValue.description,
       type: formValue.type,
       location: formValue.location,
-      foodProvided: formValue.foodProvided,
+      foodProvided: formValue.foodProvided ? true : false,
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
     };
 
-    this.eventService.createEvent(payload, this.selectedFile() || undefined).subscribe({
+    const id = this.eventId();
+
+    const request$ = id
+      ? this.eventService.updateEvent(id, payload, this.selectedFile() || undefined)
+      : this.eventService.createEvent(payload, this.selectedFile() || undefined);
+
+    request$.subscribe({
       next: () => {
         this.isSubmitting.set(false);
         this.router.navigate(['/events']);

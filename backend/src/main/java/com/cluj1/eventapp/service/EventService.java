@@ -48,13 +48,6 @@ public class EventService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
-    public EventDto getEventById(UUID id) {
-        return eventRepository.findById(id)
-                .map(eventMapper::toDto)
-                .orElseThrow(() -> new RuntimeException("Event not found for id: " + id));
-    }
-
     @Transactional
     public EventDto createEvent(EventDto eventDto, MultipartFile poster) {
         validatePoster(poster);
@@ -183,5 +176,12 @@ public class EventService {
 
             return dto;
         }).toList();
+    }
+
+    public EventDto getEventById(UUID id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found with id: " + id));
+
+        return eventMapper.toDto(event);
     }
 }

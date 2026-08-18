@@ -136,6 +136,16 @@
       >
         {{ 'events.eventViewButton' | transloco }}
       </button>
+
+      @if (isMarketingOrganizer() && event.status == 'DRAFT') {
+        <button
+          mat-stroked-button
+          (click)="editEvent(event.id)"
+          class="event-edit-button transition-colors whitespace-nowrap"
+        >
+          {{ 'events.eventEditButton' | transloco }}
+        </button>
+      }
     </ng-template>
   </app-data-table>
 </div>

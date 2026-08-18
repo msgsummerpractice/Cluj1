@@ -294,4 +294,12 @@ export class EventListComponent implements OnInit {
         : currentValues.filter((currentValue) => currentValue !== value),
     );
   }
+
+  isMarketingOrganizer(): boolean {
+    return this.authService.isMarketingOrganizer();
+  }
+
+  editEvent(eventId: string): void {
+    this.router.navigate(['/events', eventId, 'edit']);
+  }
 }
