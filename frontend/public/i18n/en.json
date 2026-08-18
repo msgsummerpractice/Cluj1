@@ -92,6 +92,7 @@
     }
   },
   "events": {
+    "participantPageTitle": "Events",
     "eventPageTitle": "Event Management",
     "eventNameColumn": "Name",
     "eventDateColumn": "Date",
@@ -108,7 +109,10 @@
     "eventTypeLocal": "Local",
     "eventViewButton": "View",
     "clearFilters": "Clear filters",
-    "noData": "No events found"
+    "noData": "No events found",
+    "participantStatusColumn": "My Status",
+    "registered": "Registered",
+    "checkedIn": "Checked-in"
   },
   "createEvent": {
     "title": "Create event",

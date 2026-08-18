@@ -1,8 +1,8 @@
 <div class="p-8 bg-white min-h-screen">
   <app-data-table
-    [columns]="columns"
+    [columns]="columns()"
     [data]="visibleEvents()"
-    tableTitle="events.eventPageTitle"
+    [tableTitle]="pageTitle()"
     noDataLabel="events.noData"
     [showPaginator]="true"
     [pageSizeOptions]="[5, 10, 25, 100]"
@@ -90,6 +90,42 @@
 
     <ng-template appDataTableCellDef="type" let-event>
       {{ 'events.eventType' + (event.type | titlecase) | transloco }}
+    </ng-template>
+
+    <ng-template appDataTableCellDef="participantStatus" let-event>
+      @if (event.isCheckedIn) {
+        <span
+          class="flex items-center justify-center gap-1 text-green-600 font-medium"
+          [title]="'events.checkedIn' | transloco"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          {{ 'events.checkedIn' | transloco }}
+        </span>
+      } @else if (event.isRegistered) {
+        <span
+          class="flex items-center justify-center gap-1 text-blue-600 font-medium"
+          [title]="'events.registered' | transloco"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            ></path>
+          </svg>
+          {{ 'events.registered' | transloco }}
+        </span>
+      } @else {
+        <span class="text-gray-400">-</span>
+      }
     </ng-template>
 
     <ng-template appDataTableCellDef="actions" let-event>

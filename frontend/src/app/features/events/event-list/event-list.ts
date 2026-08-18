@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Event } from '../../../core/models/event.model';
 import { EventService } from '../../../core/services/event.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 import { Sort, SortDirection } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,7 +18,6 @@ import { DataTableFilterDefDirective } from '../../../shared/components/data-tab
 import { DataTableColumn } from '../../../shared/components/data-table/data-table.model';
 import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 import { EventSortField, displayEventEndDate, sortEvents } from './event-list.utils';
-import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-event-list',
@@ -36,18 +37,45 @@ import { ToastService } from '../../../core/services/toast.service';
   styleUrl: './event-list.css',
 })
 export class EventListComponent implements OnInit {
-  readonly columns: readonly DataTableColumn[] = [
-    { key: 'name', label: 'events.eventNameColumn', sortKey: 'name' },
-    { key: 'date', label: 'events.eventDateColumn', sortKey: 'startDate' },
-    { key: 'status', label: 'events.eventStatusColumn', sortKey: 'status' },
-    { key: 'type', label: 'events.eventTypeColumn', sortKey: 'type', cellClass: 'text-gray-600' },
-    {
+  private readonly authService = inject(AuthService);
+  private readonly eventService = inject(EventService);
+  private readonly router = inject(Router);
+  private readonly toastService = inject(ToastService);
+
+  readonly viewMode = computed<'ADMIN' | 'PARTICIPANT'>(() =>
+    this.authService.isParticipant() ? 'PARTICIPANT' : 'ADMIN',
+  );
+
+  readonly pageTitle = computed(() =>
+    this.viewMode() === 'PARTICIPANT' ? 'events.participantPageTitle' : 'events.eventPageTitle',
+  );
+
+  readonly columns = computed<DataTableColumn[]>(() => {
+    const baseCols: DataTableColumn[] = [
+      { key: 'name', label: 'events.eventNameColumn', sortKey: 'name' },
+      { key: 'date', label: 'events.eventDateColumn', sortKey: 'startDate' },
+      { key: 'status', label: 'events.eventStatusColumn', sortKey: 'status' },
+      { key: 'type', label: 'events.eventTypeColumn', sortKey: 'type', cellClass: 'text-gray-600' },
+    ];
+
+    if (this.viewMode() === 'PARTICIPANT') {
+      baseCols.push({
+        key: 'participantStatus',
+        label: 'events.participantStatusColumn',
+        headerClass: 'text-center',
+        cellClass: 'text-center',
+      });
+    }
+    baseCols.push({
       key: 'actions',
       label: 'events.eventActionsColumn',
       headerClass: 'text-center',
       cellClass: 'text-center',
-    },
-  ];
+    });
+
+    return baseCols;
+  });
+
   readonly events = signal<readonly Event[]>([]);
   readonly nameFilter = signal('');
   readonly selectedDateYears = signal<readonly string[]>([]);
@@ -56,6 +84,7 @@ export class EventListComponent implements OnInit {
   readonly selectedTypes = signal<readonly string[]>([]);
   readonly sortField = signal<EventSortField | ''>('');
   readonly sortDirection = signal<SortDirection>('');
+
   readonly dateYearOptions = computed(() =>
     this.uniqueValues(
       this.events()
@@ -63,6 +92,7 @@ export class EventListComponent implements OnInit {
         .filter((year) => year !== ''),
     ),
   );
+
   readonly dateMonthOptions = computed(() =>
     this.uniqueValues(
       this.events()
@@ -70,12 +100,15 @@ export class EventListComponent implements OnInit {
         .filter((month) => month !== ''),
     ).sort((firstMonth, secondMonth) => Number(firstMonth) - Number(secondMonth)),
   );
+
   readonly statusOptions = computed(() =>
     this.uniqueValues(this.events().map((event) => event.status)),
   );
+
   readonly typeOptions = computed(() =>
     this.uniqueValues(this.events().map((event) => event.type)),
   );
+
   readonly hasActiveFilters = computed(
     () =>
       this.nameFilter().trim() !== '' ||
@@ -84,6 +117,7 @@ export class EventListComponent implements OnInit {
       this.selectedStatuses().length > 0 ||
       this.selectedTypes().length > 0,
   );
+
   readonly filteredEvents = computed(() => {
     const nameQuery = this.nameFilter().trim().toLowerCase();
     const dateYears = this.selectedDateYears();
@@ -103,13 +137,11 @@ export class EventListComponent implements OnInit {
       return matchesName && matchesDateYear && matchesDateMonth && matchesStatus && matchesType;
     });
   });
+
   readonly visibleEvents = computed(() =>
     sortEvents(this.filteredEvents(), this.sortField(), this.sortDirection()),
   );
 
-  private readonly eventService = inject(EventService);
-  private readonly router = inject(Router);
-  private readonly toastService = inject(ToastService);
   ngOnInit(): void {
     this.fetchEvents();
   }
@@ -168,11 +200,22 @@ export class EventListComponent implements OnInit {
   }
 
   fetchEvents(): void {
-    this.eventService.getEvents().subscribe({
+    const fetchRequest$ =
+      this.viewMode() === 'PARTICIPANT'
+        ? this.eventService.getEligibleEvents()
+        : this.eventService.getEvents();
+
+    fetchRequest$.subscribe({
       next: (data) => {
         this.events.set(data);
       },
-      error: (err) => this.toastService.show('error', typeof err?.error === 'string' ? err.error : (err?.error?.message || err?.message || 'Failed to fetch events.')),
+      error: (err) =>
+        this.toastService.show(
+          'error',
+          typeof err?.error === 'string'
+            ? err.error
+            : err?.error?.message || err?.message || 'Failed to fetch events.',
+        ),
     });
   }
 

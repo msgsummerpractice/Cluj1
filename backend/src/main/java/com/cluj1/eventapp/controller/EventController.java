@@ -35,11 +35,11 @@ public class EventController {
 	private final EventService eventService;
 	private final EventDetailsService eventDetailsService;
 
-    @GetMapping("/countRegistrationPerUser")
-    public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal){
-        String email = principal.getName();
-        return ResponseEntity.ok(eventService.getUpcomingRegisteredEventsCountPerUserByEmail(email));
-    }
+	@GetMapping("/countRegistrationPerUser")
+	public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal) {
+		String email = principal.getName();
+		return ResponseEntity.ok(eventService.getUpcomingRegisteredEventsCountPerUserByEmail(email));
+	}
 
 	@GetMapping
 	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
@@ -48,7 +48,7 @@ public class EventController {
 	}
 
 	@GetMapping("/{id}")
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	@PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
 	public ResponseEntity<EventDto> getEventById(@PathVariable UUID id) {
 		return ResponseEntity.ok(eventService.getEventById(id));
 	}
@@ -60,7 +60,7 @@ public class EventController {
 	}
 
 	@GetMapping("/{id}/poster")
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	@PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
 	public ResponseEntity<byte[]> getEventPoster(@PathVariable UUID id) {
 		return eventDetailsService.getPosterByEventId(id)
 				.map(poster -> ResponseEntity.ok()
@@ -98,5 +98,11 @@ public class EventController {
 			@RequestPart("event") EventDto eventDto,
 			@RequestPart(value = "poster", required = false) MultipartFile poster) {
 		return ResponseEntity.ok(eventService.updateEvent(id, eventDto, poster));
+	}
+
+	@GetMapping("/eligible")
+	@PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	public ResponseEntity<List<EventDto>> getEligibleEvents() {
+		return ResponseEntity.ok(eventService.getEligibleEventsForCurrentUser());
 	}
 }

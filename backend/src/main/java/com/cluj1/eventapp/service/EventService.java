@@ -8,7 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
+import com.cluj1.eventapp.repository.RegistrationRepository;
 import com.cluj1.eventapp.model.Event;
 import com.cluj1.eventapp.model.EventDetails;
 import com.cluj1.eventapp.model.User;
@@ -32,13 +32,15 @@ public class EventService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final EventMapper eventMapper;
+    private final RegistrationRepository registrationRepository;
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
 
-    public int getUpcomingRegisteredEventsCountPerUserByEmail(String email){
-        User user = userRepository.findByEmail(email).orElseThrow(()-> new IllegalArgumentException("User not found"));
+    public int getUpcomingRegisteredEventsCountPerUserByEmail(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found"));
         return eventRepository.countUpcomingEventsForUsers(OffsetDateTime.now(), user.getId());
     }
+
     @Transactional(readOnly = true)
     public List<EventDto> getAllEvents() {
         return eventRepository.findAll().stream()
@@ -149,5 +151,37 @@ public class EventService {
         } catch (IOException e) {
             throw new InvalidEventOperationException("Failed to process poster upload");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<EventDto> getEligibleEventsForCurrentUser() {
+        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(currentUserEmail)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        EventLocation userEventLocation;
+        try {
+            userEventLocation = EventLocation.valueOf(user.getUserDetails().getLocation().name());
+        } catch (IllegalArgumentException e) {
+            userEventLocation = null;
+        }
+
+        List<Event> eligibleEvents = eventRepository.findEligibleEvents(OffsetDateTime.now(), userEventLocation);
+
+        return eligibleEvents.stream().map(event -> {
+            EventDto dto = eventMapper.toDto(event);
+
+            registrationRepository.findByUserIdAndEventId(user.getId(), event.getId())
+                    .ifPresentOrElse(registration -> {
+                        dto.setIsRegistered(true);
+                        // Check-in is confirmed if the attendanceRecord exists
+                        dto.setIsCheckedIn(registration.getAttendanceRecord() != null);
+                    }, () -> {
+                        dto.setIsRegistered(false);
+                        dto.setIsCheckedIn(false);
+                    });
+
+            return dto;
+        }).toList();
     }
 }

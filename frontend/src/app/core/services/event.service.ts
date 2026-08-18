@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import {  HttpParams } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Event } from '../models/event.model';
@@ -56,6 +56,12 @@ export class EventService {
       formData.append('poster', poster);
     }
     return this.http.put<Event>(`${this.apiUrl}/${id}`, formData, {
+      withCredentials: true,
+    });
+  }
+
+  getEligibleEvents(): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.apiUrl}/eligible`, {
       withCredentials: true,
     });
   }

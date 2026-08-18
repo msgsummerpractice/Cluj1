@@ -9,4 +9,6 @@ export interface Event {
   location: 'ALL' | 'CLUJ' | 'TIMISOARA' | 'MURES' | null;
   status: 'DRAFT' | 'PUBLISHED' | 'COMPLETED';
   foodProvided?: boolean | null;
+  isRegistered?: boolean;
+  isCheckedIn?: boolean;
 }

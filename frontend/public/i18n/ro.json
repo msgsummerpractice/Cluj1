@@ -57,6 +57,7 @@
     }
   },
   "events": {
+    "participantPageTitle": "Evenimente",
     "eventPageTitle": "Gestionare evenimente",
     "eventNameColumn": "Nume",
     "eventDateColumn": "Data",
@@ -73,7 +74,10 @@
     "eventTypeLocal": "Local",
     "eventViewButton": "Vizualizează",
     "clearFilters": "Șterge filtrele",
-    "noData": "Nu s-au găsit evenimente"
+    "noData": "Nu s-au găsit evenimente",
+    "participantStatusColumn": "Statusul meu",
+    "registered": "Înregistrat",
+    "checkedIn": "Prezent (Check-in)"
   },
   "createEvent": {
     "title": "Creare eveniment",

@@ -4,7 +4,7 @@ import { RegisterComponent } from './features/register-component/register-compon
 import { ProfileComponent } from './features/profile-component/profile-component';
 
 export const routes: Routes = [
-  {path: 'profile', component: ProfileComponent, canActivate: [authGuard]},
+  { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
   {
     path: 'register',
     component: RegisterComponent,
@@ -62,7 +62,7 @@ export const routes: Routes = [
   {
     path: 'events',
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN'] },
+    data: { roles: ['PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN'] },
     loadComponent: () =>
       import('./features/events/event-list/event-list').then((m) => m.EventListComponent),
   },

@@ -27,4 +27,6 @@ public class EventDto {
     private EventType type;
     private Boolean foodProvided;
     private EventStatus status;
+    private Boolean isRegistered;
+    private Boolean isCheckedIn;
 }
