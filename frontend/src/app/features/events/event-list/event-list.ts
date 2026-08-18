@@ -16,6 +16,7 @@ import { DataTableFilterDefDirective } from '../../../shared/components/data-tab
 import { DataTableColumn } from '../../../shared/components/data-table/data-table.model';
 import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 import { EventSortField, displayEventEndDate, sortEvents } from './event-list.utils';
+import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
@@ -250,5 +251,14 @@ export class EventListComponent implements OnInit {
           : [...currentValues, value]
         : currentValues.filter((currentValue) => currentValue !== value),
     );
+  }
+
+  readonly authService = inject(AuthService);
+  isMarketingOrganizer(): boolean {
+    return this.authService.isMarketingOrganizer();
+  }
+
+  editEvent(eventId: string): void {
+    this.router.navigate(['/events', eventId, 'edit']);
   }
 }

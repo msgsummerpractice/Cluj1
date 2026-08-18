@@ -17,7 +17,7 @@ public class RegistrationService {
     private final UserRepository userRepository;
 
     public int getRegistrationsPerUserByEmail(String email) {
-        User user = userRepository.findByEmail(email)
+        User user = userRepository.findByEmail(email.toLowerCase())
                 .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
         return registrationRepository.countTotalRegistrationsPerUser(user.getId());
     }
