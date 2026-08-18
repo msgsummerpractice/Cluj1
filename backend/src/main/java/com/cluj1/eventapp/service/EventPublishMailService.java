@@ -20,7 +20,7 @@ import jakarta.mail.internet.MimeMessage;
 @Service
 public class EventPublishMailService {
 
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMMM yyyy, HH:mm");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd MMMM yyyy");
     private static final String POSTER_CONTENT_ID = "eventPoster";
 
     @Autowired

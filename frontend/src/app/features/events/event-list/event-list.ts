@@ -217,9 +217,15 @@ export class EventListComponent implements OnInit {
     this.eventService.updateEventStatus(event.id, 'PUBLISHED').subscribe({
       next: () => {
         this.fetchEvents();
+        this.toastService.show('success', 'Event published successfully.');
       },
       error: (err) => {
-        console.error('Failed to publish event', err);
+        this.toastService.show(
+          'error',
+          typeof err?.error === 'string'
+            ? err.error
+            : err?.error?.message || err?.message || 'Failed to publish event.',
+        );
       },
     });
   }
