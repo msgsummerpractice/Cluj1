@@ -74,6 +74,7 @@
     "eventViewButton": "Vizualizează",
     "eventPublishButton": "Publică",
     "eventEditButton": "Editează",
+    "eventCompleteButton": "Finalizează",
     "clearFilters": "Șterge filtrele",
     "noData": "Nu s-au găsit evenimente",
     "fetchError": "Preluarea evenimentelor a eșuat. Te rugăm să încerci din nou.",
@@ -84,6 +85,15 @@
       "cancel": "Nu",
       "success": "Evenimentul a fost publicat cu succes.",
       "error": "Publicarea evenimentului a eșuat. Te rugăm să încerci din nou."
+    },
+    "complete": {
+      "title": "Confirmă finalizarea",
+      "message": "Ești sigur că vrei să finalizezi acest eveniment?",
+      "confirm": "Da",
+      "cancel": "Nu",
+      "error": "Finalizarea evenimentului a eșuat. Te rugăm să încerci din nou.",
+      "success": "Evenimentul a fost finalizat cu succes.",
+      "notEnded": "Nu se poate finaliza evenimentul. Evenimentul nu s-a încheiat încă."
     }
   },
   "createEvent": {
