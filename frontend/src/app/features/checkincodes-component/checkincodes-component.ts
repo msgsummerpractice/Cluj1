@@ -19,6 +19,7 @@ export class CheckincodesComponent {
   private eventService = inject(EventService);
   private toast = inject(ToastService);
 
+
   eventId = input.required<string>();
   eventStatus = input.required<string>();
 
@@ -65,14 +66,14 @@ export class CheckincodesComponent {
     const pdf = new jsPDF();
     const xPos = (pdf.internal.pageSize.getWidth() - this.PDF_WIDTH) / 2;
 
-    if (eventCode) {
-      pdf.setFontSize(18);
-      pdf.text(`Event Code: ${eventCode}`, pdf.internal.pageSize.getWidth() / 2, 40, {
-        align: 'center',
-      });
-    }
+
+
     setTimeout(() => {
       try {
+        pdf.setFontSize(18);
+        pdf.text(`Event Code: ${eventCode}`, pdf.internal.pageSize.getWidth() / 2, 40, {
+        align: 'center',
+          });
         pdf.addImage(qrCode, 'PNG', xPos, 40, this.PDF_WIDTH, this.PDF_HEIGHT);
         pdf.save(`Event-${this.eventId()}-CheckIn.pdf`);
         this.toast.show('success', 'PDF downloaded successfully');
