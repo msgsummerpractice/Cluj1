@@ -5,6 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { jsPDF } from 'jspdf';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
+import { AuthService } from '../../core/services/auth.service';
 
 
 
@@ -18,6 +19,7 @@ import { MatProgressSpinner } from '@angular/material/progress-spinner';
 export class CheckincodesComponent {
   private eventService = inject(EventService);
   private toast = inject(ToastService);
+  protected auth = inject(AuthService);
 
 
   eventId = input.required<string>();

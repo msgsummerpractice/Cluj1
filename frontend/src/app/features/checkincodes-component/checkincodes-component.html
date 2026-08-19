@@ -1,4 +1,4 @@
-@if (isPublished()) {
+@if (isPublished() && auth.isMarketingOrganizer()) {
   <div class="+bg-white border border-slate-200 rounded-lg p-5 shadow-sm">
 
     <div>
