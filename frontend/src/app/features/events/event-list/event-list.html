@@ -15,8 +15,8 @@
       mat-button
       class="filter-button"
       type="button"
-      (click)="clearFilters()"
       [disabled]="!hasActiveFilters()"
+      (click)="clearFilters()"
       aria-label="Clear event filters"
     >
       {{ 'events.clearFilters' | transloco }}
@@ -35,7 +35,10 @@
     </ng-template>
 
     <ng-template appDataTableFilterDef="date">
-      <span class="filter-menu-label">{{ 'events.eventDateYear' | transloco }}</span>
+      <span class="filter-menu-label">
+        {{ 'events.eventDateYear' | transloco }}
+      </span>
+
       @for (year of dateYearOptions(); track year) {
         <mat-checkbox
           [checked]="isDateYearSelected(year)"
@@ -44,7 +47,11 @@
           {{ year }}
         </mat-checkbox>
       }
-      <span class="filter-menu-label">{{ 'events.eventDateMonth' | transloco }}</span>
+
+      <span class="filter-menu-label">
+        {{ 'events.eventDateMonth' | transloco }}
+      </span>
+
       @for (month of dateMonthOptions(); track month) {
         <mat-checkbox
           [checked]="isDateMonthSelected(month)"
@@ -79,6 +86,7 @@
 
     <ng-template appDataTableCellDef="date" let-event>
       {{ event.startDate | date: 'mediumDate' }}
+
       @if (displayEventEndDate(event)) {
         <span> - {{ event.endDate | date: 'mediumDate' }} </span>
       }
@@ -113,6 +121,21 @@
           </svg>
           {{ 'events.checkedIn' | transloco }}
         </span>
+      } @else if (event.isRegistered) {
+        <span
+          class="flex justify-start gap-1 text-blue-600 font-medium"
+          [title]="'events.registered' | transloco"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+            ></path>
+          </svg>
+          {{ 'events.registered' | transloco }}
+        </span>
       }
     </ng-template>
 
@@ -140,15 +163,28 @@
           </svg>
         </button>
 
-        @if (event.status === 'PUBLISHED' && !event.isCheckedIn) {
-          <button
-            mat-icon-button
-            (click)="navigateToCheckIn(event.id)"
-            [matTooltip]="'events.eventCheckInButton' | transloco"
-            aria-label="Check in to event"
-          >
-            <mat-icon>qr_code_scanner</mat-icon>
-          </button>
+        @if (event.status === 'PUBLISHED') {
+          @if (!event.isRegistered) {
+            <button
+              mat-icon-button
+              (click)="openRegistrationModal(event)"
+              [matTooltip]="'events.eventRegisterButton' | transloco"
+              aria-label="Register for event"
+            >
+              <mat-icon>app_registration</mat-icon>
+            </button>
+          }
+
+          @if (!event.isCheckedIn) {
+            <button
+              mat-icon-button
+              (click)="navigateToCheckIn(event.id)"
+              [matTooltip]="'events.eventCheckInButton' | transloco"
+              aria-label="Check in to event"
+            >
+              <mat-icon>qr_code_scanner</mat-icon>
+            </button>
+          }
         }
 
         @if (isMarketingOrganizer() && event.status === 'DRAFT') {
@@ -172,9 +208,7 @@
             mat-icon-button
             (click)="openDialog(event)"
             [disabled]="isPublishing(event.id)"
-            class="event-view-button transition-colors whitespace-nowrap"
             [matTooltip]="'events.eventPublishButton' | transloco"
-            matTooltipPosition="below"
           >
             @if (isPublishing(event.id)) {
               <mat-spinner diameter="18" strokeWidth="2"></mat-spinner>
@@ -189,9 +223,8 @@
             mat-icon-button
             (click)="completeEvent(event)"
             [disabled]="!eventHasEnded(event)"
-            class="event-view-button transition-colors whitespace-nowrap"
+            class="transition-colors whitespace-nowrap"
             [matTooltip]="'events.eventCompleteButton' | transloco"
-            matTooltipPosition="below"
           >
             <mat-icon>done</mat-icon>
           </button>

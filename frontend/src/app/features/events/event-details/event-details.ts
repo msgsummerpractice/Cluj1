@@ -1,18 +1,26 @@
 import { Component, OnDestroy, inject, signal, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Event } from '../../../core/models/event.model';
 import { EventDetails } from '../../../core/models/event-detail.models';
 import { EventService } from '../../../core/services/event.service';
 import { TranslocoModule } from '@jsverse/transloco';
 import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
+import { MatButtonModule } from '@angular/material/button';
 import {CheckincodesComponent} from '../../checkincodes-component/checkincodes-component';
 import { ToastService } from '../../../core/services/toast.service';
 import{ChangeDetectorRef} from '@angular/core';
 
 @Component({
   selector: 'app-event-details',
-  imports: [CommonModule, TranslocoModule, BackButtonComponent, CheckincodesComponent],
+  imports: [
+    CommonModule,
+    TranslocoModule,
+    BackButtonComponent,
+    RouterLink,
+    MatButtonModule,
+    CheckincodesComponent,
+  ],
   templateUrl: './event-details.html',
   styleUrl: './event-details.css',
 })
@@ -68,5 +76,17 @@ export class EventDetailsComponent implements OnDestroy {
     if (url) {
       URL.revokeObjectURL(url);
     }
+  }
+
+  canRegister(event: Event | null): boolean {
+    return event?.status === 'PUBLISHED';
+  }
+
+  isRegistrationClosed(event: Event | null): boolean {
+    if (!event?.registrationEndDate) {
+      return false;
+    }
+
+    return Date.now() > new Date(event.registrationEndDate).getTime();
   }
 }

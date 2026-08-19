@@ -15,6 +15,7 @@ public interface RegistrationRepository extends JpaRepository<Registration, UUID
     @Query("SELECT COUNT(r) FROM Registration r WHERE r.user.id = :userId")
     int countTotalRegistrationsPerUser(@Param("userId") UUID userId);
 
+    Optional<Registration> findByEventIdAndUserId(UUID eventId, UUID userId);
     Optional<Registration> findByUserIdAndEventId(UUID userId, UUID eventId);
 
     @Query("SELECT r FROM Registration r WHERE r.user.id = :userId AND r.event.id IN :eventIds")
