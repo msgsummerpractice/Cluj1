@@ -278,6 +278,18 @@ public class EventService {
         }
     }
 
+    private boolean isExternal(String eventType) {
+        return "EXTERNAL".equalsIgnoreCase(eventType);
+    }
+
+    private boolean isInternal(String eventType) {
+        return "INTERNAL".equalsIgnoreCase(eventType);
+    }
+
+    private boolean isLocal(String eventType) {
+        return "LOCAL".equalsIgnoreCase(eventType);
+    }
+
     @Transactional
     public Registration registerUser(UUID eventId, String userEmail, EventRegistrationDto dto) {
         User user = userRepository.findByEmail(userEmail.toLowerCase())
@@ -297,11 +309,12 @@ public class EventService {
         EventDetails eventDetails = eventDetailsReposity.findByEvent(event);
         boolean foodProvided = eventDetails != null && Boolean.TRUE.equals(eventDetails.getFoodProvided());
 
-        if (foodProvided) {
-            if (dto.getFoodPreference() == null || dto.getFoodPreference().name().equals("NONE")) {
+        FoodPreference foodPreference = FoodPreference.NONE;
+        
+        if (event.getType() != EventType.EXTERNAL && foodProvided) {
+            if (dto.getFoodPreference() != null) {
+                foodPreference = dto.getFoodPreference();
             }
-        } else {
-            dto.setFoodPreference(FoodPreference.NONE);
         }
 
         if (event.getType() != EventType.EXTERNAL && (dto.getGdprConsent() == null || !dto.getGdprConsent())) {
@@ -317,7 +330,7 @@ public class EventService {
                 .event(event)
                 .gdprConsent(Boolean.TRUE.equals(dto.getGdprConsent()))
                 .photoConsent(Boolean.TRUE.equals(dto.getPhotoConsent()))
-                .foodPreference(dto.getFoodPreference())
+                .foodPreference(foodPreference)
                 .transportationNeeded(dto.getTransportationNeeded() != null ? dto.getTransportationNeeded() : false)
                 .accommodationNeeded(dto.getAccommodationNeeded() != null ? dto.getAccommodationNeeded() : false)
                 .accommodationDays(dto.getAccommodationDays())
