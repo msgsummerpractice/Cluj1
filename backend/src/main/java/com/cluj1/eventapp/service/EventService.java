@@ -278,18 +278,6 @@ public class EventService {
         }
     }
 
-    private boolean isExternal(String eventType) {
-        return "EXTERNAL".equalsIgnoreCase(eventType);
-    }
-
-    private boolean isInternal(String eventType) {
-        return "INTERNAL".equalsIgnoreCase(eventType);
-    }
-
-    private boolean isLocal(String eventType) {
-        return "LOCAL".equalsIgnoreCase(eventType);
-    }
-
     @Transactional
     public Registration registerUser(UUID eventId, String userEmail, EventRegistrationDto dto) {
         User user = userRepository.findByEmail(userEmail.toLowerCase())
