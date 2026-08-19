@@ -47,9 +47,9 @@ import { ConfirmDialogData } from '../../../shared/components/confirm-dialog/con
   styleUrl: './event-list.css',
 })
 export class EventListComponent implements OnInit {
+  private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly eventService = inject(EventService);
-  private readonly router = inject(Router);
   private readonly toastService = inject(ToastService);
 
   readonly viewMode = computed<'ADMIN' | 'PARTICIPANT'>(() =>

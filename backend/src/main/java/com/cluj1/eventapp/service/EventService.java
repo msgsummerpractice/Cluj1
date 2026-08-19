@@ -214,6 +214,21 @@ public class EventService {
         }
     }
 
+    private List<Event> fetchEligibleEventsForUser(UserDetails userDetails) {
+        OffsetDateTime now = OffsetDateTime.now();
+
+        if (userDetails == null || userDetails.getLocation() == null) {
+            return eventRepository.findAllLocationEligibleEvents(now);
+        }
+
+        try {
+            EventLocation userEventLocation = EventLocation.valueOf(userDetails.getLocation().name());
+            return eventRepository.findEligibleEvents(now, userEventLocation, EventStatus.PUBLISHED);
+        } catch (IllegalArgumentException e) {
+            return eventRepository.findAllLocationEligibleEvents(now);
+        }
+    }
+
     /**
      * Returns all events the currently authenticated participant is eligible to
      * register for.
@@ -241,28 +256,19 @@ public class EventService {
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         UserDetails userDetails = user.getUserDetails();
-        EventLocation userEventLocation = null;
-        if (userDetails != null && userDetails.getLocation() != null) {
-            try {
-                userEventLocation = EventLocation.valueOf(userDetails.getLocation().name());
-            } catch (IllegalArgumentException ignored) {
-                // UserLocation.REMOTE has no EventLocation equivalent
-            }
-        }
 
-        List<Event> eligibleEvents = userEventLocation != null
-                ? eventRepository.findEligibleEvents(OffsetDateTime.now(), userEventLocation, EventStatus.PUBLISHED)
-                : eventRepository.findAllLocationEligibleEvents(OffsetDateTime.now());
+        List<Event> eligibleEvents = fetchEligibleEventsForUser(userDetails);
 
         Set<UUID> eventIds = eligibleEvents.stream()
                 .map(Event::getId)
                 .collect(Collectors.toSet());
+
         Map<UUID, Registration> registrationsByEventId = registrationRepository
                 .findByUserIdAndEventIdIn(user.getId(), eventIds)
                 .stream()
                 .collect(Collectors.toMap(r -> r.getEvent().getId(), r -> r));
 
-        return eligibleEvents.stream().map(event -> {
+        List<EventDto> eligibleEventDtos = eligibleEvents.stream().map(event -> {
             EventDto dto = eventMapper.toDto(event);
             Registration registration = registrationsByEventId.get(event.getId());
             if (registration != null) {
@@ -274,6 +280,8 @@ public class EventService {
             }
             return dto;
         }).toList();
+
+        return eligibleEventDtos;
     }
 
     public EventDto getEventById(UUID id) {
