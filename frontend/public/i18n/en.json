@@ -219,7 +219,10 @@
     "endDate": "End date",
     "registrationEndDate": "Registration end date",
     "foodProvided": "Food provided",
-    "eventCode": "Event code"
+    "eventCode": "Event code",
+    "downloadPDF": "Download PDF",
+    "enter6digitCode": "Or enter this 6-digit code: ",
+    "generateCodes": "Generate Check-in Codes"
   },
   "forgotPassword": {
     "title": "Forgot Password",

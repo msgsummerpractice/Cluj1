@@ -14,5 +14,4 @@ export class RegistrationService{
     return this.http.get<number>(`${this.apiUrl}/count`);
   }
 
-
 }
