@@ -82,31 +82,52 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
+
+/* Layout Stack */
 .event-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
+  display: flex;
+  flex-direction: column;
   gap: 24px;
-  align-items: start;
+  width: 100%;
 }
-.event-content {
-  min-width: 0;
+
+/* The Grid Rows containing the side-by-side elements */
+.event-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  align-items: stretch; /* Forces elements in the same row to match height */
 }
-.event-card,
-.about-card,
-.registration-card {
+
+/* Shared Card Styling */
+.card-panel {
   border: 1px solid var(--event-border);
   border-radius: 14px;
   background: var(--event-surface);
-}
-.event-card {
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
 }
-.poster-wrap {
+
+/* Make sure child component expands to fill the wrapper height natively */
+.checkin-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+.stretch-component {
+  display: block;
+  flex-grow: 1;
+  height: 100%;
+}
+
+/* Poster Styles */
+.poster-card {
   display: flex;
   justify-content: center;
   align-items: center;
   max-height: 70vh;
-  overflow: hidden;
+  background: #f8fafc;
 }
 .event-poster {
   display: block;
@@ -116,9 +137,15 @@
   max-height: 70vh;
   object-fit: contain;
 }
-.event-card-body {
-  padding: 22px 26px 26px;
+
+/* Specific Card Paddings */
+.event-card-body,
+.registration-card,
+.about-card {
+  padding: 24px 26px;
 }
+
+/* Heading Tags & Meta Row */
 .heading-tags {
   display: flex;
   flex-wrap: wrap;
@@ -172,6 +199,7 @@
   gap: 20px 28px;
   padding-top: 19px;
   border-top: 1px solid var(--event-border);
+  margin-top: auto; /* Pushes meta row to the bottom if container grows taller */
 }
 .meta-item {
   display: flex;
@@ -186,10 +214,8 @@
   flex: 0 0 auto;
   color: var(--event-maroon);
 }
-.about-card {
-  margin-top: 24px;
-  padding: 24px 26px;
-}
+
+/* About Card Details */
 .description {
   margin: 0 0 22px;
   color: #475569;
@@ -202,6 +228,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
+  margin-top: auto; /* Pushes tiles to bottom of about card */
 }
 .info-tile {
   display: flex;
@@ -226,14 +253,13 @@
   font-weight: 700;
   overflow-wrap: anywhere;
 }
-.registration-card {
-  padding: 22px;
-}
+
+/* Registration Details */
 .registration-date {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 0 0 22px;
+  margin: 0;
   color: var(--event-ink);
   font-size: 0.9rem;
   font-weight: 500;
@@ -248,11 +274,13 @@
   color: var(--event-muted);
 }
 
+/* Responsive Overrides */
 @media (max-width: 900px) {
-  .event-layout {
-    grid-template-columns: 1fr;
+  .event-row {
+    grid-template-columns: 1fr; /* Stack columns on smaller screens */
   }
 }
+
 @media (max-width: 560px) {
   .event-page {
     padding: 24px 16px 40px;
@@ -269,7 +297,8 @@
     margin-left: -10px;
   }
   .event-card-body,
-  .about-card {
+  .about-card,
+  .registration-card {
     padding: 20px;
   }
   .info-tiles {
