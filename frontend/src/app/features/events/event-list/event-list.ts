@@ -350,6 +350,10 @@ export class EventListComponent implements OnInit {
     return this.authService.isMarketingOrganizer();
   }
 
+  isHrUser(): boolean {
+    return this.authService.isHrUser();
+  }
+
   editEvent(eventId: string): void {
     this.router.navigate(['/events', eventId, 'edit']);
   }

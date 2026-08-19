@@ -76,6 +76,7 @@
     "eventEditButton": "Editează",
     "eventCompleteButton": "Finalizează",
     "eventCheckInButton": "Check-in",
+    "eventReportButton": "Raport",
     "clearFilters": "Șterge filtrele",
     "noData": "Nu s-au găsit evenimente",
     "fetchError": "Preluarea evenimentelor a eșuat. Te rugăm să încerci din nou.",

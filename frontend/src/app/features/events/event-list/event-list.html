@@ -162,6 +162,16 @@
             <mat-icon>done</mat-icon>
           </button>
         }
+        @if (isHrUser() && event.status == 'COMPLETED') {
+          <button
+            mat-stroked-button
+            class="event-view-button transition-colors whitespace-nowrap"
+            [matTooltip]="'events.eventReportButton' | transloco"
+            matTooltipPosition="below"
+          >
+            <mat-icon>assessment</mat-icon>
+          </button>
+        }
       </div>
     </ng-template>
   </app-data-table>
