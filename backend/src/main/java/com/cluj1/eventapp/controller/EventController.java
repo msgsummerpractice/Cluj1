@@ -21,6 +21,8 @@ import com.cluj1.eventapp.dto.EventRegistrationDto;
 
 import com.cluj1.eventapp.model.enums.EventStatus;
 
+import com.cluj1.eventapp.service.EventExportService;
+import org.springframework.http.ContentDisposition;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +38,7 @@ import com.cluj1.eventapp.service.EventCheckInService;
 import com.cluj1.eventapp.service.EventDetailsService;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.http.HttpHeaders;
 import java.security.Principal;
 
 @RestController
@@ -46,6 +49,7 @@ public class EventController {
     private final EventService eventService;
     private final EventDetailsService eventDetailsService;
     private final EventCheckInService eventCheckInService;
+    private final EventExportService eventExportService;
 
     @GetMapping("/countRegistrationPerUser")
     public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal) {
@@ -118,21 +122,21 @@ public class EventController {
             @PathVariable UUID eventId,
             @Valid @RequestBody EventRegistrationDto requestDto,
             Principal principal) {
-        
+
         String email = principal.getName();
         eventService.registerUser(eventId, email, requestDto);
-        
+
         return ResponseEntity.ok(Map.of("message", "Successfully registered for the event."));
     }
 
     @GetMapping("/{eventId}/check")
     public ResponseEntity<Boolean> checkIfRegistered(
-        @PathVariable UUID eventId, 
-        Principal principal) {
-    
+            @PathVariable UUID eventId,
+            Principal principal) {
+
         String userEmail = principal.getName();
         boolean isRegistered = eventService.isUserRegistered(eventId, userEmail);
-    
+
         return ResponseEntity.ok(isRegistered);
     }
 
@@ -156,5 +160,20 @@ public class EventController {
     @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
     public ResponseEntity<CheckInCodesDto> generateCheckInCodes(@PathVariable UUID id) {
         return ResponseEntity.ok(eventService.generateCheckInCodes(id));
+    }
+
+    @GetMapping("/{id}/export")
+    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'ADMIN')")
+    public ResponseEntity<byte[]> exportEventData(@PathVariable UUID id) {
+        byte[] excelData = eventExportService.exportEventRegistrationsToExcel(id);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(
+                MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        headers.setContentDisposition(ContentDisposition.builder("attachment")
+                .filename("attendance_report_" + id + ".xlsx")
+                .build());
+
+        return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
     }
 }
