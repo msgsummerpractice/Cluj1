@@ -64,19 +64,25 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
     public ResponseEntity<EventDto> getEventById(@PathVariable UUID id) {
         return ResponseEntity.ok(eventService.getEventById(id));
     }
 
     @GetMapping("/{id}/details")
-    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT')")
     public ResponseEntity<EventDetailsDto> getEventDetails(@PathVariable UUID id) {
         return ResponseEntity.ok(eventDetailsService.getEventDetailsByEventId(id));
     }
 
+    @GetMapping("/{id}/checkin")
+    @PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+    public ResponseEntity<CheckInCodesDto> getEventCheckInDetails(@PathVariable UUID id) {
+        return ResponseEntity.ok(eventService.getCheckInDetails(id));
+    }
+
     @GetMapping("/{id}/poster")
-    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
     public ResponseEntity<byte[]> getEventPoster(@PathVariable UUID id) {
         return eventDetailsService.getPosterByEventId(id)
                 .map(poster -> ResponseEntity.ok()
@@ -114,6 +120,24 @@ public class EventController {
             @RequestPart("event") EventDto eventDto,
             @RequestPart(value = "poster", required = false) MultipartFile poster) {
         return ResponseEntity.ok(eventService.updateEvent(id, eventDto, poster));
+    }
+
+    /**
+     * Returns the list of events the authenticated participant is eligible to
+     * register for.
+     * Eligibility is determined by the service based on event status, registration
+     * deadline,
+     * and location matching. Each event in the response includes
+     * {@code isRegistered} and
+     * {@code isCheckedIn} flags reflecting the caller's current participation
+     * state.
+     *
+     * @return 200 OK with the eligible event list
+     */
+    @GetMapping("/eligible")
+    @PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+    public ResponseEntity<List<EventDto>> getEligibleEvents() {
+        return ResponseEntity.ok(eventService.getEligibleEventsForCurrentUser());
     }
 
     @PostMapping("/{eventId}")
