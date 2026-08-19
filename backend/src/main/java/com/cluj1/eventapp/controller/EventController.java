@@ -23,6 +23,7 @@ import com.cluj1.eventapp.model.enums.EventStatus;
 
 import com.cluj1.eventapp.service.EventExportService;
 import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,7 +39,6 @@ import com.cluj1.eventapp.service.EventCheckInService;
 import com.cluj1.eventapp.service.EventDetailsService;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.net.http.HttpHeaders;
 import java.security.Principal;
 
 @RestController
@@ -186,8 +186,22 @@ public class EventController {
         return ResponseEntity.ok(eventService.generateCheckInCodes(id));
     }
 
+    /**
+     * Exports the registration data for the specified event as an Excel file.
+     *
+     * <p>
+     * This endpoint is accessible only to users with the
+     * {@code MARKETING_ORGANIZER} authority. The generated Excel file is returned
+     * as an attachment with a filename based on the event ID.
+     * </p>
+     *
+     * @param id the unique identifier of the event whose registration data should
+     *           be exported
+     * @return a {@link ResponseEntity} containing the Excel file as a byte array,
+     *         along with the appropriate content type and attachment headers
+     */
     @GetMapping("/{id}/export")
-    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
     public ResponseEntity<byte[]> exportEventData(@PathVariable UUID id) {
         byte[] excelData = eventExportService.exportEventRegistrationsToExcel(id);
 

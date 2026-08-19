@@ -227,7 +227,14 @@
     "eventCode": "Event code",
     "downloadPDF": "Download PDF",
     "enter6digitCode": "Or enter this 6-digit code: ",
-    "generateCodes": "Generate Check-in Codes"
+    "generateCodes": "Generate Check-in Codes",
+    "yes": "Yes",
+    "no": "No",
+    "register": "Register",
+    "registrationClosed": "Registration is closed for this event.",
+    "exporting": "Exporting...",
+    "exportAttendance": "Export Attendance Report",
+    "loading": "Loading event..."
   },
   "forgotPassword": {
     "title": "Forgot Password",

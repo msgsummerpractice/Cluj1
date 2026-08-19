@@ -22,4 +22,13 @@ public interface RegistrationRepository extends JpaRepository<Registration, UUID
     @Query("SELECT r FROM Registration r WHERE r.user.id = :userId AND r.event.id IN :eventIds")
     List<Registration> findByUserIdAndEventIdIn(@Param("userId") UUID userId,
             @Param("eventIds") Collection<UUID> eventIds);
+
+    @Query("SELECT r FROM Registration r " +
+            "JOIN FETCH r.user u " +
+            "JOIN FETCH u.userDetails ud " +
+            "LEFT JOIN FETCH r.transportationDetails td " +
+            "JOIN FETCH r.event e " +
+            "WHERE r.event.id = :eventId " +
+            "ORDER BY ud.lastName ASC, ud.firstName ASC")
+    List<Registration> findAllByEventIdWithDetails(@Param("eventId") UUID eventId);
 }

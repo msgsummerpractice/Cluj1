@@ -107,4 +107,11 @@ export class EventService {
       params,
     });
   }
+
+  exportEventData(eventId: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${eventId}/export`, {
+      responseType: 'blob',
+      withCredentials: true,
+    });
+  }
 }

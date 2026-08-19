@@ -61,9 +61,7 @@ public class EventExportService {
                 row.createCell(3).setCellValue(event.getName());
                 row.createCell(4).setCellValue(reg.getUser().getEmail());
 
-                String foodPref = reg.getFoodPreference() != null && !reg.getFoodPreference().name().equals("NONE")
-                        ? reg.getFoodPreference().name()
-                        : "";
+                String foodPref = reg.getFoodPreference() != null ? reg.getFoodPreference().name() : "";
                 row.createCell(5).setCellValue(foodPref);
 
                 boolean transportNeeded = Boolean.TRUE.equals(reg.getTransportationNeeded());
