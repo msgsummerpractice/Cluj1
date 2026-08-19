@@ -28,6 +28,7 @@ import com.cluj1.eventapp.model.User;
 import com.cluj1.eventapp.model.enums.EventLocation;
 import com.cluj1.eventapp.model.enums.EventStatus;
 import com.cluj1.eventapp.model.enums.EventType;
+import com.cluj1.eventapp.model.enums.FoodPreference;
 import com.cluj1.eventapp.repository.EventRepository;
 import com.cluj1.eventapp.repository.RegistrationRepository;
 import com.cluj1.eventapp.repository.UserRepository;
@@ -290,12 +291,17 @@ public class EventService {
         }
 
         if (eventRepository.existsByEventIdAndUserId(eventId, user.getId())) {
-            return registrationRepository.findByEventIdAndUserId(eventId, user.getId())
-                    .orElseThrow(() -> new IllegalStateException("Registration exists but could not be loaded."));
+            throw new InvalidEventOperationException("User is already registered for this event.");
         }
 
-        if (dto.getPhotoConsent() == null || !dto.getPhotoConsent()) {
-            throw new InvalidEventOperationException("Photo consent is required for registration.");
+        EventDetails eventDetails = eventDetailsReposity.findByEvent(event);
+        boolean foodProvided = eventDetails != null && Boolean.TRUE.equals(eventDetails.getFoodProvided());
+
+        if (foodProvided) {
+            if (dto.getFoodPreference() == null || dto.getFoodPreference().name().equals("NONE")) {
+            }
+        } else {
+            dto.setFoodPreference(FoodPreference.NONE);
         }
 
         if (event.getType() != EventType.EXTERNAL && (dto.getGdprConsent() == null || !dto.getGdprConsent())) {

@@ -83,7 +83,7 @@ export class EventRegistration implements OnInit {
   initEmptyForm(): void {
     this.registrationForm = this.fb.group({
       gdprConsent: [false, [Validators.requiredTrue]],
-      photoConsent: [false],
+      photoConsent: [true],
       foodPreference: ['NONE'],
       transportationNeeded: [false],
       driverName: [''],
@@ -95,7 +95,9 @@ export class EventRegistration implements OnInit {
 
   updateFormValidators(eventData: Event): void {
     const isExternal = eventData?.type === 'EXTERNAL';
-    const gdprControl = this.registrationForm.get('gdprConsent');
+    const gdprControl =
+      this.registrationForm.get('gdprControl') || this.registrationForm.get('gdprConsent');
+    const photoConsentControl = this.registrationForm.get('photoConsent');
 
     if (isExternal) {
       gdprControl?.clearValidators();
@@ -103,12 +105,20 @@ export class EventRegistration implements OnInit {
       gdprControl?.setValidators([Validators.requiredTrue]);
     }
     gdprControl?.updateValueAndValidity();
+    photoConsentControl?.setValue(true);
+    photoConsentControl?.clearValidators();
+    photoConsentControl?.updateValueAndValidity();
 
     this.syncConditionalFieldValidators(eventData);
   }
 
   private toastService = inject(ToastService);
   onSubmit(): void {
+    const photoConsentControl = this.registrationForm.get('photoConsent');
+    if (photoConsentControl) {
+      photoConsentControl.setValue(true);
+    }
+
     if (this.registrationForm.invalid || this.isSubmitting() || this.isRegistered()) {
       this.registrationForm.markAllAsTouched();
       return;

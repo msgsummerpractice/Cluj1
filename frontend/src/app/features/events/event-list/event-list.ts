@@ -363,7 +363,7 @@ export class EventListComponent implements OnInit {
       return false;
     }
 
-    return Date.now() > new Date(event.registrationEndDate).getTime();
+    return Date.now() >= new Date(event.registrationEndDate).getTime();
   }
   completeEvent(event: Event): void {
     if (!this.eventHasEnded(event)) {
