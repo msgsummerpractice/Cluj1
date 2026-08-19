@@ -92,6 +92,7 @@
     }
   },
   "events": {
+    "participantPageTitle": "Events",
     "eventPageTitle": "Event Management",
     "eventNameColumn": "Name",
     "eventDateColumn": "Date",
@@ -114,6 +115,9 @@
     "eventCheckInButton": "Check-in",
     "clearFilters": "Clear filters",
     "noData": "No events found",
+    "participantStatusColumn": "My Status",
+    "registered": "Registered",
+    "checkedIn": "Checked-in",
     "fetchError": "Failed to fetch events. Please try again.",
     "publish": {
       "title": "Confirm Publish",

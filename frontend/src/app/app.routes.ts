@@ -65,7 +65,7 @@ export const routes: Routes = [
   {
     path: 'events',
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT'] },
+    data: { roles: ['PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN'] },
     loadComponent: () =>
       import('./features/events/event-list/event-list').then((m) => m.EventListComponent),
   },

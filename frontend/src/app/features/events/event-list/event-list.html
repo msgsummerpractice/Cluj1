@@ -1,8 +1,8 @@
 <div class="p-8 bg-white min-h-screen">
   <app-data-table
-    [columns]="columns"
+    [columns]="columns()"
     [data]="visibleEvents()"
-    tableTitle="events.eventPageTitle"
+    [tableTitle]="pageTitle()"
     noDataLabel="events.noData"
     [showPaginator]="true"
     [pageSizeOptions]="[5, 10, 25, 100]"
@@ -24,11 +24,13 @@
 
     <ng-template appDataTableFilterDef="name">
       <mat-form-field appearance="outline">
-        <mat-label>
-          {{ 'events.eventNameColumn' | transloco }}
-        </mat-label>
-
-        <input matInput [value]="nameFilter()" (input)="setNameFilter($any($event.target).value)" />
+        <mat-label>{{ 'events.eventNameColumn' | transloco }}</mat-label>
+        <input
+          matInput
+          #nameFilterInput
+          [value]="nameFilter()"
+          (input)="setNameFilter(nameFilterInput.value)"
+        />
       </mat-form-field>
     </ng-template>
 
@@ -103,81 +105,126 @@
       {{ 'events.eventType' + (event.type | titlecase) | transloco }}
     </ng-template>
 
+    <ng-template appDataTableCellDef="participantStatus" let-event>
+      @if (event.isCheckedIn) {
+        <span
+          class="flex justify-start gap-1 text-green-600 font-medium"
+          [title]="'events.checkedIn' | transloco"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            ></path>
+          </svg>
+          {{ 'events.checkedIn' | transloco }}
+        </span>
+      } @else if (event.isRegistered) {
+        <span
+          class="flex justify-start gap-1 text-blue-600 font-medium"
+          [title]="'events.registered' | transloco"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+            ></path>
+          </svg>
+          {{ 'events.registered' | transloco }}
+        </span>
+      }
+    </ng-template>
+
     <ng-template appDataTableCellDef="actions" let-event>
-      <div class="flex gap-2">
-        <!-- View event -->
+      <div class="flex justify-start gap-2">
         <button
-          mat-stroked-button
-          class="event-view-button transition-colors whitespace-nowrap"
+          mat-icon-button
           (click)="manageEvent(event.id)"
           [matTooltip]="'events.eventViewButton' | transloco"
-          matTooltipPosition="below"
+          aria-label="View event"
         >
-          <mat-icon>visibility</mat-icon>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            ></path>
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+            ></path>
+          </svg>
         </button>
 
-        <!-- Register for published event -->
         @if (event.status === 'PUBLISHED') {
-          <button
-            mat-stroked-button
-            (click)="openRegistrationModal(event)"
-            class="event-view-button transition-colors whitespace-nowrap"
-            [matTooltip]="'events.eventRegisterButton' | transloco"
-            matTooltipPosition="below"
-          >
-            {{ 'events.eventRegisterButton' | transloco }}
-          </button>
-
-          <!-- Check-in for published event -->
-          @if (isMarketingOrganizer()) {
+          @if (!event.isRegistered) {
             <button
-              mat-stroked-button
-              class="event-checkin-button transition-colors whitespace-nowrap"
+              mat-icon-button
+              (click)="openRegistrationModal(event)"
+              [matTooltip]="'events.eventRegisterButton' | transloco"
+              aria-label="Register for event"
+            >
+              <mat-icon>app_registration</mat-icon>
+            </button>
+          }
+
+          @if (!event.isCheckedIn) {
+            <button
+              mat-icon-button
               (click)="navigateToCheckIn(event.id)"
               [matTooltip]="'events.eventCheckInButton' | transloco"
-              matTooltipPosition="below"
+              aria-label="Check in to event"
             >
-              {{ 'events.eventCheckInButton' | transloco }}
+              <mat-icon>qr_code_scanner</mat-icon>
             </button>
           }
         }
 
-        <!-- Marketing organizer actions for draft events -->
         @if (isMarketingOrganizer() && event.status === 'DRAFT') {
           <button
-            mat-stroked-button
+            mat-icon-button
             (click)="editEvent(event.id)"
-            class="event-view-button transition-colors whitespace-nowrap"
             [matTooltip]="'events.eventEditButton' | transloco"
-            matTooltipPosition="below"
+            aria-label="Edit event"
           >
-            <mat-icon>edit</mat-icon>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+              ></path>
+            </svg>
           </button>
-        }
-        @if (isMarketingOrganizer() && event.status === 'DRAFT') {
+
           <button
-            mat-stroked-button
-            class="event-view-button transition-colors whitespace-nowrap"
-            [disabled]="isPublishing(event.id)"
+            mat-icon-button
             (click)="openDialog(event)"
+            [disabled]="isPublishing(event.id)"
             [matTooltip]="'events.eventPublishButton' | transloco"
-            matTooltipPosition="below"
           >
             @if (isPublishing(event.id)) {
               <mat-spinner diameter="18" strokeWidth="2"></mat-spinner>
             } @else {
-              <mat-icon> publish</mat-icon>
+              <mat-icon>publish</mat-icon>
             }
           </button>
         }
+
         @if (isMarketingOrganizer() && event.status == 'PUBLISHED') {
           <button
-            mat-stroked-button
+            mat-icon-button
             (click)="completeEvent(event)"
             [disabled]="!eventHasEnded(event)"
-            class="event-view-button transition-colors whitespace-nowrap"
+            class="transition-colors whitespace-nowrap"
             [matTooltip]="'events.eventCompleteButton' | transloco"
-            matTooltipPosition="below"
           >
             <mat-icon>done</mat-icon>
           </button>

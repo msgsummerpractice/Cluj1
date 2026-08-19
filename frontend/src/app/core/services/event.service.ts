@@ -27,7 +27,6 @@ export class EventService {
     return this.http.get<Event>(`${this.apiUrl}/${id}`);
   }
 
-
   getEventDetails(eventId: string): Observable<EventDetails> {
     const url = `${this.apiUrl}/${eventId}/details`;
     return this.http.get<EventDetails>(url);
@@ -64,6 +63,10 @@ export class EventService {
     });
   }
 
+  getEligibleEvents(): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.apiUrl}/eligible`);
+  }
+
   registerForEvent(eventId: string, requestData: EventRegistrationRequest): Observable<any> {
     return this.http.post(`${this.apiUrl}/${eventId}`, requestData, {
       responseType: 'text',
@@ -86,6 +89,10 @@ export class EventService {
   generateCheckInCodes(eventId: string): Observable<CheckInCodes> {
     const url = `${this.apiUrl}/${eventId}/checkin-codes`;
     return this.http.post<CheckInCodes>(url, {}, { withCredentials: true });
+  }
+
+  getEventCheckInDetails(eventId: string): Observable<CheckInCodes> {
+    return this.http.get<CheckInCodes>(`${this.apiUrl}/${eventId}/checkin`);
   }
 
   checkIn(request: CheckInRequest): Observable<void> {
