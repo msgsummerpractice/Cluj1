@@ -83,7 +83,7 @@ export class EventRegistration implements OnInit {
   initEmptyForm(): void {
     this.registrationForm = this.fb.group({
       gdprConsent: [false, [Validators.requiredTrue]],
-      photoConsent: [true],
+      photoConsent: [false],
       foodPreference: ['NONE'],
       transportationNeeded: [false],
       driverName: [''],
@@ -96,14 +96,11 @@ export class EventRegistration implements OnInit {
   updateFormValidators(eventData: Event): void {
     const isExternal = eventData?.type === 'EXTERNAL';
     const gdprControl = this.registrationForm.get('gdprConsent');
-    const photoControl = this.registrationForm.get('photoConsent');
 
     if (isExternal) {
       gdprControl?.clearValidators();
-      photoControl?.setValue(true);
     } else {
       gdprControl?.setValidators([Validators.requiredTrue]);
-      photoControl?.setValue(false);
     }
     gdprControl?.updateValueAndValidity();
 
