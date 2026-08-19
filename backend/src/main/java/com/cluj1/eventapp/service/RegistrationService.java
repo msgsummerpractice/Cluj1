@@ -1,13 +1,11 @@
 package com.cluj1.eventapp.service;
 
-
 import com.cluj1.eventapp.model.User;
 import com.cluj1.eventapp.repository.RegistrationRepository;
 import com.cluj1.eventapp.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor

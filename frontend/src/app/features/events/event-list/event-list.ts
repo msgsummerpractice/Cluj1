@@ -1,6 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { Event } from '../../../core/models/event.model';
@@ -354,6 +354,17 @@ export class EventListComponent implements OnInit {
     this.router.navigate(['/events', eventId, 'edit']);
   }
 
+  openRegistrationModal(event: any) {
+    this.router.navigate(['/events', event.id, 'register']);
+  }
+
+  isRegistrationClosed(event: Event): boolean {
+    if (!event.registrationEndDate) {
+      return false;
+    }
+
+    return Date.now() >= new Date(event.registrationEndDate).getTime();
+  }
   completeEvent(event: Event): void {
     if (!this.eventHasEnded(event)) {
       this.toastService.show('error', this.translocoService.translate('events.complete.notEnded'));
