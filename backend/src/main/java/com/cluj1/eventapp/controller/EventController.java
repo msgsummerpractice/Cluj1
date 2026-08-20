@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.cluj1.eventapp.dto.CheckInCodesDto;
+import com.cluj1.eventapp.repository.RegistrationRepository;
+import com.cluj1.eventapp.service.AttendanceExcelGeneratorService;
 import com.cluj1.eventapp.service.EventService;
 
 import jakarta.validation.Valid;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.cluj1.eventapp.dto.AttendanceRecordDto;
 import com.cluj1.eventapp.dto.EventDetailsDto;
@@ -43,138 +46,138 @@ import java.security.Principal;
 @RequestMapping("/api/events")
 public class EventController {
 
-    private final EventService eventService;
-    private final EventDetailsService eventDetailsService;
-    private final EventCheckInService eventCheckInService;
+	private final EventService eventService;
+	private final EventDetailsService eventDetailsService;
+	private final EventCheckInService eventCheckInService;
+	private final RegistrationRepository registrationRepository;
+	private final AttendanceExcelGeneratorService attendanceReportExcelGenerator;
 
-    @GetMapping("/countRegistrationPerUser")
-    public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal) {
-        String email = principal.getName();
-        return ResponseEntity.ok(eventService.getUpcomingRegisteredEventsCountPerUserByEmail(email));
-    }
+	@GetMapping("/countRegistrationPerUser")
+	public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal) {
+		String email = principal.getName();
+		return ResponseEntity.ok(eventService.getUpcomingRegisteredEventsCountPerUserByEmail(email));
+	}
 
-    @GetMapping
-    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
-    public ResponseEntity<List<EventDto>> getAllEvents() {
-        return ResponseEntity.ok(eventService.getAllEvents());
-    }
+	@GetMapping
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	public ResponseEntity<List<EventDto>> getAllEvents() {
+		return ResponseEntity.ok(eventService.getAllEvents());
+	}
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
-    public ResponseEntity<EventDto> getEventById(@PathVariable UUID id) {
-        return ResponseEntity.ok(eventService.getEventById(id));
-    }
+	@GetMapping("/{id}")
+	@PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	public ResponseEntity<EventDto> getEventById(@PathVariable UUID id) {
+		return ResponseEntity.ok(eventService.getEventById(id));
+	}
 
-    @GetMapping("/{id}/details")
-    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT')")
-    public ResponseEntity<EventDetailsDto> getEventDetails(@PathVariable UUID id) {
-        return ResponseEntity.ok(eventDetailsService.getEventDetailsByEventId(id));
-    }
+	@GetMapping("/{id}/details")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT')")
+	public ResponseEntity<EventDetailsDto> getEventDetails(@PathVariable UUID id) {
+		return ResponseEntity.ok(eventDetailsService.getEventDetailsByEventId(id));
+	}
 
-    @GetMapping("/{id}/checkin")
-    @PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
-    public ResponseEntity<CheckInCodesDto> getEventCheckInDetails(@PathVariable UUID id) {
-        return ResponseEntity.ok(eventService.getCheckInDetails(id));
-    }
+	@GetMapping("/{id}/checkin")
+	@PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	public ResponseEntity<CheckInCodesDto> getEventCheckInDetails(@PathVariable UUID id) {
+		return ResponseEntity.ok(eventService.getCheckInDetails(id));
+	}
 
-    @GetMapping("/{id}/poster")
-    @PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
-    public ResponseEntity<byte[]> getEventPoster(@PathVariable UUID id) {
-        return eventDetailsService.getPosterByEventId(id)
-                .map(poster -> ResponseEntity.ok()
-                        .contentType(detectImageType(poster))
-                        .body(poster))
-                .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
+	public ResponseEntity<EventDto> createEvent(
+			@RequestPart("event") EventDto eventDto,
+			@RequestPart(value = "poster", required = false) MultipartFile poster) {
+		return ResponseEntity.status(HttpStatus.CREATED).body(eventService.createEvent(eventDto, poster));
+	}
 
-    private static MediaType detectImageType(byte[] poster) {
-        if (poster.length >= 3 && (poster[0] & 0xFF) == 0xFF && (poster[1] & 0xFF) == 0xD8) {
-            return MediaType.IMAGE_JPEG;
-        }
-        if (poster.length >= 4 && (poster[0] & 0xFF) == 0x47 && poster[1] == 'I' && poster[2] == 'F') {
-            return MediaType.IMAGE_GIF;
-        }
-        if (poster.length >= 12 && poster[0] == 'R' && poster[1] == 'I' && poster[2] == 'F' && poster[3] == 'F'
-                && poster[8] == 'W' && poster[9] == 'E' && poster[10] == 'B' && poster[11] == 'P') {
-            return MediaType.valueOf("image/webp");
-        }
-        return MediaType.IMAGE_PNG;
-    }
+	@GetMapping("/{id}/poster")
+	@PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	public ResponseEntity<byte[]> getEventPoster(@PathVariable UUID id) {
+		return eventDetailsService.getPosterByEventId(id)
+				.map(poster -> ResponseEntity.ok()
+						.contentType(detectImageType(poster))
+						.body(poster))
+				.orElseGet(() -> ResponseEntity.notFound().build());
+	}
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
-    public ResponseEntity<EventDto> createEvent(
-            @RequestPart("event") EventDto eventDto,
-            @RequestPart(value = "poster", required = false) MultipartFile poster) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(eventService.createEvent(eventDto, poster));
-    }
+	@PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
+	public ResponseEntity<EventDto> updateEvent(
+			@PathVariable UUID id,
+			@RequestPart("event") EventDto eventDto,
+			@RequestPart(value = "poster", required = false) MultipartFile poster) {
+		return ResponseEntity.ok(eventService.updateEvent(id, eventDto, poster));
+	}
 
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
-    public ResponseEntity<EventDto> updateEvent(
-            @PathVariable UUID id,
-            @RequestPart("event") EventDto eventDto,
-            @RequestPart(value = "poster", required = false) MultipartFile poster) {
-        return ResponseEntity.ok(eventService.updateEvent(id, eventDto, poster));
-    }
+	@GetMapping(value = "/{id}/attendance-report", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	@PreAuthorize("hasAnyAuthority('HR_USER')")
+	public ResponseEntity<byte[]> downloadAttendanceReport(@PathVariable UUID id) {
+		if (eventService.getEventById(id).getStatus() != EventStatus.COMPLETED) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT,
+					"Attendance reports are available only for completed events.");
+		}
 
-    /**
-     * Returns the list of events the authenticated participant is eligible to
-     * register for.
-     * Eligibility is determined by the service based on event status, registration
-     * deadline,
-     * and location matching. Each event in the response includes
-     * {@code isRegistered} and
-     * {@code isCheckedIn} flags reflecting the caller's current participation
-     * state.
-     *
-     * @return 200 OK with the eligible event list
-     */
-    @GetMapping("/eligible")
-    @PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
-    public ResponseEntity<List<EventDto>> getEligibleEvents() {
-        return ResponseEntity.ok(eventService.getEligibleEventsForCurrentUser());
-    }
+		byte[] report = attendanceReportExcelGenerator.generate(registrationRepository.findAttendanceReportRows(id));
+		return ResponseEntity.ok()
+				.header("Content-Disposition", "attachment; filename=attendance-report-" + id + ".xlsx")
+				.body(report);
+	}
 
-    @PostMapping("/{eventId}")
-    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'USER', 'PARTICIPANT')")
-    public ResponseEntity<Map<String, String>> registerForEvent(
-            @PathVariable UUID eventId,
-            @Valid @RequestBody EventRegistrationDto requestDto,
-            Principal principal) {
+	private static MediaType detectImageType(byte[] poster) {
+		if (poster.length >= 3 && (poster[0] & 0xFF) == 0xFF && (poster[1] & 0xFF) == 0xD8) {
+			return MediaType.IMAGE_JPEG;
+		}
+		if (poster.length >= 4 && (poster[0] & 0xFF) == 0x47 && poster[1] == 'I' && poster[2] == 'F') {
+			return MediaType.IMAGE_GIF;
+		}
+		if (poster.length >= 12 && poster[0] == 'R' && poster[1] == 'I' && poster[2] == 'F' && poster[3] == 'F'
+				&& poster[8] == 'W' && poster[9] == 'E' && poster[10] == 'B' && poster[11] == 'P') {
+			return MediaType.valueOf("image/webp");
+		}
+		return MediaType.IMAGE_PNG;
+	}
 
-        String email = principal.getName();
-        eventService.registerUser(eventId, email, requestDto);
+	/**
+	 * Returns the list of events the authenticated participant is eligible to
+	 * register for.
+	 * Eligibility is determined by the service based on event status, registration
+	 * deadline,
+	 * and location matching. Each event in the response includes
+	 * {@code isRegistered} and
+	 * {@code isCheckedIn} flags reflecting the caller's current participation
+	 * state.
+	 *
+	 * @return 200 OK with the eligible event list
+	 */
+	@GetMapping("/eligible")
+	@PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	public ResponseEntity<List<EventDto>> getEligibleEvents() {
+		return ResponseEntity.ok(eventService.getEligibleEventsForCurrentUser());
+	}
 
-        return ResponseEntity.ok(Map.of("message", "Successfully registered for the event."));
-    }
+	@PostMapping("/{eventId}")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'USER', 'PARTICIPANT')")
+	public ResponseEntity<Map<String, String>> registerForEvent(
+			@PathVariable UUID eventId,
+			@Valid @RequestBody EventRegistrationDto requestDto,
+			Principal principal) {
 
-    @GetMapping("/{eventId}/check")
-    public ResponseEntity<Boolean> checkIfRegistered(
-            @PathVariable UUID eventId,
-            Principal principal) {
+		String email = principal.getName();
+		eventService.registerUser(eventId, email, requestDto);
 
-        String userEmail = principal.getName();
-        boolean isRegistered = eventService.isUserRegistered(eventId, userEmail);
+		return ResponseEntity.ok(Map.of("message", "Successfully registered for the event."));
+	}
 
-        return ResponseEntity.ok(isRegistered);
-    }
+	@GetMapping("/{eventId}/check")
+	public ResponseEntity<Boolean> checkIfRegistered(
+			@PathVariable UUID eventId,
+			Principal principal) {
 
-    @GetMapping("/{id}/checkins/recent")
-    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
-    public ResponseEntity<List<AttendanceRecordDto>> getRecentCheckins(
-            @PathVariable UUID id,
-            @RequestParam(defaultValue = "4") int limit) {
-        return ResponseEntity.ok(eventCheckInService.getRecentCheckins(id, limit));
-    }
+		String userEmail = principal.getName();
+		boolean isRegistered = eventService.isUserRegistered(eventId, userEmail);
 
-    @PatchMapping("/{id}/status/{status}")
-    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
-    public ResponseEntity<EventDto> updateEventStatus(
-            @PathVariable UUID id,
-            @PathVariable EventStatus status) {
-        return ResponseEntity.ok(eventService.updateEventStatus(id, status));
-    }
+		return ResponseEntity.ok(isRegistered);
+	}
 
     @PostMapping("/{id}/checkin-codes")
     @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
@@ -187,4 +190,19 @@ public class EventController {
         EventStatisticsDto statistics = eventService.getEventStatistics(id);
         return ResponseEntity.ok(statistics);
     }
+	@GetMapping("/{id}/checkins/recent")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	public ResponseEntity<List<AttendanceRecordDto>> getRecentCheckins(
+			@PathVariable UUID id,
+			@RequestParam(defaultValue = "4") int limit) {
+		return ResponseEntity.ok(eventCheckInService.getRecentCheckins(id, limit));
+	}
+
+	@PatchMapping("/{id}/status/{status}")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
+	public ResponseEntity<EventDto> updateEventStatus(
+			@PathVariable UUID id,
+			@PathVariable EventStatus status) {
+		return ResponseEntity.ok(eventService.updateEventStatus(id, status));
+	}
 }

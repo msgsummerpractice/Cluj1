@@ -1,5 +1,16 @@
-import { ChangeDetectorRef, Component, OnDestroy, effect, inject, input } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  OnDestroy,
+  inject,
+  input,
+  Injector,
+  DestroyRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { toObservable, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { switchMap, Subscription } from 'rxjs';
 import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { MatCardModule } from '@angular/material/card';
@@ -7,21 +18,23 @@ import { EventStatistics } from '../../core/models/event-statistics.model';
 import { EventService } from '../../core/services/event.service';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { MatTableModule } from '@angular/material/table';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-statistics',
   imports: [CommonModule, MatCardModule, BaseChartDirective, TranslocoModule, MatTableModule],
   templateUrl: './app-statistics.html',
 })
-export class StatisticsViewComponent implements OnDestroy {
+export class StatisticsViewComponent implements OnInit, OnDestroy {
   readonly id = input.required<string>();
-  private eventService = inject(EventService);
-  private cdr = inject(ChangeDetectorRef);
+
+  private readonly eventService = inject(EventService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly translocoService = inject(TranslocoService);
+  private readonly injector = inject(Injector);
+  private readonly destroyRef = inject(DestroyRef);
+
   stats: EventStatistics | null = null;
   displayedColumns: string[] = ['name', 'email', 'status', 'checkInTime'];
-  private readonly translocoService = inject(TranslocoService);
-  private langSubscription?: Subscription;
 
   public barChartData: ChartConfiguration<'bar'>['data'] = {
     labels: [],
@@ -59,14 +72,19 @@ export class StatisticsViewComponent implements OnDestroy {
     },
   };
 
-  constructor() {
-    effect(() => {
-      this.eventService.getEventStatistics(this.id()).subscribe((data) => {
+  private langSubscription?: Subscription;
+
+  ngOnInit(): void {
+    toObservable(this.id, { injector: this.injector })
+      .pipe(
+        switchMap((id) => this.eventService.getEventStatistics(id)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((data) => {
         this.stats = data;
         this.updateChart(data.registrationTimeDistribution);
         this.cdr.detectChanges();
       });
-    });
 
     this.langSubscription = this.translocoService.langChanges$.subscribe(() => {
       if (this.stats) {
