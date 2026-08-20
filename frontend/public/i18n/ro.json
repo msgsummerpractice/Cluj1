@@ -180,7 +180,8 @@
     "userActivated": "Contul utilizatorului a fost activat cu succes",
     "userDeactivated": "Contul utilizatorului a fost dezactivat cu succes",
     "errorUpdatingStatus": "Eroare la actualizarea stării",
-    "changeUserStatus": "Starea utilizatorului a fost schimbată cu succes"
+    "changeUserStatus": "Starea utilizatorului a fost schimbată cu succes",
+    "confirmLogin": "Utilizatorul {{email}} s-a autentificat cu succes."
   },
   "register": {
     "title": "Înregistrează un cont nou",

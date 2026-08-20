@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -11,6 +12,8 @@ import { MatInputModule } from '@angular/material/input';
 import { TranslocoModule } from '@jsverse/transloco';
 
 import { AuthService } from '../../../core/services/auth.service';
+import { ToastComponent } from '../../toast-component/toast-component';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -24,6 +27,7 @@ import { AuthService } from '../../../core/services/auth.service';
     MatIconModule,
     MatInputModule,
     TranslocoModule,
+    ToastComponent,
   ],
   templateUrl: './login.html',
   styleUrl: './login.css',
@@ -33,6 +37,8 @@ export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly translocoService = inject(TranslocoService);
+  private readonly toastService = inject(ToastService);
 
   protected readonly isSubmitting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
@@ -78,5 +84,9 @@ export class LoginComponent {
           this.errorMessage.set('Unable to sign in right now. Please try again.');
         },
       });
+    this.toastService.show(
+      'success',
+      this.translocoService.translate('notifications.confirmLogin', { email: credentials.email }),
+    );
   }
 }

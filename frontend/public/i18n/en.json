@@ -61,7 +61,8 @@
     "userActivated": "User account activated successfully",
     "userDeactivated": "User account deactivated successfully",
     "errorUpdatingStatus": "Error updating status",
-    "changeUserStatus": "User status changed successfully"
+    "changeUserStatus": "User status changed successfully",
+    "confirmLogin": "User {{email}} has logged in successfully."
   },
   "auth": {
     "loginTitle": "Log in",
