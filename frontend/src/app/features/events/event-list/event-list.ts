@@ -2,7 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
+import { filter, finalize, switchMap } from 'rxjs/operators';
 import { Event } from '../../../core/models/event.model';
 import { EventService } from '../../../core/services/event.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -83,6 +83,7 @@ export class EventListComponent implements OnInit {
 
   readonly events = signal<readonly Event[]>([]);
   readonly publishingEventIds = signal<readonly string[]>([]);
+  readonly downloadingReportEventIds = signal<readonly string[]>([]);
   readonly nameFilter = signal('');
   readonly selectedDateYears = signal<readonly string[]>([]);
   readonly selectedDateMonths = signal<readonly string[]>([]);
@@ -265,6 +266,34 @@ export class EventListComponent implements OnInit {
     return this.publishingEventIds().includes(eventId);
   }
 
+  isDownloadingReport(eventId: string): boolean {
+    return this.downloadingReportEventIds().includes(eventId);
+  }
+
+  downloadAttendanceReport(eventId: string): void {
+    if (this.isDownloadingReport(eventId)) {
+      return;
+    }
+
+    this.downloadingReportEventIds.update((ids) => [...ids, eventId]);
+    this.eventService
+      .downloadAttendanceReport(eventId)
+      .pipe(finalize(() => this.clearReportDownload(eventId)))
+      .subscribe({
+        next: (report) => {
+          const reportUrl = URL.createObjectURL(report);
+          const downloadLink = document.createElement('a');
+          downloadLink.href = reportUrl;
+          downloadLink.download = `attendance-report-${eventId}.xlsx`;
+          downloadLink.click();
+          URL.revokeObjectURL(reportUrl);
+        },
+        error: () => {
+          this.toastService.show('error', this.translocoService.translate('events.reportError'));
+        },
+      });
+  }
+
   publishEvent(event: Event): void {
     if (this.isPublishing(event.id)) {
       return;
@@ -335,6 +364,10 @@ export class EventListComponent implements OnInit {
     this.publishingEventIds.update((ids) => ids.filter((id) => id !== eventId));
   }
 
+  private clearReportDownload(eventId: string): void {
+    this.downloadingReportEventIds.update((ids) => ids.filter((id) => id !== eventId));
+  }
+
   private toEventSortField(sortField: string): EventSortField | '' {
     switch (sortField) {
       case 'name':
@@ -389,6 +422,10 @@ export class EventListComponent implements OnInit {
 
   isMarketingOrganizer(): boolean {
     return this.authService.isMarketingOrganizer();
+  }
+
+  isHrUser(): boolean {
+    return this.authService.isHrUser();
   }
 
   checkIn(eventId: string): void {

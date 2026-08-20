@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.cluj1.eventapp.dto.CheckInCodesDto;
+import com.cluj1.eventapp.repository.RegistrationRepository;
+import com.cluj1.eventapp.service.AttendanceExcelGeneratorService;
 import com.cluj1.eventapp.service.EventService;
 
 import jakarta.validation.Valid;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.cluj1.eventapp.dto.AttendanceRecordDto;
 import com.cluj1.eventapp.dto.EventDetailsDto;
@@ -46,6 +49,8 @@ public class EventController {
     private final EventService eventService;
     private final EventDetailsService eventDetailsService;
     private final EventCheckInService eventCheckInService;
+    private final RegistrationRepository registrationRepository;
+    private final AttendanceExcelGeneratorService attendanceReportExcelGenerator;
 
     @GetMapping("/countRegistrationPerUser")
     public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal) {
@@ -77,6 +82,14 @@ public class EventController {
         return ResponseEntity.ok(eventService.getCheckInDetails(id));
     }
 
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
+    public ResponseEntity<EventDto> createEvent(
+            @Valid @RequestPart("event") EventDto eventDto,
+            @RequestPart(value = "poster", required = false) MultipartFile poster) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(eventService.createEvent(eventDto, poster));
+    }
+
     @GetMapping("/{id}/poster")
     @PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
     public ResponseEntity<byte[]> getEventPoster(@PathVariable UUID id) {
@@ -85,6 +98,29 @@ public class EventController {
                         .contentType(detectImageType(poster))
                         .body(poster))
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
+    public ResponseEntity<EventDto> updateEvent(
+            @PathVariable UUID id,
+            @Valid @RequestPart("event") EventDto eventDto,
+            @RequestPart(value = "poster", required = false) MultipartFile poster) {
+        return ResponseEntity.ok(eventService.updateEvent(id, eventDto, poster));
+    }
+
+    @GetMapping(value = "/{id}/attendance-report", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    @PreAuthorize("hasAnyAuthority('HR_USER')")
+    public ResponseEntity<byte[]> downloadAttendanceReport(@PathVariable UUID id) {
+        if (eventService.getEventById(id).getStatus() != EventStatus.COMPLETED) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Attendance reports are available only for completed events.");
+        }
+
+        byte[] report = attendanceReportExcelGenerator.generate(registrationRepository.findAttendanceReportRows(id));
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=attendance-report-" + id + ".xlsx")
+                .body(report);
     }
 
     private static MediaType detectImageType(byte[] poster) {
@@ -99,23 +135,6 @@ public class EventController {
             return MediaType.valueOf("image/webp");
         }
         return MediaType.IMAGE_PNG;
-    }
-
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
-    public ResponseEntity<EventDto> createEvent(
-            @Valid @RequestPart("event") EventDto eventDto,
-            @RequestPart(value = "poster", required = false) MultipartFile poster) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(eventService.createEvent(eventDto, poster));
-    }
-
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
-    public ResponseEntity<EventDto> updateEvent(
-            @PathVariable UUID id,
-            @Valid @RequestPart("event") EventDto eventDto,
-            @RequestPart(value = "poster", required = false) MultipartFile poster) {
-        return ResponseEntity.ok(eventService.updateEvent(id, eventDto, poster));
     }
 
     /**
