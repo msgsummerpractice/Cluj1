@@ -12,6 +12,32 @@
     "logout": "Deconectare",
     "login": "Autentificare"
   },
+  "manageRegistration": {
+    "title": "Gestionare înregistrare: ",
+    "subtitle": "Actualizează-ți preferințele sau anulează-ți înregistrarea mai jos.",
+    "deleting": "Se șterge...",
+    "cancelRegistration": "Anulare înregistrare",
+    "summaryTitle": "Sumar înregistrare",
+    "eventName": "Nume eveniment",
+    "eventType": "Tip eveniment",
+    "updating": "Se actualizează...",
+    "updateRegistration": "Actualizare înregistrare",
+    "cateringTitle": "Preferințe Catering",
+    "cateringSubtitle": "La acest eveniment se asigură masa. Actualizează-ți preferința mai jos.",
+    "logisticsTitle": "Logistică și Călătorie",
+    "logisticsSubtitle": "Gestionează-ți nevoile de transport și cazare.",
+    "transportationDesc": "Activează dacă ai nevoie de asistență pentru transport.",
+    "accommodationDesc": "Activează dacă ai nevoie de un loc de cazare.",
+    "accommodationDaysPlaceholder": "ex. 2",
+    "accommodationDaysError": "Este necesar un număr valid de zile.",
+    "consentsTitle": "Acorduri",
+    "consentsSubtitle": "Revizuiește acordurile legale.",
+    "gdprConsent": "Acord GDPR",
+    "gdprWarning": "Debifarea acestei căsuțe și actualizarea înregistrării vor anula definitiv înscrierea ta.",
+    "photoConsent": "Acord Foto",
+    "summary": "Sumar",
+    "event": "Eveniment"
+  },
   "profile": {
     "title": "Profilul meu",
     "firstName": "Prenume",
@@ -84,6 +110,8 @@
     "registered": "Înregistrat",
     "checkedIn": "Prezent (Check-in)",
     "fetchError": "Preluarea evenimentelor a eșuat. Te rugăm să încerci din nou.",
+    "eventManageRegistrationButton": "Gestionează înregistrarea",
+    "eventDeleteRegistrationButton": "Anulează înregistrarea",
     "publish": {
       "title": "Confirmă publicarea",
       "message": "Ești sigur că vrei să publici acest eveniment?",
@@ -228,7 +256,7 @@
     "eventCode": "Cod eveniment",
     "downloadPDF": "Descarcă PDF",
     "enter6digitCode": "Sau introdu acest cod de 6 cifre: ",
-    "generateCodes" : "Generează coduri de check-in"
+    "generateCodes": "Generează coduri de check-in"
   },
   "forgotPassword": {
     "title": "Ai uitat parola",

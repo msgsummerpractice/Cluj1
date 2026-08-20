@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.cluj1.eventapp.dto.CheckInCodesDto;
+import com.cluj1.eventapp.mapper.EventMapper;
+import com.cluj1.eventapp.model.Registration;
 import com.cluj1.eventapp.service.EventService;
 
 import jakarta.validation.Valid;
@@ -21,16 +23,7 @@ import com.cluj1.eventapp.dto.EventRegistrationDto;
 
 import com.cluj1.eventapp.model.enums.EventStatus;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cluj1.eventapp.service.EventCheckInService;
 import com.cluj1.eventapp.service.EventDetailsService;
@@ -46,6 +39,8 @@ public class EventController {
     private final EventService eventService;
     private final EventDetailsService eventDetailsService;
     private final EventCheckInService eventCheckInService;
+
+    private final EventMapper eventMapper;;
 
     @GetMapping("/countRegistrationPerUser")
     public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal) {
@@ -180,5 +175,41 @@ public class EventController {
     @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
     public ResponseEntity<CheckInCodesDto> generateCheckInCodes(@PathVariable UUID id) {
         return ResponseEntity.ok(eventService.generateCheckInCodes(id));
+    }
+
+    @PatchMapping("{eventId}/manage")
+    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'USER', 'PARTICIPANT')")
+    public ResponseEntity<?> updateRegistration(@PathVariable UUID eventId, @Valid @RequestBody EventRegistrationDto newRequestDto, Principal principal) {
+        String email = principal.getName();
+
+        Registration updatedRegistration = eventService.updateRegistration(eventId, email, newRequestDto);
+
+        if(updatedRegistration == null) {
+            return ResponseEntity.ok(Map.of("message", "Registration automatically removed due to GDPR consent"));
+        }
+        return ResponseEntity.ok(Map.of("message", "Successfully updated registration"));
+
+    }
+    @DeleteMapping("/{eventId}/manage")
+    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'USER', 'PARTICIPANT')")
+    public ResponseEntity<String> deleteRegistration(@PathVariable UUID eventId, Principal principal) {
+        String email = principal.getName();
+
+        try{
+            eventService.deleteRegistration(eventId, email);
+            return ResponseEntity.ok("Successfully deleted registration");
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting registration");
+        }
+
+    }
+    @GetMapping("/{eventId}/registration")
+    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'USER', 'PARTICIPANT')")
+    public ResponseEntity<EventRegistrationDto> getRegistrationDetails(@PathVariable UUID eventId, Principal principal) {
+        String email = principal.getName();
+
+        Registration registration = eventService.getRegistration(eventId, email);
+
+        return ResponseEntity.ok(eventMapper.toEventRegistrationDto(registration));
     }
 }

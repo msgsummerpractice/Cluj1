@@ -4,6 +4,9 @@ import { RegisterComponent } from './features/register-component/register-compon
 import { ProfileComponent } from './features/profile-component/profile-component';
 import { EventCheckInComponent } from './features/events/event-checkin/event-checkin';
 import { RubiksCubeComponent } from './features/rubiks-cube-component/rubiks-cube-component';
+import {
+  EventRegistrationManagement
+} from './features/events/event-registration-management-component/event-registration-management-component';
 
 export const routes: Routes = [
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
@@ -11,6 +14,13 @@ export const routes: Routes = [
   {
     path: 'register',
     component: RegisterComponent,
+  },
+  {
+    path: 'events/:id/manage',
+    component: EventRegistrationManagement,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT'] },
+
   },
   {
     path: '',

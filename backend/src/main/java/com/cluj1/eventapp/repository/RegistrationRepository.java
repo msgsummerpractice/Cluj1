@@ -21,4 +21,8 @@ public interface RegistrationRepository extends JpaRepository<Registration, UUID
     @Query("SELECT r FROM Registration r WHERE r.user.id = :userId AND r.event.id IN :eventIds")
     List<Registration> findByUserIdAndEventIdIn(@Param("userId") UUID userId,
             @Param("eventIds") Collection<UUID> eventIds);
+
+    void deleteRegistrationByUserEmailAndEventId(String userEmail, UUID eventId);
+
+    Optional<Registration> findByEventIdAndUserEmail(UUID eventId, String userEmail);
 }

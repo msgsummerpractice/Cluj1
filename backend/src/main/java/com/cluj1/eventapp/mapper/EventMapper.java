@@ -1,5 +1,8 @@
 package com.cluj1.eventapp.mapper;
 
+import com.cluj1.eventapp.dto.EventRegistrationDto;
+import com.cluj1.eventapp.model.Registration;
+import com.cluj1.eventapp.repository.EventRepository;
 import org.springframework.stereotype.Component;
 import com.cluj1.eventapp.dto.EventDto;
 import com.cluj1.eventapp.model.Event;
@@ -25,5 +28,21 @@ public class EventMapper {
                                 && event.getEventDetails() != null
                                 && event.getEventDetails().getEventCode() != null)
                 .build();
+    }
+
+    public EventRegistrationDto toEventRegistrationDto(Registration registration) {
+        EventRegistrationDto dto = new EventRegistrationDto();
+        dto.setGdprConsent(registration.getGdprConsent());
+        dto.setPhotoConsent(registration.getPhotoConsent());
+        dto.setFoodPreference(registration.getFoodPreference());
+        dto.setTransportationNeeded(registration.getTransportationNeeded());
+        dto.setAccommodationNeeded(registration.getAccommodationNeeded());
+        dto.setAccommodationDays(registration.getAccommodationDays());
+
+        if (registration.getTransportationDetails() != null) {
+            dto.setDriverName(registration.getTransportationDetails().getDriverName());
+            dto.setDriverPhone(registration.getTransportationDetails().getDriverPhoneNumber());
+        }
+        return dto;
     }
 }

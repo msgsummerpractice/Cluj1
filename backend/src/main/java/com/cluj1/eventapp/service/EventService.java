@@ -71,9 +71,47 @@ public class EventService {
 
     @Transactional(readOnly = true)
     public List<EventDto> getAllEvents() {
-        return eventRepository.findAll(Sort.by(Sort.Direction.ASC, "createdAt", "id")).stream()
-                .map(eventMapper::toDto)
+        List<Event> events = eventRepository.findAll(Sort.by(Sort.Direction.ASC, "createdAt", "id"));
+
+        User currentUser = getCurrentUserOrNull();
+        Map<UUID, Registration> registrationsByEventId = Map.of();
+        if (currentUser != null) {
+            Set<UUID> eventIds = events.stream().map(Event::getId).collect(Collectors.toSet());
+            registrationsByEventId = registrationRepository
+                    .findByUserIdAndEventIdIn(currentUser.getId(), eventIds)
+                    .stream()
+                    .collect(Collectors.toMap(r -> r.getEvent().getId(), r -> r));
+        }
+
+        Map<UUID, Registration> registrations = registrationsByEventId;
+        return events.stream()
+                .map(event -> enrichWithRegistrationStatus(
+                        eventMapper.toDto(event),
+                        registrations.get(event.getId())))
                 .toList();
+    }
+
+    private User getCurrentUserOrNull() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+        String email = authentication.getName();
+        if (email == null || email.isBlank() || "anonymousUser".equals(email)) {
+            return null;
+        }
+        return userRepository.findByEmail(email).orElse(null);
+    }
+
+    private EventDto enrichWithRegistrationStatus(EventDto dto, Registration registration) {
+        if (registration != null) {
+            dto.setIsRegistered(true);
+            dto.setIsCheckedIn(registration.getAttendanceRecord() != null);
+        } else {
+            dto.setIsRegistered(false);
+            dto.setIsCheckedIn(false);
+        }
+        return dto;
     }
 
     @Transactional
@@ -275,14 +313,7 @@ public class EventService {
         List<EventDto> eligibleEventDtos = eligibleEvents.stream().map(event -> {
             EventDto dto = eventMapper.toDto(event);
             Registration registration = registrationsByEventId.get(event.getId());
-            if (registration != null) {
-                dto.setIsRegistered(true);
-                dto.setIsCheckedIn(registration.getAttendanceRecord() != null);
-            } else {
-                dto.setIsRegistered(false);
-                dto.setIsCheckedIn(false);
-            }
-            return dto;
+            return enrichWithRegistrationStatus(dto, registration);
         }).toList();
 
         return eligibleEventDtos;
@@ -292,7 +323,15 @@ public class EventService {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Event not found with id: " + id));
 
-        return eventMapper.toDto(event);
+        EventDto dto = eventMapper.toDto(event);
+        User currentUser = getCurrentUserOrNull();
+        Registration registration = null;
+        if (currentUser != null) {
+            registration = registrationRepository
+                    .findByUserIdAndEventId(currentUser.getId(), id)
+                    .orElse(null);
+        }
+        return enrichWithRegistrationStatus(dto, registration);
     }
 
     /**
@@ -460,4 +499,70 @@ public class EventService {
 
         return eventRepository.existsByEventIdAndUserId(eventId, user.getId());
     }
+
+    @Transactional
+    public void deleteRegistration(UUID eventId, String userEmail) {
+        if(!isUserRegistered(eventId, userEmail)) {
+            throw new InvalidEventOperationException("User is not registered for this event.");
+        }
+        registrationRepository.deleteRegistrationByUserEmailAndEventId(userEmail.toLowerCase(), eventId);
+    }
+    @Transactional
+    public Registration updateRegistration(UUID eventId, String userEmail, EventRegistrationDto eventRegistrationDto) {
+        User user = userRepository.findByEmail(userEmail.toLowerCase())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        Registration registration = registrationRepository.findByEventIdAndUserId(eventId, user.getId())
+                .orElseThrow(() -> new InvalidEventOperationException("User is not registered for this event"));
+
+        Event event = registration.getEvent();
+
+        if(event.getType() != EventType.EXTERNAL && (eventRegistrationDto.getGdprConsent() == null || !eventRegistrationDto.getGdprConsent())) {
+            deleteRegistration(eventId, userEmail);
+            return null;
+        }
+        if(event.getType() == EventType.INTERNAL) {
+            validateInternalRegistration(eventRegistrationDto);
+        }
+        EventDetails eventDetails = eventDetailsRepository.findByEvent(event);
+        boolean foodProvided = Boolean.TRUE.equals(eventDetails.getFoodProvided());
+        FoodPreference foodPreference = FoodPreference.NONE;
+
+        if (event.getType() != EventType.EXTERNAL && foodProvided) {
+            if (eventRegistrationDto.getFoodPreference() != null) {
+                foodPreference = eventRegistrationDto.getFoodPreference();
+            }
+        }
+
+        registration.setGdprConsent(Boolean.TRUE.equals(eventRegistrationDto.getGdprConsent()));
+        registration.setPhotoConsent(Boolean.TRUE.equals(eventRegistrationDto.getPhotoConsent()));
+        registration.setFoodPreference(foodPreference);
+        registration.setTransportationNeeded(Boolean.TRUE.equals(eventRegistrationDto.getTransportationNeeded()));
+        registration.setAccommodationNeeded(Boolean.TRUE.equals(eventRegistrationDto.getAccommodationNeeded()));
+        registration.setAccommodationDays(eventRegistrationDto.getAccommodationDays());
+
+        if (event.getType() == EventType.INTERNAL && Boolean.TRUE.equals(eventRegistrationDto.getTransportationNeeded())) {
+            TransportationDetails transportDetails = registration.getTransportationDetails();
+
+            if (transportDetails == null) {
+                transportDetails = TransportationDetails.builder()
+                        .registration(registration)
+                        .build();
+            }
+            transportDetails.setDriverName(eventRegistrationDto.getDriverName());
+            transportDetails.setDriverPhoneNumber(eventRegistrationDto.getDriverPhone());
+            registration.setTransportationDetails(transportDetails);
+        }
+        else{
+            if (registration.getTransportationDetails() != null) {
+                registration.setTransportationDetails(null);
+            }
+        }
+        return registrationRepository.save(registration);
+    }
+
+    public Registration getRegistration(UUID eventId, String userEmail) {
+        return registrationRepository.findByEventIdAndUserEmail(eventId, userEmail).orElseThrow(() -> new InvalidEventOperationException("Registration not found"));
+    }
+
 }

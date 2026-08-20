@@ -30,6 +30,7 @@ export class EventDetailsComponent implements OnDestroy {
   readonly event = signal<Event | null>(null);
   readonly eventDetails = signal<EventDetails | null>(null);
   readonly posterUrl = signal<string | null>(null);
+  readonly isRegistered = signal<boolean>(false);
 
   private toast = inject(ToastService);
   private cdr = inject(ChangeDetectorRef);
@@ -43,11 +44,13 @@ export class EventDetailsComponent implements OnDestroy {
     this.eventService.getEventById(eventId).subscribe({
       next: (event) => {
         this.event.set(event);
+        this.isRegistered.set(!!event.isRegistered);
       },
       error: (error) => {
         this.toast.show('error', error);
       },
     });
+
 
     this.eventService.getEventDetails(eventId).subscribe({
       next: (details) => {

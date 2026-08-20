@@ -98,19 +98,29 @@
                   }
 
                   @if (canRegister(event)) {
-                    <button
-                      mat-flat-button
-                      class="w-full"
-                      [routerLink]="['/events', event.id, 'register']"
-                      [disabled]="isRegistrationClosed(event)"
-                    >
-                      Register
-                    </button>
+                    @if (isRegistered()) {
+                      <button
+                        mat-flat-button
+                        class="w-full"
+                        [routerLink]="['/events', event.id, 'manage']"
+                      >
+                        Manage Registration
+                      </button>
+                    } @else {
+                      <button
+                        mat-flat-button
+                        class="w-full"
+                        [routerLink]="['/events', event.id, 'register']"
+                        [disabled]="isRegistrationClosed(event)"
+                      >
+                        Register
+                      </button>
 
-                    @if (isRegistrationClosed(event)) {
-                      <p class="mt-3 text-sm text-gray-500">
-                        Registration is closed for this event.
-                      </p>
+                      @if (isRegistrationClosed(event)) {
+                        <p class="mt-3 text-sm text-gray-500">
+                          Registration is closed for this event.
+                        </p>
+                      }
                     }
                   }
                 </aside>

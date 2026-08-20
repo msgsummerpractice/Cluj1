@@ -164,7 +164,7 @@
         </button>
 
         @if (event.status === 'PUBLISHED') {
-          @if (!event.isRegistered) {
+          @if (!event.isRegistered && !isPastRegistrationEndDate(event)) {
             <button
               mat-icon-button
               (click)="openRegistrationModal(event)"
@@ -173,7 +173,34 @@
             >
               <mat-icon>app_registration</mat-icon>
             </button>
+          } @else if(event.isRegistered && !isPastRegistrationEndDate(event)) {
+            <button
+              mat-icon-button
+              (click)="manageRegistration(event.id)"
+              [matTooltip]="'events.eventManageRegistrationButton' | transloco"
+              aria-label="Manage registration"
+            >
+              <mat-icon>edit_document</mat-icon>
+            </button>
+          } @else if (event.isRegistered && isPastRegistrationEndDate(event)) {
+            <button
+              mat-icon-button
+              (click)="deleteRegistration(event.id)"
+              [matTooltip]="'events.eventDeleteRegistrationButton' | transloco"
+              aria-label="Delete registration"
+            >
+              <mat-icon>transit_enterexit</mat-icon>
+            </button>
+
+          }@else{
+            <button
+              mat-icon-button
+              [disabled] = "isPastRegistrationEndDate(event) && !event.isRegistered"
+            >
+              <mat-icon>transit_enterexit</mat-icon>
+            </button>
           }
+        }
 
           @if (!event.isCheckedIn) {
             <button
@@ -185,7 +212,7 @@
               <mat-icon>qr_code_scanner</mat-icon>
             </button>
           }
-        }
+
 
         @if (isMarketingOrganizer() && event.status === 'DRAFT') {
           <button
@@ -218,7 +245,7 @@
           </button>
         }
 
-        @if (isMarketingOrganizer() && event.status == 'PUBLISHED') {
+        @if (isMarketingOrganizer() && event.status === 'PUBLISHED') {
           <button
             mat-icon-button
             (click)="completeEvent(event)"
