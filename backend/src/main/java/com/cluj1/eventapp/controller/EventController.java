@@ -21,7 +21,7 @@ import com.cluj1.eventapp.dto.AttendanceRecordDto;
 import com.cluj1.eventapp.dto.EventDetailsDto;
 import com.cluj1.eventapp.dto.EventDto;
 import com.cluj1.eventapp.dto.EventRegistrationDto;
-
+import com.cluj1.eventapp.dto.EventStatisticsDto;
 import com.cluj1.eventapp.model.enums.EventStatus;
 
 import com.cluj1.eventapp.service.EventExportService;
@@ -183,6 +183,18 @@ public class EventController {
         return ResponseEntity.ok(isRegistered);
     }
 
+    @PostMapping("/{id}/checkin-codes")
+    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
+    public ResponseEntity<CheckInCodesDto> generateCheckInCodes(@PathVariable UUID id) {
+        return ResponseEntity.ok(eventService.generateCheckInCodes(id));
+    }
+
+    @GetMapping("/{id}/statistics")
+    public ResponseEntity<EventStatisticsDto> getEventStatistics(@PathVariable UUID id) {
+        EventStatisticsDto statistics = eventService.getEventStatistics(id);
+        return ResponseEntity.ok(statistics);
+    }
+
     @GetMapping("/{id}/checkins/recent")
     @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
     public ResponseEntity<List<AttendanceRecordDto>> getRecentCheckins(
@@ -197,12 +209,6 @@ public class EventController {
             @PathVariable UUID id,
             @PathVariable EventStatus status) {
         return ResponseEntity.ok(eventService.updateEventStatus(id, status));
-    }
-
-    @PostMapping("/{id}/checkin-codes")
-    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
-    public ResponseEntity<CheckInCodesDto> generateCheckInCodes(@PathVariable UUID id) {
-        return ResponseEntity.ok(eventService.generateCheckInCodes(id));
     }
 
     /**

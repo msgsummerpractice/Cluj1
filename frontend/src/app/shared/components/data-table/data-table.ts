@@ -13,7 +13,6 @@ import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { TranslocoModule } from '@jsverse/transloco';
 import { DataTableColumn } from './data-table.model';
 import { DataTableCellDefDirective } from './data-table-cell-def.directive';
@@ -28,7 +27,6 @@ import { DataTableFilterDefDirective } from './data-table-filter-def.directive';
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
-    MatPaginatorModule,
     TranslocoModule,
   ],
   templateUrl: './data-table.html',
@@ -48,6 +46,7 @@ export class DataTableComponent<T> {
   readonly displayedColumns = computed(() => this.columns().map((column) => column.key));
 
   readonly pageSize = linkedSignal(() => this.pageSizeOptions()[0] ?? 10);
+
   readonly pageIndex = linkedSignal<readonly T[], number>({
     source: () => this.data(),
     computation: (_data, previous) => {
@@ -55,19 +54,58 @@ export class DataTableComponent<T> {
       return Math.min(previous?.value ?? 0, lastPageIndex);
     },
   });
+
+  readonly totalPages = computed(() =>
+    Math.max(Math.ceil(this.data().length / this.pageSize()), 1),
+  );
+
+  readonly visiblePages = computed(() => {
+    const total = this.totalPages();
+    const current = this.pageIndex() + 1;
+
+    if (total <= 7) {
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+
+    if (current <= 4) {
+      return [1, 2, 3, 4, 5, '...', total];
+    }
+
+    if (current >= total - 3) {
+      return [1, '...', total - 4, total - 3, total - 2, total - 1, total];
+    }
+
+    return [1, '...', current - 1, current, current + 1, '...', total];
+  });
+
   readonly visibleRows = computed(() => {
     if (!this.showPaginator()) {
       return this.data();
     }
-
     const start = this.pageIndex() * this.pageSize();
     return this.data().slice(start, start + this.pageSize());
   });
 
-  handlePageChange(event: PageEvent): void {
-    this.pageSize.set(event.pageSize);
-    this.pageIndex.set(event.pageIndex);
+
+  goToPage(page: number | string): void {
+    if (page === '...' || typeof page === 'string') return;
+    this.pageIndex.set(page - 1);
   }
+
+  goToFirstPage(): void {
+    this.pageIndex.set(0);
+  }
+
+  goToLastPage(): void {
+    this.pageIndex.set(this.totalPages() - 1);
+  }
+
+  handlePageSizeChange(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    this.pageSize.set(Number(selectElement.value));
+    this.pageIndex.set(0);
+  }
+
 
   private readonly cellDefs = contentChildren(DataTableCellDefDirective, { descendants: true });
   private readonly filterDefs = contentChildren(DataTableFilterDefDirective, { descendants: true });

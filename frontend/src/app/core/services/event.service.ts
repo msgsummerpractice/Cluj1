@@ -7,6 +7,7 @@ import { EventDetails } from '../models/event-detail.models';
 import { EventRegistrationRequest } from '../models/event-registration.model';
 import { AttendanceRecord } from '../models/attendance-record.model';
 import { CheckInCodes } from '../models/checkincodes.model';
+import { EventStatistics } from '../models/event-statistics.model';
 
 @Injectable({
   providedIn: 'root',
@@ -108,6 +109,12 @@ export class EventService {
     });
   }
 
+  getEventStatistics(eventId: string): Observable<EventStatistics> {
+    return this.http.get<EventStatistics>(`${this.apiUrl}/${eventId}/statistics`, {
+      withCredentials: true,
+    });
+  }
+
   exportEventData(eventId: string): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/${eventId}/export`, {
       responseType: 'blob',
@@ -118,6 +125,7 @@ export class EventService {
   downloadAttendanceReport(eventId: string): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/${eventId}/attendance-report`, {
       responseType: 'blob',
+      withCredentials: true,
     });
   }
 }

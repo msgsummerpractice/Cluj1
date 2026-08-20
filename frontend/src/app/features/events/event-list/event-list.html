@@ -32,33 +32,61 @@
           (input)="setNameFilter(nameFilterInput.value)"
         />
       </mat-form-field>
+      @if (nameFilter()) {
+        <div class="mt-2">
+          <app-clear-filter (clear)="clearNameFilters()"></app-clear-filter>
+        </div>
+      }
     </ng-template>
 
     <ng-template appDataTableFilterDef="date">
-      <span class="filter-menu-label">
-        {{ 'events.eventDateYear' | transloco }}
-      </span>
+      <div class="flex flex-col gap-2 pt-1">
 
-      @for (year of dateYearOptions(); track year) {
-        <mat-checkbox
-          [checked]="isDateYearSelected(year)"
-          (change)="toggleDateYearFilter(year, $event.checked)"
-        >
-          {{ year }}
-        </mat-checkbox>
-      }
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>{{ 'events.dateFilterType' | transloco }}</mat-label>
+          <mat-select [value]="dateFilterMode()" (selectionChange)="setDateFilterMode($event.value)">
+            <mat-option value="range">{{ 'events.dateRange' | transloco }}</mat-option>
+            <mat-option value="after">{{ 'events.dateAfter' | transloco }}</mat-option>
+            <mat-option value="before">{{ 'events.dateBefore' | transloco }}</mat-option>
+          </mat-select>
+        </mat-form-field>
 
-      <span class="filter-menu-label">
-        {{ 'events.eventDateMonth' | transloco }}
-      </span>
+        @if (dateFilterMode() === 'range') {
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>{{ 'events.dateRange' | transloco }}</mat-label>
+            <mat-date-range-input [rangePicker]="rangePicker">
+              <input matStartDate [value]="dateFilterStart()" (dateChange)="setDateStart($event.value)" placeholder="{{ 'events.startDate' | transloco }}">
+              <input matEndDate [value]="dateFilterEnd()" (dateChange)="setDateEnd($event.value)" placeholder="{{ 'events.endDate' | transloco }}">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matIconSuffix [for]="rangePicker"></mat-datepicker-toggle>
+            <mat-date-range-picker #rangePicker></mat-date-range-picker>
+          </mat-form-field>
+        }
 
-      @for (month of dateMonthOptions(); track month) {
-        <mat-checkbox
-          [checked]="isDateMonthSelected(month)"
-          (change)="toggleDateMonthFilter(month, $event.checked)"
-        >
-          {{ getMonthLabel(month) | date: 'MMMM' }}
-        </mat-checkbox>
+        @if (dateFilterMode() === 'after') {
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>{{ 'events.dateAfter' | transloco }}</mat-label>
+            <input matInput [matDatepicker]="afterPicker" [value]="dateFilterStart()" (dateChange)="setDateStart($event.value)">
+            <mat-datepicker-toggle matIconSuffix [for]="afterPicker"></mat-datepicker-toggle>
+            <mat-datepicker #afterPicker></mat-datepicker>
+          </mat-form-field>
+        }
+
+        @if (dateFilterMode() === 'before') {
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>{{ 'events.dateBefore' | transloco }}</mat-label>
+            <input matInput [matDatepicker]="beforePicker" [value]="dateFilterEnd()" (dateChange)="setDateEnd($event.value)">
+            <mat-datepicker-toggle matIconSuffix [for]="beforePicker"></mat-datepicker-toggle>
+            <mat-datepicker #beforePicker></mat-datepicker>
+          </mat-form-field>
+        }
+
+      </div>
+
+      @if (dateFilterStart() || dateFilterEnd()) {
+        <div class="mt-4 border-t pt-2">
+          <app-clear-filter (clear)="clearDateFilters()"></app-clear-filter>
+        </div>
       }
     </ng-template>
 
@@ -71,6 +99,11 @@
           {{ 'events.eventStatus' + (status | titlecase) | transloco }}
         </mat-checkbox>
       }
+      @if (hasActiveFilters()) {
+        <div class="mt-4 border-t pt-2">
+          <app-clear-filter (clear)="clearStatusFilters()"></app-clear-filter>
+        </div>
+      }
     </ng-template>
 
     <ng-template appDataTableFilterDef="type">
@@ -81,6 +114,11 @@
         >
           {{ 'events.eventType' + (type | titlecase) | transloco }}
         </mat-checkbox>
+      }
+      @if (hasActiveFilters()) {
+        <div class="mt-4 border-t pt-2">
+          <app-clear-filter (clear)="clearTypeFilters()"></app-clear-filter>
+        </div>
       }
     </ng-template>
 

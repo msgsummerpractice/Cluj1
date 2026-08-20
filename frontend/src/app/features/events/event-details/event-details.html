@@ -110,7 +110,12 @@
               </div>
             }
 
-            @if (canRegister(event) || canExport()) {
+            @if (
+              canRegister(event) ||
+              canExport() ||
+              ((event.status === 'PUBLISHED' || event.status === 'COMPLETED') &&
+                canViewStatistics())
+            ) {
               <div class="flex flex-col gap-4 w-full">
                 @if (canRegister(event)) {
                   <div class="w-full">
@@ -132,6 +137,20 @@
                       </p>
                     }
                   </div>
+                }
+
+                @if (
+                  (event.status === 'PUBLISHED' || event.status === 'COMPLETED') &&
+                  canViewStatistics()
+                ) {
+                  <button
+                    mat-flat-button
+                    class="w-full mt-3"
+                    [routerLink]="['/events', event.id, 'statistics']"
+                  >
+                    <mat-icon>analytics</mat-icon>
+                    View Statistics
+                  </button>
                 }
 
                 @if (canExport()) {

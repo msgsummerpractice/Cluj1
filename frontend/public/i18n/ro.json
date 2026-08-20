@@ -86,6 +86,13 @@
     "registered": "Înregistrat",
     "checkedIn": "Prezent (Check-in)",
     "fetchError": "Preluarea evenimentelor a eșuat. Te rugăm să încerci din nou.",
+    "dateBefore": "Înainte",
+    "dateAfter": "După",
+    "dateRange": "Interval",
+    "dateFilterType": "Tip filtru",
+    "startDate": "Început",
+    "endDate": "Sfârșit",
+    "clearFilters": "Șterge filtrele",
     "publish": {
       "title": "Confirmă publicarea",
       "message": "Ești sigur că vrei să publici acest eveniment?",
@@ -354,5 +361,24 @@
       "general": "A apărut o eroare neașteptată în timpul check-in-ului.",
       "invalid_code": "Codul de check-in introdus este invalid."
     }
+  },
+  "statistics": {
+    "title": "Statistici Eveniment",
+    "invited": "Invitați",
+    "registered": "Înregistrați",
+    "participants": "Participanți (Check-in)",
+    "accommodationRequested": "Cazare Solicitată",
+    "transportRequested": "Transport Solicitat",
+    "photoConsent": "Acord Foto",
+    "foodPreferences": "Preferințe Hrană",
+    "timeDistribution": "Distribuția Timpului de Înregistrare",
+    "timeDistributionSubtitle": "Imagine de ansamblu a înregistrărilor în timp.",
+    "attendanceDetails": "Detalii Participare per Participant",
+    "name": "Nume",
+    "email": "Email",
+    "status": "Stare",
+    "checkInTime": "Ora Check-in",
+    "noParticipants": "Nu există participanți înregistrați pentru acest eveniment.",
+    "registrationsPerDay": "Înregistrări pe Zi"
   }
 }
