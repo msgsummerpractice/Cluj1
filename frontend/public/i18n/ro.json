@@ -334,7 +334,8 @@
     "error": {
       "code": {
         "required": "Codul evenimentului este obligatoriu.",
-        "invalid": "Codul evenimentului trebuie să aibă exact 6 caractere."
+        "invalid": "Codul evenimentului trebuie să aibă exact 6 caractere.",
+        "digitsOnly": "Codul evenimentului poate conține doar cifre."
       },
       "method": {
         "required": "Metoda de check-in este obligatorie."

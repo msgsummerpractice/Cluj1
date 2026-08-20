@@ -333,7 +333,8 @@
     "error": {
       "code": {
         "required": "Event code is required.",
-        "invalid": "Event code must be exactly 6 characters."
+        "invalid": "Event code must be exactly 6 characters.",
+        "digitsOnly": "Event code can only contain digits."
       },
       "method": {
         "required": "Check-in method is required."

@@ -106,7 +106,7 @@
 
           @if (inputError()) {
             <p class="text-red-500 text-sm font-semibold mt-0.5">
-              The code can only contain digits!
+              {{ 'checkin.error.code.digitsOnly' | transloco }}
             </p>
           }
         </div>
