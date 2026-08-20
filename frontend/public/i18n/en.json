@@ -280,6 +280,7 @@
     "driverPhone": "Driver Phone",
     "driverPhonePlaceholder": "Enter driver phone",
     "driverPhoneError": "Driver phone is required when transportation is needed.",
+    "driverPhonePatternError": "Driver phone may contain only digits with an optional leading +.",
     "accommodationNeeded": "Accommodation Needed?",
     "accommodationSubtitle": "Enable if you require lodging support.",
     "accommodationDays": "Number of Days",

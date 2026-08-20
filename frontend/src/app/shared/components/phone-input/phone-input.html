@@ -1,0 +1,26 @@
+<div class="flex flex-col gap-1">
+  <label class="text-sm font-medium text-gray-700">
+    {{ label() | transloco }}
+  </label>
+  <mat-form-field appearance="outline" class="w-full h-[75px]">
+    <input
+      matInput
+      type="tel"
+      [value]="value"
+      [disabled]="disabled"
+      [placeholder]="placeholder() | transloco"
+      autocomplete="tel"
+      (input)="onInput($any($event.target).value)"
+      (blur)="markTouched()"
+    />
+  </mat-form-field>
+  @if (patternInvalid && touched) {
+    <span class="text-red-600 text-xs mt-1 block">
+      {{ patternErrorLabel() | transloco }}
+    </span>
+  } @else if (invalid && touched) {
+    <span class="text-red-600 text-xs mt-1 block">
+      {{ errorLabel() | transloco }}
+    </span>
+  }
+</div>

@@ -281,6 +281,7 @@
     "driverPhone": "Telefon Șofer",
     "driverPhonePlaceholder": "Introdu telefonul șoferului",
     "driverPhoneError": "Telefonul șoferului este obligatoriu când este necesar transportul.",
+    "driverPhonePatternError": "Telefonul șoferului poate conține doar cifre și opțional + la început.",
     "accommodationNeeded": "Ai nevoie de cazare?",
     "accommodationSubtitle": "Activează dacă ai nevoie de suport pentru cazare.",
     "accommodationDays": "Număr de Zile",

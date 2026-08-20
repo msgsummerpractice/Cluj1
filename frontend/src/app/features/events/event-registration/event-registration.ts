@@ -1,6 +1,11 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
+import {
+  PhoneInput,
+  PHONE_NUMBER_PATTERN,
+} from '../../../shared/components/phone-input/phone-input';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { EventService } from '../../../core/services/event.service';
 import { Event } from '../../../core/models/event.model';
@@ -19,9 +24,9 @@ import { ToastService } from '../../../core/services/toast.service';
   selector: 'app-event-registration-view',
   standalone: true,
   imports: [
+    BackButtonComponent,
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
     TranslocoModule,
     MatButtonModule,
     MatFormFieldModule,
@@ -29,6 +34,7 @@ import { ToastService } from '../../../core/services/toast.service';
     MatSelectModule,
     MatSlideToggleModule,
     MatIconModule,
+    PhoneInput,
   ],
   templateUrl: './event-registration.html',
   styleUrl: './event-registration.css',
@@ -158,7 +164,8 @@ export class EventRegistration implements OnInit {
   }
 
   private syncConditionalFieldValidators(eventData: Event | null): void {
-    const isInternal = eventData?.type === 'INTERNAL';
+    // matches the template gating: this section shows for any non-EXTERNAL event
+    const isInternal = eventData?.type !== 'EXTERNAL';
     const transportationNeeded = this.registrationForm.get('transportationNeeded')?.value === true;
     const accommodationNeeded = this.registrationForm.get('accommodationNeeded')?.value === true;
     const driverNameControl = this.registrationForm.get('driverName');
@@ -182,12 +189,12 @@ export class EventRegistration implements OnInit {
       isInternal && transportationNeeded ? [Validators.required] : [],
     );
     driverPhoneControl?.setValidators(
-      isInternal && transportationNeeded ? [Validators.required] : [],
+      isInternal && transportationNeeded
+        ? [Validators.required, Validators.pattern(PHONE_NUMBER_PATTERN)]
+        : [],
     );
     accommodationDaysControl?.setValidators(
-      isInternal && accommodationNeeded
-        ? [Validators.required, Validators.min(1)]
-        : [Validators.min(1)],
+      isInternal && accommodationNeeded ? [Validators.required, Validators.min(1)] : [],
     );
 
     if (!(isInternal && transportationNeeded)) {
