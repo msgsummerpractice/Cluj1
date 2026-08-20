@@ -11,6 +11,7 @@ import { CheckincodesComponent } from '../../checkincodes-component/checkincodes
 import { ToastService } from '../../../core/services/toast.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-event-details',
@@ -32,6 +33,7 @@ export class EventDetailsComponent implements OnDestroy {
   readonly event = signal<Event | null>(null);
   readonly eventDetails = signal<EventDetails | null>(null);
   readonly posterUrl = signal<string | null>(null);
+  private readonly authService = inject(AuthService);
 
   private toast = inject(ToastService);
   private cdr = inject(ChangeDetectorRef);
@@ -90,5 +92,9 @@ export class EventDetailsComponent implements OnDestroy {
     }
 
     return Date.now() > new Date(event.registrationEndDate).getTime();
+  }
+
+  canViewStatistics(): boolean {
+    return this.authService.isHrUser() || this.authService.isMarketingOrganizer();
   }
 }

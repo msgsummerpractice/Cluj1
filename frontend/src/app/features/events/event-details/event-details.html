@@ -116,7 +116,10 @@
                 </aside>
               }
 
-              @if (event.status === 'PUBLISHED' || event.status === 'COMPLETED') {
+              @if (
+                (event.status === 'PUBLISHED' || event.status === 'COMPLETED') &&
+                canViewStatistics()
+              ) {
                 <button
                   mat-flat-button
                   class="w-full mt-3"

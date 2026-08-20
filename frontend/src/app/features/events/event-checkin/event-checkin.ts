@@ -1,7 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Component, inject, OnInit, AfterViewInit, signal, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
 import { EventService } from '../../../core/services/event.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { FormsModule } from '@angular/forms';
 import { ZXingScannerModule } from '@zxing/ngx-scanner';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
@@ -12,6 +13,7 @@ import { finalize } from 'rxjs/operators';
 import { Event } from '../../../core/models/event.model';
 import { CheckInRequest } from '../../../core/models/check-in-request.model';
 import { AttendanceRecord } from '../../../core/models/attendance-record.model';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-event-checkin',
@@ -20,28 +22,36 @@ import { AttendanceRecord } from '../../../core/models/attendance-record.model';
   templateUrl: './event-checkin.html',
   styleUrls: ['./event-checkin.css'],
 })
-export class EventCheckInComponent implements OnInit {
+export class EventCheckInComponent implements OnInit, AfterViewInit {
   private readonly eventService = inject(EventService);
+  private readonly authService = inject(AuthService);
   private readonly translateService = inject(TranslocoService);
   private readonly toastService = inject(ToastService);
   private readonly route = inject(ActivatedRoute);
   private readonly platform = inject(Platform);
+  private readonly router = inject(Router);
 
   readonly isMobile = this.platform.ANDROID || this.platform.IOS;
 
-  manualCode: string = '';
+  readonly manualCode = signal('');
   readonly isProcessing = signal(false);
   readonly hasDevices = signal(false);
   readonly ALLOWED_FORMATS = [BarcodeFormat.QR_CODE];
   readonly scannerEnabled = signal(true);
+  readonly showScanner = signal(false);
 
   readonly activeEvent = signal<Event | null>(null);
   readonly userTicketCode = signal<string | null>(null);
   readonly recentCheckins = signal<AttendanceRecord[]>([]);
+  private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
     const eventId = this.route.snapshot.paramMap.get('id')!;
     this.loadEvent(eventId);
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => this.showScanner.set(true), 250);
   }
 
   private loadEvent(eventId: string): void {
@@ -49,7 +59,10 @@ export class EventCheckInComponent implements OnInit {
       next: (event) => {
         this.activeEvent.set(event);
         this.loadUserTicket(event.id);
-        this.loadRecentCheckins(event.id);
+
+        if (!this.authService.isParticipant()) {
+          this.loadRecentCheckins(event.id);
+        }
       },
       error: () =>
         this.toastService.showError(
@@ -59,9 +72,12 @@ export class EventCheckInComponent implements OnInit {
   }
 
   private loadUserTicket(eventId: string): void {
-    this.eventService.getEventDetails(eventId).subscribe({
-      next: (details) => {
-        this.userTicketCode.set(details?.eventCode || null);
+    this.eventService.getEventCheckInDetails(eventId).subscribe({
+      next: (codes) => {
+        this.userTicketCode.set(codes?.eventCode || null);
+      },
+      error: () => {
+        this.userTicketCode.set(null);
       },
     });
   }
@@ -83,11 +99,11 @@ export class EventCheckInComponent implements OnInit {
   }
 
   submitManual(): void {
-    if (this.manualCode.length !== 6) {
+    if (this.manualCode().length !== 6) {
       this.toastService.showError(this.translateService.translate('checkin.error.code.invalid'));
       return;
     }
-    this.processCheckIn({ eventCode: this.manualCode, method: 'MANUAL' });
+    this.processCheckIn({ eventCode: this.manualCode(), method: 'MANUAL' });
   }
 
   private processCheckIn(request: CheckInRequest): void {
@@ -99,16 +115,17 @@ export class EventCheckInComponent implements OnInit {
         finalize(() => {
           this.isProcessing.set(false);
           if (request.method === 'MANUAL') {
-            this.manualCode = '';
+            this.manualCode.set('');
           }
         }),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: () => {
           this.toastService.showSuccess(this.translateService.translate('checkin.success'));
           this.scannerEnabled.set(false);
           const currentEvent = this.activeEvent();
-          if (currentEvent) {
+          if (currentEvent && !this.authService.isParticipant()) {
             this.loadRecentCheckins(currentEvent.id);
           }
         },
