@@ -233,11 +233,16 @@
           <button
             mat-stroked-button
             (click)="downloadAttendanceReport(event.id)"
+            [disabled]="isDownloadingReport(event.id)"
             class="event-view-button transition-colors whitespace-nowrap"
             [matTooltip]="'events.eventReportButton' | transloco"
             matTooltipPosition="below"
           >
-            <mat-icon>assessment</mat-icon>
+            @if (isDownloadingReport(event.id)) {
+              <mat-spinner diameter="18" strokeWidth="2"></mat-spinner>
+            } @else {
+              <mat-icon>assessment</mat-icon>
+            }
           </button>
         }
       </div>
