@@ -20,6 +20,8 @@
     "location": "Locație",
     "role": "Rol",
     "save changes": "Salvează modificările",
+    "discardChanges": "Anulează modificările",
+    "saveSuccess": "Modificările au fost salvate cu succes.",
     "details": "Detalii personale",
     "registrations": "Inregistrari",
     "upcoming": "Urmatoare"

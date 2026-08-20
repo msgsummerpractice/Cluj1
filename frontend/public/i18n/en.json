@@ -20,6 +20,8 @@
     "location": "Location",
     "role": "Role",
     "save changes": "Save Changes",
+    "discardChanges": "Discard changes",
+    "saveSuccess": "Modifications have been saved successfully.",
     "details": "Personal details",
     "registrations": "Registrations",
     "upcoming": "Upcoming"

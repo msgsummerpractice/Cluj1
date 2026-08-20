@@ -22,6 +22,7 @@ import { RegistrationService } from '../../core/services/registration.service';
 import { EventService } from '../../core/services/event.service';
 import { ToastService } from '../../core/services/toast.service';
 import { TitleCasePipe, UpperCasePipe } from '@angular/common';
+import { TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-profile-component',
@@ -43,6 +44,7 @@ export class ProfileComponent implements OnInit {
   private readonly registrationService = inject(RegistrationService);
   private readonly eventService: EventService = inject(EventService);
   private toastService = inject(ToastService);
+  private readonly translocoService = inject(TranslocoService);
 
   readonly locations = [
     { value: 'CLUJ', label: 'Cluj-Napoca' },
@@ -63,6 +65,11 @@ export class ProfileComponent implements OnInit {
 
   selectedLocation: string = '';
   selectedFile: File | null = null;
+  private initialLocation: string = '';
+
+  get hasChanges(): boolean {
+    return this.selectedLocation !== this.initialLocation || this.selectedFile !== null;
+  }
 
   ngOnInit(): void {
     this.loadProfile();
@@ -75,6 +82,7 @@ export class ProfileComponent implements OnInit {
       next: (profile) => {
         this.profile.set(profile);
         this.selectedLocation = profile?.userLocation || '';
+        this.initialLocation = this.selectedLocation;
       },
       error: (err) => {
         this.toastService.show('error', err);
@@ -135,6 +143,11 @@ export class ProfileComponent implements OnInit {
     this.previewImage.set(null);
   }
 
+  discardChanges(): void {
+    this.selectedLocation = this.initialLocation;
+    this.clearSelectedFile();
+  }
+
   updateProfile(): void {
     this.saving.set(true);
     this.successMessage.set('');
@@ -148,6 +161,7 @@ export class ProfileComponent implements OnInit {
           this.successMessage.set('Profile updated successfully.');
           this.selectedFile = null;
           this.previewImage.set(null);
+          this.toastService.showSuccess(this.translocoService.translate('profile.saveSuccess'));
           this.loadProfile();
         },
         error: (err) => {
