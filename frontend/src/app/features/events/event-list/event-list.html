@@ -84,11 +84,20 @@
       }
     </ng-template>
 
+    <ng-template appDataTableCellDef="name" let-event>
+      <span
+        class="block truncate max-w-[220px]"
+        [matTooltip]="event.name"
+        matTooltipShowDelay="400"
+        >{{ event.name }}</span
+      >
+    </ng-template>
+
     <ng-template appDataTableCellDef="date" let-event>
-      {{ event.startDate | date: 'mediumDate' }}
+      {{ event.startDate | date: 'dd.MM.yyyy' }}
 
       @if (displayEventEndDate(event)) {
-        <span> - {{ event.endDate | date: 'mediumDate' }} </span>
+        <span> - {{ event.endDate | date: 'dd.MM.yyyy' }} </span>
       }
     </ng-template>
 

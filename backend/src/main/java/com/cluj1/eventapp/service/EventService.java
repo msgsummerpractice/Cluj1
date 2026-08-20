@@ -71,7 +71,7 @@ public class EventService {
 
     @Transactional(readOnly = true)
     public List<EventDto> getAllEvents() {
-        return eventRepository.findAll(Sort.by(Sort.Direction.ASC, "createdAt", "id")).stream()
+        return eventRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt", "id")).stream()
                 .map(eventMapper::toDto)
                 .toList();
     }
