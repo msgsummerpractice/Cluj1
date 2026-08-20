@@ -28,6 +28,10 @@ public class RecipientPoolService {
                 .toList();
     }
 
+    public int getRecipientsCountForEvent(EventLocation eventLocation) {
+        return resolveRecipients(eventLocation).size();
+    }
+
     private UserLocation toUserLocation(EventLocation eventLocation) {
         return switch (eventLocation) {
             case CLUJ -> UserLocation.CLUJ;
@@ -37,4 +41,6 @@ public class RecipientPoolService {
                     "ALL should be handled before calling toUserLocation");
         };
     }
+
+    
 }
