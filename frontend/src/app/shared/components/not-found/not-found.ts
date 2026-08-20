@@ -1,16 +1,18 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-not-found',
   standalone: true,
-  imports: [RouterLink, TranslocoModule],
+  imports: [RouterLink, MatButtonModule, MatIconModule, TranslocoModule],
   template: `
     <div
       class="flex flex-col items-center justify-center min-h-screen gap-6 p-8 text-center bg-gray-50"
     >
-      <span class="material-symbols-outlined text-6xl text-gray-300">search_off</span>
+      <mat-icon class="!text-6xl !w-16 !h-16 text-gray-300">search_off</mat-icon>
       <div>
         <h1 class="text-2xl font-bold text-gray-800 mb-2">
           {{ 'notFound.title' | transloco }}
@@ -19,21 +21,12 @@ import { TranslocoModule } from '@jsverse/transloco';
       </div>
       <a
         routerLink="/events"
-        class="px-6 py-2 rounded-full text-sm font-medium text-white"
-        style="background-color: #8a1538"
+        mat-flat-button
+        class="!rounded-xl !bg-[var(--dark-red-dot)] !text-white !px-8 !h-11"
       >
         {{ 'notFound.back' | transloco }}
       </a>
     </div>
   `,
-  styles: [
-    `
-      .material-symbols-outlined {
-        font-family: 'Material Symbols Outlined';
-        font-size: 64px;
-        line-height: 1;
-      }
-    `,
-  ],
 })
 export class NotFoundComponent {}
