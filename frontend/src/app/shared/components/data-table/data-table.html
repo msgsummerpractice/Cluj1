@@ -67,14 +67,53 @@
     </tr>
   </table>
 
-  @if (showPaginator()) {
-    <mat-paginator
-      [length]="data().length"
-      [pageSize]="pageSize()"
-      [pageIndex]="pageIndex()"
-      [pageSizeOptions]="pageSizeOptions()"
-      (page)="handlePageChange($event)"
-    ></mat-paginator>
+  @if (showPaginator() && data().length > 0) {
+    <div class="flex flex-wrap items-center justify-between px-4 py-3 border-t bg-white">
+      <div class="flex items-center gap-2">
+        <span class="text-sm text-gray-700">Items per page:</span>
+        <select
+          class="border border-gray-300 rounded px-2 py-1 text-sm bg-transparent outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+          [value]="pageSize()"
+          (change)="handlePageSizeChange($event)"
+        >
+          @for (size of pageSizeOptions(); track size) {
+            <option [value]="size">{{ size }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="flex items-center gap-1">
+        <button
+          mat-icon-button
+          [disabled]="pageIndex() === 0"
+          (click)="goToFirstPage()"
+          aria-label="First page"
+        >
+          <mat-icon>keyboard_double_arrow_left</mat-icon>
+        </button>
+
+        @for (page of visiblePages(); track $index) {
+          <button
+            mat-button
+            [disabled]="page === '...'"
+            [class.is-active]="(pageIndex() + 1) === page"
+            class="pagination-btn min-w-[40px] px-2 rounded-md disabled:opacity-60 transition-colors"
+            (click)="goToPage(page)"
+          >
+            {{ page }}
+          </button>
+        }
+
+        <button
+          mat-icon-button
+          [disabled]="pageIndex() >= totalPages() - 1"
+          (click)="goToLastPage()"
+          aria-label="Last page"
+        >
+          <mat-icon>keyboard_double_arrow_right</mat-icon>
+        </button>
+      </div>
+    </div>
   }
 </div>
 
