@@ -163,7 +163,11 @@
                           registrationForm.get('driverName')?.touched
                         ) {
                           <span class="text-red-600 text-xs mt-1 block">
-                            {{ 'eventRegistration.driverNameError' | transloco }}
+                            @if (registrationForm.get('driverName')?.hasError('required')) {
+                              {{ 'eventRegistration.driverNameError' | transloco }}
+                            } @else if (registrationForm.get('driverName')?.hasError('pattern')) {
+                              {{ 'eventRegistration.driverNamePatternError' | transloco }}
+                            }
                           </span>
                         }
                       </div>

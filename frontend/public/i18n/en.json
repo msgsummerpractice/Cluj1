@@ -277,6 +277,7 @@
     "driverName": "Driver Name",
     "driverNamePlaceholder": "Enter driver name",
     "driverNameError": "Driver name is required when transportation is needed.",
+    "driverNamePatternError": "Driver name may contain only letters and hyphens.",
     "driverPhone": "Driver Phone",
     "driverPhonePlaceholder": "Enter driver phone",
     "driverPhoneError": "Driver phone is required when transportation is needed.",

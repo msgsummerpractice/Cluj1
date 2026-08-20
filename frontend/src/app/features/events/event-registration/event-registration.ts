@@ -20,6 +20,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { ToastService } from '../../../core/services/toast.service';
 
+const DRIVER_NAME_PATTERN = /^[\p{L}-]+$/u;
+
 @Component({
   selector: 'app-event-registration-view',
   standalone: true,
@@ -186,7 +188,9 @@ export class EventRegistration implements OnInit {
     }
 
     driverNameControl?.setValidators(
-      isInternal && transportationNeeded ? [Validators.required] : [],
+      isInternal && transportationNeeded
+        ? [Validators.required, Validators.pattern(DRIVER_NAME_PATTERN)]
+        : [],
     );
     driverPhoneControl?.setValidators(
       isInternal && transportationNeeded
