@@ -107,11 +107,10 @@ public class EventService {
         if (registration != null) {
             dto.setIsRegistered(true);
             dto.setIsCheckedIn(registration.getAttendanceRecord() != null);
+        } else {
+            dto.setIsRegistered(false);
+            dto.setIsCheckedIn(false);
         }
-
-        dto.setIsRegistered(false);
-        dto.setIsCheckedIn(false);
-
         return dto;
     }
 

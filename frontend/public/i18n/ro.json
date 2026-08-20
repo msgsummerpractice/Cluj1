@@ -128,6 +128,14 @@
       "success": "Evenimentul a fost publicat cu succes.",
       "error": "Publicarea evenimentului a eșuat. Te rugăm să încerci din nou."
     },
+    "deleteRegistration": {
+      "title": "Confirmă anularea înregistrării",
+      "message": "Ești sigur că vrei să îți anulezi înregistrarea pentru acest eveniment? Această acțiune nu poate fi anulată.",
+      "confirm": "Da, anulează",
+      "cancel": "Nu, păstrează",
+      "success": "Înregistrarea ta a fost anulată cu succes.",
+      "error": "Anularea înregistrării a eșuat. Te rugăm să încerci din nou."
+    },
     "complete": {
       "title": "Confirmă finalizarea",
       "message": "Ești sigur că vrei să finalizezi acest eveniment?",

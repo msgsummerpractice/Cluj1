@@ -163,6 +163,14 @@
       "success": "Event published successfully.",
       "error": "Failed to publish event. Please try again."
     },
+    "deleteRegistration" : {
+      "title": "Confirm Delete Registration",
+      "message": "Are you sure you want to delete your registration for this event? This action cannot be undone.",
+      "confirm": "Yes, delete",
+      "cancel": "No, keep registration",
+      "success": "Your registration has been deleted successfully.",
+      "error": "Failed to delete registration. Please try again."
+    },
     "complete": {
       "title": "Confirm Complete",
       "message": "Are you sure you want to complete this event?",
