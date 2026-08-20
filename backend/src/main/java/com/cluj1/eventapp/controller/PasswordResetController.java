@@ -1,7 +1,7 @@
 package com.cluj1.eventapp.controller;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,9 +14,9 @@ import com.cluj1.eventapp.service.PasswordResetService;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class PasswordResetController {
-    @Autowired
-    private PasswordResetService passwordResetService;
+    private final PasswordResetService passwordResetService;
 
     @PostMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request){
