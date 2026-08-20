@@ -179,6 +179,8 @@
             <button
               mat-icon-button
               (click)="navigateToCheckIn(event.id)"
+              ,
+              [disabled]="event.isCheckedIn"
               [matTooltip]="'events.eventCheckInButton' | transloco"
               aria-label="Check in to event"
             >

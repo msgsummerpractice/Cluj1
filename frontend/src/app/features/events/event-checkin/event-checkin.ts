@@ -32,8 +32,6 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
   private readonly router = inject(Router);
 
   readonly isMobile = this.platform.ANDROID || this.platform.IOS;
-
-  readonly manualCode = signal('');
   readonly isProcessing = signal(false);
   readonly hasDevices = signal(false);
   readonly ALLOWED_FORMATS = [BarcodeFormat.QR_CODE];
@@ -64,10 +62,23 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
           this.loadRecentCheckins(event.id);
         }
       },
-      error: () =>
-        this.toastService.showError(
-          this.translateService.translate('checkin.error.event.notfound'),
-        ),
+      error: (error) => {
+        let errorKey = 'checkin.error.general';
+        const rawError = error?.error?.message || error?.error;
+
+        if (typeof rawError === 'string' && rawError.includes('checkin.')) {
+          errorKey = rawError;
+        } else if (error.status === 400) {
+          errorKey = 'checkin.error.code.invalid';
+        } else if (error.status === 404) {
+          errorKey = 'checkin.error.event.notfound';
+        } else if (error.status === 409) {
+          errorKey = 'checkin.error.user.alreadycheckedin';
+          this.scannerEnabled.set(false);
+        }
+
+        this.toastService.showError(this.translateService.translate(errorKey));
+      },
     });
   }
 
@@ -95,18 +106,21 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
 
   onCodeResult(resultString: string): void {
     if (this.isProcessing() || !resultString) return;
-    // QR codes may encode "EventID:{uuid}|Name:{name}" — extract just the UUID
     const match = resultString.match(/EventID:([^|]+)/);
     const eventId = match ? match[1].trim() : resultString;
     this.processCheckIn({ eventId, method: 'QR' });
   }
 
   submitManual(): void {
-    if (this.manualCode().length !== 6) {
+    this.inputError.set(false);
+    const code = this.manualCode();
+
+    if (!/^\d{6}$/.test(code)) {
       this.toastService.showError(this.translateService.translate('checkin.error.code.invalid'));
       return;
     }
-    this.processCheckIn({ eventCode: this.manualCode(), method: 'MANUAL' });
+
+    this.processCheckIn({ eventCode: code, method: 'MANUAL' });
   }
 
   private processCheckIn(request: CheckInRequest): void {
@@ -149,5 +163,20 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
           this.toastService.showError(this.translateService.translate(errorKey));
         },
       });
+  }
+
+  readonly manualCode = signal('');
+  readonly inputError = signal(false);
+
+  onManualCodeInput(value: string): void {
+    const hasNonDigits = /\D/.test(value);
+
+    if (hasNonDigits) {
+      this.inputError.set(true);
+    } else {
+      this.inputError.set(false);
+    }
+    const numericValue = value.replace(/\D/g, '').slice(0, 6);
+    this.manualCode.set(numericValue);
   }
 }
