@@ -31,18 +31,15 @@ public class EventMapper {
     }
 
     public EventRegistrationDto toEventRegistrationDto(Registration registration) {
-        EventRegistrationDto dto = new EventRegistrationDto();
-        dto.setGdprConsent(registration.getGdprConsent());
-        dto.setPhotoConsent(registration.getPhotoConsent());
-        dto.setFoodPreference(registration.getFoodPreference());
-        dto.setTransportationNeeded(registration.getTransportationNeeded());
-        dto.setAccommodationNeeded(registration.getAccommodationNeeded());
-        dto.setAccommodationDays(registration.getAccommodationDays());
-
-        if (registration.getTransportationDetails() != null) {
-            dto.setDriverName(registration.getTransportationDetails().getDriverName());
-            dto.setDriverPhone(registration.getTransportationDetails().getDriverPhoneNumber());
-        }
-        return dto;
+        return EventRegistrationDto.builder()
+                .gdprConsent(registration.getGdprConsent())
+                .photoConsent(registration.getPhotoConsent())
+                .foodPreference(registration.getFoodPreference())
+                .transportationNeeded(registration.getTransportationNeeded())
+                .accommodationNeeded(registration.getAccommodationNeeded())
+                .accommodationDays(registration.getAccommodationDays())
+                .driverName(registration.getTransportationDetails() != null ? registration.getTransportationDetails().getDriverName() : null)
+                .driverPhone(registration.getTransportationDetails() != null ? registration.getTransportationDetails().getDriverPhoneNumber() : null)
+                .build();
     }
 }

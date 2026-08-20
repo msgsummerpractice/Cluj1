@@ -98,7 +98,7 @@ export class EventRegistrationManagement {
       next: (ev) => {
         this.event.set(ev);
       },
-      error: () => this.toast.show('error', 'Failed to load event details.'),
+      error: (err) => this.toast.show('error', err),
     });
 
     this.eventService.getRegistrationDetails(this.eventId).subscribe({

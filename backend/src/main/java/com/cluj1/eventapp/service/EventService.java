@@ -107,10 +107,11 @@ public class EventService {
         if (registration != null) {
             dto.setIsRegistered(true);
             dto.setIsCheckedIn(registration.getAttendanceRecord() != null);
-        } else {
-            dto.setIsRegistered(false);
-            dto.setIsCheckedIn(false);
         }
+
+        dto.setIsRegistered(false);
+        dto.setIsCheckedIn(false);
+
         return dto;
     }
 
@@ -509,39 +510,67 @@ public class EventService {
     }
     @Transactional
     public Registration updateRegistration(UUID eventId, String userEmail, EventRegistrationDto eventRegistrationDto) {
-        User user = userRepository.findByEmail(userEmail.toLowerCase())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        Registration registration = registrationRepository.findByEventIdAndUserId(eventId, user.getId())
-                .orElseThrow(() -> new InvalidEventOperationException("User is not registered for this event"));
-
+        User user = getUser(userEmail);
+        Registration registration = getRegistration(eventId, user.getId());
         Event event = registration.getEvent();
 
-        if(event.getType() != EventType.EXTERNAL && (eventRegistrationDto.getGdprConsent() == null || !eventRegistrationDto.getGdprConsent())) {
+        if (shouldCancelDueToMissingGdpr(event, eventRegistrationDto)) {
             deleteRegistration(eventId, userEmail);
             return null;
         }
-        if(event.getType() == EventType.INTERNAL) {
+
+        if (event.getType() == EventType.INTERNAL) {
             validateInternalRegistration(eventRegistrationDto);
         }
-        EventDetails eventDetails = eventDetailsRepository.findByEvent(event);
-        boolean foodProvided = Boolean.TRUE.equals(eventDetails.getFoodProvided());
-        FoodPreference foodPreference = FoodPreference.NONE;
 
-        if (event.getType() != EventType.EXTERNAL && foodProvided) {
-            if (eventRegistrationDto.getFoodPreference() != null) {
-                foodPreference = eventRegistrationDto.getFoodPreference();
-            }
+        updateBasicPreferences(registration, eventRegistrationDto);
+        updateFoodPreference(registration, event, eventRegistrationDto);
+        updateTransportationDetails(registration, event, eventRegistrationDto);
+
+        return registrationRepository.save(registration);
+    }
+
+
+    private User getUser(String userEmail) {
+        return userRepository.findByEmail(userEmail.toLowerCase())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
+
+    private Registration getRegistration(UUID eventId, UUID userId) {
+        return registrationRepository.findByEventIdAndUserId(eventId, userId)
+                .orElseThrow(() -> new InvalidEventOperationException("User is not registered for this event"));
+    }
+
+    private boolean shouldCancelDueToMissingGdpr(Event event, EventRegistrationDto dto) {
+        return event.getType() != EventType.EXTERNAL && !Boolean.TRUE.equals(dto.getGdprConsent());
+    }
+
+    private void updateBasicPreferences(Registration registration, EventRegistrationDto dto) {
+        registration.setGdprConsent(Boolean.TRUE.equals(dto.getGdprConsent()));
+        registration.setPhotoConsent(Boolean.TRUE.equals(dto.getPhotoConsent()));
+        registration.setTransportationNeeded(Boolean.TRUE.equals(dto.getTransportationNeeded()));
+        registration.setAccommodationNeeded(Boolean.TRUE.equals(dto.getAccommodationNeeded()));
+        registration.setAccommodationDays(dto.getAccommodationDays());
+    }
+
+    private void updateFoodPreference(Registration registration, Event event, EventRegistrationDto dto) {
+        if (event.getType() == EventType.EXTERNAL) {
+            registration.setFoodPreference(FoodPreference.NONE);
+            return;
         }
 
-        registration.setGdprConsent(Boolean.TRUE.equals(eventRegistrationDto.getGdprConsent()));
-        registration.setPhotoConsent(Boolean.TRUE.equals(eventRegistrationDto.getPhotoConsent()));
-        registration.setFoodPreference(foodPreference);
-        registration.setTransportationNeeded(Boolean.TRUE.equals(eventRegistrationDto.getTransportationNeeded()));
-        registration.setAccommodationNeeded(Boolean.TRUE.equals(eventRegistrationDto.getAccommodationNeeded()));
-        registration.setAccommodationDays(eventRegistrationDto.getAccommodationDays());
+        EventDetails eventDetails = eventDetailsRepository.findByEvent(event);
+        boolean foodProvided = Boolean.TRUE.equals(eventDetails.getFoodProvided());
 
-        if (event.getType() == EventType.INTERNAL && Boolean.TRUE.equals(eventRegistrationDto.getTransportationNeeded())) {
+        if (foodProvided && dto.getFoodPreference() != null) {
+            registration.setFoodPreference(dto.getFoodPreference());
+        } else {
+            registration.setFoodPreference(FoodPreference.NONE);
+        }
+    }
+
+    private void updateTransportationDetails(Registration registration, Event event, EventRegistrationDto dto) {
+        if (event.getType() == EventType.INTERNAL && Boolean.TRUE.equals(dto.getTransportationNeeded())) {
             TransportationDetails transportDetails = registration.getTransportationDetails();
 
             if (transportDetails == null) {
@@ -549,16 +578,13 @@ public class EventService {
                         .registration(registration)
                         .build();
             }
-            transportDetails.setDriverName(eventRegistrationDto.getDriverName());
-            transportDetails.setDriverPhoneNumber(eventRegistrationDto.getDriverPhone());
+            transportDetails.setDriverName(dto.getDriverName());
+            transportDetails.setDriverPhoneNumber(dto.getDriverPhone());
+
             registration.setTransportationDetails(transportDetails);
+        } else if (registration.getTransportationDetails() != null) {
+            registration.setTransportationDetails(null);
         }
-        else{
-            if (registration.getTransportationDetails() != null) {
-                registration.setTransportationDetails(null);
-            }
-        }
-        return registrationRepository.save(registration);
     }
 
     public Registration getRegistration(UUID eventId, String userEmail) {
