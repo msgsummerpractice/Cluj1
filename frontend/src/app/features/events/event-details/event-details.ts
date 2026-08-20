@@ -63,30 +63,30 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
     this.eventService.getEventById(eventId).subscribe({
       next: (event) => {
         this.event.set(event);
+
+        this.eventService.getEventDetails(eventId).subscribe({
+          next: (details) => {
+            this.eventDetails.set(details);
+            if (details.hasPoster) {
+              this.eventService.getEventPoster(eventId).subscribe({
+                next: (poster) => {
+                  if (poster.size > 0) {
+                    this.posterUrl.set(URL.createObjectURL(poster));
+                  }
+                },
+                error: () => {
+                  this.posterUrl.set(null);
+                },
+              });
+            }
+          },
+          error: (error) => {
+            this.toast.show('error', error?.message ?? error);
+          },
+        });
       },
       error: () => {
         this.router.navigate(['/not-found']);
-      },
-    });
-
-    this.eventService.getEventDetails(eventId).subscribe({
-      next: (details) => {
-        this.eventDetails.set(details);
-        if (details.hasPoster) {
-          this.eventService.getEventPoster(eventId).subscribe({
-            next: (poster) => {
-              if (poster.size > 0) {
-                this.posterUrl.set(URL.createObjectURL(poster));
-              }
-            },
-            error: () => {
-              this.posterUrl.set(null);
-            },
-          });
-        }
-      },
-      error: (error) => {
-        this.toast.show('error', error);
       },
     });
   }
