@@ -134,7 +134,7 @@ export class EventRegistration implements OnInit {
 
     this.isSubmitting.set(true);
     this.errorMessage.set(null);
-    const requestData: EventRegistrationRequest = this.registrationForm.value;
+    const requestData = this.buildRegistrationRequest();
 
     this.eventService.registerForEvent(this.eventId, requestData).subscribe({
       next: () => {
@@ -153,6 +153,33 @@ export class EventRegistration implements OnInit {
         this.isSubmitting.set(false);
       },
     });
+  }
+
+  private buildRegistrationRequest(): EventRegistrationRequest {
+    const formValue = this.registrationForm.value;
+
+    if (this.event()?.type === 'EXTERNAL') {
+      return {
+        gdprConsent: formValue.gdprConsent,
+        photoConsent: formValue.photoConsent,
+        foodPreference: formValue.foodPreference,
+      };
+    }
+
+    return {
+      gdprConsent: formValue.gdprConsent,
+      photoConsent: formValue.photoConsent,
+      foodPreference: formValue.foodPreference,
+      transportationNeeded: formValue.transportationNeeded,
+      accommodationNeeded: formValue.accommodationNeeded,
+      ...(formValue.transportationNeeded && {
+        driverName: formValue.driverName,
+        driverPhone: formValue.driverPhone,
+      }),
+      ...(formValue.accommodationNeeded && {
+        accommodationDays: formValue.accommodationDays,
+      }),
+    };
   }
 
   private bindConditionalFieldValidation(): void {
