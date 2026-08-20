@@ -12,7 +12,6 @@ import { MatInputModule } from '@angular/material/input';
 import { TranslocoModule } from '@jsverse/transloco';
 
 import { AuthService } from '../../../core/services/auth.service';
-import { ToastComponent } from '../../toast-component/toast-component';
 import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
@@ -27,7 +26,6 @@ import { ToastService } from '../../../core/services/toast.service';
     MatIconModule,
     MatInputModule,
     TranslocoModule,
-    ToastComponent,
   ],
   templateUrl: './login.html',
   styleUrl: './login.css',
