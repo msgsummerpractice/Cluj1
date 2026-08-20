@@ -114,4 +114,10 @@ export class EventService {
       withCredentials: true,
     });
   }
+
+  downloadAttendanceReport(eventId: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${eventId}/attendance-report`, {
+      responseType: 'blob',
+    });
+  }
 }
