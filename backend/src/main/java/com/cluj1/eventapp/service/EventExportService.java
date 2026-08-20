@@ -13,76 +13,79 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class EventExportService {
 
-    private final EventRepository eventRepository;
-    private final RegistrationRepository registrationRepository;
+        private final EventRepository eventRepository;
+        private final RegistrationRepository registrationRepository;
 
-    /**
-     * Retrieves event registration data and triggers the generation of an Excel
-     * attendance report.
-     *
-     * @param eventId the unique identifier of the event
-     * @return a byte array representing the Excel file
-     * @throws IllegalArgumentException       if the event cannot be found
-     * @throws InvalidEventOperationException if the event is in DRAFT status
-     */
-    @Transactional(readOnly = true)
-    public byte[] exportEventRegistrationsToExcel(UUID eventId) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+        /**
+         * Retrieves event registration data and triggers the generation of an Excel
+         * attendance report.
+         *
+         * @param eventId the unique identifier of the event
+         * @return a byte array representing the Excel file
+         * @throws IllegalArgumentException       if the event cannot be found
+         * @throws InvalidEventOperationException if the event is in DRAFT status
+         */
+        public byte[] exportEventRegistrationsToExcel(UUID eventId) {
+                Event event = eventRepository.findById(eventId)
+                                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
 
-        if (event.getStatus() == EventStatus.DRAFT) {
-            throw new InvalidEventOperationException("Cannot export data for events in DRAFT status.");
+                if (event.getStatus() == EventStatus.DRAFT) {
+                        throw new InvalidEventOperationException("Cannot export data for events in DRAFT status.");
+                }
+
+                List<Registration> registrations = registrationRepository.findAllByEventIdWithDetails(eventId);
+                List<AttendanceExportRowDto> exportData = new ArrayList<>();
+
+                int counter = 1;
+                for (Registration reg : registrations) {
+                        exportData.add(mapToExportRow(counter++, reg, event.getName()));
+                }
+
+                return ExcelExportUtil.getInstance().generateAttendanceReport(exportData);
         }
 
-        List<Registration> registrations = registrationRepository.findAllByEventIdWithDetails(eventId);
-        AtomicInteger counter = new AtomicInteger(1);
+        private AttendanceExportRowDto mapToExportRow(int nrCrt, Registration reg, String eventName) {
+                String foodPref = (reg.getFoodPreference() != null && !reg.getFoodPreference().name().equals("NONE"))
+                                ? reg.getFoodPreference().name()
+                                : "";
 
-        List<AttendanceExportRowDto> exportData = registrations.stream()
-                .map(reg -> mapToExportRow(counter.getAndIncrement(), reg, event.getName()))
-                .collect(Collectors.toList());
+                boolean transportNeeded = Boolean.TRUE.equals(reg.getTransportationNeeded());
+                boolean accommNeeded = Boolean.TRUE.equals(reg.getAccommodationNeeded());
 
-        return ExcelExportUtil.generateAttendanceReport(exportData);
-    }
+                String accommStr = accommNeeded
+                                ? "yes" + (reg.getAccommodationDays() != null
+                                                ? " (" + reg.getAccommodationDays() + " days)"
+                                                : "")
+                                : "no";
 
-    private AttendanceExportRowDto mapToExportRow(int nrCrt, Registration reg, String eventName) {
-        String foodPref = (reg.getFoodPreference() != null && !reg.getFoodPreference().name().equals("NONE"))
-                ? reg.getFoodPreference().name()
-                : "";
+                TransportationDetails td = reg.getTransportationDetails();
+                String driverName = (transportNeeded && td != null && td.getDriverName() != null) ? td.getDriverName()
+                                : "";
+                String driverPhone = (transportNeeded && td != null && td.getDriverPhoneNumber() != null)
+                                ? td.getDriverPhoneNumber()
+                                : "";
 
-        boolean transportNeeded = Boolean.TRUE.equals(reg.getTransportationNeeded());
-        boolean accommNeeded = Boolean.TRUE.equals(reg.getAccommodationNeeded());
-
-        String accommStr = accommNeeded
-                ? "yes" + (reg.getAccommodationDays() != null ? " (" + reg.getAccommodationDays() + " days)" : "")
-                : "no";
-
-        TransportationDetails td = reg.getTransportationDetails();
-        String driverName = (transportNeeded && td != null && td.getDriverName() != null) ? td.getDriverName() : "";
-        String driverPhone = (transportNeeded && td != null && td.getDriverPhoneNumber() != null)
-                ? td.getDriverPhoneNumber()
-                : "";
-
-        return AttendanceExportRowDto.builder()
-                .nrCrt(nrCrt)
-                .lastName(reg.getUser().getUserDetails().getLastName())
-                .firstName(reg.getUser().getUserDetails().getFirstName())
-                .eventName(eventName)
-                .email(reg.getUser().getEmail())
-                .foodPreference(foodPref)
-                .transportRequired(transportNeeded ? "yes" : "no")
-                .accommodationRequired(accommStr)
-                .driverName(driverName)
-                .driverPhoneNumber(driverPhone)
-                .gdpr(Boolean.TRUE.equals(reg.getGdprConsent()) ? "yes" : "no")
-                .build();
-    }
+                return AttendanceExportRowDto.builder()
+                                .nrCrt(nrCrt)
+                                .lastName(reg.getUser().getUserDetails().getLastName())
+                                .firstName(reg.getUser().getUserDetails().getFirstName())
+                                .eventName(eventName)
+                                .email(reg.getUser().getEmail())
+                                .foodPreference(foodPref)
+                                .transportRequired(transportNeeded ? "yes" : "no")
+                                .accommodationRequired(accommStr)
+                                .driverName(driverName)
+                                .driverPhoneNumber(driverPhone)
+                                .gdpr(Boolean.TRUE.equals(reg.getGdprConsent()) ? "yes" : "no")
+                                .build();
+        }
 }

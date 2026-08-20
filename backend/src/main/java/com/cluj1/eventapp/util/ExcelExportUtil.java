@@ -13,6 +13,8 @@ import java.util.List;
 
 public final class ExcelExportUtil {
 
+    private static volatile ExcelExportUtil INSTANCE;
+
     private static final String[] ATTENDANCE_COLUMNS = {
             "nr_crt", "lastName", "firstName", "eventName", "email",
             "foodPreference", "transportRequiered", "accomodationRequired",
@@ -20,7 +22,18 @@ public final class ExcelExportUtil {
     };
 
     private ExcelExportUtil() {
-        // prevent instantiation
+        // Prevent external instantiation
+    }
+
+    public static ExcelExportUtil getInstance() {
+        if (INSTANCE == null) {
+            synchronized (ExcelExportUtil.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = new ExcelExportUtil();
+                }
+            }
+        }
+        return INSTANCE;
     }
 
     /**
@@ -30,7 +43,7 @@ public final class ExcelExportUtil {
      * @return a byte array representing the generated Excel file content
      * @throws RuntimeException if an I/O error occurs during workbook generation
      */
-    public static byte[] generateAttendanceReport(List<AttendanceExportRowDto> data) {
+    public byte[] generateAttendanceReport(List<AttendanceExportRowDto> data) {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Attendance Report");
 
