@@ -107,6 +107,12 @@ export class EventService {
       params,
     });
   }
+
+  downloadAttendanceReport(eventId: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${eventId}/attendance-report`, {
+      responseType: 'blob',
+    });
+  }
   updateRegistration(eventId: string, requestData: EventRegistrationRequest): Observable<any> {
     return this.http.patch(`${this.apiUrl}/${eventId}/manage`, requestData, {
       withCredentials: true,

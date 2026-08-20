@@ -5,6 +5,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.cluj1.eventapp.dto.CheckInCodesDto;
+import com.cluj1.eventapp.model.Event;
+import com.cluj1.eventapp.repository.RegistrationRepository;
+import com.cluj1.eventapp.service.AttendanceExcelGeneratorService;
 import com.cluj1.eventapp.mapper.EventMapper;
 import com.cluj1.eventapp.model.Registration;
 import com.cluj1.eventapp.service.EventService;
@@ -15,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.cluj1.eventapp.dto.AttendanceRecordDto;
 import com.cluj1.eventapp.dto.EventDetailsDto;
@@ -40,7 +44,14 @@ public class EventController {
     private final EventDetailsService eventDetailsService;
     private final EventCheckInService eventCheckInService;
 
-    private final EventMapper eventMapper;;
+    private final EventMapper eventMapper;
+
+	@GetMapping("/countRegistrationPerUser")
+	public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal) {
+		String email = principal.getName();
+		return ResponseEntity.ok(eventService.getUpcomingRegisteredEventsCountPerUserByEmail(email));
+	}
+
 
     @GetMapping("/countRegistrationPerUser")
     public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal) {
@@ -60,11 +71,11 @@ public class EventController {
         return ResponseEntity.ok(eventService.getEventById(id));
     }
 
-    @GetMapping("/{id}/details")
-    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT')")
-    public ResponseEntity<EventDetailsDto> getEventDetails(@PathVariable UUID id) {
-        return ResponseEntity.ok(eventDetailsService.getEventDetailsByEventId(id));
-    }
+	@GetMapping("/{id}/details")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT')")
+	public ResponseEntity<EventDetailsDto> getEventDetails(@PathVariable UUID id) {
+		return ResponseEntity.ok(eventDetailsService.getEventDetailsByEventId(id));
+	}
 
     @GetMapping("/{id}/checkin")
     @PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")

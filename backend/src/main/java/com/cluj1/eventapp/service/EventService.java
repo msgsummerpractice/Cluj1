@@ -402,7 +402,7 @@ public class EventService {
     private String generateQRCodeBase64(Event event) {
         try {
 
-            String contentToEncode = String.format("EventID:%s|Name:%s", event.getId().toString(), event.getName());
+            String contentToEncode = event.getId().toString();
 
             QRCodeWriter qrCodeWriter = new QRCodeWriter();
             BitMatrix bitMatrix = qrCodeWriter.encode(contentToEncode, BarcodeFormat.QR_CODE, 300, 300);
