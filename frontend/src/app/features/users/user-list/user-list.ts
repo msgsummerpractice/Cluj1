@@ -22,6 +22,7 @@ import { DataTableComponent } from '../../../shared/components/data-table/data-t
 import { DataTableColumn } from '../../../shared/components/data-table/data-table.model';
 import { DataTableCellDefDirective } from '../../../shared/components/data-table/data-table-cell-def.directive';
 import { ToastService } from '../../../core/services/toast.service';
+import { RoleTitlecasePipe } from '../role-titlecase.pipe';
 
 @Component({
   selector: 'app-user-list',
@@ -41,6 +42,7 @@ import { ToastService } from '../../../core/services/toast.service';
     MatPaginatorModule,
     DataTableComponent,
     DataTableCellDefDirective,
+    RoleTitlecasePipe,
   ],
   templateUrl: './user-list.html',
   styleUrl: './user-list.css',
