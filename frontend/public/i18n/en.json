@@ -24,6 +24,32 @@
     "registrations": "Registrations",
     "upcoming": "Upcoming"
   },
+  "manageRegistration": {
+    "title": "Manage Registration: ",
+    "subtitle": "Update your preferences or cancel your registration below.",
+    "deleting": "Deleting...",
+    "cancelRegistration": "Cancel Registration",
+    "summaryTitle": "Registration Summary",
+    "eventName": "Event Name",
+    "eventType": "Event Type",
+    "updating": "Updating...",
+    "updateRegistration": "Update Registration",
+    "cateringTitle": "Catering Preferences",
+    "cateringSubtitle": "Food is provided at this event. Update your preference below.",
+    "logisticsTitle": "Logistics & Travel",
+    "logisticsSubtitle": "Manage your transportation and accommodation needs.",
+    "transportationDesc": "Enable if you require travel arrangements.",
+    "accommodationDesc": "Enable if you need a place to stay.",
+    "accommodationDaysPlaceholder": "e.g., 2",
+    "accommodationDaysError": "A valid number of days is required.",
+    "consentsTitle": "Consents",
+    "consentsSubtitle": "Review your legal agreements.",
+    "gdprConsent": "GDPR Consent",
+    "gdprWarning": "Unchecking this box and updating your registration will permanently cancel your enrollment.",
+    "photoConsent": "Photo Consent",
+    "summary": "Summary",
+    "event": "Event"
+  },
   "account": "User account",
   "openMenu": "Open navigation menu",
   "userList": {
@@ -121,13 +147,14 @@
     "registered": "Registered",
     "checkedIn": "Checked-in",
     "fetchError": "Failed to fetch events. Please try again.",
+    "eventManageRegistrationButton": "Manage Registration",
+    "eventDeleteRegistrationButton": "Delete Registration",
     "dateBefore": "Before",
     "dateAfter": "After",
     "dateRange": "Range",
     "dateFilterType" : "Date filter type",
     "startDate": "Start date",
     "endDate": "End date",
-    "clearFilters": "Clear filters",
     "publish": {
       "title": "Confirm Publish",
       "message": "Are you sure you want to publish this event?",
@@ -135,6 +162,14 @@
       "cancel": "No",
       "success": "Event published successfully.",
       "error": "Failed to publish event. Please try again."
+    },
+    "deleteRegistration" : {
+      "title": "Confirm Delete Registration",
+      "message": "Are you sure you want to delete your registration for this event? This action cannot be undone.",
+      "confirm": "Yes, delete",
+      "cancel": "No, keep registration",
+      "success": "Your registration has been deleted successfully.",
+      "error": "Failed to delete registration. Please try again."
     },
     "complete": {
       "title": "Confirm Complete",

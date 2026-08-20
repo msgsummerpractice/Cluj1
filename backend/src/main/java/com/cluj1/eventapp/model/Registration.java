@@ -60,7 +60,7 @@ public class Registration {
     private OffsetDateTime registrationDate;
 
     @ToString.Exclude
-    @OneToOne(mappedBy = "registration", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "registration", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private TransportationDetails transportationDetails;
 
     @ToString.Exclude

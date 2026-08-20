@@ -44,6 +44,10 @@ public interface RegistrationRepository extends JpaRepository<Registration, UUID
         List<Registration> findByUserIdAndEventIdIn(@Param("userId") UUID userId,
                         @Param("eventIds") Collection<UUID> eventIds);
 
+    void deleteRegistrationByUserEmailAndEventId(String userEmail, UUID eventId);
+
+    Optional<Registration> findByEventIdAndUserEmail(UUID eventId, String userEmail);
+
         @Query("SELECT r FROM Registration r " +
                         "JOIN FETCH r.user u " +
                         "JOIN FETCH u.userDetails ud " +

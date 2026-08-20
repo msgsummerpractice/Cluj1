@@ -12,6 +12,32 @@
     "logout": "Deconectare",
     "login": "Autentificare"
   },
+  "manageRegistration": {
+    "title": "Gestionare înregistrare: ",
+    "subtitle": "Actualizează-ți preferințele sau anulează-ți înregistrarea mai jos.",
+    "deleting": "Se șterge...",
+    "cancelRegistration": "Anulare înregistrare",
+    "summaryTitle": "Sumar înregistrare",
+    "eventName": "Nume eveniment",
+    "eventType": "Tip eveniment",
+    "updating": "Se actualizează...",
+    "updateRegistration": "Actualizare înregistrare",
+    "cateringTitle": "Preferințe Catering",
+    "cateringSubtitle": "La acest eveniment se asigură masa. Actualizează-ți preferința mai jos.",
+    "logisticsTitle": "Logistică și Călătorie",
+    "logisticsSubtitle": "Gestionează-ți nevoile de transport și cazare.",
+    "transportationDesc": "Activează dacă ai nevoie de asistență pentru transport.",
+    "accommodationDesc": "Activează dacă ai nevoie de un loc de cazare.",
+    "accommodationDaysPlaceholder": "ex. 2",
+    "accommodationDaysError": "Este necesar un număr valid de zile.",
+    "consentsTitle": "Acorduri",
+    "consentsSubtitle": "Revizuiește acordurile legale.",
+    "gdprConsent": "Acord GDPR",
+    "gdprWarning": "Debifarea acestei căsuțe și actualizarea înregistrării vor anula definitiv înscrierea ta.",
+    "photoConsent": "Acord Foto",
+    "summary": "Sumar",
+    "event": "Eveniment"
+  },
   "profile": {
     "title": "Profilul meu",
     "firstName": "Prenume",
@@ -92,7 +118,8 @@
     "dateFilterType": "Tip filtru",
     "startDate": "Început",
     "endDate": "Sfârșit",
-    "clearFilters": "Șterge filtrele",
+    "eventManageRegistrationButton": "Gestionează înregistrarea",
+    "eventDeleteRegistrationButton": "Anulează înregistrarea",
     "publish": {
       "title": "Confirmă publicarea",
       "message": "Ești sigur că vrei să publici acest eveniment?",
@@ -100,6 +127,14 @@
       "cancel": "Nu",
       "success": "Evenimentul a fost publicat cu succes.",
       "error": "Publicarea evenimentului a eșuat. Te rugăm să încerci din nou."
+    },
+    "deleteRegistration": {
+      "title": "Confirmă anularea înregistrării",
+      "message": "Ești sigur că vrei să îți anulezi înregistrarea pentru acest eveniment? Această acțiune nu poate fi anulată.",
+      "confirm": "Da, anulează",
+      "cancel": "Nu, păstrează",
+      "success": "Înregistrarea ta a fost anulată cu succes.",
+      "error": "Anularea înregistrării a eșuat. Te rugăm să încerci din nou."
     },
     "complete": {
       "title": "Confirmă finalizarea",

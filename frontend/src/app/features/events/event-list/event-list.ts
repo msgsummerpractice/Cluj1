@@ -471,4 +471,45 @@ export class EventListComponent implements OnInit {
         : currentValues.filter((currentValue) => currentValue !== value),
     );
   }
+
+  manageRegistration(eventId: string){
+    this.router.navigate(['/events', eventId, 'manage'])
+  }
+
+  isPastRegistrationEndDate(event: Event): boolean {
+    if (!event.registrationEndDate) {
+      return false;
+    }
+    const currentDate = new Date();
+    const registrationEndDate = new Date(event.registrationEndDate);
+    return currentDate > registrationEndDate;
+  }
+
+  deleteRegistration(eventId: string): void {
+    this.openConfirmDialog({
+      titleKey: 'events.deleteRegistration.title',
+      messageKey: 'events.deleteRegistration.message',
+      confirmKey: 'events.deleteRegistration.confirm',
+      cancelKey: 'events.deleteRegistration.cancel',
+    })
+      .pipe(
+        filter((confirmed): confirmed is true => Boolean(confirmed)),
+        switchMap(() => this.eventService.deleteRegistration(eventId)),
+      )
+      .subscribe({
+        next: () => {
+          this.fetchEvents();
+          this.toastService.show(
+            'success',
+            this.translocoService.translate('events.deleteRegistration.success'),
+          );
+        },
+        error: () => {
+          this.toastService.show(
+            'error',
+            this.translocoService.translate('events.deleteRegistration.error'),
+          );
+        },
+      });
+  }
 }
