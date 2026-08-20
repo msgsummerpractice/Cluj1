@@ -181,9 +181,17 @@
     "typeHintInternal": "Applies to all locations. Food preference option available.",
     "typeHintExternal": "Specific location required. No food preference.",
     "typeHintLocal": "Specific location required. Food preference option available.",
+    "regEndDateLabel": "Registration end date",
+    "regEndDatePlaceholder": "mm/dd/yyyy",
+    "regEndDateHint": "Optional. Last day participants can register.",
     "errors": {
       "fileSize": "File size must be under 5MB.",
-      "fileType": "Only JPEG/PNG files are allowed."
+      "fileType": "Only JPEG/PNG files are allowed.",
+      "nameRequired": "Event title is required.",
+      "nameTooLong": "Event title must not exceed 100 characters.",
+      "descriptionTooLong": "Description must not exceed 2000 characters.",
+      "endBeforeStart": "End time must be after start time.",
+      "regEndAfterStart": "Registration end date must be before the event start date."
     }
   },
   "register": {

@@ -92,6 +92,7 @@ public class EventService {
                 .status(EventStatus.DRAFT)
                 .eventStartDate(eventDto.getStartDate())
                 .eventEndTime(eventDto.getEndDate())
+                .registrationEndDate(eventDto.getRegistrationEndDate())
                 .createdBy(currentUser)
                 .build();
 
@@ -124,6 +125,16 @@ public class EventService {
                 if (status != EventStatus.PUBLISHED) {
                     throw new InvalidEventOperationException(
                             "Invalid status transition from " + currentStatus + " to " + status);
+                }
+                if (event.getEventEndTime() != null
+                        && event.getEventEndTime().isBefore(OffsetDateTime.now())) {
+                    throw new InvalidEventOperationException(
+                            "Cannot publish an event that has already ended.");
+                }
+                if (event.getEventEndTime() != null
+                        && !event.getEventEndTime().isAfter(event.getEventStartDate())) {
+                    throw new InvalidEventOperationException(
+                            "Cannot publish an event where end date is not after start date.");
                 }
                 event.setStatus(EventStatus.PUBLISHED);
                 justPublished = true;
@@ -167,6 +178,7 @@ public class EventService {
         event.setLocation(determineLocation(eventDto));
         event.setEventStartDate(eventDto.getStartDate());
         event.setEventEndTime(eventDto.getEndDate());
+        event.setRegistrationEndDate(eventDto.getRegistrationEndDate());
 
         EventDetails details = event.getEventDetails();
         if (details == null) {
@@ -187,6 +199,14 @@ public class EventService {
     private void validateEventRules(EventDto dto) {
         if (dto.getType() != EventType.INTERNAL && dto.getLocation() == null) {
             throw new InvalidEventOperationException("Location must be selected for LOCAL and EXTERNAL events.");
+        }
+        if (dto.getStartDate() != null && dto.getEndDate() != null
+                && !dto.getEndDate().isAfter(dto.getStartDate())) {
+            throw new InvalidEventOperationException("End date must be after start date.");
+        }
+        if (dto.getRegistrationEndDate() != null && dto.getStartDate() != null
+                && !dto.getRegistrationEndDate().isBefore(dto.getStartDate())) {
+            throw new InvalidEventOperationException("Registration end date must be before the event start date.");
         }
     }
 

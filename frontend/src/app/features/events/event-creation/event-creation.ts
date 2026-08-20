@@ -1,7 +1,13 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import {
+  AbstractControl,
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { EventService } from '../../../core/services/event.service';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
@@ -23,7 +29,6 @@ import { BackButtonComponent } from '../../../shared/components/back-button/back
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
     TranslocoModule,
     BackButtonComponent,
     MatButtonModule,
@@ -56,16 +61,20 @@ export class EventCreationComponent implements OnInit {
   readonly eventId = signal<string | null>(null);
   readonly isEditMode = computed(() => this.eventId() !== null);
 
-  form = this.fb.group({
-    name: ['', Validators.required],
-    description: [''],
-    date: [<Date | string | null>'', Validators.required],
-    startTime: [<Date | string | null>'', Validators.required],
-    endTime: [<Date | string | null>'', Validators.required],
-    type: ['', Validators.required],
-    location: [{ value: '', disabled: true }, Validators.required],
-    foodProvided: [{ value: false, disabled: true }],
-  });
+  form = this.fb.group(
+    {
+      name: ['', [Validators.required, Validators.maxLength(100)]],
+      description: ['', [Validators.maxLength(2000)]],
+      date: [<Date | string | null>'', Validators.required],
+      startTime: [<Date | string | null>'', Validators.required],
+      endTime: [<Date | string | null>'', Validators.required],
+      type: ['', Validators.required],
+      location: [{ value: '', disabled: true }, Validators.required],
+      foodProvided: [{ value: false, disabled: true }],
+      registrationEndDate: [<Date | string | null>null],
+    },
+    { validators: [endAfterStart, regEndBeforeStart] },
+  );
 
   ngOnInit() {
     this.form.get('type')?.valueChanges.subscribe((type) => this.handleTypeChange(type));
@@ -92,6 +101,9 @@ export class EventCreationComponent implements OnInit {
           type: event.type,
           location: event.location,
           foodProvided: event.foodProvided || false,
+          registrationEndDate: event.registrationEndDate
+            ? new Date(event.registrationEndDate)
+            : null,
         });
 
         this.handleTypeChange(event.type);
@@ -183,6 +195,9 @@ export class EventCreationComponent implements OnInit {
       foodProvided: formValue.foodProvided ? true : false,
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
+      registrationEndDate: formValue.registrationEndDate
+        ? new Date(formValue.registrationEndDate).toISOString()
+        : null,
     };
 
     const id = this.eventId();
@@ -211,4 +226,39 @@ export class EventCreationComponent implements OnInit {
       },
     });
   }
+}
+
+function buildDateTime(date: unknown, time: unknown): Date | null {
+  if (!date || !time) return null;
+  const d = new Date(date as string | Date);
+  if (isNaN(d.getTime())) return null;
+  if (time instanceof Date) {
+    d.setHours(time.getHours(), time.getMinutes(), 0, 0);
+  } else if (typeof time === 'string' && time.includes(':')) {
+    const [h, m] = time.split(':');
+    d.setHours(Number(h), Number(m), 0, 0);
+  } else {
+    return null;
+  }
+  return d;
+}
+
+function endAfterStart(group: AbstractControl): ValidationErrors | null {
+  const { date, startTime, endTime } = group.value;
+  const start = buildDateTime(date, startTime);
+  const end = buildDateTime(date, endTime);
+  if (!start || !end) return null;
+  return end <= start ? { endBeforeStart: true } : null;
+}
+
+function regEndBeforeStart(group: AbstractControl): ValidationErrors | null {
+  const { date, registrationEndDate } = group.value;
+  if (!date || !registrationEndDate) return null;
+  const eventStart = new Date(date as string | Date);
+  if (isNaN(eventStart.getTime())) return null;
+  eventStart.setHours(0, 0, 0, 0);
+  const regEnd = new Date(registrationEndDate as string | Date);
+  if (isNaN(regEnd.getTime())) return null;
+  regEnd.setHours(23, 59, 59, 999);
+  return regEnd >= eventStart ? { regEndAfterStart: true } : null;
 }
