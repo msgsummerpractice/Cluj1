@@ -70,21 +70,24 @@ export class LoginComponent {
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: (user) => {
+          this.toastService.show(
+            'success',
+            this.translocoService.translate('notifications.confirmLogin', {
+              email: credentials.email,
+            }),
+          );
           const nextUrl = returnUrl || this.authService.getLandingRoute(user.role);
           void this.router.navigateByUrl(nextUrl);
         },
         error: (error) => {
-          if (error.status !== 0) {
-            this.errorMessage.set('Invalid email or password.');
-            return;
+          let errorMsg = 'Invalid email or password.';
+
+          if (error.status === 0) {
+            errorMsg = 'Unable to sign in right now. Please try again.';
           }
 
-          this.errorMessage.set('Unable to sign in right now. Please try again.');
+          this.errorMessage.set(errorMsg);
         },
       });
-    this.toastService.show(
-      'success',
-      this.translocoService.translate('notifications.confirmLogin', { email: credentials.email }),
-    );
   }
 }
