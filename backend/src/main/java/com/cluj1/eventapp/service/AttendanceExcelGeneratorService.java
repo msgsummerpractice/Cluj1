@@ -12,7 +12,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class AttendanceExcelGeneratorService {
@@ -20,7 +19,7 @@ public class AttendanceExcelGeneratorService {
     public byte[] generate(List<AttendanceReportExcelRowDto> rows) {
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Attendance Report");
-            ExcelSheetWriter.writeSheet(workbook, sheet, columns(), rows);
+            ExcelSheetWriter.getInstance().writeSheet(workbook, sheet, columns(), rows);
             return toBytes(workbook);
         } catch (IOException exception) {
             throw new UncheckedIOException("Failed to generate attendance report Excel file", exception);
@@ -28,9 +27,10 @@ public class AttendanceExcelGeneratorService {
     }
 
     private List<ExcelColumn<AttendanceReportExcelRowDto>> columns() {
-        AtomicInteger sequence = new AtomicInteger(1);
+        int[] rowNumber = { 1 };
+
         return List.of(
-                new ExcelColumn<>("nr_crt", row -> sequence.getAndIncrement()),
+                new ExcelColumn<>("nr_crt", row -> rowNumber[0]++),
                 new ExcelColumn<>("lastName", AttendanceReportExcelRowDto::getLastName),
                 new ExcelColumn<>("firstName", AttendanceReportExcelRowDto::getFirstName),
                 new ExcelColumn<>("email", AttendanceReportExcelRowDto::getEmail),

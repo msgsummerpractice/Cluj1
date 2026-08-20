@@ -6,14 +6,22 @@ import java.time.temporal.Temporal;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class ExcelSheetWriter {
+public final class ExcelSheetWriter {
 
     private static final DateTimeFormatter DEFAULT_DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static ExcelSheetWriter INSTANCE;
 
     private ExcelSheetWriter() {
     }
 
-    public static <T> void writeSheet(
+    public static ExcelSheetWriter getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new ExcelSheetWriter();
+        }
+        return INSTANCE;
+    }
+
+    public <T> void writeSheet(
             Workbook workbook,
             Sheet sheet,
             List<ExcelColumn<T>> columns,
@@ -23,7 +31,7 @@ public class ExcelSheetWriter {
         autoSizeColumns(sheet, columns.size());
     }
 
-    private static <T> void writeHeaderRow(Workbook workbook, Sheet sheet, List<ExcelColumn<T>> columns) {
+    private <T> void writeHeaderRow(Workbook workbook, Sheet sheet, List<ExcelColumn<T>> columns) {
         CellStyle headerStyle = workbook.createCellStyle();
         Font boldFont = workbook.createFont();
         boldFont.setBold(true);
@@ -37,7 +45,7 @@ public class ExcelSheetWriter {
         }
     }
 
-    private static <T> void writeDataRows(Sheet sheet, List<ExcelColumn<T>> columns, List<T> rows) {
+    private <T> void writeDataRows(Sheet sheet, List<ExcelColumn<T>> columns, List<T> rows) {
         int rowIndex = 1;
         for (T row : rows) {
             Row excelRow = sheet.createRow(rowIndex++);
@@ -48,7 +56,7 @@ public class ExcelSheetWriter {
         }
     }
 
-    private static void setCellValue(Cell cell, Object value) {
+    private void setCellValue(Cell cell, Object value) {
         switch (value) {
             case null -> cell.setBlank();
             case Number number -> cell.setCellValue(number.doubleValue());
@@ -58,7 +66,7 @@ public class ExcelSheetWriter {
         }
     }
 
-    private static void autoSizeColumns(Sheet sheet, int columnCount) {
+    private void autoSizeColumns(Sheet sheet, int columnCount) {
         for (int col = 0; col < columnCount; col++) {
             sheet.autoSizeColumn(col);
         }

@@ -13,5 +13,5 @@ public class AttendanceReportExcelRowDto {
     private String email;
     private boolean gdprConsent;
     private OffsetDateTime registrationDate;
-    private boolean present;
+    private boolean isPresent;
 }
