@@ -46,13 +46,6 @@ public class EventController {
 
     private final EventMapper eventMapper;
 
-	@GetMapping("/countRegistrationPerUser")
-	public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal) {
-		String email = principal.getName();
-		return ResponseEntity.ok(eventService.getUpcomingRegisteredEventsCountPerUserByEmail(email));
-	}
-
-
     @GetMapping("/countRegistrationPerUser")
     public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal) {
         String email = principal.getName();
