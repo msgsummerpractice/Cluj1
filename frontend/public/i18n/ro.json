@@ -41,7 +41,7 @@
     "signUp": "Înregistrează-te"
   },
   "roles": {
-    "welcome": "Bun revenit",
+    "welcome": "Bun venit",
     "workspace": "spațiu de lucru",
     "labels": {
       "MARKETING_ORGANIZER": "Organizator Marketing",
@@ -230,7 +230,14 @@
     "eventCode": "Cod eveniment",
     "downloadPDF": "Descarcă PDF",
     "enter6digitCode": "Sau introdu acest cod de 6 cifre: ",
-    "generateCodes": "Generează coduri de check-in"
+    "generateCodes": "Generează coduri de check-in",
+    "yes": "Da",
+    "no": "Nu",
+    "register": "Înscriere",
+    "registrationClosed": "Înscrierile sunt închise pentru acest eveniment.",
+    "exporting": "Se exportă...",
+    "exportAttendance": "Descarcă raport prezență",
+    "loading": "Se încarcă evenimentul..."
   },
   "forgotPassword": {
     "title": "Ai uitat parola",

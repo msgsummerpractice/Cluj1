@@ -115,6 +115,13 @@ export class EventService {
     });
   }
 
+  exportEventData(eventId: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${eventId}/export`, {
+      responseType: 'blob',
+      withCredentials: true,
+    });
+  }
+
   downloadAttendanceReport(eventId: string): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/${eventId}/attendance-report`, {
       responseType: 'blob',
