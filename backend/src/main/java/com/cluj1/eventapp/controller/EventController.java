@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 
 import com.cluj1.eventapp.dto.CheckInCodesDto;
+import com.cluj1.eventapp.repository.RegistrationRepository;
+import com.cluj1.eventapp.service.AttendanceReportExcelGenerator;
 import com.cluj1.eventapp.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,13 +18,11 @@ import com.cluj1.eventapp.dto.EventDetailsDto;
 import com.cluj1.eventapp.dto.EventDto;
 import com.cluj1.eventapp.model.enums.EventStatus;
 
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -42,6 +42,8 @@ public class EventController {
 	private final EventService eventService;
 	private final EventDetailsService eventDetailsService;
 	private final EventCheckInService eventCheckInService;
+	private final RegistrationRepository registrationRepository;
+	private final AttendanceReportExcelGenerator attendanceReportExcelGenerator;
 
 	@GetMapping("/countRegistrationPerUser")
 	public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal) {
@@ -77,20 +79,6 @@ public class EventController {
 				.orElseGet(() -> ResponseEntity.notFound().build());
 	}
 
-	private static MediaType detectImageType(byte[] poster) {
-		if (poster.length >= 3 && (poster[0] & 0xFF) == 0xFF && (poster[1] & 0xFF) == 0xD8) {
-			return MediaType.IMAGE_JPEG;
-		}
-		if (poster.length >= 4 && (poster[0] & 0xFF) == 0x47 && poster[1] == 'I' && poster[2] == 'F') {
-			return MediaType.IMAGE_GIF;
-		}
-		if (poster.length >= 12 && poster[0] == 'R' && poster[1] == 'I' && poster[2] == 'F' && poster[3] == 'F'
-				&& poster[8] == 'W' && poster[9] == 'E' && poster[10] == 'B' && poster[11] == 'P') {
-			return MediaType.valueOf("image/webp");
-		}
-		return MediaType.IMAGE_PNG;
-	}
-
 	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
 	public ResponseEntity<EventDto> createEvent(
@@ -116,6 +104,15 @@ public class EventController {
 		return ResponseEntity.ok(eventCheckInService.getRecentCheckins(id, limit));
 	}
 
+	@GetMapping(value = "/{id}/attendance-report", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	@PreAuthorize("hasAnyAuthority('HR_USER')")
+	public ResponseEntity<byte[]> downloadAttendanceReport(@PathVariable UUID id) {
+		byte[] report = attendanceReportExcelGenerator.generate(registrationRepository.findAttendanceReportRows(id));
+		return ResponseEntity.ok()
+				.header("Content-Disposition", "attachment; filename=attendance-report-" + id + ".xlsx")
+				.body(report);
+	}
+
 	@PatchMapping("/{id}/status/{status}")
 	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
 	public ResponseEntity<EventDto> updateEventStatus(
@@ -129,4 +126,19 @@ public class EventController {
 	public ResponseEntity<CheckInCodesDto> generateCheckInCodes(@PathVariable UUID id) {
 		return ResponseEntity.ok(eventService.generateCheckInCodes(id));
 	}
+
+	private static MediaType detectImageType(byte[] poster) {
+		if (poster.length >= 3 && (poster[0] & 0xFF) == 0xFF && (poster[1] & 0xFF) == 0xD8) {
+			return MediaType.IMAGE_JPEG;
+		}
+		if (poster.length >= 4 && (poster[0] & 0xFF) == 0x47 && poster[1] == 'I' && poster[2] == 'F') {
+			return MediaType.IMAGE_GIF;
+		}
+		if (poster.length >= 12 && poster[0] == 'R' && poster[1] == 'I' && poster[2] == 'F' && poster[3] == 'F'
+				&& poster[8] == 'W' && poster[9] == 'E' && poster[10] == 'B' && poster[11] == 'P') {
+			return MediaType.valueOf("image/webp");
+		}
+		return MediaType.IMAGE_PNG;
+	}
+
 }

@@ -165,6 +165,7 @@
         @if (isHrUser() && event.status == 'COMPLETED') {
           <button
             mat-stroked-button
+            (click)="downloadAttendanceReport(event.id)"
             class="event-view-button transition-colors whitespace-nowrap"
             [matTooltip]="'events.eventReportButton' | transloco"
             matTooltipPosition="below"

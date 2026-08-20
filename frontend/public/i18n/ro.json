@@ -77,6 +77,7 @@
     "eventCompleteButton": "Finalizează",
     "eventCheckInButton": "Check-in",
     "eventReportButton": "Raport",
+    "reportError": "Generarea raportului de prezență a eșuat. Te rugăm să încerci din nou.",
     "clearFilters": "Șterge filtrele",
     "noData": "Nu s-au găsit evenimente",
     "fetchError": "Preluarea evenimentelor a eșuat. Te rugăm să încerci din nou.",

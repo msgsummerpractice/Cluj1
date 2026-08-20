@@ -112,6 +112,7 @@
     "eventCompleteButton": "Complete",
     "eventCheckInButton": "Check-in",
     "eventReportButton": "Report",
+    "reportError": "Failed to generate the attendance report. Please try again.",
     "clearFilters": "Clear filters",
     "noData": "No events found",
     "fetchError": "Failed to fetch events. Please try again.",
