@@ -1,0 +1,21 @@
+::ng-deep .custom-warn-toggle .mdc-switch--selected .mdc-switch__track::after {
+  background-color: var(--brand-maroon) !important;
+}
+
+::ng-deep .custom-warn-toggle .mdc-switch--selected .mdc-switch__handle::after {
+  background-color: var(--brand-maroon) !important;
+}
+
+::ng-deep .custom-warn-toggle .mdc-switch--selected:hover .mdc-switch__state-layer,
+::ng-deep .custom-warn-toggle .mdc-switch--selected:focus .mdc-switch__state-layer {
+  background-color: var(--brand-maroon-hover-bg) !important;
+}
+
+::ng-deep .custom-warn-toggle .mdc-switch--selected .mdc-switch__icon {
+  color: white !important;
+}
+
+::ng-deep .custom-warn-toggle .mdc-switch--selected .mdc-switch__icons svg path {
+  fill: white !important;
+  stroke: white !important;
+}
