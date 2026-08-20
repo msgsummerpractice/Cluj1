@@ -121,6 +121,13 @@
     "registered": "Registered",
     "checkedIn": "Checked-in",
     "fetchError": "Failed to fetch events. Please try again.",
+    "dateBefore": "Before",
+    "dateAfter": "After",
+    "dateRange": "Range",
+    "dateFilterType" : "Date filter type",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "clearFilters": "Clear filters",
     "publish": {
       "title": "Confirm Publish",
       "message": "Are you sure you want to publish this event?",
