@@ -1,7 +1,7 @@
 <div
-  class="min-h-screen bg-black/40 bg-blend-multiply bg-[url('/images/backgroundmsg.webp')] bg-cover bg-center bg-no-repeat px-4 py-10 sm:px-6 lg:px-8"
+  class="flex flex-1 items-center justify-center bg-black/40 bg-blend-multiply bg-[url('/images/backgroundmsg.webp')] bg-cover bg-center bg-no-repeat px-4 py-10 sm:px-6 lg:px-8"
 >
-  <div class="mx-auto flex min-h-[calc(100vh-5rem)] max-w-6xl items-center justify-center">
+  <div class="w-full max-w-6xl">
     <div
       class="grid w-full max-w-5xl overflow-hidden rounded-[2rem] border border-white/70 bg-white/90 shadow-[0_24px_80px_rgba(33,40,60,0.14)] backdrop-blur md:grid-cols-[1.1fr_0.9fr]"
     >
@@ -27,7 +27,7 @@
         <div></div>
       </section>
 
-      <section class="p-6 sm:p-10 max-h-[calc(100vh-5rem)] overflow-y-auto custom-scrollbar">
+      <section class="p-6 sm:p-10">
         <mat-card class="!bg-transparent !shadow-none">
           <mat-card-header class="!mb-6 !px-0">
             <mat-card-title class="!mb-2 !text-3xl !font-semibold !text-slate-900">
@@ -40,7 +40,6 @@
 
           <mat-card-content class="!p-0">
             <form class="grid gap-4" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-
               <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <mat-form-field appearance="outline">
                   <mat-label>{{ 'register.firstName' | transloco }}</mat-label>
@@ -54,7 +53,7 @@
                   @if (
                     registerForm.get('firstName')?.hasError('required') &&
                     registerForm.get('firstName')?.touched
-                    ) {
+                  ) {
                     <mat-error>{{ 'register.errors.firstNameRequired' | transloco }}</mat-error>
                   }
                 </mat-form-field>
@@ -71,7 +70,7 @@
                   @if (
                     registerForm.get('lastName')?.hasError('required') &&
                     registerForm.get('lastName')?.touched
-                    ) {
+                  ) {
                     <mat-error>{{ 'register.errors.lastNameRequired' | transloco }}</mat-error>
                   }
                 </mat-form-field>
@@ -81,18 +80,18 @@
                 <mat-label>{{ 'register.userLocation' | transloco }}</mat-label>
                 <mat-select id="userLocation" formControlName="userLocation">
                   <mat-option value="" disabled>{{
-                      'register.selectLocation' | transloco
-                    }}</mat-option>
+                    'register.selectLocation' | transloco
+                  }}</mat-option>
                   @for (location of locations; track location.value) {
                     <mat-option [value]="location.value">{{
-                        location.labelKey | transloco
-                      }}</mat-option>
+                      location.labelKey | transloco
+                    }}</mat-option>
                   }
                 </mat-select>
                 @if (
                   registerForm.get('userLocation')?.hasError('required') &&
                   registerForm.get('userLocation')?.touched
-                  ) {
+                ) {
                   <mat-error>{{ 'register.errors.locationRequired' | transloco }}</mat-error>
                 }
               </mat-form-field>
@@ -109,13 +108,13 @@
                 @if (
                   registerForm.get('email')?.hasError('required') &&
                   registerForm.get('email')?.touched
-                  ) {
+                ) {
                   <mat-error>{{ 'register.errors.emailRequired' | transloco }}</mat-error>
                 }
                 @if (
                   registerForm.get('email')?.hasError('pattern') &&
                   registerForm.get('email')?.touched
-                  ) {
+                ) {
                   <mat-error>{{ 'register.errors.emailInvalid' | transloco }}</mat-error>
                 }
               </mat-form-field>
@@ -141,19 +140,19 @@
                 @if (
                   registerForm.get('password')?.hasError('required') &&
                   registerForm.get('password')?.touched
-                  ) {
+                ) {
                   <mat-error>{{ 'register.errors.passwordRequired' | transloco }}</mat-error>
                 }
                 @if (
                   registerForm.get('password')?.hasError('minlength') &&
                   registerForm.get('password')?.touched
-                  ) {
+                ) {
                   <mat-error>{{ 'register.errors.passwordMinLength' | transloco }}</mat-error>
                 }
                 @if (
                   registerForm.get('password')?.hasError('pattern') &&
                   registerForm.get('password')?.touched
-                  ) {
+                ) {
                   <mat-error>{{ 'register.errors.passwordPattern' | transloco }}</mat-error>
                 }
               </mat-form-field>
@@ -179,13 +178,13 @@
                 @if (
                   registerForm.get('confirmPassword')?.hasError('required') &&
                   registerForm.get('confirmPassword')?.touched
-                  ) {
+                ) {
                   <mat-error>{{ 'register.errors.confirmPasswordRequired' | transloco }}</mat-error>
                 }
                 @if (
                   registerForm.get('confirmPassword')?.hasError('passwordMismatch') &&
                   registerForm.get('confirmPassword')?.touched
-                  ) {
+                ) {
                   <mat-error>{{ 'register.errors.passwordMismatch' | transloco }}</mat-error>
                 }
               </mat-form-field>
