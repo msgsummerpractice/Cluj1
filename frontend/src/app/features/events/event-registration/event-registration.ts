@@ -20,7 +20,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { ToastService } from '../../../core/services/toast.service';
 
-const DRIVER_NAME_PATTERN = /^[\p{L}-]+$/u;
+const DRIVER_NAME_PATTERN = /^[\p{L}'-]+$/u;
 
 @Component({
   selector: 'app-event-registration-view',
@@ -95,7 +95,7 @@ export class EventRegistration implements OnInit {
       foodPreference: ['NONE'],
       transportationNeeded: [false],
       driverName: [''],
-      driverPhone: [''],
+      driverPhone: ['', [Validators.maxLength(50)]],
       accommodationNeeded: [false],
       accommodationDays: [null, [Validators.min(1)]],
     });
@@ -194,7 +194,7 @@ export class EventRegistration implements OnInit {
     );
     driverPhoneControl?.setValidators(
       isInternal && transportationNeeded
-        ? [Validators.required, Validators.pattern(PHONE_NUMBER_PATTERN)]
+        ? [Validators.required, Validators.maxLength(50), Validators.pattern(PHONE_NUMBER_PATTERN)]
         : [],
     );
     accommodationDaysControl?.setValidators(

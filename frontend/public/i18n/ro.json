@@ -278,7 +278,7 @@
     "driverName": "Nume Șofer",
     "driverNamePlaceholder": "Introdu numele șoferului",
     "driverNameError": "Numele șoferului este obligatoriu când este necesar transportul.",
-    "driverNamePatternError": "Numele șoferului poate conține doar litere și cratime.",
+    "driverNamePatternError": "Numele șoferului poate conține doar litere, cratime și apostrofuri.",
     "driverPhone": "Telefon Șofer",
     "driverPhonePlaceholder": "Introdu telefonul șoferului",
     "driverPhoneError": "Telefonul șoferului este obligatoriu când este necesar transportul.",
