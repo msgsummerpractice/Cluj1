@@ -6,6 +6,7 @@ import com.cluj1.eventapp.model.enums.EventLocation;
 import com.cluj1.eventapp.model.enums.EventStatus;
 import com.cluj1.eventapp.model.enums.EventType;
 import com.cluj1.eventapp.security.JwtAuthenticationFilter;
+import com.cluj1.eventapp.service.EventDetailsService;
 import com.cluj1.eventapp.service.EventService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,8 @@ class EventControllerTest {
 
     @MockitoBean
     private EventService eventService;
+    @MockitoBean
+    private EventDetailsService eventDetailsService;
 
     @Test
     void getAllEventsReturnOkForMarketingOrganizer() throws Exception {
@@ -120,5 +123,53 @@ class EventControllerTest {
                 .andExpect(jsonPath("$[0].location").value("CLUJ"))
                 .andExpect(jsonPath("$[0].type").value("LOCAL"))
                 .andExpect(jsonPath("$[0].status").value("DRAFT"));
+    }
+
+    @Test
+    void getEligibleEventsReturns200ForParticipant() throws Exception {
+        when(eventService.getEligibleEventsForCurrentUser()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/events/eligible")
+                .with(user("participant").authorities(new SimpleGrantedAuthority("PARTICIPANT"))))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+    }
+
+    @Test
+    void getEligibleEventsReturns401ForUnauthenticatedUser() throws Exception {
+        mockMvc.perform(get("/api/events/eligible"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getEligibleEventsIncludesRegistrationAndCheckInFieldsInResponse() throws Exception {
+        EventDto registered = EventDto.builder()
+                .id(UUID.randomUUID())
+                .name("ClujFest")
+                .location(EventLocation.CLUJ)
+                .type(EventType.LOCAL)
+                .status(EventStatus.PUBLISHED)
+                .isRegistered(true)
+                .isCheckedIn(false)
+                .build();
+        EventDto checkedIn = EventDto.builder()
+                .id(UUID.randomUUID())
+                .name("Tech Summit")
+                .location(EventLocation.ALL)
+                .type(EventType.INTERNAL)
+                .status(EventStatus.PUBLISHED)
+                .isRegistered(true)
+                .isCheckedIn(true)
+                .build();
+
+        when(eventService.getEligibleEventsForCurrentUser()).thenReturn(List.of(registered, checkedIn));
+
+        mockMvc.perform(get("/api/events/eligible")
+                .with(user("participant").authorities(new SimpleGrantedAuthority("PARTICIPANT"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].isRegistered").value(true))
+                .andExpect(jsonPath("$[0].isCheckedIn").value(false))
+                .andExpect(jsonPath("$[1].isRegistered").value(true))
+                .andExpect(jsonPath("$[1].isCheckedIn").value(true));
     }
 }

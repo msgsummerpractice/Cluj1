@@ -1,7 +1,6 @@
 package com.cluj1.eventapp.service;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
 
 import com.cluj1.eventapp.dto.UserProfileDto;
@@ -26,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -85,7 +83,6 @@ public class UserService {
                     "Cannot remove or deactivate the last active Admin account.");
         }
     }
-
 
     @Transactional(readOnly = true)
     public UserProfileDto getUserProfileByEmail(String email) {

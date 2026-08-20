@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Event } from '../models/event.model';
 import { CheckInRequest } from '../models/check-in-request.model';
 import { EventDetails } from '../models/event-detail.models';
+import { EventRegistrationRequest } from '../models/event-registration.model';
 import { AttendanceRecord } from '../models/attendance-record.model';
 import { CheckInCodes } from '../models/checkincodes.model';
 
@@ -62,16 +63,38 @@ export class EventService {
     });
   }
 
+  getEligibleEvents(): Observable<Event[]> {
+    return this.http.get<Event[]>(`${this.apiUrl}/eligible`);
+  }
+
+  registerForEvent(eventId: string, requestData: EventRegistrationRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${eventId}`, requestData, {
+      responseType: 'text',
+      withCredentials: true,
+    });
+  }
+
   updateEventStatus(id: string, status: 'DRAFT' | 'PUBLISHED' | 'COMPLETED'): Observable<Event> {
     return this.http.patch<Event>(`${this.apiUrl}/${id}/status/${status}`, null, {
       withCredentials: true,
     });
   }
 
+  checkIfAlreadyRegistered(eventId: string): Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiUrl}/${eventId}/check`, {
+      withCredentials: true,
+    });
+  }
+
   generateCheckInCodes(eventId: string): Observable<CheckInCodes> {
     const url = `${this.apiUrl}/${eventId}/checkin-codes`;
-    return this.http.post<CheckInCodes>(url, {});
+    return this.http.post<CheckInCodes>(url, {}, { withCredentials: true });
   }
+
+  getEventCheckInDetails(eventId: string): Observable<CheckInCodes> {
+    return this.http.get<CheckInCodes>(`${this.apiUrl}/${eventId}/checkin`);
+  }
+
   checkIn(request: CheckInRequest): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/checkin`, request, {
       withCredentials: true,

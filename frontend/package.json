@@ -11,6 +11,7 @@
   "private": true,
   "packageManager": "npm@11.16.0",
   "dependencies": {
+    "@angular/animations": "^22.1.1",
     "@angular/cdk": "~22.1.1",
     "@angular/common": "^22.0.0",
     "@angular/compiler": "^22.0.0",
@@ -20,7 +21,9 @@
     "@angular/platform-browser": "^22.0.0",
     "@angular/router": "^22.0.0",
     "@jsverse/transloco": "^8.4.0",
+    "@zxing/library": "^0.23.0",
     "@zxing/ngx-scanner": "^22.0.1",
+    "jspdf": "^4.2.1",
     "jwt-decode": "^4.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

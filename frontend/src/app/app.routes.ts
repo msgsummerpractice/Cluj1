@@ -7,7 +7,7 @@ import { RubiksCubeComponent } from './features/rubiks-cube-component/rubiks-cub
 
 export const routes: Routes = [
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
-  {path: 'rubik', component: RubiksCubeComponent},
+  { path: 'rubik', component: RubiksCubeComponent },
   {
     path: 'register',
     component: RegisterComponent,
@@ -65,7 +65,7 @@ export const routes: Routes = [
   {
     path: 'events',
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT'] },
+    data: { roles: ['PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN'] },
     loadComponent: () =>
       import('./features/events/event-list/event-list').then((m) => m.EventListComponent),
   },
@@ -79,10 +79,13 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'events/:id',
-    canActivate: [authGuard],
+    path: 'events/:id/register',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'USER', 'PARTICIPANT'] },
     loadComponent: () =>
-      import('./features/events/event-details/event-details').then((m) => m.EventDetailsComponent),
+      import('./features/events/event-registration/event-registration').then(
+        (m) => m.EventRegistration,
+      ),
   },
   {
     path: 'events/:id/edit',
@@ -98,6 +101,12 @@ export const routes: Routes = [
     component: EventCheckInComponent,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT'] },
+  },
+  {
+    path: 'events/:id',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/events/event-details/event-details').then((m) => m.EventDetailsComponent),
   },
   {
     path: '**',

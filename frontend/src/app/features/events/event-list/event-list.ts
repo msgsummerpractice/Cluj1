@@ -1,11 +1,12 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { Event } from '../../../core/models/event.model';
 import { EventService } from '../../../core/services/event.service';
-
+import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
 import { Sort, SortDirection } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -13,8 +14,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTooltip } from '@angular/material/tooltip';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { DataTableComponent } from '../../../shared/components/data-table/data-table';
 import { DataTableCellDefDirective } from '../../../shared/components/data-table/data-table-cell-def.directive';
@@ -22,45 +23,64 @@ import { DataTableFilterDefDirective } from '../../../shared/components/data-tab
 import { DataTableColumn } from '../../../shared/components/data-table/data-table.model';
 import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 import { EventSortField, displayEventEndDate, sortEvents } from './event-list.utils';
-import { AuthService } from '../../../core/services/auth.service';
-
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog';
 import { ConfirmDialogData } from '../../../shared/components/confirm-dialog/confirm-dialog.model';
-import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-event-list',
   imports: [
     BackButtonComponent,
     CommonModule,
-    DataTableComponent,
     DataTableCellDefDirective,
+    DataTableComponent,
     DataTableFilterDefDirective,
     MatButtonModule,
     MatCheckboxModule,
+    MatFormFieldModule,
     MatIcon,
     MatInputModule,
-    MatFormFieldModule,
     MatProgressSpinnerModule,
-    MatTooltip,
+    MatTooltipModule,
     TranslocoModule,
   ],
   templateUrl: './event-list.html',
   styleUrl: './event-list.css',
 })
 export class EventListComponent implements OnInit {
-  readonly columns: readonly DataTableColumn[] = [
-    { key: 'name', label: 'events.eventNameColumn', sortKey: 'name' },
-    { key: 'date', label: 'events.eventDateColumn', sortKey: 'startDate' },
-    { key: 'status', label: 'events.eventStatusColumn', sortKey: 'status' },
-    { key: 'type', label: 'events.eventTypeColumn', sortKey: 'type', cellClass: 'text-gray-600' },
-    {
-      key: 'actions',
-      label: 'events.eventActionsColumn',
-      headerClass: 'text-center',
-      cellClass: 'text-center',
-    },
-  ];
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly eventService = inject(EventService);
+  private readonly toastService = inject(ToastService);
+
+  readonly viewMode = computed<'ADMIN' | 'PARTICIPANT'>(() =>
+    this.authService.isParticipant() ? 'PARTICIPANT' : 'ADMIN',
+  );
+
+  readonly pageTitle = computed(() =>
+    this.viewMode() === 'PARTICIPANT' ? 'events.participantPageTitle' : 'events.eventPageTitle',
+  );
+
+  readonly columns = computed<DataTableColumn[]>(() => {
+    return [
+      { key: 'name', label: 'events.eventNameColumn', sortKey: 'name' },
+      { key: 'date', label: 'events.eventDateColumn', sortKey: 'startDate' },
+      { key: 'status', label: 'events.eventStatusColumn', sortKey: 'status' },
+      { key: 'type', label: 'events.eventTypeColumn', sortKey: 'type', cellClass: 'text-gray-600' },
+      {
+        key: 'participantStatus',
+        label: 'events.participantStatusColumn',
+        headerClass: 'text-center',
+        cellClass: 'text-center',
+      },
+      {
+        key: 'actions',
+        label: 'events.eventActionsColumn',
+        headerClass: 'text-center',
+        cellClass: 'text-center',
+      },
+    ];
+  });
+
   readonly events = signal<readonly Event[]>([]);
   readonly publishingEventIds = signal<readonly string[]>([]);
   readonly nameFilter = signal('');
@@ -70,6 +90,7 @@ export class EventListComponent implements OnInit {
   readonly selectedTypes = signal<readonly string[]>([]);
   readonly sortField = signal<EventSortField | ''>('');
   readonly sortDirection = signal<SortDirection>('');
+
   readonly dateYearOptions = computed(() =>
     this.uniqueValues(
       this.events()
@@ -77,6 +98,7 @@ export class EventListComponent implements OnInit {
         .filter((year) => year !== ''),
     ),
   );
+
   readonly dateMonthOptions = computed(() =>
     this.uniqueValues(
       this.events()
@@ -84,12 +106,15 @@ export class EventListComponent implements OnInit {
         .filter((month) => month !== ''),
     ).sort((firstMonth, secondMonth) => Number(firstMonth) - Number(secondMonth)),
   );
+
   readonly statusOptions = computed(() =>
     this.uniqueValues(this.events().map((event) => event.status)),
   );
+
   readonly typeOptions = computed(() =>
     this.uniqueValues(this.events().map((event) => event.type)),
   );
+
   readonly hasActiveFilters = computed(
     () =>
       this.nameFilter().trim() !== '' ||
@@ -98,6 +123,7 @@ export class EventListComponent implements OnInit {
       this.selectedStatuses().length > 0 ||
       this.selectedTypes().length > 0,
   );
+
   readonly filteredEvents = computed(() => {
     const nameQuery = this.nameFilter().trim().toLowerCase();
     const dateYears = this.selectedDateYears();
@@ -117,16 +143,14 @@ export class EventListComponent implements OnInit {
       return matchesName && matchesDateYear && matchesDateMonth && matchesStatus && matchesType;
     });
   });
+
   readonly visibleEvents = computed(() =>
     sortEvents(this.filteredEvents(), this.sortField(), this.sortDirection()),
   );
 
-  private readonly eventService = inject(EventService);
-  private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
   private readonly translocoService = inject(TranslocoService);
 
-  private readonly toastService = inject(ToastService);
   ngOnInit(): void {
     this.fetchEvents();
   }
@@ -185,7 +209,12 @@ export class EventListComponent implements OnInit {
   }
 
   fetchEvents(): void {
-    this.eventService.getEvents().subscribe({
+    const fetchRequest$ =
+      this.viewMode() === 'PARTICIPANT'
+        ? this.eventService.getEligibleEvents()
+        : this.eventService.getEvents();
+
+    fetchRequest$.subscribe({
       next: (data) => {
         this.events.set(data);
       },
@@ -345,7 +374,6 @@ export class EventListComponent implements OnInit {
     );
   }
 
-  readonly authService = inject(AuthService);
   isMarketingOrganizer(): boolean {
     return this.authService.isMarketingOrganizer();
   }
@@ -354,10 +382,25 @@ export class EventListComponent implements OnInit {
     return this.authService.isHrUser();
   }
 
+  checkIn(eventId: string): void {
+    this.router.navigate(['/events', eventId, 'checkin']);
+  }
+
   editEvent(eventId: string): void {
     this.router.navigate(['/events', eventId, 'edit']);
   }
 
+  openRegistrationModal(event: any) {
+    this.router.navigate(['/events', event.id, 'register']);
+  }
+
+  isRegistrationClosed(event: Event): boolean {
+    if (!event.registrationEndDate) {
+      return false;
+    }
+
+    return Date.now() >= new Date(event.registrationEndDate).getTime();
+  }
   completeEvent(event: Event): void {
     if (!this.eventHasEnded(event)) {
       this.toastService.show('error', this.translocoService.translate('events.complete.notEnded'));

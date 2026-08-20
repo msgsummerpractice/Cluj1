@@ -1,12 +1,15 @@
 package com.cluj1.eventapp.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.cluj1.eventapp.dto.CheckInCodesDto;
 import com.cluj1.eventapp.repository.RegistrationRepository;
 import com.cluj1.eventapp.service.AttendanceReportExcelGenerator;
 import com.cluj1.eventapp.service.EventService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +19,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import com.cluj1.eventapp.dto.AttendanceRecordDto;
 import com.cluj1.eventapp.dto.EventDetailsDto;
 import com.cluj1.eventapp.dto.EventDto;
+import com.cluj1.eventapp.dto.EventRegistrationDto;
+
 import com.cluj1.eventapp.model.enums.EventStatus;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +28,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -44,6 +50,9 @@ public class EventController {
 	private final EventCheckInService eventCheckInService;
 	private final RegistrationRepository registrationRepository;
 	private final AttendanceReportExcelGenerator attendanceReportExcelGenerator;
+	private final EventService eventService;
+	private final EventDetailsService eventDetailsService;
+	private final EventCheckInService eventCheckInService;
 
 	@GetMapping("/countRegistrationPerUser")
 	public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal) {
@@ -58,33 +67,38 @@ public class EventController {
 	}
 
 	@GetMapping("/{id}")
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	@PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
 	public ResponseEntity<EventDto> getEventById(@PathVariable UUID id) {
 		return ResponseEntity.ok(eventService.getEventById(id));
 	}
 
 	@GetMapping("/{id}/details")
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT')")
 	public ResponseEntity<EventDetailsDto> getEventDetails(@PathVariable UUID id) {
 		return ResponseEntity.ok(eventDetailsService.getEventDetailsByEventId(id));
 	}
 
+	@GetMapping("/{id}/checkin")
+	@PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	public ResponseEntity<CheckInCodesDto> getEventCheckInDetails(@PathVariable UUID id) {
+		return ResponseEntity.ok(eventService.getCheckInDetails(id));
+	}
+
+	@PostMapping(consumes=MediaType.MULTIPART_FORM_DATA_VALUE)@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
+	public ResponseEntity<EventDto> createEvent(
+			@RequestPart("event") EventDto eventDto,
+			@RequestPart(value = "poster", required = false) MultipartFile poster) {
+		return ResponseEntity.status(HttpStatus.CREATED).body(eventService.createEvent(eventDto, poster));
+	}
+
 	@GetMapping("/{id}/poster")
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	@PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
 	public ResponseEntity<byte[]> getEventPoster(@PathVariable UUID id) {
 		return eventDetailsService.getPosterByEventId(id)
 				.map(poster -> ResponseEntity.ok()
 						.contentType(detectImageType(poster))
 						.body(poster))
 				.orElseGet(() -> ResponseEntity.notFound().build());
-	}
-
-	@PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
-	public ResponseEntity<EventDto> createEvent(
-			@RequestPart("event") EventDto eventDto,
-			@RequestPart(value = "poster", required = false) MultipartFile poster) {
-		return ResponseEntity.status(HttpStatus.CREATED).body(eventService.createEvent(eventDto, poster));
 	}
 
 	@PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -96,35 +110,14 @@ public class EventController {
 		return ResponseEntity.ok(eventService.updateEvent(id, eventDto, poster));
 	}
 
-	@GetMapping("/{id}/checkins/recent")
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
-	public ResponseEntity<List<AttendanceRecordDto>> getRecentCheckins(
-			@PathVariable UUID id,
-			@RequestParam(defaultValue = "4") int limit) {
-		return ResponseEntity.ok(eventCheckInService.getRecentCheckins(id, limit));
-	}
-
-	@GetMapping(value = "/{id}/attendance-report", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+	@GetMapping(value="/{id}/attendance-report",produces="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 	@PreAuthorize("hasAnyAuthority('HR_USER')")
+
 	public ResponseEntity<byte[]> downloadAttendanceReport(@PathVariable UUID id) {
 		byte[] report = attendanceReportExcelGenerator.generate(registrationRepository.findAttendanceReportRows(id));
 		return ResponseEntity.ok()
 				.header("Content-Disposition", "attachment; filename=attendance-report-" + id + ".xlsx")
 				.body(report);
-	}
-
-	@PatchMapping("/{id}/status/{status}")
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
-	public ResponseEntity<EventDto> updateEventStatus(
-			@PathVariable UUID id,
-			@PathVariable EventStatus status) {
-		return ResponseEntity.ok(eventService.updateEventStatus(id, status));
-	}
-
-	@PostMapping("/{id}/checkin-codes")
-	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
-	public ResponseEntity<CheckInCodesDto> generateCheckInCodes(@PathVariable UUID id) {
-		return ResponseEntity.ok(eventService.generateCheckInCodes(id));
 	}
 
 	private static MediaType detectImageType(byte[] poster) {
@@ -141,4 +134,69 @@ public class EventController {
 		return MediaType.IMAGE_PNG;
 	}
 
+}
+
+	/**
+	 * Returns the list of events the authenticated participant is eligible to
+	 * register for.
+	 * Eligibility is determined by the service based on event status, registration
+	 * deadline,
+	 * and location matching. Each event in the response includes
+	 * {@code isRegistered} and
+	 * {@code isCheckedIn} flags reflecting the caller's current participation
+	 * state.
+	 *
+	 * @return 200 OK with the eligible event list
+	 */
+	@GetMapping("/eligible")
+	@PreAuthorize("hasAnyAuthority('PARTICIPANT', 'MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	public ResponseEntity<List<EventDto>> getEligibleEvents() {
+		return ResponseEntity.ok(eventService.getEligibleEventsForCurrentUser());
+	}
+
+	@PostMapping("/{eventId}")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'USER', 'PARTICIPANT')")
+	public ResponseEntity<Map<String, String>> registerForEvent(
+			@PathVariable UUID eventId,
+			@Valid @RequestBody EventRegistrationDto requestDto,
+			Principal principal) {
+
+		String email = principal.getName();
+		eventService.registerUser(eventId, email, requestDto);
+
+		return ResponseEntity.ok(Map.of("message", "Successfully registered for the event."));
+	}
+
+	@GetMapping("/{eventId}/check")
+	public ResponseEntity<Boolean> checkIfRegistered(
+			@PathVariable UUID eventId,
+			Principal principal) {
+
+		String userEmail = principal.getName();
+		boolean isRegistered = eventService.isUserRegistered(eventId, userEmail);
+
+		return ResponseEntity.ok(isRegistered);
+	}
+
+	@GetMapping("/{id}/checkins/recent")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
+	public ResponseEntity<List<AttendanceRecordDto>> getRecentCheckins(
+			@PathVariable UUID id,
+			@RequestParam(defaultValue = "4") int limit) {
+		return ResponseEntity.ok(eventCheckInService.getRecentCheckins(id, limit));
+	}
+
+	@PatchMapping("/{id}/status/{status}")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
+	public ResponseEntity<EventDto> updateEventStatus(
+			@PathVariable UUID id,
+			@PathVariable EventStatus status) {
+		return ResponseEntity.ok(eventService.updateEventStatus(id, status));
+	}
+
+	@PostMapping("/{id}/checkin-codes")
+    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
+    public ResponseEntity<CheckInCodesDto> generateCheckInCodes(@PathVariable UUID id) {
+        return ResponseEntity.ok(eventService.generateCheckInCodes(id));
+    }
 }
