@@ -112,6 +112,9 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
     return Date.now() > new Date(event.registrationEndDate).getTime();
   }
 
+  canViewStatistics(): boolean {
+    return this.authService.isHrUser() || this.authService.isMarketingOrganizer();
+  }
   onExportExcel(): void {
     const currentEvent = this.event();
     if (!currentEvent || !this.canExport()) return;

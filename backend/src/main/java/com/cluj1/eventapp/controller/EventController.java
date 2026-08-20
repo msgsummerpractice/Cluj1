@@ -24,7 +24,7 @@ import com.cluj1.eventapp.dto.AttendanceRecordDto;
 import com.cluj1.eventapp.dto.EventDetailsDto;
 import com.cluj1.eventapp.dto.EventDto;
 import com.cluj1.eventapp.dto.EventRegistrationDto;
-
+import com.cluj1.eventapp.dto.EventStatisticsDto;
 import com.cluj1.eventapp.model.enums.EventStatus;
 
 import com.cluj1.eventapp.service.EventCheckInService;
@@ -175,6 +175,12 @@ public class EventController {
         return ResponseEntity.ok(isRegistered);
     }
 
+    @GetMapping("/{id}/statistics")
+    public ResponseEntity<EventStatisticsDto> getEventStatistics(@PathVariable UUID id) {
+        EventStatisticsDto statistics = eventService.getEventStatistics(id);
+        return ResponseEntity.ok(statistics);
+    }
+
     @GetMapping("/{id}/checkins/recent")
     @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
     public ResponseEntity<List<AttendanceRecordDto>> getRecentCheckins(
@@ -231,6 +237,20 @@ public class EventController {
 
         return ResponseEntity.ok(eventMapper.toEventRegistrationDto(registration));
     }
+    /**
+     * Exports the registration data for the specified event as an Excel file.
+     *
+     * <p>
+     * This endpoint is accessible only to users with the
+     * {@code MARKETING_ORGANIZER} authority. The generated Excel file is returned
+     * as an attachment with a filename based on the event ID.
+     * </p>
+     *
+     * @param id the unique identifier of the event whose registration data should
+     *           be exported
+     * @return a {@link ResponseEntity} containing the Excel file as a byte array,
+     *         along with the appropriate content type and attachment headers
+     */
     @GetMapping("/{id}/export")
     @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
     public ResponseEntity<byte[]> exportEventData(@PathVariable UUID id) {

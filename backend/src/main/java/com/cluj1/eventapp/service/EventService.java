@@ -40,6 +40,8 @@ import jakarta.persistence.EntityNotFoundException;
 
 import com.cluj1.eventapp.dto.EventDto;
 import com.cluj1.eventapp.dto.EventRegistrationDto;
+import com.cluj1.eventapp.dto.EventStatisticsDto;
+import com.cluj1.eventapp.dto.ParticipantDetailDto;
 import com.cluj1.eventapp.mapper.EventMapper;
 import com.cluj1.eventapp.exception.InvalidEventOperationException;
 
@@ -60,6 +62,7 @@ public class EventService {
     private final RegistrationRepository registrationRepository;
     private final EventMapper eventMapper;
     private final EventPublishMailService eventPublishMailService;
+    private final RecipientPoolService recipientPoolService;
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
     private final Random random = new Random();
@@ -499,6 +502,76 @@ public class EventService {
 
         return eventRepository.existsByEventIdAndUserId(eventId, user.getId());
     }
+
+    public EventStatisticsDto getEventStatistics(UUID eventId) {
+    Event event = eventRepository.findById(eventId)
+            .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+
+    int invitedCount = 0;
+    try {
+        invitedCount = recipientPoolService.getRecipientsCountForEvent(event.getLocation());
+    } catch (Exception e) {
+        log.warn("Could not fetch recipient pool count for event {}", eventId);
+    }
+
+    List<Registration> registrations = registrationRepository.findByEventId(eventId);
+    int registrationCount = registrations.size();
+
+    long participantCount = registrations.stream()
+            .filter(r -> r.getAttendanceRecord() != null)
+            .count();
+
+    Map<FoodPreference, Long> foodCounts = registrations.stream()
+                .collect(java.util.stream.Collectors.groupingBy(
+                        r -> r.getFoodPreference() != null ? r.getFoodPreference() : FoodPreference.NONE,
+                        java.util.stream.Collectors.counting()
+                ));
+
+    Map<String, Double> foodPercentages = new java.util.HashMap<>();
+    if (registrationCount > 0) {
+        foodCounts.forEach((pref, count) ->
+            foodPercentages.put(pref.name(), (count * 100.0) / registrationCount)
+        );
+    }
+
+    long accommodationCount = registrations.stream().filter(r -> Boolean.TRUE.equals(r.getAccommodationNeeded())).count();
+    long transportCount = registrations.stream().filter(r -> Boolean.TRUE.equals(r.getTransportationNeeded())).count();
+    long photoConsentCount = registrations.stream().filter(r -> Boolean.TRUE.equals(r.getPhotoConsent())).count();
+
+    double accommodationPercentage = registrationCount > 0 ? (accommodationCount * 100.0) / registrationCount : 0.0;
+    double transportPercentage = registrationCount > 0 ? (transportCount * 100.0) / registrationCount : 0.0;
+    double photoConsentPercentage = registrationCount > 0 ? (photoConsentCount * 100.0) / registrationCount : 0.0;
+
+    Map<String, Long> timeDistribution = new java.util.LinkedHashMap<>();
+    registrations.forEach(r -> {
+        if (r.getRegistrationDate() != null) {
+            String dayKey = r.getRegistrationDate().toLocalDate().toString();
+            timeDistribution.put(dayKey, timeDistribution.getOrDefault(dayKey, 0L) + 1);
+        }
+    });
+
+    List<ParticipantDetailDto> participantDetails = registrations.stream().map(r ->
+    ParticipantDetailDto.builder()
+        .name(r.getUser().getUserDetails() != null ?
+              r.getUser().getUserDetails().getFirstName() + " " + r.getUser().getUserDetails().getLastName() : "Unknown")
+        .email(r.getUser().getEmail())
+        .status(r.getAttendanceRecord() != null ? "CHECKED_IN" : "REGISTERED")
+        .checkInTime(r.getAttendanceRecord() != null ? r.getAttendanceRecord().getCheckInTime().toString() : "-")
+        .build()
+    ).toList();
+
+    return EventStatisticsDto.builder()
+            .invitedCount(invitedCount)
+            .registrationCount(registrationCount)
+            .participantCount(participantCount)
+            .registrationTimeDistribution(timeDistribution)
+            .foodPreferencePercentages(foodPercentages)
+            .accommodationPercentage(accommodationPercentage)
+            .transportPercentage(transportPercentage)
+            .photoConsentPercentage(photoConsentPercentage)
+            .participants(participantDetails)
+            .build();
+}
 
     @Transactional
     public void deleteRegistration(UUID eventId, String userEmail) {
