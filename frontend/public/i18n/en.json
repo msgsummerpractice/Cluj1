@@ -358,6 +358,7 @@
     "email": "Email",
     "status": "Status",
     "checkInTime": "Check-in Time",
-    "noParticipants": "No participants registered for this event."
+    "noParticipants": "No participants registered for this event.",
+    "registrationsPerDay": "Registrations per Day"
   }
 }

@@ -11,7 +11,7 @@ import java.util.Map;
 public class EventStatisticsDto {
     private int invitedCount;
     private int registrationCount;
-    private int participantCount;
+    private long participantCount;
     private Map<String, Long> registrationTimeDistribution;
     private Map<String, Double> foodPreferencePercentages;
     private double accommodationPercentage;

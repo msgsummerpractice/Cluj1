@@ -478,20 +478,20 @@ public class EventService {
     List<Registration> registrations = registrationRepository.findByEventId(eventId);
     int registrationCount = registrations.size();
     
-    int participantCount = (int) registrations.stream()
+    long participantCount = registrations.stream()
             .filter(r -> r.getAttendanceRecord() != null)
             .count();
 
-    Map<String, Long> foodCounts = registrations.stream()
-            .collect(java.util.stream.Collectors.groupingBy(
-                    r -> r.getFoodPreference() != null ? r.getFoodPreference().name() : "NONE",
-                    java.util.stream.Collectors.counting()
-            ));
+    Map<FoodPreference, Long> foodCounts = registrations.stream()
+                .collect(java.util.stream.Collectors.groupingBy(
+                        r -> r.getFoodPreference() != null ? r.getFoodPreference() : FoodPreference.NONE,
+                        java.util.stream.Collectors.counting()
+                ));
 
     Map<String, Double> foodPercentages = new java.util.HashMap<>();
     if (registrationCount > 0) {
         foodCounts.forEach((pref, count) -> 
-            foodPercentages.put(pref, (count * 100.0) / registrationCount)
+            foodPercentages.put(pref.name(), (count * 100.0) / registrationCount)
         );
     }
 

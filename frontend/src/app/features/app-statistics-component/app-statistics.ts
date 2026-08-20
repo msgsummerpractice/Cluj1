@@ -1,31 +1,34 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, effect, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
 import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
 import { MatCardModule } from '@angular/material/card';
 import { EventStatistics } from '../../core/models/event-statistics.model';
 import { EventService } from '../../core/services/event.service';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { MatTableModule } from '@angular/material/table';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-statistics',
-  standalone: true,
-  imports: [CommonModule, MatCardModule, BaseChartDirective, TranslocoModule],
+  imports: [CommonModule, MatCardModule, BaseChartDirective, TranslocoModule, MatTableModule],
   templateUrl: './app-statistics.html',
 })
-export class StatisticsViewComponent implements OnInit {
+export class StatisticsViewComponent implements OnDestroy {
+  readonly id = input.required<string>();
   private eventService = inject(EventService);
-  private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
   stats: EventStatistics | null = null;
+  displayedColumns: string[] = ['name', 'email', 'status', 'checkInTime'];
+  private readonly translocoService = inject(TranslocoService);
+  private langSubscription?: Subscription;
 
   public barChartData: ChartConfiguration<'bar'>['data'] = {
     labels: [],
     datasets: [
       {
         data: [],
-        label: 'Registrations per Day',
+        label: this.translocoService.translate('statistics.registrationsPerDay'),
         backgroundColor: '#8b5cf6',
         borderRadius: 6,
         barThickness: 32,
@@ -56,15 +59,25 @@ export class StatisticsViewComponent implements OnInit {
     },
   };
 
-  ngOnInit() {
-    const eventId = this.route.snapshot.paramMap.get('id');
-    if (eventId) {
-      this.eventService.getEventStatistics(eventId).subscribe((data) => {
+  constructor() {
+    effect(() => {
+      this.eventService.getEventStatistics(this.id()).subscribe((data) => {
         this.stats = data;
         this.updateChart(data.registrationTimeDistribution);
         this.cdr.detectChanges();
       });
-    }
+    });
+
+    this.langSubscription = this.translocoService.langChanges$.subscribe(() => {
+      if (this.stats) {
+        this.updateChart(this.stats.registrationTimeDistribution);
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.langSubscription?.unsubscribe();
   }
 
   updateChart(distribution: { [key: string]: number }) {
@@ -73,7 +86,7 @@ export class StatisticsViewComponent implements OnInit {
       datasets: [
         {
           data: Object.values(distribution),
-          label: 'Registrations per Day',
+          label: this.translocoService.translate('statistics.registrationsPerDay'),
           backgroundColor: '#8b5cf6',
           borderRadius: 6,
           barThickness: 32,

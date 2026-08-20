@@ -359,6 +359,7 @@
     "email": "Email",
     "status": "Stare",
     "checkInTime": "Ora Check-in",
-    "noParticipants": "Nu există participanți înregistrați pentru acest eveniment."
+    "noParticipants": "Nu există participanți înregistrați pentru acest eveniment.",
+    "registrationsPerDay": "Înregistrări pe Zi"
   }
 }
