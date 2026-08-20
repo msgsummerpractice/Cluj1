@@ -337,5 +337,23 @@
       "general": "An unexpected error occurred during check-in.",
       "invalid_code": "The check-in code you entered is invalid."
     }
+  },
+  "statistics": {
+    "title": "Event Statistics",
+    "invited": "Invited",
+    "registered": "Registered",
+    "participants": "Participants (Check-in)",
+    "accommodationRequested": "Accommodation Requested",
+    "transportRequested": "Transport Requested",
+    "photoConsent": "Photo Consent",
+    "foodPreferences": "Food Preferences Breakdown",
+    "timeDistribution": "Registration Time Distribution",
+    "timeDistributionSubtitle": "Snapshot of registrations over time.",
+    "attendanceDetails": "Participant-level Attendance Details",
+    "name": "Name",
+    "email": "Email",
+    "status": "Status",
+    "checkInTime": "Check-in Time",
+    "noParticipants": "No participants registered for this event."
   }
 }

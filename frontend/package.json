@@ -22,8 +22,10 @@
     "@jsverse/transloco": "^8.4.0",
     "@zxing/library": "^0.23.0",
     "@zxing/ngx-scanner": "^22.0.1",
+    "chart.js": "^4.5.1",
     "jspdf": "^4.2.1",
     "jwt-decode": "^4.0.0",
+    "ng2-charts": "^10.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

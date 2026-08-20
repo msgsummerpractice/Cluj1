@@ -103,6 +103,15 @@ export const routes: Routes = [
     data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT'] },
   },
   {
+    path: 'events/:id/statistics',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN'] },
+    loadComponent: () =>
+      import('./features/app-statistics-component/app-statistics').then(
+        (m) => m.StatisticsViewComponent,
+      ),
+  },
+  {
     path: 'events/:id',
     canActivate: [authGuard],
     loadComponent: () =>

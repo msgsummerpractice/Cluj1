@@ -116,6 +116,17 @@
                 </aside>
               }
 
+              @if (event.status === 'PUBLISHED' || event.status === 'COMPLETED') {
+                <button
+                  mat-flat-button
+                  class="w-full mt-3"
+                  [routerLink]="['/events', event.id, 'statistics']"
+                >
+                  <mat-icon>analytics</mat-icon>
+                  View Statistics
+                </button>
+              }
+
               <app-checkincodes-component
                 [eventId]="event.id"
                 [eventStatus]="event.status"

@@ -7,9 +7,10 @@ import { EventService } from '../../../core/services/event.service';
 import { TranslocoModule } from '@jsverse/transloco';
 import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 import { MatButtonModule } from '@angular/material/button';
-import {CheckincodesComponent} from '../../checkincodes-component/checkincodes-component';
+import { CheckincodesComponent } from '../../checkincodes-component/checkincodes-component';
 import { ToastService } from '../../../core/services/toast.service';
-import{ChangeDetectorRef} from '@angular/core';
+import { ChangeDetectorRef } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-event-details',
@@ -19,6 +20,7 @@ import{ChangeDetectorRef} from '@angular/core';
     BackButtonComponent,
     RouterLink,
     MatButtonModule,
+    MatIconModule,
     CheckincodesComponent,
   ],
   templateUrl: './event-details.html',

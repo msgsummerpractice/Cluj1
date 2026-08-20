@@ -1,0 +1,147 @@
+<div class="p-8 bg-white min-h-screen">
+  <h1 class="text-2xl font-bold mb-6">{{ 'statistics.title' | transloco }}</h1>
+
+  <!-- Top Cards: Summary -->
+  <div class="grid grid-cols-3 gap-4 mb-8">
+    <mat-card class="p-4 shadow-md">
+      <mat-card-header class="text-gray-500 text-sm">{{
+        'statistics.invited' | transloco
+      }}</mat-card-header>
+      <mat-card-content class="text-3xl font-semibold mt-2">
+        {{ stats?.invitedCount ?? 0 }}
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="p-4 shadow-md">
+      <mat-card-header class="text-gray-500 text-sm">{{
+        'statistics.registered' | transloco
+      }}</mat-card-header>
+      <mat-card-content class="text-3xl font-semibold mt-2">
+        {{ stats?.registrationCount ?? 0 }}
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="p-4 shadow-md">
+      <mat-card-header class="text-gray-500 text-sm">{{
+        'statistics.participants' | transloco
+      }}</mat-card-header>
+      <mat-card-content class="text-3xl font-semibold mt-2">
+        {{ stats?.participantCount ?? 0 }}
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Mid Cards: Requirements Percentages -->
+  <div class="grid grid-cols-3 gap-4 mb-8">
+    <mat-card class="p-4 shadow-md">
+      <mat-card-header class="text-gray-500 text-sm">{{
+        'statistics.accommodationRequested' | transloco
+      }}</mat-card-header>
+      <mat-card-content class="text-2xl font-bold mt-2">
+        {{ stats?.accommodationPercentage ?? 0 | number: '1.0-1' }}%
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="p-4 shadow-md">
+      <mat-card-header class="text-gray-500 text-sm">{{
+        'statistics.transportRequested' | transloco
+      }}</mat-card-header>
+      <mat-card-content class="text-2xl font-bold mt-2">
+        {{ stats?.transportPercentage ?? 0 | number: '1.0-1' }}%
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="p-4 shadow-md">
+      <mat-card-header class="text-gray-500 text-sm">{{
+        'statistics.photoConsent' | transloco
+      }}</mat-card-header>
+      <mat-card-content class="text-2xl font-bold mt-2">
+        {{ stats?.photoConsentPercentage ?? 0 | number: '1.0-1' }}%
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Food Preferences Breakdown -->
+  <div class="mb-8">
+    <mat-card class="p-4 shadow-md">
+      <mat-card-header class="font-semibold mb-4 text-gray-700">{{
+        'statistics.foodPreferences' | transloco
+      }}</mat-card-header>
+      <mat-card-content class="grid grid-cols-3 gap-4">
+        @if (stats?.foodPreferencePercentages) {
+          @for (food of objectKeys(stats!.foodPreferencePercentages); track food) {
+            <div class="bg-gray-50 p-3 rounded border text-center">
+              <p class="text-sm text-gray-500 uppercase">{{ food }}</p>
+              <p class="text-xl font-bold">
+                {{ stats!.foodPreferencePercentages[food] | number: '1.0-1' }}%
+              </p>
+            </div>
+          }
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Bar Chart: Registration Time Distribution -->
+  <div class="chart-wrapper p-6 bg-white rounded shadow border mb-8">
+    <h2 class="text-lg font-semibold mb-1">{{ 'statistics.timeDistribution' | transloco }}</h2>
+    <p class="text-sm text-gray-500 mb-6">
+      {{ 'statistics.timeDistributionSubtitle' | transloco }}
+    </p>
+
+    <div style="position: relative; height: 320px; width: 100%">
+      <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="'bar'"> </canvas>
+    </div>
+  </div>
+
+  <!-- Participant-level Attendance Details Table -->
+  <div class="mt-8 p-6 bg-white rounded shadow border">
+    <h2 class="text-xl font-bold mb-6">{{ 'statistics.attendanceDetails' | transloco }}</h2>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="border-b bg-gray-50">
+            <th class="p-4 text-gray-600 font-medium">{{ 'statistics.name' | transloco }}</th>
+            <th class="p-4 text-gray-600 font-medium">{{ 'statistics.email' | transloco }}</th>
+            <th class="p-4 text-gray-600 font-medium">{{ 'statistics.status' | transloco }}</th>
+            <th class="p-4 text-gray-600 font-medium">
+              {{ 'statistics.checkInTime' | transloco }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (stats?.participants && stats!.participants.length > 0) {
+            @for (p of stats?.participants; track p.email) {
+              <tr class="border-b hover:bg-gray-50 transition-colors">
+                <td class="p-4">{{ p.name }}</td>
+                <td class="p-4 text-gray-600">{{ p.email }}</td>
+                <td class="p-4">
+                  <span
+                    class="px-2 py-1 rounded-full text-xs font-bold"
+                    [class]="
+                      p.status === 'CHECKED_IN'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-orange-100 text-orange-700'
+                    "
+                  >
+                    {{ p.status }}
+                  </span>
+                </td>
+                <td class="p-4 text-gray-600">
+                  {{ p.checkInTime !== '-' ? (p.checkInTime | date: 'medium') : 'N/A' }}
+                </td>
+              </tr>
+            }
+          } @else {
+            <tr>
+              <td colspan="4" class="p-8 text-center text-gray-500">
+                {{ 'statistics.noParticipants' | transloco }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
