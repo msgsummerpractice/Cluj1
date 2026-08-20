@@ -67,10 +67,8 @@
     </tr>
   </table>
 
-  <!-- Custom Numbered Paginator -->
   @if (showPaginator() && data().length > 0) {
     <div class="flex flex-wrap items-center justify-between px-4 py-3 border-t bg-white">
-      <!-- Page Size Selector -->
       <div class="flex items-center gap-2">
         <span class="text-sm text-gray-700">Items per page:</span>
         <select
@@ -84,9 +82,7 @@
         </select>
       </div>
 
-      <!-- Numbered Navigation Controls -->
       <div class="flex items-center gap-1">
-        <!-- First Page << -->
         <button
           mat-icon-button
           [disabled]="pageIndex() === 0"
@@ -96,7 +92,6 @@
           <mat-icon>keyboard_double_arrow_left</mat-icon>
         </button>
 
-        <!-- Page Numbers -->
         @for (page of visiblePages(); track $index) {
           <button
             mat-button
@@ -109,8 +104,6 @@
           </button>
         }
 
-
-        <!-- Last Page >> -->
         <button
           mat-icon-button
           [disabled]="pageIndex() >= totalPages() - 1"

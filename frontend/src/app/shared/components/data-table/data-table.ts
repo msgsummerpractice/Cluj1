@@ -59,10 +59,9 @@ export class DataTableComponent<T> {
     Math.max(Math.ceil(this.data().length / this.pageSize()), 1),
   );
 
-  // Generates the array for the template: e.g. [1, 2, 3, '...', 9, 10]
   readonly visiblePages = computed(() => {
     const total = this.totalPages();
-    const current = this.pageIndex() + 1; // 1-based index for human readability
+    const current = this.pageIndex() + 1;
 
     if (total <= 7) {
       return Array.from({ length: total }, (_, i) => i + 1);
@@ -87,7 +86,6 @@ export class DataTableComponent<T> {
     return this.data().slice(start, start + this.pageSize());
   });
 
-  // --- Pagination Navigation Methods ---
 
   goToPage(page: number | string): void {
     if (page === '...' || typeof page === 'string') return;
@@ -105,10 +103,9 @@ export class DataTableComponent<T> {
   handlePageSizeChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
     this.pageSize.set(Number(selectElement.value));
-    this.pageIndex.set(0); // Reset to first page when size changes
+    this.pageIndex.set(0);
   }
 
-  // --- Content Children & Templates ---
 
   private readonly cellDefs = contentChildren(DataTableCellDefDirective, { descendants: true });
   private readonly filterDefs = contentChildren(DataTableFilterDefDirective, { descendants: true });

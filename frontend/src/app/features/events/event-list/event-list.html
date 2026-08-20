@@ -39,11 +39,9 @@
       }
     </ng-template>
 
-    <!-- NEW DATE RANGE FILTER -->
     <ng-template appDataTableFilterDef="date">
       <div class="flex flex-col gap-2 pt-1">
 
-        <!-- Mode Selector -->
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>{{ 'events.dateFilterType' | transloco }}</mat-label>
           <mat-select [value]="dateFilterMode()" (selectionChange)="setDateFilterMode($event.value)">
@@ -53,7 +51,6 @@
           </mat-select>
         </mat-form-field>
 
-        <!-- RANGE Picker -->
         @if (dateFilterMode() === 'range') {
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>{{ 'events.dateRange' | transloco }}</mat-label>
@@ -66,7 +63,6 @@
           </mat-form-field>
         }
 
-        <!-- AFTER Picker (Start Date Only) -->
         @if (dateFilterMode() === 'after') {
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>{{ 'events.dateAfter' | transloco }}</mat-label>
@@ -76,7 +72,6 @@
           </mat-form-field>
         }
 
-        <!-- BEFORE Picker (End Date Only) -->
         @if (dateFilterMode() === 'before') {
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>{{ 'events.dateBefore' | transloco }}</mat-label>
