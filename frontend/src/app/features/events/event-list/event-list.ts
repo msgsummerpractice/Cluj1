@@ -25,6 +25,10 @@ import { BackButtonComponent } from '../../../shared/components/back-button/back
 import { EventSortField, displayEventEndDate, sortEvents } from './event-list.utils';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog';
 import { ConfirmDialogData } from '../../../shared/components/confirm-dialog/confirm-dialog.model';
+import { ClearFilter } from '../../../shared/components/clear-filter/clear-filter';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import {MatSelectModule} from '@angular/material/select';
 
 @Component({
   selector: 'app-event-list',
@@ -42,7 +46,11 @@ import { ConfirmDialogData } from '../../../shared/components/confirm-dialog/con
     MatProgressSpinnerModule,
     MatTooltipModule,
     TranslocoModule,
+    ClearFilter,
+    MatDatepickerModule,
+    MatSelectModule,
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './event-list.html',
   styleUrl: './event-list.css',
 })
@@ -84,29 +92,17 @@ export class EventListComponent implements OnInit {
   readonly events = signal<readonly Event[]>([]);
   readonly publishingEventIds = signal<readonly string[]>([]);
   readonly downloadingReportEventIds = signal<readonly string[]>([]);
+
+  readonly dateFilterMode = signal<'range' | 'after' | 'before'>('range');
+
   readonly nameFilter = signal('');
-  readonly selectedDateYears = signal<readonly string[]>([]);
-  readonly selectedDateMonths = signal<readonly string[]>([]);
+  readonly dateFilterStart = signal<Date | null>(null);
+  readonly dateFilterEnd = signal<Date | null>(null);
   readonly selectedStatuses = signal<readonly string[]>([]);
   readonly selectedTypes = signal<readonly string[]>([]);
+
   readonly sortField = signal<EventSortField | ''>('');
   readonly sortDirection = signal<SortDirection>('');
-
-  readonly dateYearOptions = computed(() =>
-    this.uniqueValues(
-      this.events()
-        .map((event) => this.getDateParts(event.startDate).year)
-        .filter((year) => year !== ''),
-    ),
-  );
-
-  readonly dateMonthOptions = computed(() =>
-    this.uniqueValues(
-      this.events()
-        .map((event) => this.getDateParts(event.startDate).month)
-        .filter((month) => month !== ''),
-    ).sort((firstMonth, secondMonth) => Number(firstMonth) - Number(secondMonth)),
-  );
 
   readonly statusOptions = computed(() =>
     this.uniqueValues(this.events().map((event) => event.status)),
@@ -119,29 +115,39 @@ export class EventListComponent implements OnInit {
   readonly hasActiveFilters = computed(
     () =>
       this.nameFilter().trim() !== '' ||
-      this.selectedDateYears().length > 0 ||
-      this.selectedDateMonths().length > 0 ||
+      this.dateFilterStart() !== null ||
+      this.dateFilterEnd() !== null ||
       this.selectedStatuses().length > 0 ||
       this.selectedTypes().length > 0,
   );
 
   readonly filteredEvents = computed(() => {
     const nameQuery = this.nameFilter().trim().toLowerCase();
-    const dateYears = this.selectedDateYears();
-    const dateMonths = this.selectedDateMonths();
+    const startDate = this.dateFilterStart();
+    const endDate = this.dateFilterEnd();
     const statuses = this.selectedStatuses();
     const types = this.selectedTypes();
 
     return this.events().filter((event) => {
       const matchesName = event.name.toLowerCase().includes(nameQuery);
-      const dateParts = this.getDateParts(event.startDate);
-      const matchesDateYear = dateYears.length === 0 || dateYears.includes(dateParts.year);
-      const matchesDateMonth = dateMonths.length === 0 || dateMonths.includes(dateParts.month);
       const matchesStatus =
         statuses.length === 0 || statuses.includes(event.status.trim().toLowerCase());
       const matchesType = types.length === 0 || types.includes(event.type.trim().toLowerCase());
 
-      return matchesName && matchesDateYear && matchesDateMonth && matchesStatus && matchesType;
+      const eventDate = new Date(event.startDate);
+      let matchesDate = true;
+
+      if (startDate) {
+        matchesDate = matchesDate && eventDate >= startDate;
+      }
+
+      if (endDate) {
+        const endOfDay = new Date(endDate);
+        endOfDay.setHours(23, 59, 59, 999);
+        matchesDate = matchesDate && eventDate <= endOfDay;
+      }
+
+      return matchesName && matchesStatus && matchesType && matchesDate;
     });
   });
 
@@ -158,21 +164,25 @@ export class EventListComponent implements OnInit {
 
   handleSortChange(sort: Sort): void {
     const sortField = this.toEventSortField(sort.active);
-
     this.sortField.set(sortField);
     this.sortDirection.set(sortField === '' ? '' : sort.direction);
+  }
+
+  setDateFilterMode(mode: 'range' | 'after' | 'before'): void {
+    this.dateFilterMode.set(mode);
+    this.clearDateFilters();
   }
 
   setNameFilter(value: string): void {
     this.nameFilter.set(value);
   }
 
-  toggleDateYearFilter(year: string, checked: boolean): void {
-    this.toggleFilter(this.selectedDateYears, year, checked);
+  setDateStart(date: Date | null): void {
+    this.dateFilterStart.set(date);
   }
 
-  toggleDateMonthFilter(month: string, checked: boolean): void {
-    this.toggleFilter(this.selectedDateMonths, month, checked);
+  setDateEnd(date: Date | null): void {
+    this.dateFilterEnd.set(date);
   }
 
   toggleStatusFilter(status: string, checked: boolean): void {
@@ -185,10 +195,35 @@ export class EventListComponent implements OnInit {
 
   clearFilters(): void {
     this.nameFilter.set('');
-    this.selectedDateYears.set([]);
-    this.selectedDateMonths.set([]);
+    this.dateFilterStart.set(null);
+    this.dateFilterEnd.set(null);
     this.selectedStatuses.set([]);
     this.selectedTypes.set([]);
+  }
+
+  clearNameFilters(): void {
+    this.nameFilter.set('');
+  }
+
+  clearDateFilters(): void {
+    this.dateFilterStart.set(null);
+    this.dateFilterEnd.set(null);
+  }
+
+  clearStatusFilters(): void {
+    this.selectedStatuses.set([]);
+  }
+
+  clearTypeFilters(): void {
+    this.selectedTypes.set([]);
+  }
+
+  isStatusSelected(status: string): boolean {
+    return this.selectedStatuses().includes(status.trim().toLowerCase());
+  }
+
+  isTypeSelected(type: string): boolean {
+    return this.selectedTypes().includes(type.trim().toLowerCase());
   }
 
   displayEventEndDate(event: Event): boolean {
@@ -197,15 +232,12 @@ export class EventListComponent implements OnInit {
 
   getStatusBadgeClass(status: string): string {
     const normalizedStatus = status.trim().toLowerCase();
-
     if (normalizedStatus.includes('draft')) {
       return 'status-draft';
     }
-
     if (normalizedStatus.includes('published')) {
       return 'status-published';
     }
-
     return 'status-completed';
   }
 
@@ -227,26 +259,6 @@ export class EventListComponent implements OnInit {
 
   manageEvent(eventId: string): void {
     this.router.navigate(['/events', eventId]);
-  }
-
-  isDateYearSelected(year: string): boolean {
-    return this.selectedDateYears().includes(year);
-  }
-
-  isDateMonthSelected(month: string): boolean {
-    return this.selectedDateMonths().includes(month);
-  }
-
-  getMonthLabel(month: string): Date {
-    return new Date(2000, Number(month), 1);
-  }
-
-  isStatusSelected(status: string): boolean {
-    return this.selectedStatuses().includes(status.trim().toLowerCase());
-  }
-
-  isTypeSelected(type: string): boolean {
-    return this.selectedTypes().includes(type.trim().toLowerCase());
   }
 
   isPublishing(eventId: string): boolean {
@@ -338,6 +350,73 @@ export class EventListComponent implements OnInit {
       });
   }
 
+  checkIn(eventId: string): void {
+    this.router.navigate(['/events', eventId, 'checkin']);
+  }
+
+  editEvent(eventId: string): void {
+    this.router.navigate(['/events', eventId, 'edit']);
+  }
+
+  openRegistrationModal(event: any) {
+    this.router.navigate(['/events', event.id, 'register']);
+  }
+
+  completeEvent(event: Event): void {
+    if (!this.eventHasEnded(event)) {
+      this.toastService.show('error', this.translocoService.translate('events.complete.notEnded'));
+      return;
+    }
+
+    this.openConfirmDialog({
+      titleKey: 'events.complete.title',
+      messageKey: 'events.complete.message',
+      confirmKey: 'events.complete.confirm',
+      cancelKey: 'events.complete.cancel',
+    })
+      .pipe(
+        filter((confirmed): confirmed is true => Boolean(confirmed)),
+        switchMap(() => this.eventService.updateEventStatus(event.id, 'COMPLETED')),
+      )
+      .subscribe({
+        next: () => {
+          this.fetchEvents();
+          this.toastService.show(
+            'success',
+            this.translocoService.translate('events.complete.success'),
+          );
+        },
+        error: () => {
+          this.toastService.show('error', this.translocoService.translate('events.complete.error'));
+        },
+      });
+  }
+
+  navigateToCheckIn(eventId: string): void {
+    this.router.navigate(['/events', eventId, 'checkin']);
+  }
+
+  isMarketingOrganizer(): boolean {
+    return this.authService.isMarketingOrganizer();
+  }
+
+  isHrUser(): boolean {
+    return this.authService.isHrUser();
+  }
+
+  isRegistrationClosed(event: Event): boolean {
+    if (!event.registrationEndDate) {
+      return false;
+    }
+    return Date.now() >= new Date(event.registrationEndDate).getTime();
+  }
+
+  eventHasEnded(event: Event): boolean {
+    const currentDate = new Date();
+    const eventEndDate = new Date(event.endDate);
+    return currentDate > eventEndDate;
+  }
+
   private openConfirmDialog(data: ConfirmDialogData): Observable<boolean | undefined> {
     return this.dialog
       .open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
@@ -369,27 +448,13 @@ export class EventListComponent implements OnInit {
 
   private uniqueValues(values: readonly string[]): string[] {
     const unique = new Map<string, string>();
-
     values.forEach((value) => {
       const key = value.trim().toLowerCase();
       if (!unique.has(key)) {
         unique.set(key, value);
       }
     });
-
     return [...unique.values()];
-  }
-
-  private getDateParts(value: string): { year: string; month: string } {
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) {
-      return { year: '', month: '' };
-    }
-
-    return {
-      year: String(date.getFullYear()),
-      month: String(date.getMonth()),
-    };
   }
 
   private toggleFilter(
@@ -405,72 +470,5 @@ export class EventListComponent implements OnInit {
           : [...currentValues, value]
         : currentValues.filter((currentValue) => currentValue !== value),
     );
-  }
-
-  isMarketingOrganizer(): boolean {
-    return this.authService.isMarketingOrganizer();
-  }
-
-  isHrUser(): boolean {
-    return this.authService.isHrUser();
-  }
-
-  checkIn(eventId: string): void {
-    this.router.navigate(['/events', eventId, 'checkin']);
-  }
-
-  editEvent(eventId: string): void {
-    this.router.navigate(['/events', eventId, 'edit']);
-  }
-
-  openRegistrationModal(event: any) {
-    this.router.navigate(['/events', event.id, 'register']);
-  }
-
-  isRegistrationClosed(event: Event): boolean {
-    if (!event.registrationEndDate) {
-      return false;
-    }
-
-    return Date.now() >= new Date(event.registrationEndDate).getTime();
-  }
-  completeEvent(event: Event): void {
-    if (!this.eventHasEnded(event)) {
-      this.toastService.show('error', this.translocoService.translate('events.complete.notEnded'));
-      return;
-    }
-
-    this.openConfirmDialog({
-      titleKey: 'events.complete.title',
-      messageKey: 'events.complete.message',
-      confirmKey: 'events.complete.confirm',
-      cancelKey: 'events.complete.cancel',
-    })
-      .pipe(
-        filter((confirmed): confirmed is true => Boolean(confirmed)),
-        switchMap(() => this.eventService.updateEventStatus(event.id, 'COMPLETED')),
-      )
-      .subscribe({
-        next: () => {
-          this.fetchEvents();
-          this.toastService.show(
-            'success',
-            this.translocoService.translate('events.complete.success'),
-          );
-        },
-        error: () => {
-          this.toastService.show('error', this.translocoService.translate('events.complete.error'));
-        },
-      });
-  }
-
-  eventHasEnded(event: Event): boolean {
-    const currentDate = new Date();
-    const eventEndDate = new Date(event.endDate);
-    return currentDate > eventEndDate;
-  }
-
-  navigateToCheckIn(eventId: string): void {
-    this.router.navigate(['/events', eventId, 'checkin']);
   }
 }

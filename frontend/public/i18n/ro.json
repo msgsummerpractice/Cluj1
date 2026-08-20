@@ -86,6 +86,13 @@
     "registered": "Înregistrat",
     "checkedIn": "Prezent (Check-in)",
     "fetchError": "Preluarea evenimentelor a eșuat. Te rugăm să încerci din nou.",
+    "dateBefore": "Înainte",
+    "dateAfter": "După",
+    "dateRange": "Interval",
+    "dateFilterType": "Tip filtru",
+    "startDate": "Început",
+    "endDate": "Sfârșit",
+    "clearFilters": "Șterge filtrele",
     "publish": {
       "title": "Confirmă publicarea",
       "message": "Ești sigur că vrei să publici acest eveniment?",
