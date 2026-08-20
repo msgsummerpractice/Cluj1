@@ -24,6 +24,9 @@ import com.cluj1.eventapp.dto.EventRegistrationDto;
 
 import com.cluj1.eventapp.model.enums.EventStatus;
 
+import com.cluj1.eventapp.service.EventExportService;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,6 +52,7 @@ public class EventController {
     private final EventService eventService;
     private final EventDetailsService eventDetailsService;
     private final EventCheckInService eventCheckInService;
+    private final EventExportService eventExportService;
     private final RegistrationRepository registrationRepository;
     private final AttendanceExcelGeneratorService attendanceReportExcelGenerator;
 
@@ -199,5 +203,34 @@ public class EventController {
     @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
     public ResponseEntity<CheckInCodesDto> generateCheckInCodes(@PathVariable UUID id) {
         return ResponseEntity.ok(eventService.generateCheckInCodes(id));
+    }
+
+    /**
+     * Exports the registration data for the specified event as an Excel file.
+     *
+     * <p>
+     * This endpoint is accessible only to users with the
+     * {@code MARKETING_ORGANIZER} authority. The generated Excel file is returned
+     * as an attachment with a filename based on the event ID.
+     * </p>
+     *
+     * @param id the unique identifier of the event whose registration data should
+     *           be exported
+     * @return a {@link ResponseEntity} containing the Excel file as a byte array,
+     *         along with the appropriate content type and attachment headers
+     */
+    @GetMapping("/{id}/export")
+    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
+    public ResponseEntity<byte[]> exportEventData(@PathVariable UUID id) {
+        byte[] excelData = eventExportService.exportEventRegistrationsToExcel(id);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(
+                MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        headers.setContentDisposition(ContentDisposition.builder("attachment")
+                .filename("attendance_report_" + id + ".xlsx")
+                .build());
+
+        return new ResponseEntity<>(excelData, headers, HttpStatus.OK);
     }
 }
