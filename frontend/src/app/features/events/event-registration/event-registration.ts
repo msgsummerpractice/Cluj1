@@ -67,7 +67,7 @@ export class EventRegistration implements OnInit {
         this.updateFormValidators(eventData);
       },
       error: () => {
-        this.errorMessage.set('Could not load event details.');
+        this.router.navigate(['/not-found']);
       },
     });
 

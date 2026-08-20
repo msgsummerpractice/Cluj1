@@ -207,13 +207,18 @@ export class EventCreationComponent implements OnInit {
       : this.eventService.createEvent(payload, this.selectedFile() || undefined);
 
     request$.subscribe({
-      next: () => {
+      next: (result: any) => {
         this.isSubmitting.set(false);
         this.toastService.show(
           'success',
           this.translocoService.translate(id ? 'createEvent.updated' : 'createEvent.created'),
         );
-        this.router.navigate(id ? ['/events', id] : ['/events']);
+        if (id) {
+          this.router.navigate(['/events', id]);
+        } else {
+          // Stay on the form in edit mode for the newly created event
+          this.router.navigate(['/events', result.id, 'edit'], { replaceUrl: true });
+        }
       },
       error: (err) => {
         this.isSubmitting.set(false);

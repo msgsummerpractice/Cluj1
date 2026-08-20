@@ -4,6 +4,7 @@ import { RegisterComponent } from './features/register-component/register-compon
 import { ProfileComponent } from './features/profile-component/profile-component';
 import { EventCheckInComponent } from './features/events/event-checkin/event-checkin';
 import { RubiksCubeComponent } from './features/rubiks-cube-component/rubiks-cube-component';
+import { NotFoundComponent } from './shared/components/not-found/not-found';
 
 export const routes: Routes = [
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
@@ -109,7 +110,11 @@ export const routes: Routes = [
       import('./features/events/event-details/event-details').then((m) => m.EventDetailsComponent),
   },
   {
+    path: 'not-found',
+    component: NotFoundComponent,
+  },
+  {
     path: '**',
-    redirectTo: 'login',
+    redirectTo: 'not-found',
   },
 ];

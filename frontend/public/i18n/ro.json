@@ -26,6 +26,11 @@
   },
   "account": "Cont utilizator",
   "openMenu": "Deschide meniul de navigare",
+  "notFound": {
+    "title": "Acest eveniment nu există",
+    "subtitle": "Evenimentul căutat nu a putut fi găsit sau a fost șters.",
+    "back": "Înapoi la Evenimente"
+  },
   "auth": {
     "loginTitle": "Autentificare",
     "loginSubtitle": "Introdu adresa de email și parola pentru a-ți accesa contul.",

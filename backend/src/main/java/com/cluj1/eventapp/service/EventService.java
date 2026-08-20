@@ -109,7 +109,7 @@ public class EventService {
 
     @Transactional
     public EventDto updateEventStatus(UUID id, EventStatus status) {
-        Event event = eventRepository.findById(id)
+        Event event = eventRepository.findByIdForUpdate(id)
                 .orElseThrow(() -> new EntityNotFoundException("Event not found"));
 
         boolean justPublished = false;

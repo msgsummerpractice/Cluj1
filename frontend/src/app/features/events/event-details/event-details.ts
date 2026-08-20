@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, inject, signal, computed } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Event } from '../../../core/models/event.model';
 import { EventDetails } from '../../../core/models/event-detail.models';
 import { EventService } from '../../../core/services/event.service';
@@ -31,6 +31,7 @@ import { AuthService } from '../../../core/services/auth.service';
 })
 export class EventDetailsComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly eventService = inject(EventService);
   private readonly authService = inject(AuthService);
   private readonly toast = inject(ToastService);
@@ -63,8 +64,8 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
       next: (event) => {
         this.event.set(event);
       },
-      error: (error) => {
-        this.toast.show('error', error);
+      error: () => {
+        this.router.navigate(['/not-found']);
       },
     });
 
