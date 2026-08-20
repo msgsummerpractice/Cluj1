@@ -179,7 +179,8 @@
     "errorUpdatingRole": "Eroare la actualizarea rolului",
     "userActivated": "Contul utilizatorului a fost activat cu succes",
     "userDeactivated": "Contul utilizatorului a fost dezactivat cu succes",
-    "errorUpdatingStatus": "Eroare la actualizarea stării"
+    "errorUpdatingStatus": "Eroare la actualizarea stării",
+    "changeUserStatus": "Starea utilizatorului a fost schimbată cu succes"
   },
   "register": {
     "title": "Înregistrează un cont nou",
@@ -230,7 +231,7 @@
     "eventCode": "Cod eveniment",
     "downloadPDF": "Descarcă PDF",
     "enter6digitCode": "Sau introdu acest cod de 6 cifre: ",
-    "generateCodes" : "Generează coduri de check-in"
+    "generateCodes": "Generează coduri de check-in"
   },
   "forgotPassword": {
     "title": "Ai uitat parola",

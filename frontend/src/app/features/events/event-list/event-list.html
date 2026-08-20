@@ -85,10 +85,10 @@
     </ng-template>
 
     <ng-template appDataTableCellDef="date" let-event>
-      {{ event.startDate | date: 'mediumDate' }}
+      {{ event.startDate | date: 'dd MMM yyyy HH:mm' }}
 
       @if (displayEventEndDate(event)) {
-        <span> - {{ event.endDate | date: 'mediumDate' }} </span>
+        <span> - {{ event.endDate | date: 'dd MMM yyyy HH:mm' }} </span>
       }
     </ng-template>
 

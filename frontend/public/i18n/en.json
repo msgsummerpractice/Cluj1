@@ -60,7 +60,8 @@
     "errorUpdatingRole": "Error updating role",
     "userActivated": "User account activated successfully",
     "userDeactivated": "User account deactivated successfully",
-    "errorUpdatingStatus": "Error updating status"
+    "errorUpdatingStatus": "Error updating status",
+    "changeUserStatus": "User status changed successfully"
   },
   "auth": {
     "loginTitle": "Log in",
