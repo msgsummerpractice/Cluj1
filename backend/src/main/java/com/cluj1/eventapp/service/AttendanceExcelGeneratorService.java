@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class AttendanceExcelGeneratorService {
@@ -27,14 +28,14 @@ public class AttendanceExcelGeneratorService {
     }
 
     private List<ExcelColumn<AttendanceReportExcelRowDto>> columns() {
-        int[] rowNumber = { 1 };
+        AtomicInteger sequence = new AtomicInteger(1);
 
         return List.of(
-                new ExcelColumn<>("nr_crt", row -> rowNumber[0]++),
+                new ExcelColumn<>("nr_crt", row -> sequence.getAndIncrement()),
                 new ExcelColumn<>("lastName", AttendanceReportExcelRowDto::getLastName),
                 new ExcelColumn<>("firstName", AttendanceReportExcelRowDto::getFirstName),
                 new ExcelColumn<>("email", AttendanceReportExcelRowDto::getEmail),
-                new ExcelColumn<>("gdpr", AttendanceReportExcelRowDto::isGdprConsent),
+                new ExcelColumn<>("gdpr", AttendanceReportExcelRowDto::isHasGdprConsent),
                 new ExcelColumn<>("registration_date", AttendanceReportExcelRowDto::getRegistrationDate),
                 new ExcelColumn<>("present", AttendanceReportExcelRowDto::isPresent));
     }
