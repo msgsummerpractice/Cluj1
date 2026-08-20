@@ -8,10 +8,9 @@ import com.cluj1.eventapp.dto.CheckInCodesDto;
 import com.cluj1.eventapp.model.Event;
 import com.cluj1.eventapp.model.Registration;
 import com.cluj1.eventapp.repository.RegistrationRepository;
-import com.cluj1.eventapp.service.AttendanceExcelGeneratorService;
+import com.cluj1.eventapp.service.*;
 import com.cluj1.eventapp.mapper.EventMapper;
 import com.cluj1.eventapp.model.Registration;
-import com.cluj1.eventapp.service.EventService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +26,7 @@ import com.cluj1.eventapp.dto.EventRegistrationDto;
 import com.cluj1.eventapp.dto.EventStatisticsDto;
 import com.cluj1.eventapp.model.enums.EventStatus;
 
-import com.cluj1.eventapp.service.EventCheckInService;
 import org.springframework.web.bind.annotation.*;
-import com.cluj1.eventapp.service.EventDetailsService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
