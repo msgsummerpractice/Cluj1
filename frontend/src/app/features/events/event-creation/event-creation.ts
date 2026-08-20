@@ -15,6 +15,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { ToastService } from '../../../core/services/toast.service';
+import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 
 @Component({
   selector: 'app-event-creation',
@@ -24,6 +25,7 @@ import { ToastService } from '../../../core/services/toast.service';
     ReactiveFormsModule,
     RouterLink,
     TranslocoModule,
+    BackButtonComponent,
     MatButtonModule,
     MatInputModule,
     MatSelectModule,
@@ -52,6 +54,7 @@ export class EventCreationComponent implements OnInit {
   readonly isSubmitting = signal(false);
 
   readonly eventId = signal<string | null>(null);
+  readonly isEditMode = computed(() => this.eventId() !== null);
 
   form = this.fb.group({
     name: ['', Validators.required],
@@ -191,11 +194,20 @@ export class EventCreationComponent implements OnInit {
     request$.subscribe({
       next: () => {
         this.isSubmitting.set(false);
-        this.router.navigate(['/events']);
+        this.toastService.show(
+          'success',
+          this.translocoService.translate(id ? 'createEvent.updated' : 'createEvent.created'),
+        );
+        this.router.navigate(id ? ['/events', id] : ['/events']);
       },
       error: (err) => {
         this.isSubmitting.set(false);
-        this.toastService.show('error', typeof err?.error === 'string' ? err.error :(err?.error?.message || err?.message || 'Failed to create event.'));
+        this.toastService.show(
+          'error',
+          typeof err?.error === 'string'
+            ? err.error
+            : err?.error?.message || err?.message || 'Failed to create event.',
+        );
       },
     });
   }

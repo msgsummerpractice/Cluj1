@@ -1,0 +1,32 @@
+::ng-deep .custom-maroon-toggle .mdc-switch--selected .mdc-switch__track::after {
+  background-color: var(--brand-maroon) !important;
+}
+
+::ng-deep .custom-maroon-toggle .mdc-switch--selected .mdc-switch__handle::after {
+  background-color: var(--brand-maroon) !important;
+}
+
+::ng-deep .custom-maroon-toggle .mdc-switch--selected:hover .mdc-switch__state-layer,
+::ng-deep .custom-maroon-toggle .mdc-switch--selected:focus .mdc-switch__state-layer {
+  background-color: var(--brand-maroon-hover-bg) !important;
+}
+
+::ng-deep .custom-maroon-toggle .mdc-switch--selected .mdc-switch__icon {
+  color: #ffffff !important;
+}
+
+::ng-deep .custom-maroon-toggle .mdc-switch--selected .mdc-switch__icons svg path {
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+.discard-btn {
+  color: var(--brand-maroon) !important;
+  border-color: #d1d5db !important;
+}
+
+.discard-btn:hover {
+  border-color: #f87171 !important;
+  color: #b91c1c !important;
+  background-color: #fff1f2 !important;
+}

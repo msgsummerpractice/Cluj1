@@ -208,6 +208,19 @@ export class EventListComponent implements OnInit {
     return 'status-completed';
   }
 
+  getTypeBadgeClass(type: string): string {
+    switch (type.trim().toUpperCase()) {
+      case 'INTERNAL':
+        return 'type-internal';
+      case 'EXTERNAL':
+        return 'type-external';
+      case 'LOCAL':
+        return 'type-local';
+      default:
+        return '';
+    }
+  }
+
   fetchEvents(): void {
     const fetchRequest$ =
       this.viewMode() === 'PARTICIPANT'

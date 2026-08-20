@@ -173,6 +173,14 @@
     "saveDraft": "Save draft",
     "discard": "Discard",
     "publishHint": "Published events become visible to all msg colleagues immediately.",
+    "created": "Event created successfully.",
+    "updated": "Event updated successfully.",
+    "editTitle": "Edit event",
+    "editSubtitle": "Update the details of this event.",
+    "saveChanges": "Save changes",
+    "typeHintInternal": "Applies to all locations. Food preference option available.",
+    "typeHintExternal": "Specific location required. No food preference.",
+    "typeHintLocal": "Specific location required. Food preference option available.",
     "errors": {
       "fileSize": "File size must be under 5MB.",
       "fileType": "Only JPEG/PNG files are allowed."

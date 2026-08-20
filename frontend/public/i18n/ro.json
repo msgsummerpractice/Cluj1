@@ -138,6 +138,14 @@
     "saveDraft": "Salvează ciornă",
     "discard": "Renunță",
     "publishHint": "Evenimentele publicate devin vizibile imediat pentru toți colegii msg.",
+    "created": "Evenimentul a fost creat cu succes.",
+    "updated": "Evenimentul a fost actualizat cu succes.",
+    "editTitle": "Editare eveniment",
+    "editSubtitle": "Actualizează detaliile acestui eveniment.",
+    "saveChanges": "Salvează modificările",
+    "typeHintInternal": "Se aplică tuturor locațiilor. Opțiunea pentru preferințe culinare este disponibilă.",
+    "typeHintExternal": "Locație specifică necesară. Fără preferințe culinare.",
+    "typeHintLocal": "Locație specifică necesară. Opțiunea pentru preferințe culinare este disponibilă.",
     "errors": {
       "fileSize": "Dimensiunea fișierului trebuie să fie sub 5MB.",
       "fileType": "Sunt permise doar fișierele JPEG/PNG."
@@ -228,7 +236,7 @@
     "eventCode": "Cod eveniment",
     "downloadPDF": "Descarcă PDF",
     "enter6digitCode": "Sau introdu acest cod de 6 cifre: ",
-    "generateCodes" : "Generează coduri de check-in"
+    "generateCodes": "Generează coduri de check-in"
   },
   "forgotPassword": {
     "title": "Ai uitat parola",

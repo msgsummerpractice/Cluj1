@@ -102,7 +102,12 @@
     </ng-template>
 
     <ng-template appDataTableCellDef="type" let-event>
-      {{ 'events.eventType' + (event.type | titlecase) | transloco }}
+      <span
+        class="status-badge px-3 py-1.5 text-xs font-medium rounded-full border inline-block whitespace-nowrap"
+        [ngClass]="getTypeBadgeClass(event.type)"
+      >
+        {{ 'events.eventType' + (event.type | titlecase) | transloco }}
+      </span>
     </ng-template>
 
     <ng-template appDataTableCellDef="participantStatus" let-event>

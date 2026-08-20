@@ -1,16 +1,16 @@
 @reference "tailwindcss";
 
 ::ng-deep .custom-warn-toggle .mdc-switch--selected .mdc-switch__track::after {
-  background-color: #8a1538 !important;
+  background-color: var(--brand-maroon) !important;
 }
 
 ::ng-deep .custom-warn-toggle .mdc-switch--selected .mdc-switch__handle::after {
-  background-color: #8a1538 !important;
+  background-color: var(--brand-maroon) !important;
 }
 
 ::ng-deep .custom-warn-toggle .mdc-switch--selected:hover .mdc-switch__state-layer,
 ::ng-deep .custom-warn-toggle .mdc-switch--selected:focus .mdc-switch__state-layer {
-  background-color: rgba(138, 21, 56, 0.15) !important;
+  background-color: var(--brand-maroon-hover-bg) !important;
 }
 
 ::ng-deep .mat-mdc-table {

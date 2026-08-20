@@ -5,23 +5,16 @@
     (ngSubmit)="onSubmit()"
     class="w-full max-w-[1400px] grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8"
   >
-    <div
-      class="col-span-1 lg:col-span-12 flex flex-col md:flex-row justify-between items-start md:items-center mb-2"
-    >
+    <div class="col-span-1 lg:col-span-12 flex items-start gap-3 mb-2">
+      <app-back-button />
       <div>
         <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
-          {{ 'createEvent.title' | transloco }}
+          {{ (isEditMode() ? 'createEvent.editTitle' : 'createEvent.title') | transloco }}
         </h1>
-        <p class="text-gray-500 mt-1 text-sm">{{ 'createEvent.subtitle' | transloco }}</p>
+        <p class="text-gray-500 mt-1 text-sm">
+          {{ (isEditMode() ? 'createEvent.editSubtitle' : 'createEvent.subtitle') | transloco }}
+        </p>
       </div>
-      <button
-        mat-stroked-button
-        type="button"
-        routerLink="/events"
-        class="mt-4 md:mt-0 bg-white shadow-sm border-gray-300 rounded-full px-6"
-      >
-        {{ 'createEvent.cancel' | transloco }}
-      </button>
     </div>
 
     <div class="col-span-1 lg:col-span-8 flex flex-col gap-6">
@@ -50,19 +43,48 @@
               <label class="text-sm font-medium text-gray-700">{{
                 'createEvent.eventTypeLabel' | transloco
               }}</label>
-              <mat-form-field appearance="outline" class="w-full h-[75px]">
+              <mat-form-field appearance="outline" class="w-full">
                 <mat-select
                   formControlName="type"
                   [placeholder]="'createEvent.selectTypePlaceholder' | transloco"
                 >
-                  <mat-option value="INTERNAL">{{
-                    'events.eventTypeInternal' | transloco
-                  }}</mat-option>
-                  <mat-option value="EXTERNAL">{{
-                    'events.eventTypeExternal' | transloco
-                  }}</mat-option>
-                  <mat-option value="LOCAL">{{ 'events.eventTypeLocal' | transloco }}</mat-option>
+                  <mat-option value="INTERNAL">
+                    <span class="flex items-center gap-2">
+                      <span
+                        class="w-2 h-2 rounded-full inline-block"
+                        style="background-color: var(--event-type-internal)"
+                      ></span>
+                      {{ 'events.eventTypeInternal' | transloco }}
+                    </span>
+                  </mat-option>
+                  <mat-option value="EXTERNAL">
+                    <span class="flex items-center gap-2">
+                      <span
+                        class="w-2 h-2 rounded-full inline-block"
+                        style="background-color: var(--event-type-external)"
+                      ></span>
+                      {{ 'events.eventTypeExternal' | transloco }}
+                    </span>
+                  </mat-option>
+                  <mat-option value="LOCAL">
+                    <span class="flex items-center gap-2">
+                      <span
+                        class="w-2 h-2 rounded-full inline-block"
+                        style="background-color: var(--event-type-local)"
+                      ></span>
+                      {{ 'events.eventTypeLocal' | transloco }}
+                    </span>
+                  </mat-option>
                 </mat-select>
+                @if (form.get('type')?.value === 'INTERNAL') {
+                  <mat-hint>{{ 'createEvent.typeHintInternal' | transloco }}</mat-hint>
+                }
+                @if (form.get('type')?.value === 'EXTERNAL') {
+                  <mat-hint>{{ 'createEvent.typeHintExternal' | transloco }}</mat-hint>
+                }
+                @if (form.get('type')?.value === 'LOCAL') {
+                  <mat-hint>{{ 'createEvent.typeHintLocal' | transloco }}</mat-hint>
+                }
               </mat-form-field>
             </div>
 
@@ -196,7 +218,10 @@
                 {{ 'createEvent.foodProvidedSubtitle' | transloco }}
               </p>
             </div>
-            <mat-slide-toggle formControlName="foodProvided" color="primary"></mat-slide-toggle>
+            <mat-slide-toggle
+              formControlName="foodProvided"
+              class="custom-maroon-toggle"
+            ></mat-slide-toggle>
           </div>
         </div>
       </div>
@@ -265,20 +290,24 @@
             mat-flat-button
             class="w-full !rounded-md !py-6 text-base font-semibold shadow-sm text-white"
             [disabled]="form.invalid || isSubmitting() || !!fileError()"
-            style="background-color: #a01441"
+            [style.background-color]="
+              form.valid && !isSubmitting() && !fileError() ? '#a01441' : null
+            "
           >
             <mat-icon class="mr-1">save</mat-icon>
             {{
               isSubmitting()
                 ? ('createEvent.saving' | transloco)
-                : ('createEvent.saveDraft' | transloco)
+                : isEditMode()
+                  ? ('createEvent.saveChanges' | transloco)
+                  : ('createEvent.saveDraft' | transloco)
             }}
           </button>
 
           <button
             type="button"
             mat-stroked-button
-            class="w-full !rounded-md !py-6 text-base font-medium text-gray-700 bg-gray-50 border-gray-300"
+            class="discard-btn w-full !rounded-md !py-6 text-base font-medium transition-colors"
             (click)="discard()"
           >
             {{ 'createEvent.discard' | transloco }}
