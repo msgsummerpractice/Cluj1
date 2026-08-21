@@ -19,7 +19,8 @@
     <app-data-table
       [data]="users()"
       [columns]="tableColumns"
-      [showPaginator]="false"
+      [showPaginator]="true"
+      [pageSizeOptions]="[10, 25, 50]"
       [noDataLabel]="'userList.noData'"
       [noDataDetail]="searchControl.value || ''"
     >
@@ -74,15 +75,5 @@
         </button>
       </ng-template>
     </app-data-table>
-
-    <mat-paginator
-      class="border border-gray-200 border-t-0 rounded-b-lg"
-      [length]="totalUsers()"
-      [pageSize]="pageSize()"
-      [pageSizeOptions]="[5, 10, 25, 100]"
-      (page)="onPageChange($event)"
-      aria-label="Select page"
-    >
-    </mat-paginator>
   </div>
 </div>

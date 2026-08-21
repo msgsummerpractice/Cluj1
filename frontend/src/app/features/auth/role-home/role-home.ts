@@ -4,10 +4,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { TranslocoService, TranslocoModule } from '@jsverse/transloco';
 import { AuthService } from '../../../core/services/auth.service';
 import { LanguageService } from '../../../core/services/language.service';
+import { RubiksCubeComponent } from '../../rubiks-cube-component/rubiks-cube-component';
 
 @Component({
   selector: 'app-role-home',
-  imports: [CommonModule, MatButtonModule, TranslocoModule],
+  imports: [CommonModule, MatButtonModule, TranslocoModule, RubiksCubeComponent],
   templateUrl: './role-home.html',
   styleUrl: './role-home.css',
 })

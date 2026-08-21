@@ -218,6 +218,7 @@
 }
 .meta-row .meta-item:not(:last-child) {
   border-right: 1px solid var(--event-border);
+  margin-top: auto;
 }
 .meta-item {
   display: flex;
@@ -233,7 +234,6 @@
   color: var(--event-maroon);
 }
 
-/* About Card Details */
 .description {
   margin: 0 0 22px;
   color: #475569;
@@ -272,6 +272,7 @@
   overflow-wrap: anywhere;
 }
 
+
 .registration-date {
   display: flex;
   align-items: center;
@@ -291,10 +292,6 @@
   color: var(--event-muted);
 }
 
-.action-button-primary {
-  background-color: var(--dark-red-dot) !important;
-  color: #ffffff;
-}
 
 @media (max-width: 900px) {
   .event-row {

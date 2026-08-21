@@ -57,16 +57,18 @@
 .top    { transform: rotateX(90deg) translateZ(30px); }
 .bottom { transform: rotateX(-90deg) translateZ(30px); }
 
-/* --- SLOWER 90-DEGREE CHOREOGRAPHY --- */
+
 
 @keyframes tumbleCube {
-  0% { transform: rotateX(-20deg) rotateY(-45deg); }
+  0% { transform: rotateX(-30deg) rotateY(-45deg); }
   25% { transform: rotateX(20deg) rotateY(55deg); }
   50% { transform: rotateX(-15deg) rotateY(-30deg); }
-  75%, 100% { transform: rotateX(0deg) rotateY(0deg); }
+  50% { transform: rotateX(-20deg) rotateY(-35deg); }
+  100% { transform: rotateX(-30deg) rotateY(-45deg); }
+
 }
 
-/* Replaced bouncy snappy bezier with smooth ease-in-out, and extended to 12s */
+
 .row-top    { animation: rTop 12s infinite ease-in-out; }
 .row-bottom { animation: rBottom 12s infinite ease-in-out; }
 .col-right  { animation: cRight 12s infinite ease-in-out; }
@@ -74,7 +76,7 @@
 .row-middle { animation: rMiddle 12s infinite ease-in-out; }
 .col-center { animation: cCenter 12s infinite ease-in-out; }
 
-/* Phase 1: Horizontal */
+
 @keyframes rTop {
   0%, 5%   { transform: rotateY(0deg); }
   10%, 15% { transform: rotateY(90deg); }
@@ -88,7 +90,7 @@
   20%, 100%{ transform: rotateY(0deg); }
 }
 
-/* Phase 2: Vertical */
+
 @keyframes cRight {
   0%, 20%  { transform: rotateX(0deg); }
   25%, 30% { transform: rotateX(90deg); }
@@ -100,14 +102,13 @@
   35%, 100%{ transform: rotateX(0deg); }
 }
 
-/* Phase 3: Middle Horizontal */
+
 @keyframes rMiddle {
   0%, 40%  { transform: rotateY(0deg); }
   45%, 50% { transform: rotateY(90deg); }
   55%, 100%{ transform: rotateY(0deg); }
 }
 
-/* Phase 4: Center Vertical */
 @keyframes cCenter {
   0%, 60%  { transform: rotateX(0deg); }
   65%, 70% { transform: rotateX(-90deg); }

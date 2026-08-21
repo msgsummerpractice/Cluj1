@@ -132,6 +132,9 @@
       "PARTICIPANT": "View your event space and continue the actions available for your account."
     }
   },
+  "table": {
+    "itemsPerPage": "Items per page"
+  },
   "events": {
     "participantPageTitle": "Events",
     "eventPageTitle": "Event Management",
@@ -171,6 +174,7 @@
     "dateFilterType": "Date filter type",
     "startDate": "Start date",
     "endDate": "End date",
+    "unregistered": "Unregistered",
     "publish": {
       "title": "Confirm Publish",
       "message": "Are you sure you want to publish this event?",

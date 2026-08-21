@@ -17,6 +17,7 @@ import { TranslocoModule } from '@jsverse/transloco';
 import { DataTableColumn } from './data-table.model';
 import { DataTableCellDefDirective } from './data-table-cell-def.directive';
 import { DataTableFilterDefDirective } from './data-table-filter-def.directive';
+import { EllipsisTooltipDirective } from '../../directives/ellipsis-tooltip.directive';
 
 @Component({
   selector: 'app-data-table',
@@ -28,6 +29,7 @@ import { DataTableFilterDefDirective } from './data-table-filter-def.directive';
     MatIconModule,
     MatMenuModule,
     TranslocoModule,
+    EllipsisTooltipDirective,
   ],
   templateUrl: './data-table.html',
   styleUrl: './data-table.css',
@@ -39,7 +41,7 @@ export class DataTableComponent<T> {
   readonly noDataLabel = input('');
   readonly noDataDetail = input('');
   readonly showPaginator = input(false);
-  readonly pageSizeOptions = input<number[]>([5, 10, 25, 100]);
+  readonly pageSizeOptions = input<number[]>([10, 25, 50]);
 
   readonly sortChange = output<Sort>();
 

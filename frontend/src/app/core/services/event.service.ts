@@ -136,7 +136,7 @@ export class EventService {
 
   deleteRegistration(eventId: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${eventId}/manage`, {
-      responseType: 'text', // Backend returns a raw string here
+      responseType: 'text',
       withCredentials: true,
     });
   }
