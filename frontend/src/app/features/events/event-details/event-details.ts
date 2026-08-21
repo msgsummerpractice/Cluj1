@@ -6,13 +6,13 @@ import { Event } from '../../../core/models/event.model';
 import { EventDetails } from '../../../core/models/event-detail.models';
 import { EventService } from '../../../core/services/event.service';
 import { TranslocoModule } from '@jsverse/transloco';
-import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 import { MatButtonModule } from '@angular/material/button';
 import { CheckincodesComponent } from '../../checkincodes-component/checkincodes-component';
 import { ToastService } from '../../../core/services/toast.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
+import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 
 @Component({
   selector: 'app-event-details',
@@ -20,11 +20,11 @@ import { AuthService } from '../../../core/services/auth.service';
   imports: [
     CommonModule,
     TranslocoModule,
-    BackButtonComponent,
     RouterLink,
     MatButtonModule,
     MatIconModule,
     CheckincodesComponent,
+    BackButtonComponent,
   ],
   templateUrl: './event-details.html',
   styleUrl: './event-details.css',

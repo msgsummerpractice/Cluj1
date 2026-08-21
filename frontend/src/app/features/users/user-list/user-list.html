@@ -63,8 +63,8 @@
       </ng-template>
 
       <ng-template appDataTableCellDef="actions" let-user>
-        <button mat-stroked-button (click)="manageRole(user)" class="manage-role-btn">
-          {{ 'userList.manageRole' | transloco }}
+        <button mat-icon-button (click)="manageRole(user)" aria-label="Manage user role">
+          <mat-icon>manage_accounts</mat-icon>
         </button>
       </ng-template>
     </app-data-table>
