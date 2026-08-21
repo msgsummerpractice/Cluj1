@@ -1,3 +1,8 @@
+:host {
+  --registration-disabled-bg: #d1d5db;
+  --registration-disabled-text: #6b7280;
+}
+
 .registration-container {
   max-width: 600px;
   margin: 20px auto;
@@ -85,4 +90,38 @@
 .btn-submit:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+.confirm-registration {
+  background-color: var(--brand-maroon) !important;
+}
+
+.confirm-registration:disabled,
+.confirm-registration.mat-mdc-button-disabled {
+  background-color: var(--registration-disabled-bg) !important;
+  color: var(--registration-disabled-text) !important;
+  cursor: not-allowed;
+  box-shadow: none !important;
+}
+
+::ng-deep .custom-warn-toggle .mdc-switch--selected .mdc-switch__track::after {
+  background-color: var(--brand-maroon) !important;
+}
+
+::ng-deep .custom-warn-toggle .mdc-switch--selected .mdc-switch__handle::after {
+  background-color: var(--brand-maroon) !important;
+}
+
+::ng-deep .custom-warn-toggle .mdc-switch--selected:hover .mdc-switch__state-layer,
+::ng-deep .custom-warn-toggle .mdc-switch--selected:focus .mdc-switch__state-layer {
+  background-color: var(--brand-maroon-hover-bg) !important;
+}
+
+::ng-deep .custom-warn-toggle .mdc-switch--selected .mdc-switch__icon {
+  color: white !important;
+}
+
+::ng-deep .custom-warn-toggle .mdc-switch--selected .mdc-switch__icons svg path {
+  fill: white !important;
+  stroke: white !important;
 }

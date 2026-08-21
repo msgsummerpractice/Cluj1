@@ -8,3 +8,17 @@ mat-form-field {
   width: 100%;
 }
 
+.profile-avatar {
+  background-color: var(--brand-maroon);
+}
+
+.save-button {
+  background-color: var(--brand-maroon);
+  color: white;
+}
+
+.save-button--disabled {
+  background-color: var(--disabled-button-border);
+  color: var(--disabled-button-text);
+}
+

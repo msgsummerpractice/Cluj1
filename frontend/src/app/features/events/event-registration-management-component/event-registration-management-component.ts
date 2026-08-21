@@ -10,12 +10,18 @@ import { ToastService } from '../../../core/services/toast.service';
 import { Event } from '../../../core/models/event.model';
 import { EventRegistrationRequest } from '../../../core/models/event-registration.model';
 import { MatIconModule } from '@angular/material/icon';
-import{ MatFormFieldModule } from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatOption, MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
-import {MatInputModule} from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
 import { TranslocoPipe } from '@jsverse/transloco';
+import {
+  PhoneInput,
+  PHONE_NUMBER_PATTERN,
+} from '../../../shared/components/phone-input/phone-input';
+
+const DRIVER_NAME_PATTERN = /^[\p{L}.'-]+(?:\s+[\p{L}.'-]+)*$/u;
 
 @Component({
   selector: 'app-event-registration-management',
@@ -29,6 +35,7 @@ import { TranslocoPipe } from '@jsverse/transloco';
     BackButtonComponent,
     MatInputModule,
     TranslocoPipe,
+    PhoneInput,
   ],
   templateUrl: './event-registration-management-component.html',
   styleUrl: './event-registration-management-component.css',
@@ -45,13 +52,16 @@ export class EventRegistrationManagement {
   registrationForm!: FormGroup;
   isSubmitting = signal<boolean>(false);
   isDeleting = signal<boolean>(false);
+  hasChanges = signal<boolean>(false);
 
   eventId = '';
+  private initialFormValue = '';
 
   ngOnInit(): void {
     this.eventId = this.route.snapshot.paramMap.get('id') || '';
 
     this.initForm();
+    this.trackFormChanges();
     this.loadEventData();
     this.setupConditionalValidation();
   }
@@ -74,14 +84,20 @@ export class EventRegistrationManagement {
       const phoneControl = this.registrationForm.get('driverPhone');
 
       if (needed) {
-        nameControl?.setValidators([Validators.required]);
-        phoneControl?.setValidators([Validators.required]);
+        nameControl?.setValidators([Validators.required, Validators.pattern(DRIVER_NAME_PATTERN)]);
+        phoneControl?.setValidators([
+          Validators.required,
+          Validators.maxLength(50),
+          Validators.pattern(PHONE_NUMBER_PATTERN),
+        ]);
       } else {
         nameControl?.clearValidators();
         phoneControl?.clearValidators();
+        nameControl?.setValue('', { emitEvent: false });
+        phoneControl?.setValue('', { emitEvent: false });
       }
-      nameControl?.updateValueAndValidity();
-      phoneControl?.updateValueAndValidity();
+      nameControl?.updateValueAndValidity({ emitEvent: false });
+      phoneControl?.updateValueAndValidity({ emitEvent: false });
     });
     this.registrationForm.get('accommodationNeeded')?.valueChanges.subscribe((needed) => {
       const daysControl = this.registrationForm.get('accommodationDays');
@@ -89,10 +105,21 @@ export class EventRegistrationManagement {
         daysControl?.setValidators([Validators.required, Validators.min(1)]);
       } else {
         daysControl?.clearValidators();
+        daysControl?.setValue(null, { emitEvent: false });
       }
-      daysControl?.updateValueAndValidity();
+      daysControl?.updateValueAndValidity({ emitEvent: false });
     });
   }
+  private trackFormChanges(): void {
+    this.registrationForm.valueChanges.subscribe(() => {
+      this.hasChanges.set(this.serializeFormValue() !== this.initialFormValue);
+    });
+  }
+
+  private serializeFormValue(): string {
+    return JSON.stringify(this.registrationForm.getRawValue());
+  }
+
   private loadEventData(): void {
     this.eventService.getEventById(this.eventId).subscribe({
       next: (ev) => {
@@ -113,6 +140,8 @@ export class EventRegistrationManagement {
           driverName: registrationData.driverName || '',
           driverPhone: registrationData.driverPhone || '',
         });
+        this.initialFormValue = this.serializeFormValue();
+        this.hasChanges.set(false);
       },
     });
   }

@@ -23,7 +23,7 @@
       </mat-label>
       <mat-select [(ngModel)]="selectedRole" panelClass="custom-select-panel">
         <mat-option *ngFor="let role of roles" [value]="role">
-          {{ role.replace('_', ' ') | titlecase }}
+          {{ role | roleTitlecase }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -32,7 +32,7 @@
   <ng-container *ngIf="isConfirming">
     <p class="confirmation-text">
       {{ 'roleManageDialog.confirmPrompt' | transloco }}
-      <strong>{{ selectedRole.replace('_', ' ') | titlecase }}</strong
+      <strong>{{ selectedRole | roleTitlecase }}</strong
       >?
     </p>
   </ng-container>

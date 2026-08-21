@@ -22,6 +22,7 @@ import { DataTableComponent } from '../../../shared/components/data-table/data-t
 import { DataTableColumn } from '../../../shared/components/data-table/data-table.model';
 import { DataTableCellDefDirective } from '../../../shared/components/data-table/data-table-cell-def.directive';
 import { ToastService } from '../../../core/services/toast.service';
+import { RoleTitlecasePipe } from '../role-titlecase.pipe';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
@@ -42,6 +43,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatPaginatorModule,
     DataTableComponent,
     DataTableCellDefDirective,
+    RoleTitlecasePipe,
     MatTooltipModule,
   ],
   templateUrl: './user-list.html',

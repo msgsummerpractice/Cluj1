@@ -35,7 +35,7 @@
             'role-standard': user.role !== 'ADMIN',
           }"
         >
-          {{ user.role.replace('_', ' ') | titlecase }}
+          {{ user.role | roleTitlecase }}
         </span>
       </ng-template>
 
