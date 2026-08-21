@@ -2,9 +2,11 @@ package com.cluj1.eventapp.dto;
 
 import com.cluj1.eventapp.model.enums.FoodPreference;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class EventRegistrationDto {
 
     @NotNull(message = "GDPR consent is required")

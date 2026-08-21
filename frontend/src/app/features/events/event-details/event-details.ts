@@ -39,6 +39,7 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
   readonly event = signal<Event | null>(null);
   readonly eventDetails = signal<EventDetails | null>(null);
   readonly posterUrl = signal<string | null>(null);
+  readonly isRegistered = signal<boolean>(false);
 
   readonly isExporting = signal<boolean>(false);
 
@@ -62,11 +63,13 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
     this.eventService.getEventById(eventId).subscribe({
       next: (event) => {
         this.event.set(event);
+        this.isRegistered.set(!!event.isRegistered);
       },
       error: (error) => {
         this.toast.show('error', error);
       },
     });
+
 
     this.eventService.getEventDetails(eventId).subscribe({
       next: (details) => {
