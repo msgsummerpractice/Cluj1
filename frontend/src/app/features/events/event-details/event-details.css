@@ -74,6 +74,20 @@
   color: var(--event-maroon);
   margin-top: 2px;
 }
+.description {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.registration-closed-badge {
+  margin: 6px 0 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #dc2626;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 .section-kicker {
   margin: 0 0 10px;
   color: var(--event-muted);
@@ -94,6 +108,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
+  align-items: stretch;
 }
 
 .card-panel {
@@ -186,11 +201,23 @@
   background: #ffffff;
 }
 .meta-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px 28px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
   padding-top: 19px;
   border-top: 1px solid var(--event-border);
+}
+.meta-row .meta-item {
+  padding: 0 20px;
+}
+.meta-row .meta-item:first-child {
+  padding-left: 0;
+}
+.meta-row .meta-item:last-child {
+  padding-right: 0;
+}
+.meta-row .meta-item:not(:last-child) {
+  border-right: 1px solid var(--event-border);
   margin-top: auto;
 }
 .meta-item {
@@ -291,6 +318,15 @@
   .about-card,
   .registration-card {
     padding: 20px;
+  }
+  .meta-row {
+    grid-auto-flow: row;
+    grid-auto-columns: auto;
+    gap: 14px;
+  }
+  .meta-row .meta-item {
+    padding: 0;
+    border-right: none;
   }
   .info-tiles {
     grid-template-columns: 1fr;

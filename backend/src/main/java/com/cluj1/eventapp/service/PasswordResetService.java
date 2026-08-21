@@ -5,7 +5,6 @@ import java.util.UUID;
 import com.cluj1.eventapp.model.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,6 +19,7 @@ import com.cluj1.eventapp.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -28,12 +28,12 @@ public class PasswordResetService {
 
     private final PasswordResetTokenRepository tokenRepo;
 
-    private final  JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
 
     private final PasswordEncoder passwordEncoder;
 
     @PersistenceContext
-    private final EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Value("${spring.mail.username}")
     private String sender;
@@ -62,11 +62,19 @@ public class PasswordResetService {
 
         try {
             String resetLink = passwordResetUrl + "?token=" + rawToken;
-            String htmlBody = "<div style=\"font-family: Arial, sans-serif; padding: 20px;\">" +
+            String htmlBody = "<div style=\"font-family: Arial, sans-serif; padding: 20px; color: #333;\">" +
                     "<h2>Password Reset Request</h2>" +
                     "<p>To reset your password, click the link below:</p>" +
-                    "<a href=\"" + resetLink + "\" style=\"background-color: #8b143d; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;\">Reset Password</a>" +
+                    "<a href=\"" + resetLink + "\" style=\"background-color: #8b143d; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-bottom: 20px;\">Reset Password</a>" +
                     "<p>If you didn't request this, please ignore this email.</p>" +
+                    
+                    "<hr style=\"border: none; border-top: 1px solid #ddd; margin: 30px 0;\" />" +
+                    
+                    "<h2>Cerere de resetare a parolei</h2>" +
+                    "<p>Pentru ați reseta parola, apasă pe linkul de mai jos:</p>" +
+                    "<a href=\"" + resetLink + "\" style=\"background-color: #8b143d; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-bottom: 20px;\">Resetează Parola</a>" +
+                    "<p>Dacă nu ai solicitat acest lucru, te rugăm să ignori acest email.</p>" +
+                    
                     "</div>";
             
             sendHtmlMessage(user.getEmail(), "Password Reset Request", htmlBody);

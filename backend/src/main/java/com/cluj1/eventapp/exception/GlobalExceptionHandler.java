@@ -4,6 +4,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import jakarta.persistence.EntityNotFoundException;
 
 import com.cluj1.eventapp.dto.ErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -73,6 +74,15 @@ public class GlobalExceptionHandler {
                 .message(ex.getReason() != null ? ex.getReason() : "An error occurred")
                 .build();
         return ResponseEntity.status(ex.getStatusCode()).body(errorResponse);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException ex) {
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .error("Not Found")
+                .message(ex.getMessage())
+                .build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)

@@ -58,6 +58,24 @@
   border-color: #6eb45d;
 }
 
+.type-internal {
+  background-color: var(--event-type-internal-bg);
+  color: var(--event-type-internal-text);
+  border-color: var(--event-type-internal-border);
+}
+
+.type-external {
+  background-color: var(--event-type-external-bg);
+  color: var(--event-type-external-text);
+  border-color: var(--event-type-external-border);
+}
+
+.type-local {
+  background-color: var(--event-type-local-bg);
+  color: var(--event-type-local-text);
+  border-color: var(--event-type-local-border);
+}
+
 .filter-button {
   border-color: #d1d5db !important;
   color: #9ca3af !important;
