@@ -117,6 +117,7 @@
     "eventRegisterButton": "Înregistrează-te",
     "eventCheckInButton": "Check-in",
     "eventReportButton": "Raport",
+    "downloadReportButton": "Descarcă raportul",
     "reportError": "Generarea raportului de prezență a eșuat. Te rugăm să încerci din nou.",
     "clearFilters": "Șterge filtrele",
     "noData": "Nu s-au găsit evenimente",

@@ -155,6 +155,7 @@
     "eventRegisterButton": "Register",
     "eventCheckInButton": "Check-in",
     "eventReportButton": "Report",
+    "downloadReportButton": "Export report",
     "reportError": "Failed to generate the attendance report. Please try again.",
     "clearFilters": "Clear filters",
     "noData": "No events found",

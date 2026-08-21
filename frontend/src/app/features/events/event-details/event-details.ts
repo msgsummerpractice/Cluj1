@@ -5,12 +5,13 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Event } from '../../../core/models/event.model';
 import { EventDetails } from '../../../core/models/event-detail.models';
 import { EventService } from '../../../core/services/event.service';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CheckincodesComponent } from '../../checkincodes-component/checkincodes-component';
 import { ToastService } from '../../../core/services/toast.service';
 import { ChangeDetectorRef } from '@angular/core';
-import { take } from 'rxjs/operators';
+import { finalize, take } from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
 import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 
@@ -23,6 +24,7 @@ import { BackButtonComponent } from '../../../shared/components/back-button/back
     RouterLink,
     MatButtonModule,
     MatIconModule,
+    MatProgressSpinnerModule,
     CheckincodesComponent,
     BackButtonComponent,
   ],
@@ -34,6 +36,7 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
   private readonly eventService = inject(EventService);
   private readonly authService = inject(AuthService);
+  private readonly translocoService = inject(TranslocoService);
   private readonly toast = inject(ToastService);
   private readonly cdr = inject(ChangeDetectorRef);
 
@@ -43,6 +46,7 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
   readonly isRegistered = signal<boolean>(false);
 
   readonly isExporting = signal<boolean>(false);
+  readonly isDownloadingReport = signal<boolean>(false);
 
   readonly canExport = computed(() => {
     const currentEvent = this.event();
@@ -53,6 +57,11 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
     const isMarketingOrganizer = this.authService.currentUser()?.role === 'MARKETING_ORGANIZER';
 
     return isValidStatus && isMarketingOrganizer;
+  });
+
+  readonly canDownloadReport = computed(() => {
+    const currentEvent = this.event();
+    return currentEvent?.status === 'COMPLETED' && this.authService.isHrUser();
   });
 
   ngOnInit() {
@@ -114,6 +123,31 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
   canViewStatistics(): boolean {
     return this.authService.isHrUser() || this.authService.isMarketingOrganizer();
   }
+
+  onDownloadAttendanceReport(): void {
+    const currentEvent = this.event();
+    if (!currentEvent || !this.canDownloadReport() || this.isDownloadingReport()) return;
+
+    this.isDownloadingReport.set(true);
+
+    this.eventService
+      .downloadAttendanceReport(currentEvent.id)
+      .pipe(finalize(() => this.isDownloadingReport.set(false)))
+      .subscribe({
+        next: (report) => {
+          const reportUrl = URL.createObjectURL(report);
+          const downloadLink = document.createElement('a');
+          downloadLink.href = reportUrl;
+          downloadLink.download = `attendance-report-${currentEvent.id}.xlsx`;
+          downloadLink.click();
+          URL.revokeObjectURL(reportUrl);
+        },
+        error: () => {
+          this.toast.show('error', this.translocoService.translate('events.reportError'));
+        },
+      });
+  }
+
   onExportExcel(): void {
     const currentEvent = this.event();
     if (!currentEvent || !this.canExport()) return;

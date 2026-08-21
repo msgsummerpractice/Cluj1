@@ -103,6 +103,7 @@
             @if (
               canRegister(event) ||
               canExport() ||
+              canDownloadReport() ||
               ((event.status === 'PUBLISHED' || event.status === 'COMPLETED') &&
                 canViewStatistics())
             ) {
@@ -140,6 +141,26 @@
                   >
                     <mat-icon class="mr-1">analytics</mat-icon>
                     View Statistics
+                  </button>
+                }
+
+                @if (canDownloadReport()) {
+                  <button
+                    type="button"
+                    mat-flat-button
+                    class="w-full !rounded-md !py-6 text-base font-semibold shadow-sm text-white action-button-primary"
+                    (click)="onDownloadAttendanceReport()"
+                    [disabled]="isDownloadingReport()"
+                  >
+                    @if (isDownloadingReport()) {
+                      <mat-spinner diameter="18" strokeWidth="2"></mat-spinner>
+                    }
+                    <mat-icon class="mr-1" [class.hidden]="isDownloadingReport()"
+                      >file_download</mat-icon
+                    >
+                    <span [class.hidden]="isDownloadingReport()">
+                      {{ 'events.downloadReportButton' | transloco }}
+                    </span>
                   </button>
                 }
 
