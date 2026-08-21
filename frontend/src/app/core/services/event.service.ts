@@ -128,4 +128,21 @@ export class EventService {
       withCredentials: true,
     });
   }
+  updateRegistration(eventId: string, requestData: EventRegistrationRequest): Observable<any> {
+    return this.http.patch(`${this.apiUrl}/${eventId}/manage`, requestData, {
+      withCredentials: true,
+    });
+  }
+
+  deleteRegistration(eventId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${eventId}/manage`, {
+      responseType: 'text', // Backend returns a raw string here
+      withCredentials: true,
+    });
+  }
+  getRegistrationDetails(eventId: string): Observable<EventRegistrationRequest> {
+    return this.http.get<EventRegistrationRequest>(`${this.apiUrl}/${eventId}/registration`, {
+      withCredentials: true,
+    });
+  }
 }
