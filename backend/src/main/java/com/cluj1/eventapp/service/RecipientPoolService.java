@@ -20,8 +20,8 @@ public class RecipientPoolService {
 
     public List<User> resolveRecipients(EventLocation eventLocation) {
         List<UserDetails> matchingDetails = eventLocation == EventLocation.ALL
-                ? userDetailsRepository.findAll()
-                : userDetailsRepository.findByLocation(toUserLocation(eventLocation));
+                ? userDetailsRepository.findByUserIsActiveTrue()
+                : userDetailsRepository.findByLocationAndUserIsActiveTrue(toUserLocation(eventLocation));
 
         return matchingDetails.stream()
                 .map(UserDetails::getUser)
