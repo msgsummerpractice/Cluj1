@@ -274,6 +274,11 @@
   color: var(--event-muted);
 }
 
+.action-button-primary {
+  background-color: var(--dark-red-dot) !important;
+  color: #ffffff;
+}
+
 /* Responsive Overrides */
 @media (max-width: 900px) {
   .event-row {
