@@ -20,6 +20,8 @@
     "location": "Location",
     "role": "Role",
     "save changes": "Save Changes",
+    "discardChanges": "Discard changes",
+    "saveSuccess": "Modifications have been saved successfully.",
     "details": "Personal details",
     "registrations": "Registrations",
     "upcoming": "Upcoming"
@@ -86,7 +88,9 @@
     "errorUpdatingRole": "Error updating role",
     "userActivated": "User account activated successfully",
     "userDeactivated": "User account deactivated successfully",
-    "errorUpdatingStatus": "Error updating status"
+    "errorUpdatingStatus": "Error updating status",
+    "changeUserStatus": "User status changed successfully",
+    "confirmLogin": "User {{email}} has logged in successfully."
   },
   "auth": {
     "loginTitle": "Log in",
@@ -99,7 +103,11 @@
     "sessionInfo": "Your session will stay active until you log out or it expires.",
     "submitting": "Signing in...",
     "noAccount": "Don't have an account?",
-    "signUp": "Sign up"
+    "signUp": "Sign up",
+    "error": {
+      "invalidCredentials": "Invalid email or password.",
+      "signInError": "Unable to sign in right now. Please try again."
+    }
   },
   "roles": {
     "welcome": "Welcome back",
@@ -155,7 +163,7 @@
     "dateBefore": "Before",
     "dateAfter": "After",
     "dateRange": "Range",
-    "dateFilterType" : "Date filter type",
+    "dateFilterType": "Date filter type",
     "startDate": "Start date",
     "endDate": "End date",
     "unregistered": "Unregistered",
@@ -167,7 +175,7 @@
       "success": "Event published successfully.",
       "error": "Failed to publish event. Please try again."
     },
-    "deleteRegistration" : {
+    "deleteRegistration": {
       "title": "Confirm Delete Registration",
       "message": "Are you sure you want to delete your registration for this event? This action cannot be undone.",
       "confirm": "Yes, delete",
@@ -330,9 +338,11 @@
     "driverName": "Driver Name",
     "driverNamePlaceholder": "Enter driver name",
     "driverNameError": "Driver name is required when transportation is needed.",
+    "driverNamePatternError": "Driver name may contain only letters, spaces, dots, hyphens, and apostrophes.",
     "driverPhone": "Driver Phone",
     "driverPhonePlaceholder": "Enter driver phone",
     "driverPhoneError": "Driver phone is required when transportation is needed.",
+    "driverPhonePatternError": "Driver phone may contain only digits with an optional leading +.",
     "accommodationNeeded": "Accommodation Needed?",
     "accommodationSubtitle": "Enable if you require lodging support.",
     "accommodationDays": "Number of Days",
@@ -377,7 +387,8 @@
     "error": {
       "code": {
         "required": "Event code is required.",
-        "invalid": "Event code must be exactly 6 characters."
+        "invalid": "Event code must be exactly 6 digits.",
+        "digitsOnly": "Event code can only contain digits."
       },
       "method": {
         "required": "Check-in method is required."

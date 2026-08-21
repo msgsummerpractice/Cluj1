@@ -14,11 +14,12 @@ import { Event } from '../../../core/models/event.model';
 import { CheckInRequest } from '../../../core/models/check-in-request.model';
 import { AttendanceRecord } from '../../../core/models/attendance-record.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 
 @Component({
   selector: 'app-event-checkin',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZXingScannerModule, TranslocoModule],
+  imports: [CommonModule, FormsModule, ZXingScannerModule, TranslocoModule, BackButtonComponent],
   templateUrl: './event-checkin.html',
   styleUrls: ['./event-checkin.css'],
 })
@@ -32,8 +33,6 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
   private readonly router = inject(Router);
 
   readonly isMobile = this.platform.ANDROID || this.platform.IOS;
-
-  readonly manualCode = signal('');
   readonly isProcessing = signal(false);
   readonly hasDevices = signal(false);
   readonly ALLOWED_FORMATS = [BarcodeFormat.QR_CODE];
@@ -64,10 +63,30 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
           this.loadRecentCheckins(event.id);
         }
       },
-      error: () =>
-        this.toastService.showError(
-          this.translateService.translate('checkin.error.event.notfound'),
-        ),
+      error: (error) => {
+        let errorKey = 'checkin.error.general';
+        const rawError = error?.error?.message || error?.error;
+
+        switch (true) {
+          case typeof rawError === 'string' && rawError.includes('checkin.'):
+            errorKey = rawError;
+            break;
+          case error.status === 400:
+            errorKey = 'checkin.error.code.invalid';
+            break;
+          case error.status === 404:
+            errorKey = 'checkin.error.event.notfound';
+            break;
+          case error.status === 409:
+            errorKey = 'checkin.error.user.alreadycheckedin';
+            this.scannerEnabled.set(false);
+            break;
+          default:
+            break;
+        }
+
+        this.toastService.showError(this.translateService.translate(errorKey));
+      },
     });
   }
 
@@ -89,6 +108,10 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
     });
   }
 
+  isParticipant(): boolean {
+    return this.authService.isParticipant();
+  }
+
   onCamerasFound(devices: MediaDeviceInfo[]): void {
     this.hasDevices.set(!!(devices && devices.length > 0));
   }
@@ -101,11 +124,15 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
   }
 
   submitManual(): void {
-    if (this.manualCode().length !== 6) {
+    this.inputError.set(false);
+    const code = this.manualCode();
+
+    if (!/^\d{6}$/.test(code)) {
       this.toastService.showError(this.translateService.translate('checkin.error.code.invalid'));
       return;
     }
-    this.processCheckIn({ eventCode: this.manualCode(), method: 'MANUAL' });
+
+    this.processCheckIn({ eventCode: code, method: 'MANUAL' });
   }
 
   private processCheckIn(request: CheckInRequest): void {
@@ -148,5 +175,20 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
           this.toastService.showError(this.translateService.translate(errorKey));
         },
       });
+  }
+
+  readonly manualCode = signal('');
+  readonly inputError = signal(false);
+
+  onManualCodeInput(value: string): void {
+    const hasNonDigits = /\D/.test(value);
+
+    if (hasNonDigits) {
+      this.inputError.set(true);
+    } else {
+      this.inputError.set(false);
+    }
+    const numericValue = value.replace(/\D/g, '').slice(0, 6);
+    this.manualCode.set(numericValue);
   }
 }

@@ -42,10 +42,12 @@
 
     <ng-template appDataTableFilterDef="date">
       <div class="flex flex-col gap-2 pt-1">
-
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>{{ 'events.dateFilterType' | transloco }}</mat-label>
-          <mat-select [value]="dateFilterMode()" (selectionChange)="setDateFilterMode($event.value)">
+          <mat-select
+            [value]="dateFilterMode()"
+            (selectionChange)="setDateFilterMode($event.value)"
+          >
             <mat-option value="range">{{ 'events.dateRange' | transloco }}</mat-option>
             <mat-option value="after">{{ 'events.dateAfter' | transloco }}</mat-option>
             <mat-option value="before">{{ 'events.dateBefore' | transloco }}</mat-option>
@@ -56,8 +58,18 @@
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>{{ 'events.dateRange' | transloco }}</mat-label>
             <mat-date-range-input [rangePicker]="rangePicker">
-              <input matStartDate [value]="dateFilterStart()" (dateChange)="setDateStart($event.value)" placeholder="{{ 'events.startDate' | transloco }}">
-              <input matEndDate [value]="dateFilterEnd()" (dateChange)="setDateEnd($event.value)" placeholder="{{ 'events.endDate' | transloco }}">
+              <input
+                matStartDate
+                [value]="dateFilterStart()"
+                (dateChange)="setDateStart($event.value)"
+                placeholder="{{ 'events.startDate' | transloco }}"
+              />
+              <input
+                matEndDate
+                [value]="dateFilterEnd()"
+                (dateChange)="setDateEnd($event.value)"
+                placeholder="{{ 'events.endDate' | transloco }}"
+              />
             </mat-date-range-input>
             <mat-datepicker-toggle matIconSuffix [for]="rangePicker"></mat-datepicker-toggle>
             <mat-date-range-picker #rangePicker></mat-date-range-picker>
@@ -67,7 +79,12 @@
         @if (dateFilterMode() === 'after') {
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>{{ 'events.dateAfter' | transloco }}</mat-label>
-            <input matInput [matDatepicker]="afterPicker" [value]="dateFilterStart()" (dateChange)="setDateStart($event.value)">
+            <input
+              matInput
+              [matDatepicker]="afterPicker"
+              [value]="dateFilterStart()"
+              (dateChange)="setDateStart($event.value)"
+            />
             <mat-datepicker-toggle matIconSuffix [for]="afterPicker"></mat-datepicker-toggle>
             <mat-datepicker #afterPicker></mat-datepicker>
           </mat-form-field>
@@ -76,12 +93,16 @@
         @if (dateFilterMode() === 'before') {
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>{{ 'events.dateBefore' | transloco }}</mat-label>
-            <input matInput [matDatepicker]="beforePicker" [value]="dateFilterEnd()" (dateChange)="setDateEnd($event.value)">
+            <input
+              matInput
+              [matDatepicker]="beforePicker"
+              [value]="dateFilterEnd()"
+              (dateChange)="setDateEnd($event.value)"
+            />
             <mat-datepicker-toggle matIconSuffix [for]="beforePicker"></mat-datepicker-toggle>
             <mat-datepicker #beforePicker></mat-datepicker>
           </mat-form-field>
         }
-
       </div>
 
       @if (dateFilterStart() || dateFilterEnd()) {
@@ -124,10 +145,10 @@
     </ng-template>
 
     <ng-template appDataTableCellDef="date" let-event>
-      {{ event.startDate | date: 'mediumDate' }}
+      {{ event.startDate | date: 'dd MMM yyyy HH:mm' }}
 
       @if (displayEventEndDate(event)) {
-        <span> - {{ event.endDate | date: 'mediumDate' }} </span>
+        <span> - {{ event.endDate | date: 'dd MMM yyyy HH:mm' }} </span>
       }
     </ng-template>
 
@@ -216,7 +237,7 @@
             >
               <mat-icon>app_registration</mat-icon>
             </button>
-          } @else if(event.isRegistered && !isPastRegistrationEndDate(event)) {
+          } @else if (event.isRegistered && !isPastRegistrationEndDate(event)) {
             <button
               mat-icon-button
               (click)="manageRegistration(event.id)"
@@ -234,28 +255,24 @@
             >
               <mat-icon>transit_enterexit</mat-icon>
             </button>
-
-          }@else{
+          } @else {
             <button
               mat-icon-button
-              [disabled] = "isPastRegistrationEndDate(event) && !event.isRegistered"
+              [disabled]="isPastRegistrationEndDate(event) && !event.isRegistered"
             >
               <mat-icon>transit_enterexit</mat-icon>
             </button>
           }
         }
-
-          @if (!event.isCheckedIn) {
-            <button
-              mat-icon-button
-              (click)="navigateToCheckIn(event.id)"
-              [matTooltip]="'events.eventCheckInButton' | transloco"
-              aria-label="Check in to event"
-            >
-              <mat-icon>qr_code_scanner</mat-icon>
-            </button>
-          }
-
+        <button
+          mat-icon-button
+          (click)="navigateToCheckIn(event.id)"
+          [disabled]="event.isCheckedIn"
+          [matTooltip]="'events.eventCheckInButton' | transloco"
+          aria-label="Check in to event"
+        >
+          <mat-icon>qr_code_scanner</mat-icon>
+        </button>
 
         @if (isMarketingOrganizer() && event.status === 'DRAFT') {
           <button

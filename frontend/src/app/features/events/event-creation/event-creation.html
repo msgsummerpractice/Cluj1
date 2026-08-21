@@ -127,7 +127,7 @@
                   (click)="startPicker.open()"
                 />
                 <mat-timepicker-toggle matSuffix [for]="startPicker"></mat-timepicker-toggle>
-                <mat-timepicker #startPicker></mat-timepicker>
+                <mat-timepicker #startPicker format="24h"></mat-timepicker>
               </mat-form-field>
             </div>
             <div class="flex flex-col gap-1">
@@ -143,7 +143,7 @@
                   (click)="endPicker.open()"
                 />
                 <mat-timepicker-toggle matSuffix [for]="endPicker"></mat-timepicker-toggle>
-                <mat-timepicker #endPicker></mat-timepicker>
+                <mat-timepicker #endPicker format="24h"></mat-timepicker>
               </mat-form-field>
             </div>
           </div>
@@ -195,7 +195,10 @@
                 {{ 'createEvent.foodProvidedSubtitle' | transloco }}
               </p>
             </div>
-            <mat-slide-toggle formControlName="foodProvided" color="primary"></mat-slide-toggle>
+            <mat-slide-toggle
+              formControlName="foodProvided"
+              class="custom-warn-toggle"
+            ></mat-slide-toggle>
           </div>
         </div>
       </div>
