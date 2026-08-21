@@ -1,156 +1,16 @@
 @if (event(); as ev) {
   <div class="min-h-screen bg-gray-50 p-4 md:p-8 flex justify-center">
     <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="w-full max-w-[1400px]">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-        <div>
-          <div class="flex items-center gap-2 -ml-3">
-            <app-back-button />
-            <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
-              {{ 'eventRegistration.pageTitle' | transloco }} {{ ev.name }}
-            </h1>
-          </div>
-          <p class="text-gray-500 mt-1 text-sm">
-            {{ 'eventRegistration.subtitle' | transloco }}
-          </p>
-
-          <div class="flex flex-col gap-1">
-            <label class="text-sm font-medium text-gray-700">
-              {{ 'eventRegistration.foodPreferenceLabel' | transloco }}
-            </label>
-            <mat-form-field appearance="outline" class="w-full h-[75px]">
-              <mat-select formControlName="foodPreference">
-                <mat-option value="NONE">{{ 'eventRegistration.foodNone' | transloco }}</mat-option>
-                <mat-option value="VEGETARIAN">{{
-                  'eventRegistration.foodVegetarian' | transloco
-                }}</mat-option>
-                <mat-option value="VEGAN">{{
-                  'eventRegistration.foodVegan' | transloco
-                }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
+      <div class="mb-6">
+        <div class="flex items-center gap-2 -ml-3">
+          <app-back-button />
+          <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
+            {{ 'eventRegistration.pageTitle' | transloco }} {{ ev.name }}
+          </h1>
         </div>
-
-        @if ($any(ev.type) === 'INTERNAL') {
-          <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 lg:p-8">
-            <h2 class="text-lg font-bold text-gray-900 mb-1">
-              {{ 'eventRegistration.internalTitle' | transloco }}
-            </h2>
-            <p class="text-gray-500 text-sm mb-6">
-              {{ 'eventRegistration.internalSubtitle' | transloco }}
-            </p>
-
-            <div class="flex flex-col gap-6">
-              <div class="flex flex-col gap-4 border-b border-gray-100 pb-6">
-                <div
-                  class="flex justify-between items-center p-4 bg-gray-50/50 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
-                >
-                  <div>
-                    <p class="font-medium text-gray-900">
-                      {{ 'eventRegistration.transportationNeeded' | transloco }}
-                    </p>
-                    <p class="text-sm text-gray-500">
-                      {{ 'eventRegistration.transportationSubtitle' | transloco }}
-                    </p>
-                  </div>
-                  <mat-slide-toggle
-                    formControlName="transportationNeeded"
-                    color="primary"
-                  ></mat-slide-toggle>
-                </div>
-
-                @if (registrationForm.get('transportationNeeded')?.value) {
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-                    <div class="flex flex-col gap-1">
-                      <label class="text-sm font-medium text-gray-700">
-                        {{ 'eventRegistration.driverName' | transloco }}
-                      </label>
-                      <mat-form-field appearance="outline" class="w-full h-[75px]">
-                        <input
-                          matInput
-                          formControlName="driverName"
-                          [placeholder]="'eventRegistration.driverNamePlaceholder' | transloco"
-                        />
-                      </mat-form-field>
-                      @if (
-                        registrationForm.get('driverName')?.invalid &&
-                        registrationForm.get('driverName')?.touched
-                      ) {
-                        <span class="text-red-600 text-xs mt-1 block">
-                          {{ 'eventRegistration.driverNameError' | transloco }}
-                        </span>
-                      }
-                    </div>
-                    <div class="flex flex-col gap-1">
-                      <label class="text-sm font-medium text-gray-700">
-                        {{ 'eventRegistration.driverPhone' | transloco }}
-                      </label>
-                      <mat-form-field appearance="outline" class="w-full h-[75px]">
-                        <input
-                          matInput
-                          formControlName="driverPhone"
-                          [placeholder]="'eventRegistration.driverPhonePlaceholder' | transloco"
-                        />
-                      </mat-form-field>
-                      @if (
-                        registrationForm.get('driverPhone')?.invalid &&
-                        registrationForm.get('driverPhone')?.touched
-                      ) {
-                        <span class="text-red-600 text-xs mt-1 block">
-                          {{ 'eventRegistration.driverPhoneError' | transloco }}
-                        </span>
-                      }
-                    </div>
-                  </div>
-                }
-              </div>
-
-              <div class="flex flex-col gap-4">
-                <div
-                  class="flex justify-between items-center p-4 bg-gray-50/50 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
-                >
-                  <div>
-                    <p class="font-medium text-gray-900">
-                      {{ 'eventRegistration.accommodationNeeded' | transloco }}
-                    </p>
-                    <p class="text-sm text-gray-500">
-                      {{ 'eventRegistration.accommodationSubtitle' | transloco }}
-                    </p>
-                  </div>
-                  <mat-slide-toggle
-                    formControlName="accommodationNeeded"
-                    color="primary"
-                  ></mat-slide-toggle>
-                </div>
-
-                @if (registrationForm.get('accommodationNeeded')?.value) {
-                  <div class="flex flex-col gap-1 mt-2">
-                    <label class="text-sm font-medium text-gray-700">
-                      {{ 'eventRegistration.accommodationDays' | transloco }}
-                    </label>
-                    <mat-form-field appearance="outline" class="w-full h-[75px]">
-                      <input
-                        matInput
-                        type="number"
-                        min="1"
-                        formControlName="accommodationDays"
-                        [placeholder]="'eventRegistration.accommodationDaysPlaceholder' | transloco"
-                      />
-                    </mat-form-field>
-                    @if (
-                      registrationForm.get('accommodationDays')?.invalid &&
-                      registrationForm.get('accommodationDays')?.touched
-                    ) {
-                      <span class="text-red-600 text-xs mt-1 block">
-                        {{ 'eventRegistration.accommodationDaysError' | transloco }}
-                      </span>
-                    }
-                  </div>
-                }
-              </div>
-            </div>
-          </div>
-        }
+        <p class="text-gray-500 mt-1 text-sm">
+          {{ 'eventRegistration.subtitle' | transloco }}
+        </p>
       </div>
 
       @if (isRegistrationClosed() || successMessage() || errorMessage()) {
