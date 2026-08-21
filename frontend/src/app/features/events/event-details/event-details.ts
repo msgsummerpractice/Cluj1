@@ -74,6 +74,11 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
       next: (event) => {
         this.event.set(event);
 
+        this.eventService.checkIfAlreadyRegistered(eventId).subscribe({
+          next: (registered) => this.isRegistered.set(registered),
+          error: () => this.isRegistered.set(false),
+        });
+
         this.eventService.getEventDetails(eventId).subscribe({
           next: (details) => {
             this.eventDetails.set(details);
@@ -109,7 +114,7 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
   }
 
   canRegister(event: Event | null): boolean {
-    return event?.status === 'PUBLISHED';
+    return event?.status === 'PUBLISHED' && !this.isRegistered();
   }
 
   isRegistrationClosed(event: Event | null): boolean {
