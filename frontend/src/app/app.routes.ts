@@ -1,12 +1,13 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { Routes, Router } from '@angular/router';
 import { authGuard, guestGuard, roleGuard } from './core/auth/auth.guards';
+import { AuthService } from './core/services/auth.service';
 import { RegisterComponent } from './features/register-component/register-component';
 import { ProfileComponent } from './features/profile-component/profile-component';
 import { EventCheckInComponent } from './features/events/event-checkin/event-checkin';
 import { RubiksCubeComponent } from './features/rubiks-cube-component/rubiks-cube-component';
-import {
-  EventRegistrationManagement
-} from './features/events/event-registration-management-component/event-registration-management-component';
+import { NotFoundComponent } from './shared/components/not-found/not-found';
+import { EventRegistrationManagement } from './features/events/event-registration-management-component/event-registration-management-component';
 
 export const routes: Routes = [
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
@@ -20,7 +21,6 @@ export const routes: Routes = [
     component: EventRegistrationManagement,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'PARTICIPANT'] },
-
   },
   {
     path: '',
@@ -128,7 +128,22 @@ export const routes: Routes = [
       import('./features/events/event-details/event-details').then((m) => m.EventDetailsComponent),
   },
   {
+    path: 'not-found',
+    component: NotFoundComponent,
+  },
+  {
+    path: 'homepage',
+    canActivate: [
+      () => {
+        const authService = inject(AuthService);
+        const router = inject(Router);
+        return router.createUrlTree([authService.getHomeRoute()]);
+      },
+    ],
+    children: [],
+  },
+  {
     path: '**',
-    redirectTo: 'login',
+    redirectTo: 'not-found',
   },
 ];

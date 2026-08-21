@@ -5,23 +5,16 @@
     (ngSubmit)="onSubmit()"
     class="w-full max-w-[1400px] grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8"
   >
-    <div
-      class="col-span-1 lg:col-span-12 flex flex-col md:flex-row justify-between items-start md:items-center mb-2"
-    >
+    <div class="col-span-1 lg:col-span-12 flex items-start gap-3 mb-2">
+      <app-back-button />
       <div>
         <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
-          {{ 'createEvent.title' | transloco }}
+          {{ (isEditMode() ? 'createEvent.editTitle' : 'createEvent.title') | transloco }}
         </h1>
-        <p class="text-gray-500 mt-1 text-sm">{{ 'createEvent.subtitle' | transloco }}</p>
+        <p class="text-gray-500 mt-1 text-sm">
+          {{ (isEditMode() ? 'createEvent.editSubtitle' : 'createEvent.subtitle') | transloco }}
+        </p>
       </div>
-      <button
-        mat-stroked-button
-        type="button"
-        routerLink="/events"
-        class="mt-4 md:mt-0 bg-white shadow-sm border-gray-300 rounded-full px-6"
-      >
-        {{ 'createEvent.cancel' | transloco }}
-      </button>
     </div>
 
     <div class="col-span-1 lg:col-span-8 flex flex-col gap-6">
@@ -36,12 +29,19 @@
             <label class="text-sm font-medium text-gray-700">{{
               'createEvent.eventTitleLabel' | transloco
             }}</label>
-            <mat-form-field appearance="outline" class="w-full h-[75px]">
+            <mat-form-field appearance="outline" class="w-full">
               <input
                 matInput
                 formControlName="name"
                 [placeholder]="'createEvent.eventTitlePlaceholder' | transloco"
               />
+              <mat-hint align="end">{{ form.get('name')?.value?.length || 0 }}/100</mat-hint>
+              @if (form.get('name')?.hasError('required')) {
+                <mat-error>{{ 'createEvent.errors.nameRequired' | transloco }}</mat-error>
+              }
+              @if (form.get('name')?.hasError('maxlength')) {
+                <mat-error>{{ 'createEvent.errors.nameTooLong' | transloco }}</mat-error>
+              }
             </mat-form-field>
           </div>
 
@@ -50,19 +50,48 @@
               <label class="text-sm font-medium text-gray-700">{{
                 'createEvent.eventTypeLabel' | transloco
               }}</label>
-              <mat-form-field appearance="outline" class="w-full h-[75px]">
+              <mat-form-field appearance="outline" class="w-full">
                 <mat-select
                   formControlName="type"
                   [placeholder]="'createEvent.selectTypePlaceholder' | transloco"
                 >
-                  <mat-option value="INTERNAL">{{
-                    'events.eventTypeInternal' | transloco
-                  }}</mat-option>
-                  <mat-option value="EXTERNAL">{{
-                    'events.eventTypeExternal' | transloco
-                  }}</mat-option>
-                  <mat-option value="LOCAL">{{ 'events.eventTypeLocal' | transloco }}</mat-option>
+                  <mat-option value="INTERNAL">
+                    <span class="flex items-center gap-2">
+                      <span
+                        class="w-2 h-2 rounded-full inline-block"
+                        style="background-color: var(--event-type-internal)"
+                      ></span>
+                      {{ 'events.eventTypeInternal' | transloco }}
+                    </span>
+                  </mat-option>
+                  <mat-option value="EXTERNAL">
+                    <span class="flex items-center gap-2">
+                      <span
+                        class="w-2 h-2 rounded-full inline-block"
+                        style="background-color: var(--event-type-external)"
+                      ></span>
+                      {{ 'events.eventTypeExternal' | transloco }}
+                    </span>
+                  </mat-option>
+                  <mat-option value="LOCAL">
+                    <span class="flex items-center gap-2">
+                      <span
+                        class="w-2 h-2 rounded-full inline-block"
+                        style="background-color: var(--event-type-local)"
+                      ></span>
+                      {{ 'events.eventTypeLocal' | transloco }}
+                    </span>
+                  </mat-option>
                 </mat-select>
+                @if (form.get('type')?.value === 'INTERNAL') {
+                  <mat-hint>{{ 'createEvent.typeHintInternal' | transloco }}</mat-hint>
+                }
+                @if (form.get('type')?.value === 'EXTERNAL') {
+                  <mat-hint>{{ 'createEvent.typeHintExternal' | transloco }}</mat-hint>
+                }
+                @if (form.get('type')?.value === 'LOCAL') {
+                  <mat-hint>{{ 'createEvent.typeHintLocal' | transloco }}</mat-hint>
+                }
               </mat-form-field>
             </div>
 
@@ -87,6 +116,12 @@
                 rows="4"
                 [placeholder]="'createEvent.descriptionPlaceholder' | transloco"
               ></textarea>
+              <mat-hint align="end"
+                >{{ form.get('description')?.value?.length || 0 }}/2000</mat-hint
+              >
+              @if (form.get('description')?.hasError('maxlength')) {
+                <mat-error>{{ 'createEvent.errors.descriptionTooLong' | transloco }}</mat-error>
+              }
             </mat-form-field>
           </div>
         </div>
@@ -149,6 +184,15 @@
             </div>
           </div>
 
+          @if (
+            form.hasError('endBeforeStart') &&
+            (form.get('endTime')?.touched || form.get('startTime')?.touched)
+          ) {
+            <p class="text-red-600 text-xs -mt-2">
+              {{ 'createEvent.errors.endBeforeStart' | transloco }}
+            </p>
+          }
+
           <div class="flex flex-col gap-1">
             <label class="text-sm font-medium text-gray-700">{{
               'createEvent.locationLabel' | transloco
@@ -158,14 +202,14 @@
                 formControlName="location"
                 [placeholder]="'createEvent.selectLocationPlaceholder' | transloco"
               >
-                <mat-option *ngIf="form.get('type')?.value === 'INTERNAL'" value="ALL"
-                  >ALL</mat-option
-                >
-                <ng-container *ngIf="form.get('type')?.value !== 'INTERNAL'">
-                  <mat-option *ngFor="let loc of locations" [value]="loc">{{
-                    loc | titlecase
-                  }}</mat-option>
-                </ng-container>
+                @if (form.get('type')?.value === 'INTERNAL') {
+                  <mat-option value="ALL">ALL</mat-option>
+                }
+                @if (form.get('type')?.value !== 'INTERNAL') {
+                  @for (loc of locations; track loc) {
+                    <mat-option [value]="loc">{{ loc | titlecase }}</mat-option>
+                  }
+                }
               </mat-select>
               <mat-icon matPrefix class="mr-2 text-gray-400">location_on</mat-icon>
             </mat-form-field>
@@ -184,6 +228,32 @@
         <div
           class="flex flex-col gap-0 border border-gray-100 rounded-lg overflow-hidden divide-y divide-gray-100"
         >
+          <div class="flex flex-col gap-1 p-4 bg-gray-50/50">
+            <label class="text-sm font-medium text-gray-700">{{
+              'createEvent.regEndDateLabel' | transloco
+            }}</label>
+            <mat-form-field appearance="outline" class="w-full">
+              <input
+                matInput
+                [matDatepicker]="regPicker"
+                formControlName="registrationEndDate"
+                [placeholder]="'createEvent.regEndDatePlaceholder' | transloco"
+                (click)="regPicker.open()"
+              />
+              <mat-datepicker-toggle matSuffix [for]="regPicker"></mat-datepicker-toggle>
+              <mat-datepicker #regPicker></mat-datepicker>
+              <mat-hint>{{ 'createEvent.regEndDateHint' | transloco }}</mat-hint>
+            </mat-form-field>
+            @if (
+              form.hasError('regEndAfterStart') &&
+              (form.get('registrationEndDate')?.touched || form.get('date')?.touched)
+            ) {
+              <p class="text-red-600 text-xs -mt-2">
+                {{ 'createEvent.errors.regEndAfterStart' | transloco }}
+              </p>
+            }
+          </div>
+
           <div
             class="flex justify-between items-center p-4 bg-gray-50/50 hover:bg-gray-50 transition-colors"
             [class.opacity-50]="form.get('foodProvided')?.disabled"
@@ -198,7 +268,7 @@
             </div>
             <mat-slide-toggle
               formControlName="foodProvided"
-              class="custom-warn-toggle"
+              class="custom-maroon-toggle"
             ></mat-slide-toggle>
           </div>
         </div>
@@ -223,42 +293,50 @@
             title=""
           />
 
-          <div *ngIf="!filePreview()" class="flex flex-col items-center pointer-events-none">
-            <mat-icon class="text-gray-400 mb-2 transform scale-150">add_photo_alternate</mat-icon>
-            <p class="text-sm font-medium text-gray-900 mb-1">
-              {{ 'createEvent.uploadPoster' | transloco }}
-            </p>
-            <p class="text-xs text-gray-500 mb-4 px-2">
-              {{ 'createEvent.uploadHint' | transloco }}
-            </p>
-            <div
-              class="px-4 py-1.5 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 flex items-center shadow-sm"
-            >
-              <mat-icon class="text-gray-500 mr-2 text-[18px] h-[18px] w-[18px]"
-                >file_upload</mat-icon
+          @if (!filePreview()) {
+            <div class="flex flex-col items-center pointer-events-none">
+              <mat-icon class="text-gray-400 mb-2 transform scale-150"
+                >add_photo_alternate</mat-icon
               >
-              {{ 'createEvent.chooseFile' | transloco }}
+              <p class="text-sm font-medium text-gray-900 mb-1">
+                {{ 'createEvent.uploadPoster' | transloco }}
+              </p>
+              <p class="text-xs text-gray-500 mb-4 px-2">
+                {{ 'createEvent.uploadHint' | transloco }}
+              </p>
+              <div
+                class="px-4 py-1.5 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 flex items-center shadow-sm"
+              >
+                <mat-icon class="text-gray-500 mr-2 text-[18px] h-[18px] w-[18px]"
+                  >file_upload</mat-icon
+                >
+                {{ 'createEvent.chooseFile' | transloco }}
+              </div>
             </div>
-          </div>
+          }
 
-          <div *ngIf="filePreview()" class="w-full h-full absolute inset-0 z-0">
-            <img
-              [src]="filePreview()"
-              class="w-full h-full object-cover opacity-80"
-              alt="Preview"
-            />
-            <div
-              class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
-            >
-              <span
-                class="text-white font-medium flex items-center bg-black/50 px-3 py-1 rounded-full"
-                ><mat-icon class="mr-1 text-[18px] h-[18px] w-[18px]">edit</mat-icon>
-                {{ 'createEvent.changeFile' | transloco }}</span
+          @if (filePreview()) {
+            <div class="w-full h-full absolute inset-0 z-0">
+              <img
+                [src]="filePreview()"
+                class="w-full h-full object-cover opacity-80"
+                alt="Preview"
+              />
+              <div
+                class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
               >
+                <span
+                  class="text-white font-medium flex items-center bg-black/50 px-3 py-1 rounded-full"
+                  ><mat-icon class="mr-1 text-[18px] h-[18px] w-[18px]">edit</mat-icon>
+                  {{ 'createEvent.changeFile' | transloco }}</span
+                >
+              </div>
             </div>
-          </div>
+          }
         </div>
-        <span class="text-red-600 text-xs mt-2 block" *ngIf="fileError()">{{ fileError() }}</span>
+        @if (fileError()) {
+          <span class="text-red-600 text-xs mt-2 block">{{ fileError() }}</span>
+        }
       </div>
 
       <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 sticky top-6">
@@ -268,20 +346,24 @@
             mat-flat-button
             class="w-full !rounded-md !py-6 text-base font-semibold shadow-sm text-white"
             [disabled]="form.invalid || isSubmitting() || !!fileError()"
-            style="background-color: #a01441"
+            [style.background-color]="
+              form.valid && !isSubmitting() && !fileError() ? '#a01441' : null
+            "
           >
             <mat-icon class="mr-1">save</mat-icon>
             {{
               isSubmitting()
                 ? ('createEvent.saving' | transloco)
-                : ('createEvent.saveDraft' | transloco)
+                : isEditMode()
+                  ? ('createEvent.saveChanges' | transloco)
+                  : ('createEvent.saveDraft' | transloco)
             }}
           </button>
 
           <button
             type="button"
             mat-stroked-button
-            class="w-full !rounded-md !py-6 text-base font-medium text-gray-700 bg-gray-50 border-gray-300"
+            class="discard-btn w-full !rounded-md !py-6 text-base font-medium transition-colors"
             (click)="discard()"
           >
             {{ 'createEvent.discard' | transloco }}

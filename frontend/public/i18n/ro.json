@@ -54,6 +54,11 @@
   },
   "account": "Cont utilizator",
   "openMenu": "Deschide meniul de navigare",
+  "notFound": {
+    "title": "Acest eveniment nu există",
+    "subtitle": "Evenimentul căutat nu a putut fi găsit sau a fost șters.",
+    "back": "Înapoi la Evenimente"
+  },
   "auth": {
     "loginTitle": "Autentificare",
     "loginSubtitle": "Introdu adresa de email și parola pentru a-ți accesa contul.",
@@ -168,7 +173,7 @@
     "descriptionPlaceholder": "Agenda, publicul țintă, ce ar trebui să aducă participanții...",
     "scheduleTitle": "Program și locație",
     "dateLabel": "Data",
-    "datePlaceholder": "zz/ll/aaaa",
+    "datePlaceholder": "zz.ll.aaaa",
     "startLabel": "Început",
     "startPlaceholder": "09:00",
     "endLabel": "Sfârșit",
@@ -188,9 +193,25 @@
     "saveDraft": "Salvează ciornă",
     "discard": "Renunță",
     "publishHint": "Evenimentele publicate devin vizibile imediat pentru toți colegii msg.",
+    "created": "Evenimentul a fost creat cu succes.",
+    "updated": "Evenimentul a fost actualizat cu succes.",
+    "editTitle": "Editare eveniment",
+    "editSubtitle": "Actualizează detaliile acestui eveniment.",
+    "saveChanges": "Salvează modificările",
+    "typeHintInternal": "Se aplică tuturor locațiilor. Opțiunea pentru preferințe culinare este disponibilă.",
+    "typeHintExternal": "Locație specifică necesară. Fără preferințe culinare.",
+    "typeHintLocal": "Locație specifică necesară. Opțiunea pentru preferințe culinare este disponibilă.",
+    "regEndDateLabel": "Data limită de înregistrare",
+    "regEndDatePlaceholder": "zz.ll.aaaa",
+    "regEndDateHint": "Opțional. Ultima zi în care participanții se pot înscrie.",
     "errors": {
       "fileSize": "Dimensiunea fișierului trebuie să fie sub 5MB.",
-      "fileType": "Sunt permise doar fișierele JPEG/PNG."
+      "fileType": "Sunt permise doar fișierele JPEG/PNG.",
+      "nameRequired": "Titlul evenimentului este obligatoriu.",
+      "nameTooLong": "Titlul evenimentului nu poate depăși 100 de caractere.",
+      "descriptionTooLong": "Descrierea nu poate depăși 2000 de caractere.",
+      "endBeforeStart": "Ora de sfârșit trebuie să fie după ora de început.",
+      "regEndAfterStart": "Data limită de înregistrare trebuie să fie înainte de data evenimentului."
     }
   },
   "userList": {

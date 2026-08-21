@@ -1,0 +1,18 @@
+<div
+  class="flex flex-col items-center justify-center min-h-screen gap-6 p-8 text-center bg-gray-50"
+>
+  <mat-icon class="!text-6xl !w-16 !h-16 text-gray-300">search_off</mat-icon>
+  <div>
+    <h1 class="text-2xl font-bold text-gray-800 mb-2">
+      {{ 'notFound.title' | transloco }}
+    </h1>
+    <p class="text-gray-500 text-sm">{{ 'notFound.subtitle' | transloco }}</p>
+  </div>
+  <a
+    routerLink="/events"
+    mat-flat-button
+    class="!rounded-xl !bg-[var(--dark-red-dot)] !text-white !px-8 !h-11"
+  >
+    {{ 'notFound.back' | transloco }}
+  </a>
+</div>

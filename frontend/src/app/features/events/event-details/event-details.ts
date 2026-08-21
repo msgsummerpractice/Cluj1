@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, inject, signal, computed } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Event } from '../../../core/models/event.model';
 import { EventDetails } from '../../../core/models/event-detail.models';
 import { EventService } from '../../../core/services/event.service';
@@ -31,6 +31,7 @@ import { BackButtonComponent } from '../../../shared/components/back-button/back
 })
 export class EventDetailsComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly eventService = inject(EventService);
   private readonly authService = inject(AuthService);
   private readonly toast = inject(ToastService);
@@ -63,32 +64,30 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
     this.eventService.getEventById(eventId).subscribe({
       next: (event) => {
         this.event.set(event);
-        this.isRegistered.set(!!event.isRegistered);
-      },
-      error: (error) => {
-        this.toast.show('error', error);
-      },
-    });
 
-
-    this.eventService.getEventDetails(eventId).subscribe({
-      next: (details) => {
-        this.eventDetails.set(details);
-        if (details.hasPoster) {
-          this.eventService.getEventPoster(eventId).subscribe({
-            next: (poster) => {
-              if (poster.size > 0) {
-                this.posterUrl.set(URL.createObjectURL(poster));
-              }
-            },
-            error: () => {
-              this.posterUrl.set(null);
-            },
-          });
-        }
+        this.eventService.getEventDetails(eventId).subscribe({
+          next: (details) => {
+            this.eventDetails.set(details);
+            if (details.hasPoster) {
+              this.eventService.getEventPoster(eventId).subscribe({
+                next: (poster) => {
+                  if (poster.size > 0) {
+                    this.posterUrl.set(URL.createObjectURL(poster));
+                  }
+                },
+                error: () => {
+                  this.posterUrl.set(null);
+                },
+              });
+            }
+          },
+          error: (error) => {
+            this.toast.show('error', error?.message ?? error);
+          },
+        });
       },
-      error: (error) => {
-        this.toast.show('error', error);
+      error: () => {
+        this.router.navigate(['/not-found']);
       },
     });
   }

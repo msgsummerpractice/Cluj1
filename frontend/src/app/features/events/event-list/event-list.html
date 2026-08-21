@@ -143,11 +143,20 @@
       }
     </ng-template>
 
+    <ng-template appDataTableCellDef="name" let-event>
+      <span
+        class="block truncate max-w-[220px]"
+        [matTooltip]="event.name"
+        matTooltipShowDelay="400"
+        >{{ event.name }}</span
+      >
+    </ng-template>
+
     <ng-template appDataTableCellDef="date" let-event>
-      {{ event.startDate | date: 'dd MMM yyyy HH:mm' }}
+      {{ event.startDate | date: 'dd.MM.yyyy' }}
 
       @if (displayEventEndDate(event)) {
-        <span> - {{ event.endDate | date: 'dd MMM yyyy HH:mm' }} </span>
+        <span> - {{ event.endDate | date: 'dd.MM.yyyy' }} </span>
       }
     </ng-template>
 
@@ -161,7 +170,12 @@
     </ng-template>
 
     <ng-template appDataTableCellDef="type" let-event>
-      {{ 'events.eventType' + (event.type | titlecase) | transloco }}
+      <span
+        class="status-badge px-3 py-1.5 text-xs font-medium rounded-full border inline-block whitespace-nowrap"
+        [ngClass]="getTypeBadgeClass(event.type)"
+      >
+        {{ 'events.eventType' + (event.type | titlecase) | transloco }}
+      </span>
     </ng-template>
 
     <ng-template appDataTableCellDef="participantStatus" let-event>
