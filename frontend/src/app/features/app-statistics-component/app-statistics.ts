@@ -1,3 +1,4 @@
+import { BackButtonComponent } from '../../shared/components/back-button/back-button';
 import {
   ChangeDetectorRef,
   Component,
@@ -21,7 +22,14 @@ import { MatTableModule } from '@angular/material/table';
 
 @Component({
   selector: 'app-statistics',
-  imports: [CommonModule, MatCardModule, BaseChartDirective, TranslocoModule, MatTableModule],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    BaseChartDirective,
+    TranslocoModule,
+    MatTableModule,
+    BackButtonComponent,
+  ],
   templateUrl: './app-statistics.html',
 })
 export class StatisticsViewComponent implements OnInit, OnDestroy {
