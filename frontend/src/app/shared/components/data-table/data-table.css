@@ -5,7 +5,7 @@
 
 table[mat-table] {
   width: 100%;
-  min-width: 48rem;
+  min-width: 60rem;
   table-layout: fixed;
 }
 
