@@ -67,7 +67,8 @@
     "signUp": "Înregistrează-te",
     "error": {
       "invalidCredentials": "Email sau parola sunt invalide.",
-      "signInError": "Autentificarea nu este posibilă momentan. Te rugăm să încerci din nou."
+      "signInError": "Autentificarea nu este posibilă momentan. Te rugăm să încerci din nou.",
+      "invalidCompanyEmail": "Te rugăm să introduci o adresă de email validă de companie (@msg.group)."
     }
   },
   "roles": {
@@ -205,7 +206,8 @@
     "statusActive": "Activ",
     "statusInactive": "Inactiv",
     "manageRole": "Gestionare rol",
-    "noData": "Niciun utilizator găsit pentru"
+    "noData": "Niciun utilizator găsit pentru",
+    "manageUsers": "Gestionare utilizatori"
   },
   "roleManageDialog": {
     "title": "Gestionare rol",
