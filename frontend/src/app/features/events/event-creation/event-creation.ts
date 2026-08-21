@@ -224,9 +224,7 @@ export class EventCreationComponent implements OnInit {
         this.isSubmitting.set(false);
         this.toastService.show(
           'error',
-          typeof err?.error === 'string'
-            ? err.error
-            : err?.error?.message || err?.message || 'Failed to create event.',
+          err?.error?.message || err?.message || 'Failed to create event.',
         );
       },
     });

@@ -167,15 +167,15 @@ public class EventService {
                     throw new InvalidEventOperationException(
                             "Invalid status transition from " + currentStatus + " to " + status);
                 }
-                if (event.getEventEndTime() != null
-                        && event.getEventEndTime().isBefore(OffsetDateTime.now())) {
-                    throw new InvalidEventOperationException(
-                            "Cannot publish an event that has already ended.");
-                }
-                if (event.getEventEndTime() != null
-                        && !event.getEventEndTime().isAfter(event.getEventStartDate())) {
-                    throw new InvalidEventOperationException(
-                            "Cannot publish an event where end date is not after start date.");
+                if (event.getEventEndTime() != null) {
+                    if (event.getEventEndTime().isBefore(OffsetDateTime.now())) {
+                        throw new InvalidEventOperationException(
+                                "Cannot publish an event that has already ended.");
+                    }
+                    if (!event.getEventEndTime().isAfter(event.getEventStartDate())) {
+                        throw new InvalidEventOperationException(
+                                "Cannot publish an event where end date is not after start date.");
+                    }
                 }
                 event.setStatus(EventStatus.PUBLISHED);
                 justPublished = true;
