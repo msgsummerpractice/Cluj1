@@ -13,6 +13,29 @@
 .cancel-registration {
   border-color: var(--brand-maroon) !important;
   color: var(--brand-maroon) !important;
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.cancel-registration:not(:disabled):hover,
+.cancel-registration:not(.mat-mdc-button-disabled):hover {
+  background-color: var(--brand-maroon) !important;
+  color: white !important;
+  box-shadow: 0 4px 10px rgb(95 24 43 / 18%) !important;
+}
+
+.cancel-registration:not(:disabled):focus-visible,
+.cancel-registration:not(.mat-mdc-button-disabled):focus-visible {
+  outline: 3px solid var(--brand-maroon-hover-bg);
+  outline-offset: 2px;
+}
+
+.cancel-registration:disabled,
+.cancel-registration.mat-mdc-button-disabled {
+  cursor: not-allowed;
 }
 
 ::ng-deep .custom-warn-toggle .mdc-switch--selected .mdc-switch__track::after {
