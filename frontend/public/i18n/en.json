@@ -68,7 +68,8 @@
     "statusActive": "Active",
     "statusInactive": "Inactive",
     "manageRole": "Manage Role",
-    "noData": "No users found matching"
+    "noData": "No users found matching",
+    "manageUsers": "Manage users"
   },
   "roleManageDialog": {
     "title": "Manage role",
@@ -111,7 +112,8 @@
     "signUp": "Sign up",
     "error": {
       "invalidCredentials": "Invalid email or password.",
-      "signInError": "Unable to sign in right now. Please try again."
+      "signInError": "Unable to sign in right now. Please try again.",
+      "invalidCompanyEmail": "Please enter a valid company email address (@msg.group)."
     }
   },
   "roles": {
