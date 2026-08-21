@@ -14,11 +14,12 @@ import { Event } from '../../../core/models/event.model';
 import { CheckInRequest } from '../../../core/models/check-in-request.model';
 import { AttendanceRecord } from '../../../core/models/attendance-record.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 
 @Component({
   selector: 'app-event-checkin',
   standalone: true,
-  imports: [CommonModule, FormsModule, ZXingScannerModule, TranslocoModule],
+  imports: [CommonModule, FormsModule, ZXingScannerModule, TranslocoModule, BackButtonComponent],
   templateUrl: './event-checkin.html',
   styleUrls: ['./event-checkin.css'],
 })
@@ -105,6 +106,10 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
       next: (checkins) => this.recentCheckins.set(checkins),
       error: () => {},
     });
+  }
+
+  isParticipant(): boolean {
+    return this.authService.isParticipant();
   }
 
   onCamerasFound(devices: MediaDeviceInfo[]): void {
