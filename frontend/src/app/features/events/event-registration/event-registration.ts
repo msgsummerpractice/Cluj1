@@ -20,7 +20,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatIconModule } from '@angular/material/icon';
 import { ToastService } from '../../../core/services/toast.service';
 
-const DRIVER_NAME_PATTERN = /^[\p{L}'-]+$/u;
+const DRIVER_NAME_PATTERN = /^[\p{L}.'-]+(?:\s+[\p{L}.'-]+)*$/u;
 
 @Component({
   selector: 'app-event-registration-view',

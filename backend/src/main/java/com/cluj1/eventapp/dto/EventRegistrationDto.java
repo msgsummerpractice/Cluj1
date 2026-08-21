@@ -20,7 +20,7 @@ public class EventRegistrationDto {
     private Boolean transportationNeeded;
 
     @Size(max = 255, message = "Driver name must not exceed 255 characters")
-    @Pattern(regexp = "^[\\p{L}'-]+$", message = "Driver name may contain only letters, hyphens, and apostrophes")
+    @Pattern(regexp = "^[\\p{L}.'-]+(?:\\s+[\\p{L}.'-]+)*$", message = "Driver name may contain only letters, spaces, dots, hyphens, and apostrophes")
     private String driverName;
 
     @Size(max = 50, message = "Driver phone must not exceed 50 characters")

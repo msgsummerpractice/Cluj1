@@ -6,11 +6,11 @@
     <input
       matInput
       type="tel"
-      [value]="value"
-      [disabled]="disabled"
+      [value]="value()"
+      [disabled]="disabled()"
       [placeholder]="placeholder() | transloco"
       autocomplete="tel"
-      (input)="onInput($any($event.target).value)"
+      (input)="onInput($event)"
       (blur)="markTouched()"
     />
   </mat-form-field>

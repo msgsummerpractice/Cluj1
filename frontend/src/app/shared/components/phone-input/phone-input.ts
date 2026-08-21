@@ -1,5 +1,4 @@
-import { Component, input, Optional, Self } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, input, Optional, Self, signal } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule } from '@jsverse/transloco';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,7 +9,7 @@ export const PHONE_NUMBER_PATTERN = /^\+?[0-9]+$/;
 @Component({
   selector: 'app-phone-input',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslocoModule, MatFormFieldModule, MatInputModule],
+  imports: [ReactiveFormsModule, TranslocoModule, MatFormFieldModule, MatInputModule],
   templateUrl: './phone-input.html',
 })
 export class PhoneInput implements ControlValueAccessor {
@@ -19,13 +18,13 @@ export class PhoneInput implements ControlValueAccessor {
   readonly errorLabel = input('eventRegistration.driverPhoneError');
   readonly patternErrorLabel = input('eventRegistration.driverPhonePatternError');
 
-  value = '';
-  disabled = false;
+  value = signal('');
+  disabled = signal(false);
 
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
-  constructor(@Optional() @Self() private ngControl: NgControl) {
+  constructor(@Optional() @Self() public ngControl: NgControl) {
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
     }
@@ -43,8 +42,8 @@ export class PhoneInput implements ControlValueAccessor {
     return !!this.ngControl?.touched;
   }
 
-  writeValue(value: string): void {
-    this.value = value ?? '';
+  writeValue(value: string | null | undefined): void {
+    this.value.set(value ?? '');
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -56,11 +55,12 @@ export class PhoneInput implements ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
+    this.disabled.set(isDisabled);
   }
 
-  onInput(value: string): void {
-    this.value = value;
+  onInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.value.set(value);
     this.onChange(value);
   }
 
