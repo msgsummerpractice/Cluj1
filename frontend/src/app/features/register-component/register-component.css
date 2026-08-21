@@ -1,7 +1,7 @@
 :host {
-  display: block;
-  height: 100dvh;
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - 5rem);
 }
 
 ::ng-deep .mat-mdc-form-field-error-wrapper {

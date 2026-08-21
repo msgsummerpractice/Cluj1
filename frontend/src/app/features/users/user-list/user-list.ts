@@ -22,6 +22,8 @@ import { DataTableComponent } from '../../../shared/components/data-table/data-t
 import { DataTableColumn } from '../../../shared/components/data-table/data-table.model';
 import { DataTableCellDefDirective } from '../../../shared/components/data-table/data-table-cell-def.directive';
 import { ToastService } from '../../../core/services/toast.service';
+import { RoleTitlecasePipe } from '../role-titlecase.pipe';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-user-list',
@@ -41,6 +43,8 @@ import { ToastService } from '../../../core/services/toast.service';
     MatPaginatorModule,
     DataTableComponent,
     DataTableCellDefDirective,
+    RoleTitlecasePipe,
+    MatTooltipModule,
   ],
   templateUrl: './user-list.html',
   styleUrl: './user-list.css',
@@ -96,7 +100,11 @@ export class UserListComponent implements OnInit {
           this.users.set(data.content);
           this.totalUsers.set(data.totalElements);
         },
-        error: (err) => this.toastService.show('error', this.translocoService.translate('notifications.errorFetchingUsers')),
+        error: (err) =>
+          this.toastService.show(
+            'error',
+            this.translocoService.translate('notifications.errorFetchingUsers'),
+          ),
       });
   }
 
@@ -127,6 +135,10 @@ export class UserListComponent implements OnInit {
             }
             return currentUsers;
           });
+          this.toastService.show(
+            'success',
+            this.translocoService.translate('notifications.roleUpdated'),
+          );
         }
       });
   }
@@ -151,12 +163,18 @@ export class UserListComponent implements OnInit {
           const messageKey = newStatus
             ? 'notifications.userActivated'
             : 'notifications.userDeactivated';
-          this.toastService.show('success', messageKey);
+          this.toastService.show(
+            'success',
+            this.translocoService.translate('notifications.changeUserStatus'),
+          );
         },
         error: (err) => {
           event.source.checked = user.isActive;
 
-          this.toastService.show('error', this.translocoService.translate('notifications.errorUpdatingStatus'));
+          this.toastService.show(
+            'error',
+            this.translocoService.translate('notifications.errorUpdatingStatus'),
+          );
         },
       });
   }
@@ -166,5 +184,4 @@ export class UserListComponent implements OnInit {
     const formatted = location.replace(/_/g, ' ').toLowerCase();
     return formatted.charAt(0).toUpperCase() + formatted.slice(1);
   }
-
 }

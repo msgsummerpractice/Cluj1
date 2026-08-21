@@ -30,57 +30,55 @@ class RecipientPoolServiceTest {
     private RecipientPoolService recipientPoolService;
 
     @Test
-    void resolveRecipientsReturnsAllUsersWhenEventLocationIsAll() {
-        User firstUser = new User();
-        User secondUser = new User();
-        UserDetails firstDetails = userDetails(firstUser, UserLocation.CLUJ);
-        UserDetails secondDetails = userDetails(secondUser, UserLocation.MURES);
-        when(userDetailsRepository.findAll()).thenReturn(List.of(firstDetails, secondDetails));
+    void resolveRecipientsReturnsOnlyActiveUsersWhenEventLocationIsAll() {
+        User activeUser = new User();
+        UserDetails activeDetails = userDetails(activeUser, UserLocation.CLUJ);
+        when(userDetailsRepository.findByUserIsActiveTrue()).thenReturn(List.of(activeDetails));
 
         List<User> result = recipientPoolService.resolveRecipients(EventLocation.ALL);
 
-        assertEquals(List.of(firstUser, secondUser), result);
-        verify(userDetailsRepository).findAll();
+        assertEquals(List.of(activeUser), result);
+        verify(userDetailsRepository).findByUserIsActiveTrue();
         verifyNoMoreInteractions(userDetailsRepository);
     }
 
     @Test
-    void resolveRecipientsReturnsUsersForClujEvent() {
+    void resolveRecipientsReturnsOnlyActiveUsersForClujEvent() {
         User user = new User();
-        when(userDetailsRepository.findByLocation(UserLocation.CLUJ))
+        when(userDetailsRepository.findByLocationAndUserIsActiveTrue(UserLocation.CLUJ))
                 .thenReturn(List.of(userDetails(user, UserLocation.CLUJ)));
 
         List<User> result = recipientPoolService.resolveRecipients(EventLocation.CLUJ);
 
         assertEquals(1, result.size());
         assertSame(user, result.get(0));
-        verify(userDetailsRepository).findByLocation(UserLocation.CLUJ);
+        verify(userDetailsRepository).findByLocationAndUserIsActiveTrue(UserLocation.CLUJ);
         verifyNoMoreInteractions(userDetailsRepository);
     }
 
     @Test
-    void resolveRecipientsReturnsUsersForTimisoaraEvent() {
+    void resolveRecipientsReturnsOnlyActiveUsersForTimisoaraEvent() {
         User user = new User();
-        when(userDetailsRepository.findByLocation(UserLocation.TIMISOARA))
+        when(userDetailsRepository.findByLocationAndUserIsActiveTrue(UserLocation.TIMISOARA))
                 .thenReturn(List.of(userDetails(user, UserLocation.TIMISOARA)));
 
         List<User> result = recipientPoolService.resolveRecipients(EventLocation.TIMISOARA);
 
         assertEquals(List.of(user), result);
-        verify(userDetailsRepository).findByLocation(UserLocation.TIMISOARA);
+        verify(userDetailsRepository).findByLocationAndUserIsActiveTrue(UserLocation.TIMISOARA);
         verifyNoMoreInteractions(userDetailsRepository);
     }
 
     @Test
-    void resolveRecipientsReturnsUsersForMuresEvent() {
+    void resolveRecipientsReturnsOnlyActiveUsersForMuresEvent() {
         User user = new User();
-        when(userDetailsRepository.findByLocation(UserLocation.MURES))
+        when(userDetailsRepository.findByLocationAndUserIsActiveTrue(UserLocation.MURES))
                 .thenReturn(List.of(userDetails(user, UserLocation.MURES)));
 
         List<User> result = recipientPoolService.resolveRecipients(EventLocation.MURES);
 
         assertEquals(List.of(user), result);
-        verify(userDetailsRepository).findByLocation(UserLocation.MURES);
+        verify(userDetailsRepository).findByLocationAndUserIsActiveTrue(UserLocation.MURES);
         verifyNoMoreInteractions(userDetailsRepository);
     }
 

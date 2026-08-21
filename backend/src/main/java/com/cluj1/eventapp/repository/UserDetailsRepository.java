@@ -17,4 +17,8 @@ public interface UserDetailsRepository extends JpaRepository<UserDetails, UUID> 
     Optional<UserDetails> findById(UUID userId);
 
     List<UserDetails> findByLocation(UserLocation userLocation);
+
+    List<UserDetails> findByUserIsActiveTrue();
+
+    List<UserDetails> findByLocationAndUserIsActiveTrue(UserLocation userLocation);
 }

@@ -100,15 +100,19 @@
               </div>
             }
 
-            @if (canRegister(event) || canExport()) {
+            @if (
+              canRegister(event) ||
+              canExport() ||
+              ((event.status === 'PUBLISHED' || event.status === 'COMPLETED') &&
+                canViewStatistics())
+            ) {
               <div class="flex flex-col gap-4 w-full">
                 @if (canRegister(event)) {
                   <div class="w-full">
                     <button
                       type="button"
                       mat-flat-button
-                      class="w-full !rounded-md !py-6 text-base font-semibold shadow-sm text-white"
-                      style="background-color: #a01441"
+                      class="w-full !rounded-md !py-6 text-base font-semibold shadow-sm text-white action-button-primary"
                       [routerLink]="['/events', event.id, 'register']"
                       [disabled]="isRegistrationClosed(event)"
                     >
@@ -124,13 +128,27 @@
                   </div>
                 }
 
+                @if (
+                  (event.status === 'PUBLISHED' || event.status === 'COMPLETED') &&
+                  canViewStatistics()
+                ) {
+                  <button
+                    type="button"
+                    mat-flat-button
+                    class="w-full !rounded-md !py-6 text-base font-semibold shadow-sm text-white action-button-primary"
+                    [routerLink]="['/events', event.id, 'statistics']"
+                  >
+                    <mat-icon class="mr-1">analytics</mat-icon>
+                    View Statistics
+                  </button>
+                }
+
                 @if (canExport()) {
                   <div class="w-full">
                     <button
                       type="button"
                       mat-flat-button
-                      class="w-full !rounded-md !py-6 text-base font-semibold shadow-sm text-white"
-                      style="background-color: #a01441"
+                      class="w-full !rounded-md !py-6 text-base font-semibold shadow-sm text-white action-button-primary"
                       (click)="onExportExcel()"
                       [disabled]="isExporting()"
                     >

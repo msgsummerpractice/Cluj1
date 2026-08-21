@@ -13,6 +13,7 @@ import { Role } from '../../../core/models/role.enum';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { UserService } from '../../../core/services/user.service';
 import { ToastService } from '../../../core/services/toast.service';
+import { RoleTitlecasePipe } from '../role-titlecase.pipe';
 
 @Component({
   selector: 'app-role-manage-dialog-component',
@@ -27,6 +28,7 @@ import { ToastService } from '../../../core/services/toast.service';
     MatIconModule,
     MatSnackBarModule,
     TranslocoModule,
+    RoleTitlecasePipe,
   ],
   templateUrl: './role-manage-dialog.html',
   styleUrl: './role-manage-dialog.css',
@@ -77,7 +79,10 @@ export class RoleManageDialogComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (updatedUser) => {
-          this.toastService.show('success', this.translocoService.translate('roleManageDialog.successMessage'));
+          this.toastService.show(
+            'success',
+            this.translocoService.translate('roleManageDialog.successMessage'),
+          );
           this.dialogRef.close(updatedUser);
         },
         error: (err) => {

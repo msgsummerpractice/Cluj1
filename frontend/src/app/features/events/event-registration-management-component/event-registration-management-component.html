@@ -1,0 +1,302 @@
+@if (event(); as ev) {
+  <div class="min-h-screen bg-gray-50 p-4 md:p-8 flex justify-center font-sans">
+    <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="w-full max-w-[1400px]">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+        <div>
+          <div class="flex items-center gap-2 -ml-3">
+            <app-back-button />
+            <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
+              {{ 'manageRegistration.title' | transloco }}{{ ev.name }}
+            </h1>
+          </div>
+          <p class="text-gray-500 mt-1 text-sm">
+            {{ 'manageRegistration.subtitle' | transloco }}
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-3 mt-4 md:mt-0">
+          <button
+            mat-stroked-button
+            color="warn"
+            type="button"
+            (click)="onDelete()"
+            [disabled]="isDeleting() || isSubmitting()"
+            class="cancel-registration bg-white shadow-sm !rounded-md !px-8 !py-3 text-base font-semibold min-h-[56px] items-center justify-center flex"
+          >
+            <mat-icon class="mr-1">delete_outline</mat-icon>
+            {{
+              isDeleting()
+                ? ('manageRegistration.deleting' | transloco)
+                : ('manageRegistration.cancelRegistration' | transloco)
+            }}
+          </button>
+        </div>
+      </div>
+
+      @if ($any(ev.type) === 'EXTERNAL') {
+        <div class="max-w-xl mx-auto flex flex-col gap-6">
+          <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 lg:p-8">
+            <h2 class="text-lg font-bold text-gray-900 mb-4">
+              {{ 'manageRegistration.summaryTitle' | transloco }}
+            </h2>
+            <div
+              class="flex flex-col gap-3 text-sm text-gray-600 mb-6 border-b border-gray-100 pb-4"
+            >
+              <div class="flex justify-between">
+                <span>{{ 'manageRegistration.eventName' | transloco }}</span>
+                <span class="font-medium text-gray-900 text-right truncate max-w-[240px]">{{
+                  ev.name
+                }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span>{{ 'manageRegistration.eventType' | transloco }}</span>
+                <span class="font-medium text-gray-900">{{ ev.type }}</span>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              mat-flat-button
+              class="confirm-registration w-full !rounded-md !py-6 text-base font-semibold shadow-sm text-white items-center justify-center flex"
+              [disabled]="
+                registrationForm.invalid || !hasChanges() || isSubmitting() || isDeleting()
+              "
+            >
+              <mat-icon class="mr-1">update</mat-icon>
+              {{
+                isSubmitting()
+                  ? ('manageRegistration.updating' | transloco)
+                  : ('manageRegistration.updateRegistration' | transloco)
+              }}
+            </button>
+          </div>
+        </div>
+      }
+
+      @if ($any(ev.type) !== 'EXTERNAL') {
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+          <div class="col-span-1 lg:col-span-8 flex flex-col gap-6">
+            @if (ev.foodProvided) {
+              <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 lg:p-8">
+                <h2 class="text-lg text-gray-900 mb-1">
+                  {{ 'manageRegistration.cateringTitle' | transloco }}
+                </h2>
+                <p class="text-gray-500 text-sm mb-6">
+                  {{ 'manageRegistration.cateringSubtitle' | transloco }}
+                </p>
+
+                <div class="flex flex-col gap-1">
+                  <label class="text-sm font-medium text-gray-700">{{
+                    'eventRegistration.foodPreferenceLabel' | transloco
+                  }}</label>
+                  <mat-form-field appearance="outline" class="w-full h-[75px]">
+                    <mat-select formControlName="foodPreference">
+                      <mat-option value="NONE">{{
+                        'eventRegistration.foodNone' | transloco
+                      }}</mat-option>
+                      <mat-option value="VEGETARIAN">{{
+                        'eventRegistration.foodVegetarian' | transloco
+                      }}</mat-option>
+                      <mat-option value="VEGAN">{{
+                        'eventRegistration.foodVegan' | transloco
+                      }}</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+              </div>
+            }
+
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 lg:p-8">
+              <h2 class="text-lg font-bold text-gray-900 mb-1">
+                {{ 'manageRegistration.logisticsTitle' | transloco }}
+              </h2>
+              <p class="text-gray-500 text-sm mb-6">
+                {{ 'manageRegistration.logisticsSubtitle' | transloco }}
+              </p>
+
+              <div class="flex flex-col gap-6">
+                <div class="flex flex-col gap-4 border-b border-gray-100 pb-6">
+                  <div
+                    class="flex justify-between items-center p-4 bg-gray-50/50 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                  >
+                    <div>
+                      <p class="font-medium text-gray-900">
+                        {{ 'eventRegistration.transportationNeeded' | transloco }}
+                      </p>
+                      <p class="text-sm text-gray-500">
+                        {{ 'manageRegistration.transportationDesc' | transloco }}
+                      </p>
+                    </div>
+                    <mat-slide-toggle
+                      formControlName="transportationNeeded"
+                      class="custom-warn-toggle"
+                    ></mat-slide-toggle>
+                  </div>
+
+                  @if (registrationForm.get('transportationNeeded')?.value) {
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                      <div class="flex flex-col gap-1">
+                        <label class="text-sm font-medium text-gray-700">{{
+                          'eventRegistration.driverName' | transloco
+                        }}</label>
+                        <mat-form-field appearance="outline" class="w-full h-[75px]">
+                          <input
+                            matInput
+                            formControlName="driverName"
+                            maxlength="255"
+                            [placeholder]="'eventRegistration.driverNamePlaceholder' | transloco"
+                          />
+                        </mat-form-field>
+                        @if (
+                          registrationForm.get('driverName')?.invalid &&
+                          registrationForm.get('driverName')?.touched
+                        ) {
+                          <span class="text-red-600 text-xs mt-1 block">
+                            @if (registrationForm.get('driverName')?.hasError('required')) {
+                              {{ 'eventRegistration.driverNameError' | transloco }}
+                            } @else if (registrationForm.get('driverName')?.hasError('pattern')) {
+                              {{ 'eventRegistration.driverNamePatternError' | transloco }}
+                            }
+                          </span>
+                        }
+                      </div>
+                      <app-phone-input formControlName="driverPhone" />
+                    </div>
+                  }
+                </div>
+
+                <div class="flex flex-col gap-4">
+                  <div
+                    class="flex justify-between items-center p-4 bg-gray-50/50 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                  >
+                    <div>
+                      <p class="font-medium text-gray-900">
+                        {{ 'eventRegistration.accommodationNeeded' | transloco }}
+                      </p>
+                      <p class="text-sm text-gray-500">
+                        {{ 'manageRegistration.accommodationDesc' | transloco }}
+                      </p>
+                    </div>
+                    <mat-slide-toggle
+                      formControlName="accommodationNeeded"
+                      class="custom-warn-toggle"
+                    ></mat-slide-toggle>
+                  </div>
+
+                  @if (registrationForm.get('accommodationNeeded')?.value) {
+                    <div class="flex flex-col gap-1 mt-2">
+                      <label class="text-sm font-medium text-gray-700">{{
+                        'eventRegistration.accommodationDays' | transloco
+                      }}</label>
+                      <mat-form-field appearance="outline" class="w-full h-[75px]">
+                        <input
+                          matInput
+                          type="number"
+                          min="1"
+                          formControlName="accommodationDays"
+                          [placeholder]="
+                            'manageRegistration.accommodationDaysPlaceholder' | transloco
+                          "
+                        />
+                      </mat-form-field>
+                      @if (
+                        registrationForm.get('accommodationDays')?.invalid &&
+                        registrationForm.get('accommodationDays')?.touched
+                      ) {
+                        <span class="text-red-600 text-xs mt-1 block">
+                          {{ 'manageRegistration.accommodationDaysError' | transloco }}
+                        </span>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-span-1 lg:col-span-4 flex flex-col gap-6">
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 lg:p-8">
+              <h2 class="text-lg font-bold text-gray-900 mb-1">
+                {{ 'manageRegistration.consentsTitle' | transloco }}
+              </h2>
+              <p class="text-gray-500 text-sm mb-6">
+                {{ 'manageRegistration.consentsSubtitle' | transloco }}
+              </p>
+
+              <div class="flex flex-col gap-4">
+                <div class="flex flex-col gap-1">
+                  <label
+                    class="flex items-start gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      formControlName="gdprConsent"
+                      class="w-4 h-4 mt-0.5 text-primary rounded border-gray-300 focus:ring-primary"
+                    />
+                    <div class="flex flex-col">
+                      <span class="text-sm font-medium text-gray-700"
+                        >{{ 'manageRegistration.gdprConsent' | transloco }}
+                        <span class="text-red-500">*</span></span
+                      >
+                      <span class="text-xs text-red-500 font-normal mt-1 leading-relaxed">
+                        {{ 'manageRegistration.gdprWarning' | transloco }}
+                      </span>
+                    </div>
+                  </label>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                  <label
+                    class="flex items-center gap-3 cursor-pointer p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      formControlName="photoConsent"
+                      class="w-4 h-4 text-primary rounded border-gray-300 focus:ring-primary"
+                    />
+                    <span class="text-sm font-medium text-gray-700">{{
+                      'manageRegistration.photoConsent' | transloco
+                    }}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 sticky top-6">
+              <h2 class="text-lg font-bold text-gray-900 mb-4">
+                {{ 'manageRegistration.summary' | transloco }}
+              </h2>
+              <div
+                class="flex flex-col gap-3 text-sm text-gray-600 mb-6 border-b border-gray-100 pb-4"
+              >
+                <div class="flex justify-between">
+                  <span>{{ 'manageRegistration.event' | transloco }}</span>
+                  <span class="font-medium text-gray-900 text-right truncate max-w-[180px]">{{
+                    ev.name
+                  }}</span>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-3">
+                <button
+                  type="submit"
+                  mat-flat-button
+                  class="confirm-registration w-full !rounded-md !py-6 text-base font-semibold shadow-sm text-white items-center justify-center flex"
+                  [disabled]="
+                    registrationForm.invalid || !hasChanges() || isSubmitting() || isDeleting()
+                  "
+                >
+                  <mat-icon class="mr-1">update</mat-icon>
+                  {{
+                    isSubmitting()
+                      ? ('manageRegistration.updating' | transloco)
+                      : ('manageRegistration.updateRegistration' | transloco)
+                  }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </form>
+  </div>
+}

@@ -1,41 +1,60 @@
-
 <div class="min-h-screen bg-slate-50 p-4 sm:p-6 lg:p-8 font-sans text-slate-900">
   <div class="mx-auto max-w-7xl">
-
     <!-- Top Header -->
     <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
         <h1 class="text-3xl font-bold text-slate-800">{{ 'profile.title' | transloco }}</h1>
-
       </div>
-      <button
-        mat-flat-button
-        (click)="updateProfile()"
-        [disabled]="saving()"
-        class="bg-[#8b143d]! text-white! rounded-lg! px-6! py-6! text-base! font-medium"
-      >
-        {{ saving() ? ('profile.save changes' | transloco) : ('profile.save changes' | transloco) }}
-      </button>
+      <div class="flex items-center gap-2">
+        @if (hasChanges) {
+          <button
+            mat-icon-button
+            (click)="discardChanges()"
+            [attr.aria-label]="'profile.discardChanges' | transloco"
+            [title]="'profile.discardChanges' | transloco"
+            class="text-slate-500!"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+        <button
+          mat-flat-button
+          (click)="updateProfile()"
+          [disabled]="saving() || !hasChanges"
+          class="rounded-lg! px-6! py-6! text-base! font-medium"
+          [class]="hasChanges ? 'save-button' : 'save-button--disabled'"
+        >
+          {{
+            saving() ? ('profile.save changes' | transloco) : ('profile.save changes' | transloco)
+          }}
+        </button>
+      </div>
     </div>
 
     @if (profile(); as p) {
       <div class="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-[340px_1fr]">
-
         <!-- LEFT COLUMN: Profile Sidebar -->
-        <aside class="flex flex-col gap-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm h-full">
-
+        <aside
+          class="flex flex-col gap-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm h-full"
+        >
           <!-- Avatar & Identity -->
           <div class="flex flex-col items-center text-center">
             <div class="relative mb-4 h-24 w-24">
               <!-- Avatar Circle -->
-              <div class="flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-[#8b143d] text-3xl font-bold text-white shadow-sm">
+              <div
+                class="profile-avatar flex h-full w-full items-center justify-center overflow-hidden rounded-full text-3xl font-bold text-white shadow-sm"
+              >
                 @if (previewImage(); as preview) {
                   <img [src]="preview" alt="Preview" class="h-full w-full object-cover" />
                 } @else if (p.profilePicture) {
-                  <img [src]="'data:image/jpeg;base64,' + p.profilePicture" alt="Profile" class="h-full w-full object-cover" />
+                  <img
+                    [src]="'data:image/jpeg;base64,' + p.profilePicture"
+                    alt="Profile"
+                    class="h-full w-full object-cover"
+                  />
                 } @else {
                   <img
-                  src="/images/defalutpfp2.jpg"
+                    src="/images/defalutpfp2.jpg"
                     alt="Default profile picture"
                     class="h-full w-full object-cover"
                   />
@@ -50,7 +69,13 @@
               >
                 <mat-icon class="h-4! w-4! text-[16px]!">photo_camera</mat-icon>
               </button>
-              <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/png, image/jpeg, image/jpg" hidden />
+              <input
+                type="file"
+                #fileInput
+                (change)="onFileSelected($event)"
+                accept="image/png, image/jpeg, image/jpg"
+                hidden
+              />
             </div>
 
             <h2 class="text-xl font-bold text-slate-900">{{ p.firstName }} {{ p.lastName }}</h2>
@@ -59,7 +84,7 @@
             <!-- Badges -->
             <div class="mt-3 flex gap-2">
               <span class="rounded-md bg-red-50 px-2.5 py-1 text-xs font-semibold text-red-700">
-                {{ (formatRole(p.role) | uppercase) }}
+                {{ formatRole(p.role) | uppercase }}
               </span>
             </div>
           </div>
@@ -78,22 +103,26 @@
           <div class="mt-2 grid grid-cols-2 gap-2 justify-between">
             <div class="flex flex-col items-center justify-center rounded-lg bg-slate-100 py-3">
               <span class="text-lg font-bold text-slate-900">{{ registrationCount() }}</span>
-              <span class="mt-1 text-center text-[10px] uppercase leading-tight text-slate-500">{{'profile.registrations'| transloco }}</span>
+              <span class="mt-1 text-center text-[10px] uppercase leading-tight text-slate-500">{{
+                'profile.registrations' | transloco
+              }}</span>
             </div>
             <div class="flex flex-col items-center justify-center rounded-lg bg-slate-100 py-3">
-              <span class="text-lg font-bold text-slate-900">{{futureEvents()}}</span>
-              <span class="mt-1 text-center text-[10px] uppercase leading-tight text-slate-500">{{ 'profile.upcoming'| transloco }}</span>
+              <span class="text-lg font-bold text-slate-900">{{ futureEvents() }}</span>
+              <span class="mt-1 text-center text-[10px] uppercase leading-tight text-slate-500">{{
+                'profile.upcoming' | transloco
+              }}</span>
             </div>
           </div>
         </aside>
 
         <!-- RIGHT COLUMN: Main Forms -->
-        <div class="flex flex-col gap-6 ">
-
+        <div class="flex flex-col gap-6">
           <!-- Personal Details -->
           <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm h-full">
-            <h3 class="text-lg font-bold text-slate-900 mb-5">{{ 'profile.details' | transloco }}</h3>
-
+            <h3 class="text-lg font-bold text-slate-900 mb-5">
+              {{ 'profile.details' | transloco }}
+            </h3>
 
             <div class="flex flex-col gap-x-4 gap-y-2 sm:grid-cols-2">
               <mat-form-field appearance="outline" class="w-full">
@@ -121,7 +150,6 @@
               </mat-form-field>
             </div>
           </section>
-
         </div>
       </div>
     }

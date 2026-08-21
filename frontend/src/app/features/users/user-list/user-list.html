@@ -35,7 +35,7 @@
             'role-standard': user.role !== 'ADMIN',
           }"
         >
-          {{ user.role.replace('_', ' ') | titlecase }}
+          {{ user.role | roleTitlecase }}
         </span>
       </ng-template>
 
@@ -63,8 +63,8 @@
       </ng-template>
 
       <ng-template appDataTableCellDef="actions" let-user>
-        <button mat-stroked-button (click)="manageRole(user)" class="manage-role-btn">
-          {{ 'userList.manageRole' | transloco }}
+        <button mat-icon-button (click)="manageRole(user)" aria-label="Manage user role">
+          <mat-icon>manage_accounts</mat-icon>
         </button>
       </ng-template>
     </app-data-table>

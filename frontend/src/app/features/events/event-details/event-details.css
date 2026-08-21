@@ -291,6 +291,11 @@
   color: var(--event-muted);
 }
 
+.action-button-primary {
+  background-color: var(--dark-red-dot) !important;
+  color: #ffffff;
+}
+
 @media (max-width: 900px) {
   .event-row {
     grid-template-columns: 1fr;

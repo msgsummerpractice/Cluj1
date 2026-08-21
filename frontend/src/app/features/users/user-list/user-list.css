@@ -22,12 +22,12 @@
 }
 
 ::ng-deep .custom-warn-toggle .mdc-switch--selected .mdc-switch__icon {
-  color: #ffffff !important;
+  color: white !important;
 }
 
 ::ng-deep .custom-warn-toggle .mdc-switch--selected .mdc-switch__icons svg path {
-  fill: #ffffff !important;
-  stroke: #ffffff !important;
+  fill: white !important;
+  stroke: white !important;
 }
 
 .user-list-wrapper {

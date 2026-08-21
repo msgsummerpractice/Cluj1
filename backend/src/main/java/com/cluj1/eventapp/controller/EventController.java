@@ -5,41 +5,28 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.cluj1.eventapp.dto.CheckInCodesDto;
+import com.cluj1.eventapp.model.Event;
+import com.cluj1.eventapp.model.Registration;
 import com.cluj1.eventapp.repository.RegistrationRepository;
-import com.cluj1.eventapp.service.AttendanceExcelGeneratorService;
-import com.cluj1.eventapp.service.EventService;
+import com.cluj1.eventapp.service.*;
+import com.cluj1.eventapp.mapper.EventMapper;
+import com.cluj1.eventapp.model.Registration;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.cluj1.eventapp.dto.AttendanceRecordDto;
 import com.cluj1.eventapp.dto.EventDetailsDto;
 import com.cluj1.eventapp.dto.EventDto;
 import com.cluj1.eventapp.dto.EventRegistrationDto;
-
+import com.cluj1.eventapp.dto.EventStatisticsDto;
 import com.cluj1.eventapp.model.enums.EventStatus;
 
-import com.cluj1.eventapp.service.EventExportService;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.cluj1.eventapp.service.EventCheckInService;
-import com.cluj1.eventapp.service.EventDetailsService;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
@@ -55,6 +42,8 @@ public class EventController {
     private final EventExportService eventExportService;
     private final RegistrationRepository registrationRepository;
     private final AttendanceExcelGeneratorService attendanceReportExcelGenerator;
+
+    private final EventMapper eventMapper;
 
     @GetMapping("/countRegistrationPerUser")
     public ResponseEntity<Integer> getRegistrationCountPerUser(Principal principal) {
@@ -183,6 +172,12 @@ public class EventController {
         return ResponseEntity.ok(isRegistered);
     }
 
+    @GetMapping("/{id}/statistics")
+    public ResponseEntity<EventStatisticsDto> getEventStatistics(@PathVariable UUID id) {
+        EventStatisticsDto statistics = eventService.getEventStatistics(id);
+        return ResponseEntity.ok(statistics);
+    }
+
     @GetMapping("/{id}/checkins/recent")
     @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN')")
     public ResponseEntity<List<AttendanceRecordDto>> getRecentCheckins(
@@ -199,12 +194,46 @@ public class EventController {
         return ResponseEntity.ok(eventService.updateEventStatus(id, status));
     }
 
-    @PostMapping("/{id}/checkin-codes")
-    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
-    public ResponseEntity<CheckInCodesDto> generateCheckInCodes(@PathVariable UUID id) {
-        return ResponseEntity.ok(eventService.generateCheckInCodes(id));
-    }
+	@PostMapping("/{id}/checkin-codes")
+	@PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER')")
+	public ResponseEntity<CheckInCodesDto> generateCheckInCodes(@PathVariable UUID id) {
+		return ResponseEntity.ok(eventService.generateCheckInCodes(id));
+	}
+    @PatchMapping("{eventId}/manage")
+    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'USER', 'PARTICIPANT')")
+    public ResponseEntity<?> updateRegistration(@PathVariable UUID eventId, @Valid @RequestBody EventRegistrationDto newRequestDto, Principal principal) {
+        String email = principal.getName();
 
+        Registration updatedRegistration = eventService.updateRegistration(eventId, email, newRequestDto);
+
+        if(updatedRegistration == null) {
+            return ResponseEntity.ok(Map.of("message", "Registration automatically removed due to GDPR consent"));
+        }
+        return ResponseEntity.ok(Map.of("message", "Successfully updated registration"));
+
+    }
+    @DeleteMapping("/{eventId}/manage")
+    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'USER', 'PARTICIPANT')")
+    public ResponseEntity<String> deleteRegistration(@PathVariable UUID eventId, Principal principal) {
+        String email = principal.getName();
+
+        try{
+            eventService.deleteRegistration(eventId, email);
+            return ResponseEntity.ok("Successfully deleted registration");
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting registration");
+        }
+
+    }
+    @GetMapping("/{eventId}/registration")
+    @PreAuthorize("hasAnyAuthority('MARKETING_ORGANIZER', 'HR_USER', 'ADMIN', 'USER', 'PARTICIPANT')")
+    public ResponseEntity<EventRegistrationDto> getRegistrationDetails(@PathVariable UUID eventId, Principal principal) {
+        String email = principal.getName();
+
+        Registration registration = eventService.getRegistration(eventId, email);
+
+        return ResponseEntity.ok(eventMapper.toEventRegistrationDto(registration));
+    }
     /**
      * Exports the registration data for the specified event as an Excel file.
      *

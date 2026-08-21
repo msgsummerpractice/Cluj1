@@ -6,13 +6,13 @@ import { Event } from '../../../core/models/event.model';
 import { EventDetails } from '../../../core/models/event-detail.models';
 import { EventService } from '../../../core/services/event.service';
 import { TranslocoModule } from '@jsverse/transloco';
-import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 import { MatButtonModule } from '@angular/material/button';
 import { CheckincodesComponent } from '../../checkincodes-component/checkincodes-component';
 import { ToastService } from '../../../core/services/toast.service';
 import { ChangeDetectorRef } from '@angular/core';
 import { take } from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
+import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 
 @Component({
   selector: 'app-event-details',
@@ -20,11 +20,11 @@ import { AuthService } from '../../../core/services/auth.service';
   imports: [
     CommonModule,
     TranslocoModule,
-    BackButtonComponent,
     RouterLink,
     MatButtonModule,
     MatIconModule,
     CheckincodesComponent,
+    BackButtonComponent,
   ],
   templateUrl: './event-details.html',
   styleUrl: './event-details.css',
@@ -40,6 +40,7 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
   readonly event = signal<Event | null>(null);
   readonly eventDetails = signal<EventDetails | null>(null);
   readonly posterUrl = signal<string | null>(null);
+  readonly isRegistered = signal<boolean>(false);
 
   readonly isExporting = signal<boolean>(false);
 
@@ -110,6 +111,9 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
     return Date.now() > new Date(event.registrationEndDate).getTime();
   }
 
+  canViewStatistics(): boolean {
+    return this.authService.isHrUser() || this.authService.isMarketingOrganizer();
+  }
   onExportExcel(): void {
     const currentEvent = this.event();
     if (!currentEvent || !this.canExport()) return;

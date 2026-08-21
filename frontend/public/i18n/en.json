@@ -20,9 +20,37 @@
     "location": "Location",
     "role": "Role",
     "save changes": "Save Changes",
+    "discardChanges": "Discard changes",
+    "saveSuccess": "Modifications have been saved successfully.",
     "details": "Personal details",
     "registrations": "Registrations",
     "upcoming": "Upcoming"
+  },
+  "manageRegistration": {
+    "title": "Manage Registration: ",
+    "subtitle": "Update your preferences or cancel your registration below.",
+    "deleting": "Deleting...",
+    "cancelRegistration": "Cancel Registration",
+    "summaryTitle": "Registration Summary",
+    "eventName": "Event Name",
+    "eventType": "Event Type",
+    "updating": "Updating...",
+    "updateRegistration": "Update Registration",
+    "cateringTitle": "Catering Preferences",
+    "cateringSubtitle": "Food is provided at this event. Update your preference below.",
+    "logisticsTitle": "Logistics & Travel",
+    "logisticsSubtitle": "Manage your transportation and accommodation needs.",
+    "transportationDesc": "Enable if you require travel arrangements.",
+    "accommodationDesc": "Enable if you need a place to stay.",
+    "accommodationDaysPlaceholder": "e.g., 2",
+    "accommodationDaysError": "A valid number of days is required.",
+    "consentsTitle": "Consents",
+    "consentsSubtitle": "Review your legal agreements.",
+    "gdprConsent": "GDPR Consent",
+    "gdprWarning": "Unchecking this box and updating your registration will permanently cancel your enrollment.",
+    "photoConsent": "Photo Consent",
+    "summary": "Summary",
+    "event": "Event"
   },
   "account": "User account",
   "openMenu": "Open navigation menu",
@@ -60,7 +88,9 @@
     "errorUpdatingRole": "Error updating role",
     "userActivated": "User account activated successfully",
     "userDeactivated": "User account deactivated successfully",
-    "errorUpdatingStatus": "Error updating status"
+    "errorUpdatingStatus": "Error updating status",
+    "changeUserStatus": "User status changed successfully",
+    "confirmLogin": "User {{email}} has logged in successfully."
   },
   "notFound": {
     "title": "This event does not exist",
@@ -78,7 +108,11 @@
     "sessionInfo": "Your session will stay active until you log out or it expires.",
     "submitting": "Signing in...",
     "noAccount": "Don't have an account?",
-    "signUp": "Sign up"
+    "signUp": "Sign up",
+    "error": {
+      "invalidCredentials": "Invalid email or password.",
+      "signInError": "Unable to sign in right now. Please try again."
+    }
   },
   "roles": {
     "welcome": "Welcome back",
@@ -126,6 +160,14 @@
     "registered": "Registered",
     "checkedIn": "Checked-in",
     "fetchError": "Failed to fetch events. Please try again.",
+    "eventManageRegistrationButton": "Manage Registration",
+    "eventDeleteRegistrationButton": "Delete Registration",
+    "dateBefore": "Before",
+    "dateAfter": "After",
+    "dateRange": "Range",
+    "dateFilterType": "Date filter type",
+    "startDate": "Start date",
+    "endDate": "End date",
     "publish": {
       "title": "Confirm Publish",
       "message": "Are you sure you want to publish this event?",
@@ -133,6 +175,14 @@
       "cancel": "No",
       "success": "Event published successfully.",
       "error": "Failed to publish event. Please try again."
+    },
+    "deleteRegistration": {
+      "title": "Confirm Delete Registration",
+      "message": "Are you sure you want to delete your registration for this event? This action cannot be undone.",
+      "confirm": "Yes, delete",
+      "cancel": "No, keep registration",
+      "success": "Your registration has been deleted successfully.",
+      "error": "Failed to delete registration. Please try again."
     },
     "complete": {
       "title": "Confirm Complete",
@@ -306,9 +356,11 @@
     "driverName": "Driver Name",
     "driverNamePlaceholder": "Enter driver name",
     "driverNameError": "Driver name is required when transportation is needed.",
+    "driverNamePatternError": "Driver name may contain only letters, spaces, dots, hyphens, and apostrophes.",
     "driverPhone": "Driver Phone",
     "driverPhonePlaceholder": "Enter driver phone",
     "driverPhoneError": "Driver phone is required when transportation is needed.",
+    "driverPhonePatternError": "Driver phone may contain only digits with an optional leading +.",
     "accommodationNeeded": "Accommodation Needed?",
     "accommodationSubtitle": "Enable if you require lodging support.",
     "accommodationDays": "Number of Days",
@@ -353,7 +405,8 @@
     "error": {
       "code": {
         "required": "Event code is required.",
-        "invalid": "Event code must be exactly 6 characters."
+        "invalid": "Event code must be exactly 6 digits.",
+        "digitsOnly": "Event code can only contain digits."
       },
       "method": {
         "required": "Check-in method is required."
@@ -372,5 +425,24 @@
       "general": "An unexpected error occurred during check-in.",
       "invalid_code": "The check-in code you entered is invalid."
     }
+  },
+  "statistics": {
+    "title": "Event Statistics",
+    "invited": "Invited",
+    "registered": "Registered",
+    "participants": "Participants (Check-in)",
+    "accommodationRequested": "Accommodation Requested",
+    "transportRequested": "Transport Requested",
+    "photoConsent": "Photo Consent",
+    "foodPreferences": "Food Preferences Breakdown",
+    "timeDistribution": "Registration Time Distribution",
+    "timeDistributionSubtitle": "Snapshot of registrations over time.",
+    "attendanceDetails": "Participant-level Attendance Details",
+    "name": "Name",
+    "email": "Email",
+    "status": "Status",
+    "checkInTime": "Check-in Time",
+    "noParticipants": "No participants registered for this event.",
+    "registrationsPerDay": "Registrations per Day"
   }
 }
