@@ -78,7 +78,7 @@ export class AuthService {
   getLandingRoute(role: UserRole): string {
     switch (role) {
       case 'ADMIN':
-        return '/admin/users';
+        return '/admin';
       case 'MARKETING_ORGANIZER':
         return '/marketing';
       case 'HR_USER':

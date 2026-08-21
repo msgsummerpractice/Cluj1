@@ -57,6 +57,12 @@ export const routes: Routes = [
     data: { roles: ['MARKETING_ORGANIZER'] },
     loadComponent: () =>
       import('./features/auth/role-home/role-home').then((m) => m.RoleHomeComponent),
+  },{
+    path: 'admin',
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['ADMIN'] },
+    loadComponent: () =>
+      import('./features/auth/role-home/role-home').then((m) => m.RoleHomeComponent),
   },
   {
     path: 'hr',

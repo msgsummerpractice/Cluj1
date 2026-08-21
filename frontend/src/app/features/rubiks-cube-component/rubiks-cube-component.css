@@ -60,10 +60,12 @@
 /* --- SLOWER 90-DEGREE CHOREOGRAPHY --- */
 
 @keyframes tumbleCube {
-  0% { transform: rotateX(-20deg) rotateY(-45deg); }
+  0% { transform: rotateX(-30deg) rotateY(-45deg); }
   25% { transform: rotateX(20deg) rotateY(55deg); }
   50% { transform: rotateX(-15deg) rotateY(-30deg); }
-  75%, 100% { transform: rotateX(0deg) rotateY(0deg); }
+  50% { transform: rotateX(-20deg) rotateY(-35deg); }
+  100% { transform: rotateX(-30deg) rotateY(-45deg); }
+
 }
 
 /* Replaced bouncy snappy bezier with smooth ease-in-out, and extended to 12s */
