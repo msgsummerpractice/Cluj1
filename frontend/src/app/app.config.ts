@@ -15,6 +15,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes, withComponentInputBinding()),
     provideAnimationsAsync(),
+    { provide: MAT_DATE_LOCALE, useValue: 'ro-RO' },
     provideHttpClient(withInterceptors([authInterceptor])),
     { provide: MAT_DATE_LOCALE, useValue: 'en-GB' },
     provideTransloco({

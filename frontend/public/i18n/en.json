@@ -68,7 +68,8 @@
     "statusActive": "Active",
     "statusInactive": "Inactive",
     "manageRole": "Manage Role",
-    "noData": "No users found matching"
+    "noData": "No users found matching",
+    "manageUsers": "Manage users"
   },
   "roleManageDialog": {
     "title": "Manage role",
@@ -92,6 +93,11 @@
     "changeUserStatus": "User status changed successfully",
     "confirmLogin": "User {{email}} has logged in successfully."
   },
+  "notFound": {
+    "title": "This event does not exist",
+    "subtitle": "The event you are looking for could not be found or has been removed.",
+    "back": "Back to Events"
+  },
   "auth": {
     "loginTitle": "Log in",
     "loginSubtitle": "Enter your email and password to access your account.",
@@ -106,7 +112,8 @@
     "signUp": "Sign up",
     "error": {
       "invalidCredentials": "Invalid email or password.",
-      "signInError": "Unable to sign in right now. Please try again."
+      "signInError": "Unable to sign in right now. Please try again.",
+      "invalidCompanyEmail": "Please enter a valid company email address (@msg.group)."
     }
   },
   "roles": {
@@ -206,11 +213,11 @@
     "descriptionPlaceholder": "Agenda, target audience, what participants should bring...",
     "scheduleTitle": "Schedule & venue",
     "dateLabel": "Date",
-    "datePlaceholder": "mm/dd/yyyy",
+    "datePlaceholder": "dd.MM.yyyy",
     "startLabel": "Start",
-    "startPlaceholder": "09:00 AM",
+    "startPlaceholder": "09:00",
     "endLabel": "End",
-    "endPlaceholder": "05:00 PM",
+    "endPlaceholder": "17:00",
     "locationLabel": "Location",
     "selectLocationPlaceholder": "Select location",
     "registrationTitle": "Registration options",
@@ -226,9 +233,25 @@
     "saveDraft": "Save draft",
     "discard": "Discard",
     "publishHint": "Published events become visible to all msg colleagues immediately.",
+    "created": "Event created successfully.",
+    "updated": "Event updated successfully.",
+    "editTitle": "Edit event",
+    "editSubtitle": "Update the details of this event.",
+    "saveChanges": "Save changes",
+    "typeHintInternal": "Applies to all locations. Food preference option available.",
+    "typeHintExternal": "Specific location required. No food preference.",
+    "typeHintLocal": "Specific location required. Food preference option available.",
+    "regEndDateLabel": "Registration end date",
+    "regEndDatePlaceholder": "dd.MM.yyyy",
+    "regEndDateHint": "Optional. Last day participants can register.",
     "errors": {
       "fileSize": "File size must be under 5MB.",
-      "fileType": "Only JPEG/PNG files are allowed."
+      "fileType": "Only JPEG/PNG files are allowed.",
+      "nameRequired": "Event title is required.",
+      "nameTooLong": "Event title must not exceed 100 characters.",
+      "descriptionTooLong": "Description must not exceed 2000 characters.",
+      "endBeforeStart": "End time must be after start time.",
+      "regEndAfterStart": "Registration end date must be before the event start date."
     }
   },
   "register": {
@@ -276,6 +299,7 @@
     "startDate": "Start date",
     "endDate": "End date",
     "registrationEndDate": "Registration end date",
+    "registrationClosed": "Registration closed",
     "foodProvided": "Food provided",
     "eventCode": "Event code",
     "downloadPDF": "Download PDF",

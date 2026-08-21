@@ -133,6 +133,7 @@ public class EventService {
                 .status(EventStatus.DRAFT)
                 .eventStartDate(eventDto.getStartDate())
                 .eventEndTime(eventDto.getEndDate())
+                .registrationEndDate(eventDto.getRegistrationEndDate())
                 .createdBy(currentUser)
                 .build();
 
@@ -149,7 +150,7 @@ public class EventService {
 
     @Transactional
     public EventDto updateEventStatus(UUID id, EventStatus status) {
-        Event event = eventRepository.findById(id)
+        Event event = eventRepository.findByIdForUpdate(id)
                 .orElseThrow(() -> new EntityNotFoundException("Event not found"));
 
         boolean justPublished = false;
@@ -165,6 +166,16 @@ public class EventService {
                 if (status != EventStatus.PUBLISHED) {
                     throw new InvalidEventOperationException(
                             "Invalid status transition from " + currentStatus + " to " + status);
+                }
+                if (event.getEventEndTime() != null) {
+                    if (event.getEventEndTime().isBefore(OffsetDateTime.now())) {
+                        throw new InvalidEventOperationException(
+                                "Cannot publish an event that has already ended.");
+                    }
+                    if (!event.getEventEndTime().isAfter(event.getEventStartDate())) {
+                        throw new InvalidEventOperationException(
+                                "Cannot publish an event where end date is not after start date.");
+                    }
                 }
                 event.setStatus(EventStatus.PUBLISHED);
                 justPublished = true;
@@ -208,6 +219,7 @@ public class EventService {
         event.setLocation(determineLocation(eventDto));
         event.setEventStartDate(eventDto.getStartDate());
         event.setEventEndTime(eventDto.getEndDate());
+        event.setRegistrationEndDate(eventDto.getRegistrationEndDate());
 
         EventDetails details = event.getEventDetails();
         if (details == null) {
@@ -228,6 +240,14 @@ public class EventService {
     private void validateEventRules(EventDto dto) {
         if (dto.getType() != EventType.INTERNAL && dto.getLocation() == null) {
             throw new InvalidEventOperationException("Location must be selected for LOCAL and EXTERNAL events.");
+        }
+        if (dto.getStartDate() != null && dto.getEndDate() != null
+                && !dto.getEndDate().isAfter(dto.getStartDate())) {
+            throw new InvalidEventOperationException("End date must be after start date.");
+        }
+        if (dto.getRegistrationEndDate() != null && dto.getStartDate() != null
+                && !dto.getRegistrationEndDate().isBefore(dto.getStartDate())) {
+            throw new InvalidEventOperationException("Registration end date must be before the event start date.");
         }
     }
 
@@ -504,82 +524,82 @@ public class EventService {
     }
 
     public EventStatisticsDto getEventStatistics(UUID eventId) {
-    Event event = eventRepository.findById(eventId)
-            .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
 
-    int invitedCount = 0;
-    try {
-        invitedCount = recipientPoolService.getRecipientsCountForEvent(event.getLocation());
-    } catch (Exception e) {
-        log.warn("Could not fetch recipient pool count for event {}", eventId);
-    }
+        int invitedCount = 0;
+        try {
+            invitedCount = recipientPoolService.getRecipientsCountForEvent(event.getLocation());
+        } catch (Exception e) {
+            log.warn("Could not fetch recipient pool count for event {}", eventId);
+        }
 
-    List<Registration> registrations = registrationRepository.findByEventId(eventId);
-    int registrationCount = registrations.size();
+        List<Registration> registrations = registrationRepository.findByEventId(eventId);
+        int registrationCount = registrations.size();
 
-    long participantCount = registrations.stream()
-            .filter(r -> r.getAttendanceRecord() != null)
-            .count();
+        long participantCount = registrations.stream()
+                .filter(r -> r.getAttendanceRecord() != null)
+                .count();
 
-    Map<FoodPreference, Long> foodCounts = registrations.stream()
+        Map<FoodPreference, Long> foodCounts = registrations.stream()
                 .collect(java.util.stream.Collectors.groupingBy(
                         r -> r.getFoodPreference() != null ? r.getFoodPreference() : FoodPreference.NONE,
-                        java.util.stream.Collectors.counting()
-                ));
+                        java.util.stream.Collectors.counting()));
 
-    Map<String, Double> foodPercentages = new java.util.HashMap<>();
-    if (registrationCount > 0) {
-        foodCounts.forEach((pref, count) ->
-            foodPercentages.put(pref.name(), (count * 100.0) / registrationCount)
-        );
-    }
-
-    long accommodationCount = registrations.stream().filter(r -> Boolean.TRUE.equals(r.getAccommodationNeeded())).count();
-    long transportCount = registrations.stream().filter(r -> Boolean.TRUE.equals(r.getTransportationNeeded())).count();
-    long photoConsentCount = registrations.stream().filter(r -> Boolean.TRUE.equals(r.getPhotoConsent())).count();
-
-    double accommodationPercentage = registrationCount > 0 ? (accommodationCount * 100.0) / registrationCount : 0.0;
-    double transportPercentage = registrationCount > 0 ? (transportCount * 100.0) / registrationCount : 0.0;
-    double photoConsentPercentage = registrationCount > 0 ? (photoConsentCount * 100.0) / registrationCount : 0.0;
-
-    Map<String, Long> timeDistribution = new java.util.LinkedHashMap<>();
-    registrations.forEach(r -> {
-        if (r.getRegistrationDate() != null) {
-            String dayKey = r.getRegistrationDate().toLocalDate().toString();
-            timeDistribution.put(dayKey, timeDistribution.getOrDefault(dayKey, 0L) + 1);
+        Map<String, Double> foodPercentages = new java.util.HashMap<>();
+        if (registrationCount > 0) {
+            foodCounts.forEach((pref, count) -> foodPercentages.put(pref.name(), (count * 100.0) / registrationCount));
         }
-    });
 
-    List<ParticipantDetailDto> participantDetails = registrations.stream().map(r ->
-    ParticipantDetailDto.builder()
-        .name(r.getUser().getUserDetails() != null ?
-              r.getUser().getUserDetails().getFirstName() + " " + r.getUser().getUserDetails().getLastName() : "Unknown")
-        .email(r.getUser().getEmail())
-        .status(r.getAttendanceRecord() != null ? "CHECKED_IN" : "REGISTERED")
-        .checkInTime(r.getAttendanceRecord() != null ? r.getAttendanceRecord().getCheckInTime().toString() : "-")
-        .build()
-    ).toList();
+        long accommodationCount = registrations.stream().filter(r -> Boolean.TRUE.equals(r.getAccommodationNeeded()))
+                .count();
+        long transportCount = registrations.stream().filter(r -> Boolean.TRUE.equals(r.getTransportationNeeded()))
+                .count();
+        long photoConsentCount = registrations.stream().filter(r -> Boolean.TRUE.equals(r.getPhotoConsent())).count();
 
-    return EventStatisticsDto.builder()
-            .invitedCount(invitedCount)
-            .registrationCount(registrationCount)
-            .participantCount(participantCount)
-            .registrationTimeDistribution(timeDistribution)
-            .foodPreferencePercentages(foodPercentages)
-            .accommodationPercentage(accommodationPercentage)
-            .transportPercentage(transportPercentage)
-            .photoConsentPercentage(photoConsentPercentage)
-            .participants(participantDetails)
-            .build();
-}
+        double accommodationPercentage = registrationCount > 0 ? (accommodationCount * 100.0) / registrationCount : 0.0;
+        double transportPercentage = registrationCount > 0 ? (transportCount * 100.0) / registrationCount : 0.0;
+        double photoConsentPercentage = registrationCount > 0 ? (photoConsentCount * 100.0) / registrationCount : 0.0;
+
+        Map<String, Long> timeDistribution = new java.util.LinkedHashMap<>();
+        registrations.forEach(r -> {
+            if (r.getRegistrationDate() != null) {
+                String dayKey = r.getRegistrationDate().toLocalDate().toString();
+                timeDistribution.put(dayKey, timeDistribution.getOrDefault(dayKey, 0L) + 1);
+            }
+        });
+
+        List<ParticipantDetailDto> participantDetails = registrations.stream().map(r -> ParticipantDetailDto.builder()
+                .name(r.getUser().getUserDetails() != null
+                        ? r.getUser().getUserDetails().getFirstName() + " " + r.getUser().getUserDetails().getLastName()
+                        : "Unknown")
+                .email(r.getUser().getEmail())
+                .status(r.getAttendanceRecord() != null ? "CHECKED_IN" : "REGISTERED")
+                .checkInTime(
+                        r.getAttendanceRecord() != null ? r.getAttendanceRecord().getCheckInTime().toString() : "-")
+                .build()).toList();
+
+        return EventStatisticsDto.builder()
+                .invitedCount(invitedCount)
+                .registrationCount(registrationCount)
+                .participantCount(participantCount)
+                .registrationTimeDistribution(timeDistribution)
+                .foodPreferencePercentages(foodPercentages)
+                .accommodationPercentage(accommodationPercentage)
+                .transportPercentage(transportPercentage)
+                .photoConsentPercentage(photoConsentPercentage)
+                .participants(participantDetails)
+                .build();
+    }
 
     @Transactional
     public void deleteRegistration(UUID eventId, String userEmail) {
-        if(!isUserRegistered(eventId, userEmail)) {
+        if (!isUserRegistered(eventId, userEmail)) {
             throw new InvalidEventOperationException("User is not registered for this event.");
         }
         registrationRepository.deleteRegistrationByUserEmailAndEventId(userEmail.toLowerCase(), eventId);
     }
+
     @Transactional
     public Registration updateRegistration(UUID eventId, String userEmail, EventRegistrationDto eventRegistrationDto) {
         User user = getUser(userEmail);
@@ -601,7 +621,6 @@ public class EventService {
 
         return registrationRepository.save(registration);
     }
-
 
     private User getUser(String userEmail) {
         return userRepository.findByEmail(userEmail.toLowerCase())
@@ -660,7 +679,8 @@ public class EventService {
     }
 
     public Registration getRegistration(UUID eventId, String userEmail) {
-        return registrationRepository.findByEventIdAndUserEmail(eventId, userEmail).orElseThrow(() -> new InvalidEventOperationException("Registration not found"));
+        return registrationRepository.findByEventIdAndUserEmail(eventId, userEmail)
+                .orElseThrow(() -> new InvalidEventOperationException("Registration not found"));
     }
 
 }

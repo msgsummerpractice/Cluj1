@@ -10,12 +10,12 @@
           <div class="event-date">
             <span class="material-symbols-outlined" aria-hidden="true">calendar_month</span>
             <span>
-              {{ event.startDate | date: 'dd MMM yyyy HH:mm' }}
+              {{ event.startDate | date: 'dd.MM.yyyy, HH:mm' }}
               @if (
                 event.endDate &&
                 (event.endDate | date: 'yyyy-MM-dd') !== (event.startDate | date: 'yyyy-MM-dd')
               ) {
-                - {{ event.endDate | date: 'dd MMM yyyy HH:mm' }}
+                - {{ event.endDate | date: 'dd.MM.yyyy, HH:mm' }}
               } @else if (event.endDate) {
                 - {{ event.endDate | date: 'HH:mm' }}
               }
@@ -34,65 +34,55 @@
         <div class="flex flex-col lg:flex-row items-start gap-6 w-full">
           <div class="flex flex-col gap-6 w-full lg:w-2/3">
             <div class="event-card-body card-panel w-full">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-                <div class="flex flex-col gap-3">
-                  <div class="heading-tags">
-                    <span class="type-pill">{{ event.type | titlecase }}</span>
-                    <span class="status-pill status-{{ event.status | lowercase }}">
-                      <span class="status-dot"></span>{{ event.status | titlecase }}
-                    </span>
-                  </div>
-                  <div class="meta-row">
-                    <div class="meta-item">
-                      <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
-                      <span>{{ event.location ? (event.location | titlecase) : '-' }}</span>
+              <div class="heading-tags">
+                <span class="type-pill">{{ event.type | titlecase }}</span>
+                <span class="status-pill status-{{ event.status | lowercase }}">
+                  <span class="status-dot"></span>{{ event.status | titlecase }}
+                </span>
+              </div>
+              <div class="meta-row">
+                <div class="meta-item">
+                  <span class="material-symbols-outlined" aria-hidden="true">location_on</span>
+                  <span>{{ event.location ? (event.location | titlecase) : '-' }}</span>
+                </div>
+                @if (event.registrationEndDate; as registrationEndDate) {
+                  <div class="meta-item">
+                    <span class="material-symbols-outlined" aria-hidden="true"
+                      >event_available</span
+                    >
+                    <div>
+                      <p class="tile-label">{{ 'eventDetails.registrationEndDate' | transloco }}</p>
+                      <span>{{ registrationEndDate | date: 'dd.MM.yyyy' }}</span>
                     </div>
                   </div>
-                </div>
-
-                @if (event.registrationEndDate; as registrationEndDate) {
-                  <div class="md:border-l md:border-gray-200 md:pl-6 flex flex-col justify-center">
-                    <p class="section-kicker mb-1">
-                      {{ 'eventDetails.registrationEndDate' | transloco }}
-                    </p>
-                    <p class="registration-date flex items-center gap-2">
-                      <span class="material-symbols-outlined" aria-hidden="true"
-                        >event_available</span
-                      >
-                      {{ registrationEndDate | date: 'medium' }}
-                    </p>
-                  </div>
+                }
+                @if (eventDetails(); as details) {
+                  @if ((event.type | lowercase) !== 'external') {
+                    <div class="meta-item">
+                      <span class="material-symbols-outlined" aria-hidden="true">restaurant</span>
+                      <div>
+                        <p class="tile-label">{{ 'eventDetails.foodProvided' | transloco }}</p>
+                        <span>
+                          {{
+                            details.foodProvided
+                              ? ('eventDetails.yes' | transloco)
+                              : ('eventDetails.no' | transloco)
+                          }}
+                        </span>
+                      </div>
+                    </div>
+                  }
                 }
               </div>
             </div>
 
             @if (eventDetails(); as details) {
-              <div class="about-card card-panel">
-                @if (details.description) {
+              @if (details.description) {
+                <div class="about-card card-panel">
                   <p class="section-kicker">{{ 'eventDetails.description' | transloco }}</p>
                   <p class="description">{{ details.description }}</p>
-                }
-
-                <div class="info-tiles">
-                  @if (event.type | lowercase; as eventType) {
-                    @if (eventType !== 'external') {
-                      <div class="info-tile">
-                        <span class="material-symbols-outlined" aria-hidden="true">restaurant</span>
-                        <div>
-                          <p class="tile-label">{{ 'eventDetails.foodProvided' | transloco }}</p>
-                          <p class="tile-value">
-                            {{
-                              details.foodProvided
-                                ? ('eventDetails.yes' | transloco)
-                                : ('eventDetails.no' | transloco)
-                            }}
-                          </p>
-                        </div>
-                      </div>
-                    }
-                  }
                 </div>
-              </div>
+              }
             }
           </div>
 

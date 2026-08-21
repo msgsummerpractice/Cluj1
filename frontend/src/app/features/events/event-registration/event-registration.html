@@ -1,18 +1,16 @@
 @if (event(); as ev) {
   <div class="min-h-screen bg-gray-50 p-4 md:p-8 flex justify-center">
     <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="w-full max-w-[1400px]">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-        <div>
-          <div class="flex items-center gap-2 -ml-3">
-            <app-back-button />
-            <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
-              {{ 'eventRegistration.pageTitle' | transloco }} {{ ev.name }}
-            </h1>
-          </div>
-          <p class="text-gray-500 mt-1 text-sm">
-            {{ 'eventRegistration.subtitle' | transloco }}
-          </p>
+      <div class="mb-6">
+        <div class="flex items-center gap-2 -ml-3">
+          <app-back-button />
+          <h1 class="text-3xl font-bold text-gray-900 tracking-tight">
+            {{ 'eventRegistration.pageTitle' | transloco }} {{ ev.name }}
+          </h1>
         </div>
+        <p class="text-gray-500 mt-1 text-sm">
+          {{ 'eventRegistration.subtitle' | transloco }}
+        </p>
       </div>
 
       @if (isRegistrationClosed() || successMessage() || errorMessage()) {
