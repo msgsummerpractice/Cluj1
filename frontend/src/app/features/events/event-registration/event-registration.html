@@ -59,53 +59,50 @@
                   ></mat-slide-toggle>
                 </div>
 
-                <div
-                  class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2"
-                  *ngIf="registrationForm.get('transportationNeeded')?.value"
-                >
-                  <div class="flex flex-col gap-1">
-                    <label class="text-sm font-medium text-gray-700">
-                      {{ 'eventRegistration.driverName' | transloco }}
-                    </label>
-                    <mat-form-field appearance="outline" class="w-full h-[75px]">
-                      <input
-                        matInput
-                        formControlName="driverName"
-                        [placeholder]="'eventRegistration.driverNamePlaceholder' | transloco"
-                      />
-                    </mat-form-field>
-                    <span
-                      class="text-red-600 text-xs mt-1 block"
-                      *ngIf="
+                @if (registrationForm.get('transportationNeeded')?.value) {
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                    <div class="flex flex-col gap-1">
+                      <label class="text-sm font-medium text-gray-700">
+                        {{ 'eventRegistration.driverName' | transloco }}
+                      </label>
+                      <mat-form-field appearance="outline" class="w-full h-[75px]">
+                        <input
+                          matInput
+                          formControlName="driverName"
+                          [placeholder]="'eventRegistration.driverNamePlaceholder' | transloco"
+                        />
+                      </mat-form-field>
+                      @if (
                         registrationForm.get('driverName')?.invalid &&
                         registrationForm.get('driverName')?.touched
-                      "
-                    >
-                      {{ 'eventRegistration.driverNameError' | transloco }}
-                    </span>
-                  </div>
-                  <div class="flex flex-col gap-1">
-                    <label class="text-sm font-medium text-gray-700">
-                      {{ 'eventRegistration.driverPhone' | transloco }}
-                    </label>
-                    <mat-form-field appearance="outline" class="w-full h-[75px]">
-                      <input
-                        matInput
-                        formControlName="driverPhone"
-                        [placeholder]="'eventRegistration.driverPhonePlaceholder' | transloco"
-                      />
-                    </mat-form-field>
-                    <span
-                      class="text-red-600 text-xs mt-1 block"
-                      *ngIf="
+                      ) {
+                        <span class="text-red-600 text-xs mt-1 block">
+                          {{ 'eventRegistration.driverNameError' | transloco }}
+                        </span>
+                      }
+                    </div>
+                    <div class="flex flex-col gap-1">
+                      <label class="text-sm font-medium text-gray-700">
+                        {{ 'eventRegistration.driverPhone' | transloco }}
+                      </label>
+                      <mat-form-field appearance="outline" class="w-full h-[75px]">
+                        <input
+                          matInput
+                          formControlName="driverPhone"
+                          [placeholder]="'eventRegistration.driverPhonePlaceholder' | transloco"
+                        />
+                      </mat-form-field>
+                      @if (
                         registrationForm.get('driverPhone')?.invalid &&
                         registrationForm.get('driverPhone')?.touched
-                      "
-                    >
-                      {{ 'eventRegistration.driverPhoneError' | transloco }}
-                    </span>
+                      ) {
+                        <span class="text-red-600 text-xs mt-1 block">
+                          {{ 'eventRegistration.driverPhoneError' | transloco }}
+                        </span>
+                      }
+                    </div>
                   </div>
-                </div>
+                }
               </div>
 
               <div class="flex flex-col gap-4">
@@ -126,32 +123,30 @@
                   ></mat-slide-toggle>
                 </div>
 
-                <div
-                  class="flex flex-col gap-1 mt-2"
-                  *ngIf="registrationForm.get('accommodationNeeded')?.value"
-                >
-                  <label class="text-sm font-medium text-gray-700">
-                    {{ 'eventRegistration.accommodationDays' | transloco }}
-                  </label>
-                  <mat-form-field appearance="outline" class="w-full h-[75px]">
-                    <input
-                      matInput
-                      type="number"
-                      min="1"
-                      formControlName="accommodationDays"
-                      [placeholder]="'eventRegistration.accommodationDaysPlaceholder' | transloco"
-                    />
-                  </mat-form-field>
-                  <span
-                    class="text-red-600 text-xs mt-1 block"
-                    *ngIf="
+                @if (registrationForm.get('accommodationNeeded')?.value) {
+                  <div class="flex flex-col gap-1 mt-2">
+                    <label class="text-sm font-medium text-gray-700">
+                      {{ 'eventRegistration.accommodationDays' | transloco }}
+                    </label>
+                    <mat-form-field appearance="outline" class="w-full h-[75px]">
+                      <input
+                        matInput
+                        type="number"
+                        min="1"
+                        formControlName="accommodationDays"
+                        [placeholder]="'eventRegistration.accommodationDaysPlaceholder' | transloco"
+                      />
+                    </mat-form-field>
+                    @if (
                       registrationForm.get('accommodationDays')?.invalid &&
                       registrationForm.get('accommodationDays')?.touched
-                    "
-                  >
-                    {{ 'eventRegistration.accommodationDaysError' | transloco }}
-                  </span>
-                </div>
+                    ) {
+                      <span class="text-red-600 text-xs mt-1 block">
+                        {{ 'eventRegistration.accommodationDaysError' | transloco }}
+                      </span>
+                    }
+                  </div>
+                }
               </div>
             </div>
           </div>
