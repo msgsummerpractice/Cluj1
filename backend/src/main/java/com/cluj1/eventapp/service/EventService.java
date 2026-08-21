@@ -471,7 +471,7 @@ public class EventService {
             throw new InvalidEventOperationException("GDPR consent is required for this event type.");
         }
 
-        if (event.getType() == EventType.INTERNAL) {
+        if (event.getType() != EventType.EXTERNAL) {
             validateInternalRegistration(dto);
         }
 
@@ -486,7 +486,7 @@ public class EventService {
                 .accommodationDays(dto.getAccommodationDays())
                 .build();
 
-        if (event.getType() == EventType.INTERNAL && Boolean.TRUE.equals(dto.getTransportationNeeded())) {
+        if (event.getType() != EventType.EXTERNAL && Boolean.TRUE.equals(dto.getTransportationNeeded())) {
             TransportationDetails transportDetails = TransportationDetails.builder()
                     .registration(registration)
                     .driverName(dto.getDriverName())
@@ -611,7 +611,7 @@ public class EventService {
             return null;
         }
 
-        if (event.getType() == EventType.INTERNAL) {
+        if (event.getType() != EventType.EXTERNAL) {
             validateInternalRegistration(eventRegistrationDto);
         }
 
@@ -661,7 +661,7 @@ public class EventService {
     }
 
     private void updateTransportationDetails(Registration registration, Event event, EventRegistrationDto dto) {
-        if (event.getType() == EventType.INTERNAL && Boolean.TRUE.equals(dto.getTransportationNeeded())) {
+        if (event.getType() != EventType.EXTERNAL && Boolean.TRUE.equals(dto.getTransportationNeeded())) {
             TransportationDetails transportDetails = registration.getTransportationDetails();
 
             if (transportDetails == null) {

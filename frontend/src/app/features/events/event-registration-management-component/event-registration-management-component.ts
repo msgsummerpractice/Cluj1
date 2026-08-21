@@ -61,9 +61,9 @@ export class EventRegistrationManagement {
     this.eventId = this.route.snapshot.paramMap.get('id') || '';
 
     this.initForm();
+    this.setupConditionalValidation();
     this.trackFormChanges();
     this.loadEventData();
-    this.setupConditionalValidation();
   }
 
   private initForm(): void {
@@ -131,14 +131,14 @@ export class EventRegistrationManagement {
     this.eventService.getRegistrationDetails(this.eventId).subscribe({
       next: (registrationData: EventRegistrationRequest) => {
         this.registrationForm.patchValue({
-          foodPreference: registrationData.foodPreference || 'NONE',
-          transportationNeeded: registrationData.transportationNeeded || false,
-          accommodationNeeded: registrationData.accommodationNeeded || false,
-          accommodationDays: registrationData.accommodationDays || null,
-          gdprConsent: registrationData.gdprConsent || false,
-          photoConsent: registrationData.photoConsent || false,
-          driverName: registrationData.driverName || '',
-          driverPhone: registrationData.driverPhone || '',
+          foodPreference: registrationData.foodPreference ?? 'NONE',
+          transportationNeeded: registrationData.transportationNeeded ?? false,
+          accommodationNeeded: registrationData.accommodationNeeded ?? false,
+          accommodationDays: registrationData.accommodationDays ?? null,
+          gdprConsent: registrationData.gdprConsent ?? false,
+          photoConsent: registrationData.photoConsent ?? false,
+          driverName: registrationData.driverName ?? '',
+          driverPhone: registrationData.driverPhone ?? '',
         });
         this.initialFormValue = this.serializeFormValue();
         this.hasChanges.set(false);
@@ -151,9 +151,9 @@ export class EventRegistrationManagement {
       return;
     }
 
-    const formValues = this.registrationForm.value;
+    const requestData = this.buildRegistrationRequest();
 
-    if (formValues.gdprConsent === false) {
+    if (requestData.gdprConsent === false) {
       this.openConfirmDialog({
         titleKey: 'Revoke GDPR Consent?',
         messageKey:
@@ -163,14 +163,41 @@ export class EventRegistrationManagement {
       })
         .pipe(filter((confirmed): confirmed is true => Boolean(confirmed)))
         .subscribe(() => {
-          this.performUpdate(formValues);
+          this.performUpdate(requestData);
         });
     } else {
-      this.performUpdate(formValues);
+      this.performUpdate(requestData);
     }
   }
 
-  private performUpdate(formValues: any): void {
+  private buildRegistrationRequest(): EventRegistrationRequest {
+    const formValues = this.registrationForm.value;
+
+    if (this.event()?.type === 'EXTERNAL') {
+      return {
+        gdprConsent: formValues.gdprConsent,
+        photoConsent: formValues.photoConsent,
+        foodPreference: formValues.foodPreference,
+      };
+    }
+
+    return {
+      gdprConsent: formValues.gdprConsent,
+      photoConsent: formValues.photoConsent,
+      foodPreference: formValues.foodPreference,
+      transportationNeeded: formValues.transportationNeeded,
+      accommodationNeeded: formValues.accommodationNeeded,
+      ...(formValues.transportationNeeded && {
+        driverName: formValues.driverName,
+        driverPhone: formValues.driverPhone,
+      }),
+      ...(formValues.accommodationNeeded && {
+        accommodationDays: formValues.accommodationDays,
+      }),
+    };
+  }
+
+  private performUpdate(formValues: EventRegistrationRequest): void {
     this.isSubmitting.set(true);
 
     this.eventService.updateRegistration(this.eventId, formValues).subscribe({
@@ -181,7 +208,6 @@ export class EventRegistrationManagement {
         } else {
           this.toast.show('success', 'Registration updated successfully!');
         }
-        setTimeout(() => this.router.navigate(['/events']), 1500);
       },
       error: (err) => {
         this.isSubmitting.set(false);
@@ -192,11 +218,10 @@ export class EventRegistrationManagement {
 
   onDelete(): void {
     this.openConfirmDialog({
-      titleKey: 'Cancel Registration?',
-      messageKey:
-        'Are you sure you want to cancel your registration for this event? This action cannot be undone.',
-      confirmKey: 'Yes, Cancel Registration',
-      cancelKey: 'Go Back',
+      titleKey: 'events.deleteRegistration.title',
+      messageKey: 'events.deleteRegistration.message',
+      confirmKey: 'events.deleteRegistration.confirm',
+      cancelKey: 'events.deleteRegistration.cancel',
     })
       .pipe(filter((confirmed): confirmed is true => Boolean(confirmed)))
       .subscribe(() => {
