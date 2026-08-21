@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { TranslocoService } from '@jsverse/transloco';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -11,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { TranslocoModule } from '@jsverse/transloco';
 
 import { AuthService } from '../../../core/services/auth.service';
+import { ToastService } from '../../../core/services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -33,6 +35,8 @@ export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly translocoService = inject(TranslocoService);
+  private readonly toastService = inject(ToastService);
 
   protected readonly isSubmitting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
@@ -66,16 +70,22 @@ export class LoginComponent {
       .pipe(finalize(() => this.isSubmitting.set(false)))
       .subscribe({
         next: (user) => {
+          this.toastService.show(
+            'success',
+            this.translocoService.translate('notifications.confirmLogin', {
+              email: credentials.email,
+            }),
+          );
           const nextUrl = returnUrl || this.authService.getLandingRoute(user.role);
           void this.router.navigateByUrl(nextUrl);
         },
         error: (error) => {
-          if (error.status !== 0) {
-            this.errorMessage.set('Invalid email or password.');
-            return;
+          let errorMessage: string;
+          errorMessage = 'auth.error.invalidCredentials';
+          if (error.status === 0) {
+            errorMessage = 'auth.error.signInError';
           }
-
-          this.errorMessage.set('Unable to sign in right now. Please try again.');
+          this.errorMessage.set(errorMessage);
         },
       });
   }
