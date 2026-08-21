@@ -142,6 +142,7 @@ export class EventRegistration implements OnInit {
         this.errorMessage.set(null);
         this.isSubmitting.set(false);
         this.isRegistered.set(true);
+        this.router.navigate([`/events/${this.eventId}/manage`]);
       },
       error: (err) => {
         const message =
