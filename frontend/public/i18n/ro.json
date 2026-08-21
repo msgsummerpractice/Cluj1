@@ -64,7 +64,11 @@
     "sessionInfo": "Sesiunea ta va rămâne activă până la deconectare sau expirare.",
     "submitting": "Se autentifică...",
     "noAccount": "Nu ai un cont?",
-    "signUp": "Înregistrează-te"
+    "signUp": "Înregistrează-te",
+    "error": {
+      "invalidCredentials": "Email sau parola sunt invalide.",
+      "signInError": "Autentificarea nu este posibilă momentan. Te rugăm să încerci din nou."
+    }
   },
   "roles": {
     "welcome": "Bun venit",
@@ -221,7 +225,9 @@
     "errorUpdatingRole": "Eroare la actualizarea rolului",
     "userActivated": "Contul utilizatorului a fost activat cu succes",
     "userDeactivated": "Contul utilizatorului a fost dezactivat cu succes",
-    "errorUpdatingStatus": "Eroare la actualizarea stării"
+    "errorUpdatingStatus": "Eroare la actualizarea stării",
+    "changeUserStatus": "Starea utilizatorului a fost schimbată cu succes",
+    "confirmLogin": "Utilizatorul {{email}} s-a autentificat cu succes."
   },
   "register": {
     "title": "Înregistrează un cont nou",
@@ -374,7 +380,8 @@
     "error": {
       "code": {
         "required": "Codul evenimentului este obligatoriu.",
-        "invalid": "Codul evenimentului trebuie să aibă exact 6 caractere."
+        "invalid": "Codul evenimentului trebuie să aibă exact 6 cifre.",
+        "digitsOnly": "Codul evenimentului poate conține doar cifre."
       },
       "method": {
         "required": "Metoda de check-in este obligatorie."
