@@ -259,15 +259,17 @@
             </button>
           }
         }
-        <button
-          mat-icon-button
-          (click)="navigateToCheckIn(event.id)"
-          [disabled]="event.isCheckedIn"
-          [matTooltip]="'events.eventCheckInButton' | transloco"
-          aria-label="Check in to event"
-        >
-          <mat-icon>qr_code_scanner</mat-icon>
-        </button>
+        @if (event.status != 'DRAFT') {
+          <button
+            mat-icon-button
+            (click)="navigateToCheckIn(event.id)"
+            [disabled]="event.isCheckedIn"
+            [matTooltip]="'events.eventCheckInButton' | transloco"
+            aria-label="Check in to event"
+          >
+            <mat-icon>qr_code_scanner</mat-icon>
+          </button>
+        }
 
         @if (isMarketingOrganizer() && event.status === 'DRAFT') {
           <button
