@@ -24,6 +24,15 @@ table[mat-table] {
 
 th[mat-header-cell] {
   white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background-color: #f9fafb;
+}
+
+
+tr[mat-header-row] {
+  background-color: #f9fafb;
 }
 
 th[mat-header-cell] button {

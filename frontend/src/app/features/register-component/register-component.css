@@ -8,7 +8,6 @@
   position: relative !important;
 }
 
-/* suppress the browser's built-in password-reveal button */
 input::-ms-reveal,
 input::-ms-clear {
   display: none;

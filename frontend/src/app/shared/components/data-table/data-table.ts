@@ -39,7 +39,7 @@ export class DataTableComponent<T> {
   readonly noDataLabel = input('');
   readonly noDataDetail = input('');
   readonly showPaginator = input(false);
-  readonly pageSizeOptions = input<number[]>([5, 10, 25, 100]);
+  readonly pageSizeOptions = input<number[]>([10, 25, 50]);
 
   readonly sortChange = output<Sort>();
 

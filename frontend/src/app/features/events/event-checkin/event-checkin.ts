@@ -95,7 +95,6 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
 
   onCodeResult(resultString: string): void {
     if (this.isProcessing() || !resultString) return;
-    // QR codes may encode "EventID:{uuid}|Name:{name}" — extract just the UUID
     const match = resultString.match(/EventID:([^|]+)/);
     const eventId = match ? match[1].trim() : resultString;
     this.processCheckIn({ eventId, method: 'QR' });

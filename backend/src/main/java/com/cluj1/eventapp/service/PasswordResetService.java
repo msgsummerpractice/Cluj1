@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.cluj1.eventapp.model.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,21 +22,18 @@ import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class PasswordResetService {
-    @Autowired
-    private UserRepository userRepo;
+    private final UserRepository userRepo;
 
-    @Autowired
-    private PasswordResetTokenRepository tokenRepo;
+    private final PasswordResetTokenRepository tokenRepo;
 
-    @Autowired
-    private JavaMailSender mailSender;
+    private final  JavaMailSender mailSender;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
     @Value("${spring.mail.username}")
     private String sender;
