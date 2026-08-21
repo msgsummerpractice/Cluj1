@@ -9,6 +9,7 @@ table[mat-table] {
   table-layout: fixed;
 }
 
+
 ::ng-deep .pagination-btn {
   color: #000000 !important;
 }

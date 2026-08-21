@@ -32,6 +32,10 @@
   cursor: default !important;
 }
 
+.event-list-wrapper {
+  height: calc(100dvh - 5rem); /* subtract sticky header (h-20 = 5rem) */
+}
+
 .status-badge {
   display: inline-block;
 }

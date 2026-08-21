@@ -1,5 +1,6 @@
-<div class="p-8 bg-white min-h-screen">
+<div class="event-list-wrapper p-8 bg-white w-full flex flex-col overflow-hidden">
   <app-data-table
+    class="flex-1 min-h-0 block w-full"
     [columns]="columns()"
     [data]="visibleEvents()"
     [tableTitle]="pageTitle()"
@@ -173,6 +174,10 @@
             ></path>
           </svg>
           {{ 'events.registered' | transloco }}
+        </span>
+      } @else {
+        <span class = "text-gray-400 font-medium" [title]="'events.unregistered' | transloco">
+          {{ 'events.unregistered' | transloco }}
         </span>
       }
     </ng-template>

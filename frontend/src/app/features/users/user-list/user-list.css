@@ -31,11 +31,13 @@
 }
 
 .user-list-wrapper {
-  @apply p-4 sm:p-8 bg-white min-h-screen;
+  @apply p-4 sm:p-8 bg-white flex flex-col w-full;
+  height: calc(100dvh - 5rem); /* subtract sticky header (h-20 = 5rem) */
+  overflow: hidden;
 }
 
 .user-list-header {
-  @apply flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-6;
+  @apply flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-6 shrink-0;
 }
 
 .user-list-title {
@@ -43,7 +45,11 @@
 }
 
 .table-container {
-  @apply shadow-md rounded-lg overflow-x-auto border border-gray-200 w-full;
+  @apply shadow-md rounded-lg border border-gray-200 w-full flex flex-col flex-1 min-h-0 overflow-hidden;
+}
+
+.table-container app-data-table {
+  @apply flex-1 min-h-0 block w-full;
 }
 
 .table-header {

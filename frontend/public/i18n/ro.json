@@ -82,6 +82,9 @@
       "PARTICIPANT": "Vizualizează spațiul tău pentru evenimente și continuă acțiunile disponibile pentru contul tău."
     }
   },
+  "table": {
+    "itemsPerPage": "Elemente pe pagină"
+  },
   "events": {
     "participantPageTitle": "Evenimente",
     "eventPageTitle": "Gestionare evenimente",
@@ -118,6 +121,7 @@
     "dateFilterType": "Tip filtru",
     "startDate": "Început",
     "endDate": "Sfârșit",
+    "unregistered": "Neînregistrat",
     "eventManageRegistrationButton": "Gestionează înregistrarea",
     "eventDeleteRegistrationButton": "Anulează înregistrarea",
     "publish": {
