@@ -66,15 +66,22 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
         let errorKey = 'checkin.error.general';
         const rawError = error?.error?.message || error?.error;
 
-        if (typeof rawError === 'string' && rawError.includes('checkin.')) {
-          errorKey = rawError;
-        } else if (error.status === 400) {
-          errorKey = 'checkin.error.code.invalid';
-        } else if (error.status === 404) {
-          errorKey = 'checkin.error.event.notfound';
-        } else if (error.status === 409) {
-          errorKey = 'checkin.error.user.alreadycheckedin';
-          this.scannerEnabled.set(false);
+        switch (true) {
+          case typeof rawError === 'string' && rawError.includes('checkin.'):
+            errorKey = rawError;
+            break;
+          case error.status === 400:
+            errorKey = 'checkin.error.code.invalid';
+            break;
+          case error.status === 404:
+            errorKey = 'checkin.error.event.notfound';
+            break;
+          case error.status === 409:
+            errorKey = 'checkin.error.user.alreadycheckedin';
+            this.scannerEnabled.set(false);
+            break;
+          default:
+            break;
         }
 
         this.toastService.showError(this.translateService.translate(errorKey));

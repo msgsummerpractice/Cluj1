@@ -80,13 +80,12 @@ export class LoginComponent {
           void this.router.navigateByUrl(nextUrl);
         },
         error: (error) => {
-          let errorMsg = 'Invalid email or password.';
-
+          let errorMessage: string;
+          errorMessage = 'auth.error.invalidCredentials';
           if (error.status === 0) {
-            errorMsg = 'Unable to sign in right now. Please try again.';
+            errorMessage = 'auth.error.signInError';
           }
-
-          this.errorMessage.set(errorMsg);
+          this.errorMessage.set(errorMessage);
         },
       });
   }

@@ -64,7 +64,11 @@
     "sessionInfo": "Sesiunea ta va rămâne activă până la deconectare sau expirare.",
     "submitting": "Se autentifică...",
     "noAccount": "Nu ai un cont?",
-    "signUp": "Înregistrează-te"
+    "signUp": "Înregistrează-te",
+    "error": {
+      "invalidCredentials": "Email sau parola sunt invalide.",
+      "signInError": "Autentificarea nu este posibilă momentan. Te rugăm să încerci din nou."
+    }
   },
   "roles": {
     "welcome": "Bun venit",
@@ -376,7 +380,7 @@
     "error": {
       "code": {
         "required": "Codul evenimentului este obligatoriu.",
-        "invalid": "Codul evenimentului trebuie să aibă exact 6 caractere.",
+        "invalid": "Codul evenimentului trebuie să aibă exact 6 cifre.",
         "digitsOnly": "Codul evenimentului poate conține doar cifre."
       },
       "method": {

@@ -101,7 +101,11 @@
     "sessionInfo": "Your session will stay active until you log out or it expires.",
     "submitting": "Signing in...",
     "noAccount": "Don't have an account?",
-    "signUp": "Sign up"
+    "signUp": "Sign up",
+    "error": {
+      "invalidCredentials": "Invalid email or password.",
+      "signInError": "Unable to sign in right now. Please try again."
+    }
   },
   "roles": {
     "welcome": "Welcome back",
@@ -154,7 +158,7 @@
     "dateBefore": "Before",
     "dateAfter": "After",
     "dateRange": "Range",
-    "dateFilterType" : "Date filter type",
+    "dateFilterType": "Date filter type",
     "startDate": "Start date",
     "endDate": "End date",
     "publish": {
@@ -165,7 +169,7 @@
       "success": "Event published successfully.",
       "error": "Failed to publish event. Please try again."
     },
-    "deleteRegistration" : {
+    "deleteRegistration": {
       "title": "Confirm Delete Registration",
       "message": "Are you sure you want to delete your registration for this event? This action cannot be undone.",
       "confirm": "Yes, delete",
@@ -375,7 +379,7 @@
     "error": {
       "code": {
         "required": "Event code is required.",
-        "invalid": "Event code must be exactly 6 characters.",
+        "invalid": "Event code must be exactly 6 digits.",
         "digitsOnly": "Event code can only contain digits."
       },
       "method": {
