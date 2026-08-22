@@ -299,6 +299,15 @@
   color: var(--disabled-button-text) !important;
 }
 
+.event-page button:not(:disabled):not(.mat-mdc-button-disabled) {
+  cursor: pointer;
+}
+
+.event-page button:disabled,
+.event-page button.mat-mdc-button-disabled {
+  cursor: not-allowed;
+}
+
 @media (max-width: 900px) {
   .event-row {
     grid-template-columns: 1fr;
