@@ -337,7 +337,12 @@
     "confirmPasswordRequired": "Te rugăm să confirmi parola.",
     "redirecting": "Se redirecționează către autentificare...",
     "submit": "Resetează parola",
-    "submitting": "Se resetează..."
+    "submitting": "Se resetează...",
+    "errors": {
+      "invalidToken": "Token de resetare a parolei invalid sau lipsă.",
+      "failedReset": "Resetarea parolei a eșuat. Linkul ar putea fi expirat.",
+      "passwordMismatch": "Parolele nu se potrivesc."
+    }
   },
   "eventRegistration": {
     "pageTitle": "Înregistrează-te pentru:",

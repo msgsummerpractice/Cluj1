@@ -9,7 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { AuthService } from '../../../core/services/auth.service';
-import { TranslocoModule } from '@jsverse/transloco';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 
 @Component({
   selector: 'app-reset-password',
@@ -32,6 +32,7 @@ export class ResetPasswordComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly translocoService = inject(TranslocoService);
 
   protected readonly isSubmitting = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
@@ -56,7 +57,7 @@ export class ResetPasswordComponent implements OnInit {
   ngOnInit(): void {
     this.token = this.route.snapshot.queryParamMap.get('token');
     if (!this.token) {
-      this.errorMessage.set('Invalid or missing password reset token.');
+      this.translocoService.translate('resetPassword.errors.invalidToken');
     }
   }
 
@@ -69,8 +70,7 @@ export class ResetPasswordComponent implements OnInit {
     const { newPassword, confirmPassword } = this.resetForm.getRawValue();
 
     if (newPassword !== confirmPassword) {
-      this.errorMessage.set('Passwords do not match.');
-      return;
+      this.translocoService.translate('resetPassword.errors.passwordMissmatch');
     }
 
     this.isSubmitting.set(true);
@@ -92,7 +92,7 @@ export class ResetPasswordComponent implements OnInit {
         },
         error: (err) => {
           this.errorMessage.set(
-            err.error || 'Failed to reset password. The link might be expired.',
+            err.error || this.translocoService.translate('resetPassword.errors.failedReset'),
           );
         },
       });

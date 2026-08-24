@@ -126,7 +126,7 @@ export class EventDetailsComponent {
   }
 
   canViewStatistics(): boolean {
-    return this.authService.isHrUser() || this.authService.isMarketingOrganizer();
+    return this.authService.isMarketingOrganizer();
   }
 
   onDownloadAttendanceReport(): void {

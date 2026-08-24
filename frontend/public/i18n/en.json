@@ -337,7 +337,12 @@
     "confirmPasswordRequired": "Please confirm your password.",
     "redirecting": "Redirecting to login...",
     "submit": "Reset Password",
-    "submitting": "Resetting..."
+    "submitting": "Resetting...",
+    "errors": {
+      "invalidToken": "Invalid or missing password reset token.",
+      "failedReset": "Failed to reset password. The link might be expired.",
+      "passwordMismatch": "Passwords do not match."
+    }
   },
   "eventRegistration": {
     "pageTitle": "Register for:",
