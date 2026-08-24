@@ -57,7 +57,8 @@ export const routes: Routes = [
     data: { roles: ['MARKETING_ORGANIZER'] },
     loadComponent: () =>
       import('./features/auth/role-home/role-home').then((m) => m.RoleHomeComponent),
-  },{
+  },
+  {
     path: 'admin',
     canActivate: [authGuard, roleGuard],
     data: { roles: ['ADMIN'] },
@@ -121,7 +122,7 @@ export const routes: Routes = [
   {
     path: 'events/:id/statistics',
     canActivate: [authGuard, roleGuard],
-    data: { roles: ['MARKETING_ORGANIZER', 'HR_USER', 'ADMIN'] },
+    data: { roles: ['MARKETING_ORGANIZER'] },
     loadComponent: () =>
       import('./features/app-statistics-component/app-statistics').then(
         (m) => m.StatisticsViewComponent,

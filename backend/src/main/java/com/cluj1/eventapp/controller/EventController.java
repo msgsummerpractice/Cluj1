@@ -173,6 +173,7 @@ public class EventController {
     }
 
     @GetMapping("/{id}/statistics")
+    @PreAuthorize("hasAuthority('MARKETING_ORGANIZER')")
     public ResponseEntity<EventStatisticsDto> getEventStatistics(@PathVariable UUID id) {
         EventStatisticsDto statistics = eventService.getEventStatistics(id);
         return ResponseEntity.ok(statistics);

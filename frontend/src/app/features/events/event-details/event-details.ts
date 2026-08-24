@@ -126,7 +126,7 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
   }
 
   canViewStatistics(): boolean {
-    return this.authService.isHrUser() || this.authService.isMarketingOrganizer();
+    return this.authService.isMarketingOrganizer();
   }
 
   onDownloadAttendanceReport(): void {
