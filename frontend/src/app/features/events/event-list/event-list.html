@@ -211,7 +211,7 @@
           {{ 'events.registered' | transloco }}
         </span>
       } @else {
-        <span class = "text-gray-400 font-medium" [title]="'events.unregistered' | transloco">
+        <span class="text-gray-400 font-medium" [title]="'events.unregistered' | transloco">
           {{ 'events.unregistered' | transloco }}
         </span>
       }
@@ -278,7 +278,7 @@
             </button>
           }
         }
-        @if (event.status != 'DRAFT') {
+        @if (event.status != 'DRAFT' && event.isRegistered) {
           <button
             mat-icon-button
             (click)="navigateToCheckIn(event.id)"
