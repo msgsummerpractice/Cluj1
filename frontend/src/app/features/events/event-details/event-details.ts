@@ -1,4 +1,5 @@
-import { Component, OnDestroy, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, effect, inject, signal, computed } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -10,7 +11,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CheckincodesComponent } from '../../checkincodes-component/checkincodes-component';
 import { ToastService } from '../../../core/services/toast.service';
-import { ChangeDetectorRef } from '@angular/core';
 import { finalize, take } from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
 import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
@@ -31,19 +31,41 @@ import { BackButtonComponent } from '../../../shared/components/back-button/back
   templateUrl: './event-details.html',
   styleUrl: './event-details.css',
 })
-export class EventDetailsComponent implements OnInit, OnDestroy {
+export class EventDetailsComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly eventService = inject(EventService);
   private readonly authService = inject(AuthService);
   private readonly translocoService = inject(TranslocoService);
   private readonly toast = inject(ToastService);
-  private readonly cdr = inject(ChangeDetectorRef);
 
-  readonly event = signal<Event | null>(null);
-  readonly eventDetails = signal<EventDetails | null>(null);
+  private readonly eventId = signal(this.route.snapshot.paramMap.get('id') ?? undefined);
+
+  private readonly eventResource = rxResource({
+    params: () => this.eventId(),
+    stream: ({ params: id }) => this.eventService.getEventById(id),
+  });
+
+  private readonly registrationResource = rxResource({
+    params: () => this.eventId(),
+    stream: ({ params: id }) => this.eventService.checkIfAlreadyRegistered(id),
+    defaultValue: false,
+  });
+
+  private readonly detailsResource = rxResource({
+    params: () => this.eventId(),
+    stream: ({ params: id }) => this.eventService.getEventDetails(id),
+  });
+
+  private readonly posterResource = rxResource({
+    params: () => (this.detailsResource.value()?.hasPoster ? this.eventId() : undefined),
+    stream: ({ params: id }) => this.eventService.getEventPoster(id),
+  });
+
+  readonly event = computed<Event | null>(() => this.eventResource.value() ?? null);
+  readonly eventDetails = computed<EventDetails | null>(() => this.detailsResource.value() ?? null);
+  readonly isRegistered = computed(() => this.registrationResource.value());
   readonly posterUrl = signal<string | null>(null);
-  readonly isRegistered = signal<boolean>(false);
 
   readonly isExporting = signal<boolean>(false);
   readonly isDownloadingReport = signal<boolean>(false);
@@ -64,53 +86,31 @@ export class EventDetailsComponent implements OnInit, OnDestroy {
     return currentEvent?.status === 'COMPLETED' && this.authService.isHrUser();
   });
 
-  ngOnInit() {
-    const eventId = this.route.snapshot.paramMap.get('id');
-    if (!eventId) {
-      return;
-    }
+  constructor() {
+    effect((onCleanup) => {
+      const poster = this.posterResource.value();
+      if (!poster || poster.size === 0) {
+        this.posterUrl.set(null);
+        return;
+      }
 
-    this.eventService.getEventById(eventId).subscribe({
-      next: (event) => {
-        this.event.set(event);
-
-        this.eventService.checkIfAlreadyRegistered(eventId).subscribe({
-          next: (registered) => this.isRegistered.set(registered),
-          error: () => this.isRegistered.set(false),
-        });
-
-        this.eventService.getEventDetails(eventId).subscribe({
-          next: (details) => {
-            this.eventDetails.set(details);
-            if (details.hasPoster) {
-              this.eventService.getEventPoster(eventId).subscribe({
-                next: (poster) => {
-                  if (poster.size > 0) {
-                    this.posterUrl.set(URL.createObjectURL(poster));
-                  }
-                },
-                error: () => {
-                  this.posterUrl.set(null);
-                },
-              });
-            }
-          },
-          error: (error) => {
-            this.toast.show('error', error?.message ?? error);
-          },
-        });
-      },
-      error: () => {
-        this.router.navigate(['/not-found']);
-      },
+      const url = URL.createObjectURL(poster);
+      this.posterUrl.set(url);
+      onCleanup(() => URL.revokeObjectURL(url));
     });
-  }
 
-  ngOnDestroy() {
-    const url = this.posterUrl();
-    if (url) {
-      URL.revokeObjectURL(url);
-    }
+    effect(() => {
+      if (this.eventResource.error()) {
+        this.router.navigate(['/not-found']);
+      }
+    });
+
+    effect(() => {
+      const error = this.detailsResource.error() as { message?: string } | undefined;
+      if (error) {
+        this.toast.show('error', error.message ?? String(error));
+      }
+    });
   }
 
   canRegister(event: Event | null): boolean {
