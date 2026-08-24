@@ -6,6 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 import { AuthRequest } from '../models/auth-request.model';
 import { AuthResponse } from '../models/auth-response.model';
 import { AuthUser, UserRole } from '../models/auth-user.model';
+import { environment } from '../../../environments/environment.prod';
 
 type JwtPayload = {
   sub?: string;
@@ -23,7 +24,8 @@ export class AuthService {
   private readonly router = inject(Router);
   private readonly storageKey = 'eventapp.auth.token';
   private expirationTimer: ReturnType<typeof setTimeout> | null = null;
-  private apiUrl: string = 'http://localhost:8080/api/auth';
+  // private apiUrl: string = 'http://localhost:8080/api/auth';
+  private baseUrl: string = environment.apiUrl;
 
   private readonly authUserState = signal<AuthUser | null>(this.restoreSession());
 
@@ -40,13 +42,13 @@ export class AuthService {
 
   login(request: AuthRequest): Observable<AuthUser> {
     return this.http
-      .post<AuthResponse>(`${this.apiUrl}/login`, request)
+      .post<AuthResponse>(`${this.baseUrl}/api/auth/login`, request)
       .pipe(map(({ token }) => this.persistSession(token)));
   }
 
   logout(): void {
     this.http
-      .post<void>(`${this.apiUrl}/logout`, {})
+      .post<void>(`${this.baseUrl}/api/auth/logout`, {})
       .pipe(
         finalize(() => {
           this.clearSession();
@@ -176,7 +178,7 @@ export class AuthService {
   }
 
   forgotPassword(email: string): Observable<string> {
-    return this.http.post(`${this.apiUrl}/forgot-password`, { email }, { responseType: 'text' });
+    return this.http.post(`${this.baseUrl}/api/auth/forgot-password`, { email }, { responseType: 'text' });
   }
 
   resetPassword(payload: {
@@ -184,7 +186,7 @@ export class AuthService {
     newPassword: string;
     confirmPassword: string;
   }): Observable<string> {
-    return this.http.post(`${this.apiUrl}/reset-password`, payload, { responseType: 'text' });
+    return this.http.post(`${this.baseUrl}/api/auth/reset-password`, payload, { responseType: 'text' });
   }
 
   isAdmin(): boolean {
