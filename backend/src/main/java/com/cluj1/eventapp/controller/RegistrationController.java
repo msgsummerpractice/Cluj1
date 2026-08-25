@@ -29,7 +29,6 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://thankful-ground-011b95203.7.azurestaticapps.net")
 @RequestMapping("/api/registration")
 public class RegistrationController {
 
