@@ -2,7 +2,6 @@ package com.cluj1.eventapp.mapper;
 
 import com.cluj1.eventapp.dto.EventRegistrationDto;
 import com.cluj1.eventapp.model.Registration;
-import com.cluj1.eventapp.repository.EventRepository;
 import org.springframework.stereotype.Component;
 import com.cluj1.eventapp.dto.EventDto;
 import com.cluj1.eventapp.model.Event;
@@ -38,8 +37,12 @@ public class EventMapper {
                 .transportationNeeded(registration.getTransportationNeeded())
                 .accommodationNeeded(registration.getAccommodationNeeded())
                 .accommodationDays(registration.getAccommodationDays())
-                .driverName(registration.getTransportationDetails() != null ? registration.getTransportationDetails().getDriverName() : null)
-                .driverPhone(registration.getTransportationDetails() != null ? registration.getTransportationDetails().getDriverPhoneNumber() : null)
+                .driverName(registration.getTransportationDetails() != null
+                        ? registration.getTransportationDetails().getDriverName()
+                        : null)
+                .driverPhone(registration.getTransportationDetails() != null
+                        ? registration.getTransportationDetails().getDriverPhoneNumber()
+                        : null)
                 .build();
     }
 }
