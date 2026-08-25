@@ -42,7 +42,7 @@ public class SecurityConfig {
 								.sendError(HttpStatus.UNAUTHORIZED.value(), authException.getMessage())))
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers("/api/auth/login", "/api/users/register", "/api/auth/forgot-password",
-								"/api/auth/reset-password")
+								"/api/auth/reset-password", "/actuator/health")
 						.permitAll()
 						.anyRequest().authenticated())
 				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -53,7 +53,7 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+		configuration.setAllowedOrigins(List.of("https://thankful-ground-011b95203.7.azurestaticapps.net"));
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
 		configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
 		configuration.setAllowCredentials(true);
