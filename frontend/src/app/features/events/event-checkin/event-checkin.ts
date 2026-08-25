@@ -38,6 +38,8 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
   readonly ALLOWED_FORMATS = [BarcodeFormat.QR_CODE];
   readonly scannerEnabled = signal(true);
   readonly showScanner = signal(false);
+  readonly cameras = signal<MediaDeviceInfo[]>([]);
+  readonly currentDevice = signal<MediaDeviceInfo | undefined>(undefined);
 
   readonly activeEvent = signal<Event | null>(null);
   readonly userTicketCode = signal<string | null>(null);
@@ -113,7 +115,29 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
   }
 
   onCamerasFound(devices: MediaDeviceInfo[]): void {
-    this.hasDevices.set(!!(devices && devices.length > 0));
+    this.cameras.set(devices);
+    this.hasDevices.set(devices.length > 0);
+  }
+
+  switchCamera(): void {
+    const devices = this.cameras();
+
+    if (devices.length <= 1) {
+      return;
+    }
+
+    const current = this.currentDevice();
+
+    if (!current) {
+      this.currentDevice.set(devices[0]);
+      return;
+    }
+
+    const currentIndex = devices.findIndex((device) => device.deviceId === current.deviceId);
+
+    const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % devices.length;
+
+    this.currentDevice.set(devices[nextIndex]);
   }
 
   onCodeResult(resultString: string): void {
