@@ -12,7 +12,6 @@ import { Platform } from '@angular/cdk/platform';
 import { finalize } from 'rxjs/operators';
 import { Event } from '../../../core/models/event.model';
 import { CheckInRequest } from '../../../core/models/check-in-request.model';
-import { AttendanceRecord } from '../../../core/models/attendance-record.model';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 
@@ -43,7 +42,6 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
 
   readonly activeEvent = signal<Event | null>(null);
   readonly userTicketCode = signal<string | null>(null);
-  readonly recentCheckins = signal<AttendanceRecord[]>([]);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly facingMode = signal<'environment' | 'user'>('environment');
@@ -63,10 +61,6 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
       next: (event) => {
         this.activeEvent.set(event);
         this.loadUserTicket(event.id);
-
-        if (!this.authService.isParticipant()) {
-          this.loadRecentCheckins(event.id);
-        }
       },
       error: (error) => {
         let errorKey = 'checkin.error.general';
@@ -104,17 +98,6 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
         this.userTicketCode.set(null);
       },
     });
-  }
-
-  private loadRecentCheckins(eventId: string): void {
-    this.eventService.getRecentCheckins(eventId).subscribe({
-      next: (checkins) => this.recentCheckins.set(checkins),
-      error: () => {},
-    });
-  }
-
-  isParticipant(): boolean {
-    return this.authService.isParticipant();
   }
 
   onCamerasFound(devices: MediaDeviceInfo[]): void {
@@ -156,9 +139,7 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
         this.currentDevice.set(matchedDevice);
         this.facingMode.set(facingMode);
       }
-    } catch {
-
-    }
+    } catch {}
   }
 
   onCodeResult(resultString: string): void {
@@ -198,10 +179,6 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
         next: () => {
           this.toastService.showSuccess(this.translateService.translate('checkin.success'));
           this.scannerEnabled.set(false);
-          const currentEvent = this.activeEvent();
-          if (currentEvent && !this.authService.isParticipant()) {
-            this.loadRecentCheckins(currentEvent.id);
-          }
         },
         error: (error) => {
           let errorKey = 'checkin.error.general';
