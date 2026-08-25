@@ -5,8 +5,7 @@ import { User } from '../models/user.model';
 import { RegisterDto } from '../models/register-dto';
 import { UserProfile } from '../models/user-profile.model';
 import { Page } from '../models/page.model';
-import { environment } from '../../../environments/environment.prod';
-
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
