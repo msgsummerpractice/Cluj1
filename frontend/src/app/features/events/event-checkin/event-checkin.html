@@ -33,11 +33,37 @@
         >
           @if (scannerEnabled() && showScanner()) {
             <zxing-scanner
+              [device]="currentDevice()"
               (scanSuccess)="onCodeResult($event)"
               (camerasFound)="onCamerasFound($event)"
               [formats]="ALLOWED_FORMATS"
               class="w-full h-full object-cover absolute inset-0"
             ></zxing-scanner>
+
+            @if (cameras().length > 1) {
+              <button
+                type="button"
+                (click)="switchCamera()"
+                class="absolute right-4 bottom-4 z-20 flex items-center justify-center w-12 h-12 rounded-full bg-black/60 hover:bg-black/80 text-white shadow-lg backdrop-blur-sm transition-colors"
+                aria-label="Switch camera"
+              >
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 7h3l2-2h6l2 2h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V9a2 2 0 012-2z"
+                  />
+                  <circle cx="12" cy="13" r="3" />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M17 5l1-2"
+                  />
+                </svg>
+              </button>
+            }
           }
 
           @if (!hasDevices() || !showScanner()) {
