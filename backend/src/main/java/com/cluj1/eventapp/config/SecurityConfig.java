@@ -3,6 +3,7 @@ package com.cluj1.eventapp.config;
 import com.cluj1.eventapp.security.CustomUserDetailsService;
 import com.cluj1.eventapp.security.JwtAuthenticationFilter;
 import com.cluj1.eventapp.security.JwtTokenProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
+
+	@Value("${app.cors.allowed-origins:http://localhost:4200,https://thankful-ground-011b95203.7.azurestaticapps.net}")
+	private List<String> allowedOrigins;
 
 	@Bean
 	public JwtAuthenticationFilter jwtAuthenticationFilter(JwtTokenProvider tokenProvider,
@@ -53,7 +57,7 @@ public class SecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("https://thankful-ground-011b95203.7.azurestaticapps.net"));
+		configuration.setAllowedOrigins(allowedOrigins);
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
 		configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
 		configuration.setAllowCredentials(true);
