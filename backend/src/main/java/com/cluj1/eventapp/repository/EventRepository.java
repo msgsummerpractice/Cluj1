@@ -24,14 +24,14 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
         @Query("SELECT COUNT(r) FROM Registration r WHERE r.user.id = :user_id AND r.event.eventStartDate > :now")
         int countUpcomingEventsForUsers(@Param("now") OffsetDateTime now, @Param("user_id") UUID user_id);
 
-        @Query("SELECT e FROM Event e WHERE e.status = :status AND e.registrationEndDate >= :now AND (e.location = 'ALL' OR e.location = :userLocation)")
+        @Query("SELECT e FROM Event e WHERE e.status = :status AND (e.registrationEndDate IS NULL OR e.registrationEndDate >= :now) AND (e.location = 'ALL' OR e.location = :userLocation)")
         List<Event> findEligibleEvents(
                         @Param("now") OffsetDateTime now,
                         @Param("userLocation") EventLocation userLocation,
                         @Param("status") EventStatus status);
 
         @Query("SELECT e FROM Event e WHERE e.status = com.cluj1.eventapp.model.enums.EventStatus.PUBLISHED " +
-                        "AND e.registrationEndDate >= :now " +
+                        "AND (e.registrationEndDate IS NULL OR e.registrationEndDate >= :now) " +
                         "AND e.location = com.cluj1.eventapp.model.enums.EventLocation.ALL")
         List<Event> findAllLocationEligibleEvents(@Param("now") OffsetDateTime now);
 

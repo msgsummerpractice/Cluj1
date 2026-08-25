@@ -260,4 +260,22 @@ class EligibleEventsIntegrationTest {
         mockMvc.perform(get("/api/events/eligible"))
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    void getEligibleEventsIncludesEventWithNoRegistrationEndDate() throws Exception {
+        eventRepository.save(Event.builder()
+                .name("Open Ended Event")
+                .location(EventLocation.CLUJ)
+                .type(EventType.LOCAL)
+                .status(EventStatus.PUBLISHED)
+                .registrationEndDate(null)
+                .createdBy(organizer)
+                .build());
+
+        mockMvc.perform(get("/api/events/eligible")
+                .with(user(PARTICIPANT_EMAIL).authorities(new SimpleGrantedAuthority("PARTICIPANT"))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].name").value("Open Ended Event"));
+    }
 }
