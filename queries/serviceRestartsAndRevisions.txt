@@ -1,0 +1,9 @@
+/*
+Tracks Container App restarts, revision changes, and deployment events. 
+This helps correlate service incidents with deployments.
+*/
+
+ContainerAppConsoleLogs
+| where Log has "restart" or Log has "revision" or Log has "deploy"
+| project TimeGenerated, ContainerAppName, RevisionName, Log
+| order by TimeGenerated desc

@@ -38,11 +38,16 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
   readonly ALLOWED_FORMATS = [BarcodeFormat.QR_CODE];
   readonly scannerEnabled = signal(true);
   readonly showScanner = signal(false);
+  readonly cameras = signal<MediaDeviceInfo[]>([]);
+  readonly currentDevice = signal<MediaDeviceInfo | undefined>(undefined);
 
   readonly activeEvent = signal<Event | null>(null);
   readonly userTicketCode = signal<string | null>(null);
   readonly recentCheckins = signal<AttendanceRecord[]>([]);
   private readonly destroyRef = inject(DestroyRef);
+
+  readonly facingMode = signal<'environment' | 'user'>('environment');
+  private initialCameraSelected = false;
 
   ngOnInit(): void {
     const eventId = this.route.snapshot.paramMap.get('id')!;
@@ -113,7 +118,47 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
   }
 
   onCamerasFound(devices: MediaDeviceInfo[]): void {
-    this.hasDevices.set(!!(devices && devices.length > 0));
+    this.cameras.set(devices);
+    this.hasDevices.set(devices.length > 0);
+
+    if (!this.initialCameraSelected && devices.length > 0) {
+      this.initialCameraSelected = true;
+      void this.selectCameraByFacingMode('environment');
+    }
+  }
+
+  async switchCamera(): Promise<void> {
+    const devices = this.cameras();
+
+    if (devices.length <= 1) {
+      return;
+    }
+
+    const nextFacingMode = this.facingMode() === 'environment' ? 'user' : 'environment';
+    await this.selectCameraByFacingMode(nextFacingMode);
+  }
+
+  // Resolves the device that actually matches the requested facing mode instead of blindly
+  // cycling through every enumerated camera (phones often expose several lenses per side).
+  private async selectCameraByFacingMode(facingMode: 'environment' | 'user'): Promise<void> {
+    const devices = this.cameras();
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { exact: facingMode } },
+      });
+      const settings = stream.getVideoTracks()[0]?.getSettings();
+      stream.getTracks().forEach((track) => track.stop());
+
+      const matchedDevice = devices.find((device) => device.deviceId === settings?.deviceId);
+
+      if (matchedDevice) {
+        this.currentDevice.set(matchedDevice);
+        this.facingMode.set(facingMode);
+      }
+    } catch {
+
+    }
   }
 
   onCodeResult(resultString: string): void {

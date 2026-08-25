@@ -5,7 +5,6 @@ import java.util.UUID;
 import com.cluj1.eventapp.model.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -42,9 +41,9 @@ public class PasswordResetService {
     private String passwordResetUrl;
 
     @Transactional
-    public void createPasswordResetToken(String email){
+    public void createPasswordResetToken(String email) {
         User user = userRepo.findByEmail(email).orElse(null);
-        if (user == null){
+        if (user == null) {
             return;
         }
 
@@ -65,18 +64,22 @@ public class PasswordResetService {
             String htmlBody = "<div style=\"font-family: Arial, sans-serif; padding: 20px; color: #333;\">" +
                     "<h2>Password Reset Request</h2>" +
                     "<p>To reset your password, click the link below:</p>" +
-                    "<a href=\"" + resetLink + "\" style=\"background-color: #8b143d; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-bottom: 20px;\">Reset Password</a>" +
+                    "<a href=\"" + resetLink
+                    + "\" style=\"background-color: #8b143d; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-bottom: 20px;\">Reset Password</a>"
+                    +
                     "<p>If you didn't request this, please ignore this email.</p>" +
-                    
+
                     "<hr style=\"border: none; border-top: 1px solid #ddd; margin: 30px 0;\" />" +
-                    
+
                     "<h2>Cerere de resetare a parolei</h2>" +
                     "<p>Pentru ați reseta parola, apasă pe linkul de mai jos:</p>" +
-                    "<a href=\"" + resetLink + "\" style=\"background-color: #8b143d; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-bottom: 20px;\">Resetează Parola</a>" +
+                    "<a href=\"" + resetLink
+                    + "\" style=\"background-color: #8b143d; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-bottom: 20px;\">Resetează Parola</a>"
+                    +
                     "<p>Dacă nu ai solicitat acest lucru, te rugăm să ignori acest email.</p>" +
-                    
+
                     "</div>";
-            
+
             sendHtmlMessage(user.getEmail(), "Password Reset Request", htmlBody);
         } catch (Exception e) {
             e.printStackTrace();
@@ -96,29 +99,29 @@ public class PasswordResetService {
     }
 
     @Transactional
-    public void resetPassword(String token, String newPassword, String confirmPassword){
-        if(!newPassword.equals(confirmPassword)){
+    public void resetPassword(String token, String newPassword, String confirmPassword) {
+        if (!newPassword.equals(confirmPassword)) {
             throw new IllegalArgumentException("Passwords do not match");
         }
         PasswordResetToken resetToken = tokenRepo.findByTokenHash(token)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid token"));
 
-        if (resetToken.getUsedAt() != null){
+        if (resetToken.getUsedAt() != null) {
             throw new IllegalArgumentException("This reset link has already been used");
         }
-        if(resetToken.getExpiresAt().isBefore(OffsetDateTime.now())){
+        if (resetToken.getExpiresAt().isBefore(OffsetDateTime.now())) {
             throw new IllegalArgumentException("This reset link has expired");
         }
 
         User tokenUser = resetToken.getUser();
-        
+
         User user = userRepo.findById(tokenUser.getId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         String encodedPassword = passwordEncoder.encode(newPassword);
         userRepo.updatePasswordHash(user.getId(), encodedPassword);
         userRepo.flush();
-        
+
         user.setPasswordHash(encodedPassword);
 
         resetToken.setUsedAt(OffsetDateTime.now());
