@@ -8,7 +8,7 @@ import { EventRegistrationRequest } from '../models/event-registration.model';
 import { AttendanceRecord } from '../models/attendance-record.model';
 import { CheckInCodes } from '../models/checkincodes.model';
 import { EventStatistics } from '../models/event-statistics.model';
-import { environment } from '../../../environments/environment.prod';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -106,9 +106,12 @@ export class EventService {
 
   getRecentCheckins(eventId: string, limit: number = 4): Observable<AttendanceRecord[]> {
     const params = new HttpParams().set('limit', limit.toString());
-    return this.http.get<AttendanceRecord[]>(`${this.baseUrl}/api/events/${eventId}/checkins/recent`, {
-      params,
-    });
+    return this.http.get<AttendanceRecord[]>(
+      `${this.baseUrl}/api/events/${eventId}/checkins/recent`,
+      {
+        params,
+      },
+    );
   }
 
   getEventStatistics(eventId: string): Observable<EventStatistics> {
@@ -143,8 +146,11 @@ export class EventService {
     });
   }
   getRegistrationDetails(eventId: string): Observable<EventRegistrationRequest> {
-    return this.http.get<EventRegistrationRequest>(`${this.baseUrl}/api/events/${eventId}/registration`, {
-      withCredentials: true,
-    });
+    return this.http.get<EventRegistrationRequest>(
+      `${this.baseUrl}/api/events/${eventId}/registration`,
+      {
+        withCredentials: true,
+      },
+    );
   }
 }

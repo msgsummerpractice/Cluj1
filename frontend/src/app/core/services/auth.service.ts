@@ -6,7 +6,7 @@ import { jwtDecode } from 'jwt-decode';
 import { AuthRequest } from '../models/auth-request.model';
 import { AuthResponse } from '../models/auth-response.model';
 import { AuthUser, UserRole } from '../models/auth-user.model';
-import { environment } from '../../../environments/environment.prod';
+import { environment } from '../../../environments/environment';
 
 type JwtPayload = {
   sub?: string;
@@ -178,7 +178,11 @@ export class AuthService {
   }
 
   forgotPassword(email: string): Observable<string> {
-    return this.http.post(`${this.baseUrl}/api/auth/forgot-password`, { email }, { responseType: 'text' });
+    return this.http.post(
+      `${this.baseUrl}/api/auth/forgot-password`,
+      { email },
+      { responseType: 'text' },
+    );
   }
 
   resetPassword(payload: {
@@ -186,7 +190,9 @@ export class AuthService {
     newPassword: string;
     confirmPassword: string;
   }): Observable<string> {
-    return this.http.post(`${this.baseUrl}/api/auth/reset-password`, payload, { responseType: 'text' });
+    return this.http.post(`${this.baseUrl}/api/auth/reset-password`, payload, {
+      responseType: 'text',
+    });
   }
 
   isAdmin(): boolean {
