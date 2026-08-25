@@ -1,0 +1,13 @@
+/*
+Shows backend API routes ranked by their 95th and 99th percentile response times. 
+This identifies performance bottlenecks in your API.
+*/
+
+AppRequests
+| summarize 
+    RequestCount = count(),
+    p95_DurationMs = percentile(DurationMs, 95),
+    p99_DurationMs = percentile(DurationMs, 99),
+    Avg_DurationMs = avg(DurationMs) 
+    by Name
+| order by p95_DurationMs desc

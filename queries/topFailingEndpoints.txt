@@ -1,0 +1,8 @@
+/*
+Shows the HTTP endpoints with the highest error counts, sorted by frequency.
+*/
+
+AppRequests
+| where toint(ResultCode) >= 400
+| summarize ErrorCount = count() by Name, ResultCode
+| order by ErrorCount desc

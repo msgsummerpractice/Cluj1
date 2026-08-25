@@ -1,0 +1,7 @@
+/*
+Groups exceptions by type and shows counts. This helps identify systematic issues like specific error patterns.
+*/
+
+AppExceptions
+| summarize ExceptionCount = count() by Type, OuterMessage
+| order by ExceptionCount desc
