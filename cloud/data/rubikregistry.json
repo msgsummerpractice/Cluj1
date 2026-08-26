@@ -1,0 +1,33 @@
+{
+  "sku": {
+    "name": "Basic",
+    "tier": "Basic"
+  },
+  "type": "Microsoft.ContainerRegistry/registries",
+  "id": "/subscriptions/bff82f66-027a-4464-a242-3e971760bb2e/resourceGroups/rubik/providers/Microsoft.ContainerRegistry/registries/rubikregistry",
+  "name": "rubikregistry",
+  "location": "westeurope",
+  "tags": {
+    "SummerPractice": "Azure"
+  },
+  "properties": {
+    "loginServer": "rubikregistry.azurecr.io",
+    "creationDate": "2026-08-24T08:34:24.1441237Z",
+    "provisioningState": "Succeeded",
+    "adminUserEnabled": true,
+    "policies": {
+      "quarantinePolicy": {
+        "status": "disabled"
+      },
+      "trustPolicy": {
+        "type": "Notary",
+        "status": "disabled"
+      },
+      "retentionPolicy": {
+        "days": 7,
+        "lastUpdatedTime": "2026-08-24T08:34:31.2086682+00:00",
+        "status": "disabled"
+      }
+    }
+  }
+}

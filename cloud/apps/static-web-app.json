@@ -1,0 +1,53 @@
+{
+  "id": "/subscriptions/bff82f66-027a-4464-a242-3e971760bb2e/resourceGroups/rubik/providers/Microsoft.Web/staticSites/rubik-static-web-app",
+  "name": "rubik-static-web-app",
+  "type": "Microsoft.Web/staticSites",
+  "location": "West Europe",
+  "tags": {
+    "SummerPractice": "Azure"
+  },
+  "properties": {
+    "defaultHostname": "thankful-ground-011b95203.7.azurestaticapps.net",
+    "repositoryUrl": "https://github.com/msgsummerpractice/Cluj1",
+    "branch": "main",
+    "customDomains": [],
+    "stableInboundIP": "132.220.38.112",
+    "privateEndpointConnections": [],
+    "stagingEnvironmentPolicy": "Enabled",
+    "allowConfigFileUpdates": true,
+    "contentDistributionEndpoint": "https://content-am2.infrastructure.7.azurestaticapps.net",
+    "keyVaultReferenceIdentity": "SystemAssigned",
+    "userProvidedFunctionApps": null,
+    "linkedBackends": [],
+    "provider": "GitHub",
+    "enterpriseGradeCdnStatus": "Disabling",
+    "publicNetworkAccess": null,
+    "databaseConnections": [],
+    "trafficSplitting": {
+      "environmentDistribution": {
+        "default": 100
+      }
+    },
+    "targetResourceGroupResourceId": null,
+    "trialExpirationTimeUtc": null,
+    "prettyNameStatus": null,
+    "prettyName": null,
+    "prettyNameHostname": null,
+    "backendRegion": {
+      "regionName": null,
+      "status": null
+    },
+    "stagingEnvironmentRegion": null,
+    "deploymentAuthPolicy": "DeploymentToken",
+    "federatedIdentityTenantId": null,
+    "federatedIdentityClientId": null,
+    "federatedIdentitySubscriptionId": null,
+    "deploymentStorageAccountResourceId": null,
+    "deploymentStorageAccountReferenceIdentity": null,
+    "networkConfigurations": null
+  },
+  "sku": {
+    "name": "Standard",
+    "tier": "Standard"
+  }
+}

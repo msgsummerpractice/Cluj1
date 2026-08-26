@@ -1,0 +1,18 @@
+{
+  "location": "westeurope",
+  "tags": {
+    "SummerPractice": "Azure"
+  },
+  "id": "/subscriptions/bff82f66-027a-4464-a242-3e971760bb2e/resourcegroups/rubik/providers/Microsoft.ManagedIdentity/userAssignedIdentities/rubik",
+  "name": "rubik",
+  "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+  "properties": {
+    "isolationScope": "None",
+    "assignmentRestrictions": {
+      "providers": []
+    },
+    "tenantId": "763b2760-45c5-46d3-883e-29705bba49b7",
+    "principalId": "69c3684c-f3ec-46be-9a7d-383052314841",
+    "clientId": "2a44b382-7087-4cdc-8a3f-050983fe395f"
+  }
+}
