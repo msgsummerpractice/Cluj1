@@ -24,7 +24,6 @@ export class AuthService {
   private readonly router = inject(Router);
   private readonly storageKey = 'eventapp.auth.token';
   private expirationTimer: ReturnType<typeof setTimeout> | null = null;
-  // private apiUrl: string = 'http://localhost:8080/api/auth';
   private baseUrl: string = environment.apiUrl;
 
   private readonly authUserState = signal<AuthUser | null>(this.restoreSession());
