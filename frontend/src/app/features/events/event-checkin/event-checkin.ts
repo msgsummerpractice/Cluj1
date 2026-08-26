@@ -121,14 +121,19 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
     await this.selectCameraByFacingMode(nextFacingMode);
   }
 
-  // Resolves the device that actually matches the requested facing mode instead of blindly
-  // cycling through every enumerated camera (phones often expose several lenses per side).
   private async selectCameraByFacingMode(facingMode: 'environment' | 'user'): Promise<void> {
     const devices = this.cameras();
 
+    const labelMatch = this.findDeviceByLabel(devices, facingMode);
+    if (labelMatch) {
+      this.currentDevice.set(labelMatch);
+      this.facingMode.set(facingMode);
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { exact: facingMode } },
+        video: { facingMode: { ideal: facingMode } },
       });
       const settings = stream.getVideoTracks()[0]?.getSettings();
       stream.getTracks().forEach((track) => track.stop());
@@ -140,6 +145,14 @@ export class EventCheckInComponent implements OnInit, AfterViewInit {
         this.facingMode.set(facingMode);
       }
     } catch {}
+  }
+
+  private findDeviceByLabel(
+    devices: MediaDeviceInfo[],
+    facingMode: 'environment' | 'user',
+  ): MediaDeviceInfo | undefined {
+    const pattern = facingMode === 'environment' ? /back|rear|environment/i : /front|user|face/i;
+    return devices.find((device) => pattern.test(device.label));
   }
 
   onCodeResult(resultString: string): void {
