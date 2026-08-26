@@ -264,6 +264,7 @@
   "register": {
     "title": "Register an account",
     "subtitle": "Create an account to participate in our events, connect with the community, and manage your registrations.",
+    "fillDetails": "Fill in your details to create a new account.",
     "firstName": "First Name",
     "firstNamePlaceholder": "First Name",
     "lastName": "Last Name",
@@ -306,7 +307,6 @@
     "startDate": "Start date",
     "endDate": "End date",
     "registrationEndDate": "Registration end date",
-    "registrationClosed": "Registration closed",
     "foodProvided": "Food provided",
     "eventCode": "Event code",
     "downloadPDF": "Download PDF",
