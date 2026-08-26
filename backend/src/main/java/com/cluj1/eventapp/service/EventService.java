@@ -74,7 +74,7 @@ public class EventService {
 
     @Transactional(readOnly = true)
     public List<EventDto> getAllEvents() {
-        List<Event> events = eventRepository.findAll(Sort.by(Sort.Direction.ASC, "createdAt", "id"));
+        List<Event> events = eventRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt", "id"));
 
         User currentUser = getCurrentUserOrNull();
         Map<UUID, Registration> registrationsByEventId = Map.of();
