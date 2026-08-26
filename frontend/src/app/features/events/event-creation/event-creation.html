@@ -108,20 +108,17 @@
             <label class="text-sm font-medium text-gray-700">{{
               'createEvent.descriptionLabel' | transloco
             }}</label>
-            <mat-form-field appearance="outline" class="w-full">
-              <textarea
-                matInput
-                formControlName="description"
-                rows="4"
-                [placeholder]="'createEvent.descriptionPlaceholder' | transloco"
-              ></textarea>
-              <mat-hint align="end"
-                >{{ form.get('description')?.value?.length || 0 }}/2000</mat-hint
-              >
-              @if (form.get('description')?.hasError('maxlength')) {
-                <mat-error>{{ 'createEvent.errors.descriptionTooLong' | transloco }}</mat-error>
-              }
-            </mat-form-field>
+            <quill-editor
+              formControlName="description"
+              [modules]="descriptionModules"
+              [placeholder]="'createEvent.descriptionPlaceholder' | transloco"
+              class="description-editor"
+            ></quill-editor>
+            @if (form.get('description')?.hasError('maxlength')) {
+              <span class="text-red-600 text-xs mt-1">{{
+                'createEvent.errors.descriptionTooLong' | transloco
+              }}</span>
+            }
           </div>
         </div>
       </div>

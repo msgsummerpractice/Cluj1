@@ -22,6 +22,8 @@ export const appConfig: ApplicationConfig = {
       config: {
         availableLangs: ['en', 'ro'],
         defaultLang: 'en',
+        fallbackLang: 'ro',
+        missingHandler: {useFallbackTranslation: true, allowEmpty: false},
         reRenderOnLangChange: true,
         prodMode: !isDevMode(),
       },

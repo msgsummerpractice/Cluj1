@@ -1,7 +1,7 @@
 :host {
   display: block;
-  min-height: 100dvh;
-  overflow-y: auto;
+  height: calc(100dvh - 5rem);
+  overflow: hidden;
 }
 
 mat-form-field {

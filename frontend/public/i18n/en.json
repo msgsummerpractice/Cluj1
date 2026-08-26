@@ -255,7 +255,7 @@
       "fileType": "Only JPEG/PNG files are allowed.",
       "nameRequired": "Event title is required.",
       "nameTooLong": "Event title must not exceed 100 characters.",
-      "descriptionTooLong": "Description must not exceed 2000 characters.",
+      "descriptionTooLong": "Description must not exceed 10000 characters.",
       "endBeforeStart": "End time must be after start time.",
       "regEndAfterStart": "Registration end date must be before the event start date."
     }
