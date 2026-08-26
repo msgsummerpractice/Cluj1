@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@jsverse/transloco';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-not-found',
@@ -10,4 +11,12 @@ import { TranslocoModule } from '@jsverse/transloco';
   imports: [RouterLink, MatButtonModule, MatIconModule, TranslocoModule],
   templateUrl: './not-found.html',
 })
-export class NotFoundComponent {}
+export class NotFoundComponent {
+  constructor() {
+    const auth = inject(AuthService);
+    const router = inject(Router);
+    if (!auth.isAuthenticated()) {
+      void router.navigate(['/login']);
+    }
+  }
+}

@@ -167,6 +167,10 @@ public class EventService {
                     throw new InvalidEventOperationException(
                             "Invalid status transition from " + currentStatus + " to " + status);
                 }
+                if (event.getEventStartDate() != null && event.getEventStartDate().isBefore(OffsetDateTime.now())) {
+                    throw new InvalidEventOperationException(
+                            "event.publish.error.startDateInPast");
+                }
                 if (event.getEventEndTime() != null) {
                     if (event.getEventEndTime().isBefore(OffsetDateTime.now())) {
                         throw new InvalidEventOperationException(

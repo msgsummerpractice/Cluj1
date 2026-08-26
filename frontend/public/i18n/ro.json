@@ -143,7 +143,8 @@
       "confirm": "Da",
       "cancel": "Nu",
       "success": "Evenimentul a fost publicat cu succes.",
-      "error": "Publicarea evenimentului a eșuat. Te rugăm să încerci din nou."
+      "error": "Publicarea evenimentului a eșuat. Te rugăm să încerci din nou.",
+      "errorStartDateInPast": "Nu se poate publica un eveniment a cărui dată de început a trecut."
     },
     "deleteRegistration": {
       "title": "Confirmă anularea înregistrării",

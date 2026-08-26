@@ -28,7 +28,7 @@ import { ConfirmDialogData } from '../../../shared/components/confirm-dialog/con
 import { ClearFilter } from '../../../shared/components/clear-filter/clear-filter';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import {MatSelectModule} from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-event-list',
@@ -295,7 +295,12 @@ export class EventListComponent implements OnInit {
       },
       error: (err) => {
         this.clearPublishing(event.id);
-        this.toastService.show('error', this.translocoService.translate('events.publish.error'));
+        const backendMsg: string = err?.error?.message ?? '';
+        const errorKey =
+          backendMsg === 'event.publish.error.startDateInPast'
+            ? 'events.publish.errorStartDateInPast'
+            : 'events.publish.error';
+        this.toastService.show('error', this.translocoService.translate(errorKey));
       },
     });
   }
@@ -327,9 +332,14 @@ export class EventListComponent implements OnInit {
             this.translocoService.translate('events.publish.success'),
           );
         },
-        error: () => {
+        error: (err) => {
           this.clearPublishing(event.id);
-          this.toastService.show('error', this.translocoService.translate('events.publish.error'));
+          const backendMsg: string = err?.error?.message ?? '';
+          const errorKey =
+            backendMsg === 'event.publish.error.startDateInPast'
+              ? 'events.publish.errorStartDateInPast'
+              : 'events.publish.error';
+          this.toastService.show('error', this.translocoService.translate(errorKey));
         },
       });
   }
@@ -452,8 +462,8 @@ export class EventListComponent implements OnInit {
     );
   }
 
-  manageRegistration(eventId: string){
-    this.router.navigate(['/events', eventId, 'manage'])
+  manageRegistration(eventId: string) {
+    this.router.navigate(['/events', eventId, 'manage']);
   }
 
   isPastRegistrationEndDate(event: Event): boolean {
