@@ -26,7 +26,7 @@ public class EventDto {
     @Size(max = 100, message = "Event name must not exceed 100 characters.")
     private String name;
 
-    @Size(max = 2000, message = "Description must not exceed 2000 characters.")
+    @Size(max = 10000, message = "Description must not exceed 10000 characters.")
     private String description;
 
     @NotNull(message = "Start date is required.")

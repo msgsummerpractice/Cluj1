@@ -215,7 +215,7 @@
       "fileType": "Sunt permise doar fișierele JPEG/PNG.",
       "nameRequired": "Titlul evenimentului este obligatoriu.",
       "nameTooLong": "Titlul evenimentului nu poate depăși 100 de caractere.",
-      "descriptionTooLong": "Descrierea nu poate depăși 2000 de caractere.",
+      "descriptionTooLong": "Descrierea nu poate depăși 10000 de caractere.",
       "endBeforeStart": "Ora de sfârșit trebuie să fie după ora de început.",
       "regEndAfterStart": "Data limită de înregistrare trebuie să fie înainte de data evenimentului."
     }

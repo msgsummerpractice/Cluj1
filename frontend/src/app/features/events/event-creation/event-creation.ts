@@ -22,6 +22,7 @@ import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { ToastService } from '../../../core/services/toast.service';
 import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
+import { QuillModule } from 'ngx-quill';
 
 @Component({
   selector: 'app-event-creation',
@@ -40,6 +41,7 @@ import { BackButtonComponent } from '../../../shared/components/back-button/back
     MatDatepickerModule,
     MatTimepickerModule,
     MatNativeDateModule,
+    QuillModule,
   ],
   templateUrl: './event-creation.html',
   styleUrl: './event-creation.css',
@@ -61,10 +63,20 @@ export class EventCreationComponent implements OnInit {
   readonly eventId = signal<string | null>(null);
   readonly isEditMode = computed(() => this.eventId() !== null);
 
+  readonly descriptionModules = {
+    toolbar: [
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ color: [] }, { background: [] }],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['link'],
+      ['clean'],
+    ],
+  };
+
   form = this.fb.group(
     {
       name: ['', [Validators.required, Validators.maxLength(100)]],
-      description: ['', [Validators.maxLength(2000)]],
+      description: ['', [Validators.maxLength(10000)]],
       date: [<Date | string | null>'', Validators.required],
       startTime: [<Date | string | null>'', Validators.required],
       endTime: [<Date | string | null>'', Validators.required],

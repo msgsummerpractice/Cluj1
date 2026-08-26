@@ -80,7 +80,7 @@
               @if (details.description) {
                 <div class="about-card card-panel">
                   <p class="section-kicker">{{ 'eventDetails.description' | transloco }}</p>
-                  <p class="description">{{ details.description }}</p>
+                  <div class="description" [innerHTML]="sanitizedDescription()"></div>
                 </div>
               }
             }

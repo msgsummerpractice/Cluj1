@@ -31,6 +31,27 @@
   background-color: #fff1f2 !important;
 }
 
+.description-editor {
+  display: block;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+::ng-deep .description-editor .ql-toolbar {
+  border-color: #d1d5db;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+::ng-deep .description-editor .ql-container {
+  border-color: #d1d5db;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  min-height: 140px;
+  font-family: inherit;
+  font-size: 0.875rem;
+}
+
 ::ng-deep .custom-warn-toggle .mdc-switch--selected .mdc-switch__track::after {
   background-color: var(--brand-maroon) !important;
 }
