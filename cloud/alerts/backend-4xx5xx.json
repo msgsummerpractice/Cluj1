@@ -8,10 +8,10 @@
   },
   "kind": "LogAlert",
   "systemData": {
-    "createdBy": "Patrick.Blaga@msg.group",
+    "createdBy": "",
     "createdByType": "User",
     "createdAt": "2026-08-25T12:45:31.9594687Z",
-    "lastModifiedBy": "Patrick.Blaga@msg.group",
+    "lastModifiedBy": "",
     "lastModifiedByType": "User",
     "lastModifiedAt": "2026-08-26T06:25:34.7472367Z"
   },

@@ -13,25 +13,25 @@
     "emailReceivers": [
       {
         "name": "Team Email_-EmailAction-",
-        "emailAddress": "Patrick.Blaga@msg.group",
+        "emailAddress": "",
         "useCommonAlertSchema": false,
         "status": "Enabled"
       },
       {
         "name": "Team Email 2 _-EmailAction-",
-        "emailAddress": "Bianca.Holobica@msg.group",
+        "emailAddress": "",
         "useCommonAlertSchema": false,
         "status": "Enabled"
       },
       {
         "name": "Team Email 3 _-EmailAction-",
-        "emailAddress": "Eduard.Kloss@msg.group",
+        "emailAddress": "",
         "useCommonAlertSchema": false,
         "status": "Enabled"
       },
       {
         "name": "Team Email 4_-EmailAction-",
-        "emailAddress": "Biborka.Bartus@msg.group",
+        "emailAddress": "",
         "useCommonAlertSchema": false,
         "status": "Enabled"
       }
