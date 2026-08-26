@@ -2,6 +2,10 @@
 Groups exceptions by type and shows counts. This helps identify systematic issues like specific error patterns.
 */
 
-AppExceptions
-| summarize ExceptionCount = count() by Type, OuterMessage
-| order by ExceptionCount desc
+ContainerAppConsoleLogs_CL
+| where ContainerAppName_s == "backend"
+| where TimeGenerated > ago(24h)
+| where Log_s matches regex @"^\d{4}-\d{2}-\d{2}T.*\sERROR\s"
+| extend ExceptionType = extract(@"([a-zA-Z0-9_.]+(?:Exception|Error))\b", 1, Log_s)
+| summarize Count = count() by ExceptionType = iif(isempty(ExceptionType), "Unknown", ExceptionType)
+| order by Count desc

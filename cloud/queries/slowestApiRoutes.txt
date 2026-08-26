@@ -3,11 +3,11 @@ Shows backend API routes ranked by their 95th and 99th percentile response times
 This identifies performance bottlenecks in your API.
 */
 
-AppRequests
-| summarize 
-    RequestCount = count(),
-    p95_DurationMs = percentile(DurationMs, 95),
-    p99_DurationMs = percentile(DurationMs, 99),
-    Avg_DurationMs = avg(DurationMs) 
-    by Name
-| order by p95_DurationMs desc
+ContainerAppConsoleLogs_CL
+| where ContainerAppName_s == "backend"
+| where TimeGenerated > ago(24h)
+| extend Path = extract(@'"(GET|POST|PUT|DELETE|PATCH)\s(\S+)', 2, Log_s)
+| extend DurationMs = toint(extract(@'\s(\d+)$', 1, Log_s))
+| where isnotempty(Path) and isnotnull(DurationMs)
+| summarize p95=percentile(DurationMs,95), p99=percentile(DurationMs,99), avg=avg(DurationMs), count() by Path
+| order by p99 desc

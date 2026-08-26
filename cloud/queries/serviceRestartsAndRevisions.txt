@@ -3,7 +3,9 @@ Tracks Container App restarts, revision changes, and deployment events.
 This helps correlate service incidents with deployments.
 */
 
-ContainerAppConsoleLogs
-| where Log has "restart" or Log has "revision" or Log has "deploy"
-| project TimeGenerated, ContainerAppName, RevisionName, Log
+ContainerAppConsoleLogs_CL
+| where ContainerAppName_s == "backend"
+| where TimeGenerated > ago(7d)
+| where Log_s has_any ("GracefulShutdown", "Commencing graceful shutdown", "Initializing Servlet", "Started ", "Shutdown initiated", "Shutdown completed")
+| project TimeGenerated, RevisionName_s, ContainerName_s, Log_s
 | order by TimeGenerated desc
