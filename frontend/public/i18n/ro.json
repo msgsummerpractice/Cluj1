@@ -315,6 +315,8 @@
     "registrationClosed": "Înscrierile sunt închise pentru acest eveniment.",
     "exporting": "Se exportă...",
     "exportAttendance": "Descarcă raport prezență",
+    "noActionsTitle": "Nimic de făcut aici încă",
+    "noActionsMessage": "Momentan nu sunt disponibile acțiuni pentru acest eveniment.",
     "loading": "Se încarcă evenimentul..."
   },
   "forgotPassword": {

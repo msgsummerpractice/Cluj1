@@ -86,6 +86,35 @@ export class EventDetailsComponent {
     return currentEvent?.status === 'COMPLETED' && this.authService.isHrUser();
   });
 
+  readonly showCheckInCodes = computed(() => {
+    const currentEvent = this.event();
+    return (
+      !!currentEvent &&
+      currentEvent.status === 'PUBLISHED' &&
+      this.authService.isMarketingOrganizer()
+    );
+  });
+
+  readonly showActionsPanel = computed(() => {
+    const currentEvent = this.event();
+    if (!currentEvent) return false;
+
+    return (
+      this.canRegister(currentEvent) ||
+      this.canCheckIn() ||
+      this.canExport() ||
+      this.canDownloadReport() ||
+      ((currentEvent.status === 'PUBLISHED' || currentEvent.status === 'COMPLETED') &&
+        this.canViewStatistics())
+    );
+  });
+
+  readonly canCheckIn = computed(() => {
+    const currentEvent = this.event();
+    if (!currentEvent) return false;
+    return currentEvent.status !== 'DRAFT' && this.isRegistered();
+  });
+
   constructor() {
     effect((onCleanup) => {
       const poster = this.posterResource.value();
