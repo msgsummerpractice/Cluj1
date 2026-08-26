@@ -9,7 +9,6 @@ table[mat-table] {
   table-layout: fixed;
 }
 
-
 ::ng-deep .pagination-btn {
   color: #000000 !important;
 }
@@ -29,7 +28,6 @@ th[mat-header-cell] {
   z-index: 5;
   background-color: #f9fafb;
 }
-
 
 tr[mat-header-row] {
   background-color: #f9fafb;
@@ -51,8 +49,11 @@ th[mat-header-cell] button {
 }
 
 @media (max-width: 768px), (hover: none) {
-  ::ng-deep th[mat-header-cell] .mat-sort-header-arrow {
+  ::ng-deep th[mat-header-cell] .mat-sort-header-sorted .mat-sort-header-arrow {
     opacity: 1 !important;
-    transform: translateY(0) !important;
+  }
+
+  ::ng-deep th[mat-header-cell] .mat-sort-header-descending .mat-sort-header-arrow {
+    transform: rotate(180deg) !important;
   }
 }
