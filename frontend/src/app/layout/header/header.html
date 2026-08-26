@@ -58,15 +58,17 @@
         </nav>
       }
 
-      <button
-        mat-icon-button
-        [matMenuTriggerFor]="mainNav"
-        class="nav-icon-button md:!hidden text-gray-700"
-        aria-label="Open navigation menu"
-        disableRipple
-      >
-        <mat-icon>menu</mat-icon>
-      </button>
+      @if (showHeader()) {
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="mainNav"
+          class="nav-icon-button md:!hidden text-gray-700"
+          aria-label="Open navigation menu"
+          disableRipple
+        >
+          <mat-icon>menu</mat-icon>
+        </button>
+      }
 
       <mat-menu #mainNav="matMenu">
         <a mat-menu-item routerLink="/homepage">
