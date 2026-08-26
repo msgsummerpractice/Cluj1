@@ -20,6 +20,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ToastService } from '../../../core/services/toast.service';
 import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 import { QuillModule } from 'ngx-quill';
@@ -41,6 +42,7 @@ import { QuillModule } from 'ngx-quill';
     MatDatepickerModule,
     MatTimepickerModule,
     MatNativeDateModule,
+    MatTooltipModule,
     QuillModule,
   ],
   templateUrl: './event-creation.html',
@@ -171,6 +173,11 @@ export class EventCreationComponent implements OnInit {
 
   discard() {
     this.router.navigate(['/events']);
+  }
+
+  clearRegistrationEndDate(event: Event) {
+    event.stopPropagation();
+    this.form.get('registrationEndDate')?.setValue(null);
   }
 
   onSubmit() {

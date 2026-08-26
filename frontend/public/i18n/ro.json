@@ -210,6 +210,8 @@
     "regEndDateLabel": "Data limită de înregistrare",
     "regEndDatePlaceholder": "zz.ll.aaaa",
     "regEndDateHint": "Opțional. Ultima zi în care participanții se pot înscrie.",
+    "clearDate": "Șterge data",
+    "openCalendar": "Deschide calendarul",
     "errors": {
       "fileSize": "Dimensiunea fișierului trebuie să fie sub 5MB.",
       "fileType": "Sunt permise doar fișierele JPEG/PNG.",

@@ -236,7 +236,23 @@
                 [placeholder]="'createEvent.regEndDatePlaceholder' | transloco"
                 (click)="regPicker.open()"
               />
-              <mat-datepicker-toggle matSuffix [for]="regPicker"></mat-datepicker-toggle>
+              @if (form.get('registrationEndDate')?.value) {
+                <button
+                  type="button"
+                  matSuffix
+                  mat-icon-button
+                  [matTooltip]="'createEvent.clearDate' | transloco"
+                  [attr.aria-label]="'createEvent.clearDate' | transloco"
+                  (click)="clearRegistrationEndDate($event)"
+                >
+                  <mat-icon>close</mat-icon>
+                </button>
+              }
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="regPicker"
+                [matTooltip]="'createEvent.openCalendar' | transloco"
+              ></mat-datepicker-toggle>
               <mat-datepicker #regPicker></mat-datepicker>
               <mat-hint>{{ 'createEvent.regEndDateHint' | transloco }}</mat-hint>
             </mat-form-field>
