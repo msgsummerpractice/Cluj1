@@ -1,0 +1,64 @@
+{
+  "sku": {
+    "name": "Standard_B1ms",
+    "tier": "Burstable"
+  },
+  "systemData": {
+    "createdAt": "2026-08-24T09:02:44.9558283Z"
+  },
+  "properties": {
+    "replica": {
+      "role": "Primary",
+      "capacity": 5
+    },
+    "storage": {
+      "type": "Premium_LRS",
+      "iops": 120,
+      "tier": "P4",
+      "storageSizeGB": 32,
+      "autoGrow": "Disabled"
+    },
+    "network": {
+      "publicNetworkAccess": "Enabled"
+    },
+    "privateEndpointConnections": [],
+    "dataEncryption": {
+      "type": "SystemManaged"
+    },
+    "authConfig": {
+      "activeDirectoryAuth": "Enabled",
+      "passwordAuth": "Enabled",
+      "tenantId": "763b2760-45c5-46d3-883e-29705bba49b7"
+    },
+    "fullyQualifiedDomainName": "rubik.postgres.database.azure.com",
+    "version": "18",
+    "minorVersion": "4",
+    "administratorLogin": "rubik",
+    "state": "Ready",
+    "availabilityZone": "2",
+    "backup": {
+      "backupRetentionDays": 7,
+      "geoRedundantBackup": "Disabled",
+      "earliestRestoreDate": "2026-08-24T09:12:12.6418836+00:00"
+    },
+    "highAvailability": {
+      "mode": "Disabled",
+      "state": "NotEnabled"
+    },
+    "maintenanceWindow": {
+      "customWindow": "Disabled",
+      "dayOfWeek": 0,
+      "startHour": 0,
+      "startMinute": 0
+    },
+    "replicationRole": "Primary",
+    "replicaCapacity": 5
+  },
+  "location": "West Europe",
+  "tags": {
+    "SummerPractice": "Azure"
+  },
+  "id": "/subscriptions/bff82f66-027a-4464-a242-3e971760bb2e/resourceGroups/rubik/providers/Microsoft.DBforPostgreSQL/flexibleServers/rubik",
+  "name": "rubik",
+  "type": "Microsoft.DBforPostgreSQL/flexibleServers"
+}

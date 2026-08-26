@@ -1,0 +1,33 @@
+{
+  "properties": {
+    "customerId": "06dce313-79d9-45b8-9e4e-a836b355ad7b",
+    "provisioningState": "Succeeded",
+    "sku": {
+      "name": "PerGB2018",
+      "lastSkuUpdate": "2026-08-24T11:08:14.0665095Z"
+    },
+    "retentionInDays": 30,
+    "features": {
+      "legacy": 0,
+      "searchVersion": 1,
+      "enableLogAccessUsingOnlyResourcePermissions": true
+    },
+    "workspaceCapping": {
+      "dailyQuotaGb": -1,
+      "quotaNextResetTime": "2026-08-25T04:00:00Z",
+      "dataIngestionStatus": "RespectQuota"
+    },
+    "publicNetworkAccessForIngestion": "Enabled",
+    "publicNetworkAccessForQuery": "Enabled",
+    "createdDate": "2026-08-24T11:08:14.0665095Z",
+    "modifiedDate": "2026-08-24T11:08:26.2240798Z"
+  },
+  "location": "westeurope",
+  "tags": {
+    "SummerPractice": "Azure"
+  },
+  "id": "/subscriptions/bff82f66-027a-4464-a242-3e971760bb2e/resourceGroups/rubik/providers/Microsoft.OperationalInsights/workspaces/workspacerubik8808",
+  "name": "workspacerubik8808",
+  "type": "Microsoft.OperationalInsights/workspaces",
+  "etag": "\"8a01380b-0000-0d00-0000-6a8c262a0000\""
+}

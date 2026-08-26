@@ -1,0 +1,53 @@
+{
+  "id": "/subscriptions/bff82f66-027a-4464-a242-3e971760bb2e/resourceGroups/rubik/providers/microsoft.insights/scheduledqueryrules/backend-4xx5xx",
+  "name": "backend-4xx5xx",
+  "type": "Microsoft.Insights/scheduledQueryRules",
+  "location": "westeurope",
+  "tags": {
+    "SummerPractice": "Azure"
+  },
+  "kind": "LogAlert",
+  "systemData": {
+    "createdBy": "Patrick.Blaga@msg.group",
+    "createdByType": "User",
+    "createdAt": "2026-08-25T12:45:31.9594687Z",
+    "lastModifiedBy": "Patrick.Blaga@msg.group",
+    "lastModifiedByType": "User",
+    "lastModifiedAt": "2026-08-26T06:25:34.7472367Z"
+  },
+  "properties": {
+    "createdWithApiVersion": "2026-03-01",
+    "displayName": "backend-4xx5xx",
+    "description": "",
+    "severity": 3,
+    "enabled": true,
+    "evaluationFrequency": "PT5M",
+    "scopes": [
+      "/subscriptions/bff82f66-027a-4464-a242-3e971760bb2e/resourcegroups/rubik/providers/Microsoft.OperationalInsights/workspaces/rubik-analytic-workspace"
+    ],
+    "targetResourceTypes": ["Microsoft.OperationalInsights/workspaces"],
+    "windowSize": "PT5M",
+    "overrideQueryTimeRange": "P2D",
+    "criteria": {
+      "allOf": [
+        {
+          "query": "ContainerAppHTTPLogs\n| where TimeGenerated > ago(5m)\n| summarize TotalRequests = count(), ErrorRequests = countif(StatusCode >= 400) by TimeGenerated = bin(TimeGenerated, 5m)\n| project TimeGenerated, ErrorRatePercentage = (todouble(ErrorRequests) / TotalRequests) * 100\n| where ErrorRatePercentage > 5\n",
+          "timeAggregation": "Count",
+          "dimensions": [],
+          "operator": "GreaterThan",
+          "threshold": 0,
+          "failingPeriods": {
+            "numberOfEvaluationPeriods": 1,
+            "minFailingPeriodsToAlert": 1
+          }
+        }
+      ]
+    },
+    "autoMitigate": false,
+    "actions": {
+      "actionGroups": [
+        "/subscriptions/bff82f66-027a-4464-a242-3e971760bb2e/resourcegroups/rubik/providers/microsoft.insights/actiongroups/rubik-alerts"
+      ]
+    }
+  }
+}

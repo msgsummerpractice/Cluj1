@@ -1,0 +1,43 @@
+{
+  "id": "/subscriptions/bff82f66-027a-4464-a242-3e971760bb2e/resourceGroups/rubik/providers/microsoft.insights/metricAlerts/backend-cpu-alert",
+  "name": "backend-cpu-alert",
+  "type": "Microsoft.Insights/metricAlerts",
+  "location": "global",
+  "tags": {
+    "SummerPractice": "Azure"
+  },
+  "properties": {
+    "description": "",
+    "severity": 2,
+    "enabled": true,
+    "scopes": [
+      "/subscriptions/bff82f66-027a-4464-a242-3e971760bb2e/resourceGroups/rubik/providers/Microsoft.App/containerApps/backend"
+    ],
+    "evaluationFrequency": "PT1M",
+    "windowSize": "PT15M",
+    "criteria": {
+      "allOf": [
+        {
+          "threshold": 80,
+          "name": "Metric1",
+          "metricNamespace": "Microsoft.App/containerApps",
+          "metricName": "CpuPercentage",
+          "operator": "GreaterThan",
+          "timeAggregation": "Average",
+          "skipMetricValidation": false,
+          "criterionType": "StaticThresholdCriterion"
+        }
+      ],
+      "odata.type": "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+    },
+    "autoMitigate": true,
+    "targetResourceType": "Microsoft.App/containerApps",
+    "targetResourceRegion": "westeurope",
+    "actions": [
+      {
+        "actionGroupId": "/subscriptions/bff82f66-027a-4464-a242-3e971760bb2e/resourcegroups/rubik/providers/microsoft.insights/actiongroups/rubik-alerts",
+        "webHookProperties": {}
+      }
+    ]
+  }
+}

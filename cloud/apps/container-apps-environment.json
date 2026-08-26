@@ -1,0 +1,77 @@
+{
+  "id": "/subscriptions/bff82f66-027a-4464-a242-3e971760bb2e/resourceGroups/rubik/providers/Microsoft.App/managedEnvironments/rubik",
+  "name": "rubik",
+  "type": "Microsoft.App/managedEnvironments",
+  "location": "West Europe",
+  "tags": {
+    "SummerPractice": "Azure"
+  },
+  "systemData": {
+    "createdBy": "Eduard.Kloos@msg.group",
+    "createdByType": "User",
+    "createdAt": "2026-08-25T07:21:52.8009858",
+    "lastModifiedBy": "Eduard.Kloos@msg.group",
+    "lastModifiedByType": "User",
+    "lastModifiedAt": "2026-08-25T07:21:52.8009858"
+  },
+  "properties": {
+    "provisioningState": "Succeeded",
+    "daprAIInstrumentationKey": null,
+    "daprAIConnectionString": null,
+    "vnetConfiguration": null,
+    "defaultDomain": "ambitiousglacier-3b0c1c5f.westeurope.azurecontainerapps.io",
+    "staticIp": "20.61.145.82",
+    "appLogsConfiguration": {
+      "destination": "log-analytics",
+      "logAnalyticsConfiguration": {
+        "customerId": "8339a209-b92f-4daf-a906-63dd038c3b4d",
+        "sharedKey": null,
+        "dynamicJsonColumns": false
+      }
+    },
+    "openTelemetryConfiguration": null,
+    "zoneRedundant": false,
+    "kedaConfiguration": {
+      "version": "2.18.1"
+    },
+    "daprConfiguration": {
+      "version": "1.16.4-msft.11"
+    },
+    "eventStreamEndpoint": "https://westeurope.azurecontainerapps.dev/subscriptions/bff82f66-027a-4464-a242-3e971760bb2e/resourceGroups/rubik/managedEnvironments/rubik/eventstream",
+    "customDomainConfiguration": {
+      "customDomainVerificationId": "9416CEB85AD58827C60F362B9ACB907BC85BE9F2CB405E5C5FFBCBF268CFCAEA",
+      "dnsSuffix": null,
+      "certificateKeyVaultProperties": null,
+      "certificateValue": null,
+      "certificatePassword": null,
+      "thumbprint": null,
+      "subjectName": null,
+      "expirationDate": null
+    },
+    "workloadProfiles": [
+      {
+        "workloadProfileType": "Consumption",
+        "name": "Consumption",
+        "enableFips": false
+      }
+    ],
+    "appInsightsConfiguration": null,
+    "infrastructureResourceGroup": null,
+    "peerAuthentication": {
+      "mtls": {
+        "enabled": false
+      }
+    },
+    "peerTrafficConfiguration": {
+      "encryption": {
+        "enabled": false
+      }
+    },
+    "publicNetworkAccess": "Enabled"
+  },
+  "identity": {
+    "type": "SystemAssigned",
+    "principalId": "a34f238c-1d89-4e4d-a6f6-6e71c1dd0cbe",
+    "tenantId": "763b2760-45c5-46d3-883e-29705bba49b7"
+  }
+}

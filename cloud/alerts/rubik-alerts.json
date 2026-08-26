@@ -1,0 +1,50 @@
+{
+  "id": "/subscriptions/BFF82F66-027A-4464-A242-3E971760BB2E/resourceGroups/rubik/providers/microsoft.insights/actionGroups/rubik-alerts",
+  "type": "Microsoft.Insights/ActionGroups",
+  "name": "rubik-alerts",
+  "location": "germanywestcentral",
+  "kind": null,
+  "tags": {
+    "SummerPractice": "Azure"
+  },
+  "properties": {
+    "groupShortName": "rubik-alerts",
+    "enabled": true,
+    "emailReceivers": [
+      {
+        "name": "Team Email_-EmailAction-",
+        "emailAddress": "Patrick.Blaga@msg.group",
+        "useCommonAlertSchema": false,
+        "status": "Enabled"
+      },
+      {
+        "name": "Team Email 2 _-EmailAction-",
+        "emailAddress": "Bianca.Holobica@msg.group",
+        "useCommonAlertSchema": false,
+        "status": "Enabled"
+      },
+      {
+        "name": "Team Email 3 _-EmailAction-",
+        "emailAddress": "Eduard.Kloss@msg.group",
+        "useCommonAlertSchema": false,
+        "status": "Enabled"
+      },
+      {
+        "name": "Team Email 4_-EmailAction-",
+        "emailAddress": "Biborka.Bartus@msg.group",
+        "useCommonAlertSchema": false,
+        "status": "Enabled"
+      }
+    ],
+    "smsReceivers": [],
+    "webhookReceivers": [],
+    "eventHubReceivers": [],
+    "itsmReceivers": [],
+    "azureAppPushReceivers": [],
+    "automationRunbookReceivers": [],
+    "voiceReceivers": [],
+    "logicAppReceivers": [],
+    "azureFunctionReceivers": [],
+    "armRoleReceivers": []
+  }
+}
