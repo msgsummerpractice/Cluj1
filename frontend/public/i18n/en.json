@@ -181,7 +181,8 @@
       "confirm": "Yes",
       "cancel": "No",
       "success": "Event published successfully.",
-      "error": "Failed to publish event. Please try again."
+      "error": "Failed to publish event. Please try again.",
+      "errorStartDateInPast": "Cannot publish an event whose start date is in the past."
     },
     "deleteRegistration": {
       "title": "Confirm Delete Registration",
