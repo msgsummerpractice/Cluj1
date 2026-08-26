@@ -8,7 +8,6 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root',
 })
 export class RegistrationService {
-  // private apiUrl: string = 'http://localhost:8080/api/registration';
   private baseUrl = environment.apiUrl;
   private http = inject(HttpClient);
 

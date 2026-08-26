@@ -14,7 +14,6 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root',
 })
 export class EventService {
-  // private apiUrl: string = 'http://localhost:8080/api/events';
   private baseUrl: string = environment.apiUrl;
   private readonly http = inject(HttpClient);
 

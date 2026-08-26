@@ -11,7 +11,6 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root',
 })
 export class UserService {
-  // private apiUrl: string = 'http://localhost:8080/api/users';
   private baseUrl: string = environment.apiUrl;
   private http = inject(HttpClient);
 

@@ -49,25 +49,38 @@ export class EventDetailsComponent {
     stream: ({ params: id }) => this.eventService.getEventById(id),
   });
 
+  private readonly validEventId = computed(() =>
+    this.eventResource.hasValue() ? this.eventId() : undefined,
+  );
+
   private readonly registrationResource = rxResource({
-    params: () => this.eventId(),
+    params: () => this.validEventId(),
     stream: ({ params: id }) => this.eventService.checkIfAlreadyRegistered(id),
     defaultValue: false,
   });
 
   private readonly detailsResource = rxResource({
-    params: () => this.eventId(),
+    params: () => this.validEventId(),
     stream: ({ params: id }) => this.eventService.getEventDetails(id),
   });
 
   private readonly posterResource = rxResource({
-    params: () => (this.detailsResource.value()?.hasPoster ? this.eventId() : undefined),
+    params: () =>
+      this.detailsResource.hasValue() && this.detailsResource.value()?.hasPoster
+        ? this.validEventId()
+        : undefined,
     stream: ({ params: id }) => this.eventService.getEventPoster(id),
   });
 
-  readonly event = computed<Event | null>(() => this.eventResource.value() ?? null);
-  readonly eventDetails = computed<EventDetails | null>(() => this.detailsResource.value() ?? null);
-  readonly isRegistered = computed(() => this.registrationResource.value());
+  readonly event = computed<Event | null>(() =>
+    this.eventResource.hasValue() ? this.eventResource.value() : null,
+  );
+  readonly eventDetails = computed<EventDetails | null>(() =>
+    this.detailsResource.hasValue() ? this.detailsResource.value() : null,
+  );
+  readonly isRegistered = computed(() =>
+    this.registrationResource.hasValue() ? this.registrationResource.value() : false,
+  );
   readonly posterUrl = signal<string | null>(null);
 
   readonly sanitizedDescription = computed<SafeHtml | null>(() => {
@@ -145,7 +158,7 @@ export class EventDetailsComponent {
 
     effect(() => {
       const error = this.detailsResource.error() as { message?: string } | undefined;
-      if (error) {
+      if (error && this.eventResource.hasValue()) {
         this.toast.show('error', error.message ?? String(error));
       }
     });
