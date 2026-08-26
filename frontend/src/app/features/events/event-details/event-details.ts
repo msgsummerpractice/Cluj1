@@ -2,6 +2,8 @@ import { Component, effect, inject, signal, computed } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import DOMPurify from 'dompurify';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Event } from '../../../core/models/event.model';
 import { EventDetails } from '../../../core/models/event-detail.models';
@@ -38,6 +40,7 @@ export class EventDetailsComponent {
   private readonly authService = inject(AuthService);
   private readonly translocoService = inject(TranslocoService);
   private readonly toast = inject(ToastService);
+  private readonly sanitizer = inject(DomSanitizer);
 
   private readonly eventId = signal(this.route.snapshot.paramMap.get('id') ?? undefined);
 
@@ -66,6 +69,12 @@ export class EventDetailsComponent {
   readonly eventDetails = computed<EventDetails | null>(() => this.detailsResource.value() ?? null);
   readonly isRegistered = computed(() => this.registrationResource.value());
   readonly posterUrl = signal<string | null>(null);
+
+  readonly sanitizedDescription = computed<SafeHtml | null>(() => {
+    const description = this.eventDetails()?.description;
+    if (!description) return null;
+    return this.sanitizer.bypassSecurityTrustHtml(DOMPurify.sanitize(description));
+  });
 
   readonly isExporting = signal<boolean>(false);
   readonly isDownloadingReport = signal<boolean>(false);
