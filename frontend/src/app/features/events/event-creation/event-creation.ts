@@ -20,6 +20,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ToastService } from '../../../core/services/toast.service';
 import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 
@@ -40,6 +41,7 @@ import { BackButtonComponent } from '../../../shared/components/back-button/back
     MatDatepickerModule,
     MatTimepickerModule,
     MatNativeDateModule,
+    MatTooltipModule,
   ],
   templateUrl: './event-creation.html',
   styleUrl: './event-creation.css',
@@ -159,6 +161,11 @@ export class EventCreationComponent implements OnInit {
 
   discard() {
     this.router.navigate(['/events']);
+  }
+
+  clearRegistrationEndDate(event: Event) {
+    event.stopPropagation();
+    this.form.get('registrationEndDate')?.setValue(null);
   }
 
   onSubmit() {

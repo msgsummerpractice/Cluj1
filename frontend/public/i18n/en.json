@@ -248,6 +248,8 @@
     "regEndDateLabel": "Registration end date",
     "regEndDatePlaceholder": "dd.MM.yyyy",
     "regEndDateHint": "Optional. Last day participants can register.",
+    "clearDate": "Clear date",
+    "openCalendar": "Open calendar",
     "errors": {
       "fileSize": "File size must be under 5MB.",
       "fileType": "Only JPEG/PNG files are allowed.",
