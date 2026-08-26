@@ -317,6 +317,8 @@
     "registrationClosed": "Registration is closed for this event.",
     "exporting": "Exporting...",
     "exportAttendance": "Export Attendance Report",
+    "noActionsTitle": "Nothing to do here yet",
+    "noActionsMessage": "There are no actions available for this event at the moment.",
     "loading": "Loading event..."
   },
   "forgotPassword": {
