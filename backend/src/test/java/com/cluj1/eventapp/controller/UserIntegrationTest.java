@@ -97,8 +97,8 @@ class UserIntegrationTest {
         mockMvc.perform(get("/api/users")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[*].email",
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[*].email",
                         hasItems("integration.admin@msg.group",
                                 "integration.participant@msg.group")));
     }
@@ -110,9 +110,9 @@ class UserIntegrationTest {
                 .param("search", "timisoara")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].email", is("integration.participant@msg.group")))
-                .andExpect(jsonPath("$[0].location", is("TIMISOARA")));
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].email", is("integration.participant@msg.group")))
+                .andExpect(jsonPath("$.content[0].location", is("TIMISOARA")));
     }
 
     @Test
@@ -122,9 +122,9 @@ class UserIntegrationTest {
                 .param("search", "ADMIN")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].role", is("ADMIN")))
-                .andExpect(jsonPath("$[0].firstName", is("IntAdmin")));
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.content[0].role", is("ADMIN")))
+                .andExpect(jsonPath("$.content[0].firstName", is("IntAdmin")));
     }
 
     @Test
@@ -165,9 +165,5 @@ class UserIntegrationTest {
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isUnauthorized());
         }
-
-
-
-
 
 }

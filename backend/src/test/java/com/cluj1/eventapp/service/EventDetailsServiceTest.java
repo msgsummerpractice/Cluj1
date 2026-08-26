@@ -14,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.cluj1.eventapp.dto.EventDetailsDto;
 import com.cluj1.eventapp.model.EventDetails;
 import com.cluj1.eventapp.repository.EventDetailsRepository;
 
@@ -54,5 +55,101 @@ class EventDetailsServiceTest {
                 .hasMessage("Event details not found for id: " + id);
 
         verify(eventDetailsRepository).findById(id);
+    }
+
+    @Test
+    void getEventDetailsByEventId_returnsDtoWithAllFields_whenDetailsExist() {
+        UUID eventId = UUID.randomUUID();
+        UUID detailsId = UUID.randomUUID();
+        EventDetails details = EventDetails.builder()
+                .id(detailsId)
+                .description("desc")
+                .foodProvided(true)
+                .eventCode("ABC123")
+                .qrCodeContent("data:image/png;base64,AAA")
+                .poster(new byte[] { 1, 2, 3 })
+                .build();
+        when(eventDetailsRepository.findByEventId(eventId)).thenReturn(Optional.of(details));
+
+        EventDetailsDto dto = eventDetailsService.getEventDetailsByEventId(eventId);
+
+        assertThat(dto.getId()).isEqualTo(detailsId);
+        assertThat(dto.getEventId()).isEqualTo(eventId);
+        assertThat(dto.getDescription()).isEqualTo("desc");
+        assertThat(dto.getFoodProvided()).isTrue();
+        assertThat(dto.getEventCode()).isEqualTo("ABC123");
+        assertThat(dto.getQrCodeContent()).isEqualTo("data:image/png;base64,AAA");
+        assertThat(dto.getHasPoster()).isTrue();
+    }
+
+    @Test
+    void getEventDetailsByEventId_setsHasPosterFalse_whenPosterIsNull() {
+        UUID eventId = UUID.randomUUID();
+        EventDetails details = EventDetails.builder()
+                .id(UUID.randomUUID())
+                .foodProvided(false)
+                .poster(null)
+                .build();
+        when(eventDetailsRepository.findByEventId(eventId)).thenReturn(Optional.of(details));
+
+        EventDetailsDto dto = eventDetailsService.getEventDetailsByEventId(eventId);
+
+        assertThat(dto.getHasPoster()).isFalse();
+    }
+
+    @Test
+    void getEventDetailsByEventId_setsHasPosterFalse_whenPosterIsEmpty() {
+        UUID eventId = UUID.randomUUID();
+        EventDetails details = EventDetails.builder()
+                .id(UUID.randomUUID())
+                .foodProvided(true)
+                .poster(new byte[0])
+                .build();
+        when(eventDetailsRepository.findByEventId(eventId)).thenReturn(Optional.of(details));
+
+        EventDetailsDto dto = eventDetailsService.getEventDetailsByEventId(eventId);
+
+        assertThat(dto.getHasPoster()).isFalse();
+    }
+
+    @Test
+    void getEventDetailsByEventId_throwsRuntimeException_whenDetailsMissing() {
+        UUID eventId = UUID.randomUUID();
+        when(eventDetailsRepository.findByEventId(eventId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> eventDetailsService.getEventDetailsByEventId(eventId))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("Event details not found for event id: " + eventId);
+    }
+
+    @Test
+    void getPosterByEventId_returnsPoster_whenPresentAndNonEmpty() {
+        UUID eventId = UUID.randomUUID();
+        byte[] poster = { 1, 2, 3 };
+        when(eventDetailsRepository.findPosterByEventId(eventId)).thenReturn(Optional.of(poster));
+
+        Optional<byte[]> result = eventDetailsService.getPosterByEventId(eventId);
+
+        assertThat(result).contains(poster);
+    }
+
+    @Test
+    void getPosterByEventId_returnsEmpty_whenPosterBytesAreEmpty() {
+        UUID eventId = UUID.randomUUID();
+        when(eventDetailsRepository.findPosterByEventId(eventId)).thenReturn(Optional.of(new byte[0]));
+
+        Optional<byte[]> result = eventDetailsService.getPosterByEventId(eventId);
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void getPosterByEventId_returnsEmpty_whenPosterNotFound() {
+        UUID eventId = UUID.randomUUID();
+        when(eventDetailsRepository.findPosterByEventId(eventId)).thenReturn(Optional.empty());
+
+        Optional<byte[]> result = eventDetailsService.getPosterByEventId(eventId);
+
+        assertThat(result).isEmpty();
     }
 }

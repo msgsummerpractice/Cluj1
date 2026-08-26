@@ -196,7 +196,10 @@ class EventIntegrationTest {
                         "name": "Integration Test Event",
                         "type": "LOCAL",
                         "location": "TIMISOARA",
-                        "foodProvided": true
+                        "foodProvided": true,
+                        "startDate": "2026-12-01T10:00:00+00:00",
+                        "endDate": "2026-12-01T18:00:00+00:00",
+                        "registrationEndDate": "2026-11-25T23:59:00+00:00"
                     }
                 """;
 

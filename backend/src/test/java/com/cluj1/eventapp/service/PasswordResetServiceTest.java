@@ -115,18 +115,15 @@ class PasswordResetServiceTest {
         when(tokenRepository.findByTokenHash("token-123")).thenReturn(Optional.of(resetToken));
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         when(passwordEncoder.encode("NewPassword1!")).thenReturn("encoded-password");
-        when(entityManager.createQuery("UPDATE User u SET u.passwordHash = :passwordHash WHERE u.id = :userId"))
-            .thenReturn(updateQuery);
-        when(updateQuery.setParameter("passwordHash", "encoded-password")).thenReturn(updateQuery);
-        when(updateQuery.setParameter("userId", user.getId())).thenReturn(updateQuery);
 
         passwordResetService.resetPassword("token-123", "NewPassword1!", "NewPassword1!");
 
         assertThat(user.getPasswordHash()).isEqualTo("encoded-password");
         assertThat(resetToken.getUsedAt()).isNotNull();
-        verify(updateQuery).executeUpdate();
-        verify(entityManager).flush();
+        verify(userRepository).updatePasswordHash(user.getId(), "encoded-password");
+        verify(userRepository).flush();
         verify(tokenRepository).save(resetToken);
+        verify(tokenRepository).flush();
     }
 
     @Test

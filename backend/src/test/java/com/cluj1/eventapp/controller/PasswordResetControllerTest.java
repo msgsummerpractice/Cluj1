@@ -66,7 +66,7 @@ class PasswordResetControllerTest {
 
     @Test
     void forgotPassword_validRequest_returns200AndLowercasesEmail() throws Exception {
-        ForgotPasswordRequest request = new ForgotPasswordRequest("USER@EXAMPLE.COM");
+        ForgotPasswordRequest request = new ForgotPasswordRequest("John.Doe@msg.group");
 
         mockMvc.perform(post("/api/auth/forgot-password")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -74,7 +74,7 @@ class PasswordResetControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("Password reset token sent to email"));
 
-        verify(passwordResetService).createPasswordResetToken("user@example.com");
+        verify(passwordResetService).createPasswordResetToken("john.doe@msg.group");
     }
 
     @Test

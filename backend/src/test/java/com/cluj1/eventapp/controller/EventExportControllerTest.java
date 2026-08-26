@@ -2,7 +2,10 @@ package com.cluj1.eventapp.controller;
 
 import com.cluj1.eventapp.config.SecurityConfig;
 import com.cluj1.eventapp.exception.InvalidEventOperationException;
+import com.cluj1.eventapp.mapper.EventMapper;
+import com.cluj1.eventapp.repository.RegistrationRepository;
 import com.cluj1.eventapp.security.JwtAuthenticationFilter;
+import com.cluj1.eventapp.service.AttendanceExcelGeneratorService;
 import com.cluj1.eventapp.service.EventCheckInService;
 import com.cluj1.eventapp.service.EventDetailsService;
 import com.cluj1.eventapp.service.EventExportService;
@@ -64,6 +67,12 @@ class EventExportControllerTest {
     private EventCheckInService eventCheckInService;
     @MockitoBean
     private EventExportService eventExportService;
+    @MockitoBean
+    private RegistrationRepository registrationRepository;
+    @MockitoBean
+    private AttendanceExcelGeneratorService attendanceReportExcelGenerator;
+    @MockitoBean
+    private EventMapper eventMapper;
 
     private static final String EXPORT_URL = "/api/events/{id}/export";
 
@@ -122,7 +131,7 @@ class EventExportControllerTest {
 
     @Test
     void exportReturnsExcelBytesAsBody() throws Exception {
-        byte[] fakeExcel = { 0x50, 0x4B, 0x03, 0x04 }; // OOXML magic bytes
+        byte[] fakeExcel = { 0x50, 0x4B, 0x03, 0x04 };
         when(eventExportService.exportEventRegistrationsToExcel(any())).thenReturn(fakeExcel);
 
         mockMvc.perform(get(EXPORT_URL, UUID.randomUUID())
