@@ -34,6 +34,7 @@
     "consentsSubtitle": "Revizuiește acordurile legale.",
     "gdprConsent": "Acord GDPR",
     "gdprWarning": "Debifarea acestei căsuțe și actualizarea înregistrării vor anula definitiv înscrierea ta.",
+    "viewGdprInfo": "Vezi informațiile GDPR",
     "photoConsent": "Acord Foto",
     "summary": "Sumar",
     "event": "Eveniment"
@@ -359,6 +360,7 @@
     "consentsSubtitle": "Te rugăm să confirmi termenii de mai jos.",
     "gdprLabel": "Sunt de acord cu termenii GDPR",
     "gdprError": "Consimțământul GDPR este obligatoriu pentru acest eveniment.",
+    "viewGdprInfo": "Vezi informațiile GDPR",
     "photoLabel": "Sunt de acord cu notificarea privind fotografierea",
     "photoError": "Consimțământul foto este obligatoriu.",
     "cateringTitle": "Preferințe Catering",
@@ -391,6 +393,16 @@
     "confirmRegistration": "Confirmă Înregistrarea",
     "registered": "Înregistrat",
     "agreementNotice": "Prin înregistrare, ești de acord să respecți regulile și politicile stabilite pentru acest eveniment."
+  },
+  "gdprInfo": {
+    "title": "Informații GDPR",
+    "close": "Închide",
+    "introBeforeName": "Datele completate mai jos vor fi folosite pentru înscrierea la",
+    "introAfterName": ".",
+    "rightsInfo": "Chiar și în cazul unui astfel de formular, aveți dreptul la informații, precum și la ștergerea datelor dvs. personale, în conformitate cu reglementările privind protecția datelor. Puteți revoca acest consimțământ în orice moment, prin gestionarea înscrierii dvs. din aplicație și retragerea acordului GDPR. După revocare, datele dvs. vor fi șterse.",
+    "storageTitle": "Unde sunt procesate datele?",
+    "storageInfo": "Datele introduse în acest formular sunt stocate în mod securizat pe serverele aplicației noastre, găzduite în Uniunea Europeană, și sunt accesibile doar persoanelor autorizate implicate în organizarea evenimentului.",
+    "retentionInfo": "Datele din acest formular vor fi șterse în termen de o lună de la data trimiterii lor. În cazul în care datele vor fi exportate, cele care conțin informații cu caracter personal vor fi anonimizate, dacă este cazul."
   },
   "checkin": {
     "title": "Check-In Eveniment",

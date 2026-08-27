@@ -48,6 +48,7 @@
     "consentsSubtitle": "Review your legal agreements.",
     "gdprConsent": "GDPR Consent",
     "gdprWarning": "Unchecking this box and updating your registration will permanently cancel your enrollment.",
+    "viewGdprInfo": "View GDPR information",
     "photoConsent": "Photo Consent",
     "summary": "Summary",
     "event": "Event"
@@ -358,6 +359,7 @@
     "consentsSubtitle": "Please acknowledge the required terms below.",
     "gdprLabel": "I agree to the GDPR terms",
     "gdprError": "GDPR consent is required for this event.",
+    "viewGdprInfo": "View GDPR information",
     "photoLabel": "I agree to the photo consent notice",
     "photoError": "Photo consent is required.",
     "cateringTitle": "Catering Preferences",
@@ -390,6 +392,16 @@
     "confirmRegistration": "Confirm Registration",
     "registered": "Registered",
     "agreementNotice": "By registering, you agree to comply with the rules and policies established for this event."
+  },
+  "gdprInfo": {
+    "title": "GDPR Information",
+    "close": "Close",
+    "introBeforeName": "The data you fill in below will be used for your registration to",
+    "introAfterName": ".",
+    "rightsInfo": "Even for this kind of form, you have the right to information as well as to the deletion of your personal data, in accordance with data protection regulations. You can revoke this consent at any time by managing your registration in the app and withdrawing your GDPR consent. After revocation, your data will be deleted.",
+    "storageTitle": "Where is the data processed?",
+    "storageInfo": "The data entered in this form is stored securely on our application's servers, hosted within the European Union, and is accessible only to authorized personnel involved in organizing the event.",
+    "retentionInfo": "The data from this form will be deleted within one month of submission. If the data is exported, any personally identifiable information will be anonymized where applicable."
   },
   "checkin": {
     "title": "Event Check-In",
