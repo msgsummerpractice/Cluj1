@@ -394,6 +394,10 @@ export class EventListComponent implements OnInit {
   }
 
   navigateToCheckIn(eventId: string): void {
+    const event = this.events().find((e) => e.id === eventId);
+    if (event?.isCheckedIn || event?.status === 'COMPLETED') {
+      return;
+    }
     this.router.navigate(['/events', eventId, 'checkin']);
   }
 
@@ -483,6 +487,11 @@ export class EventListComponent implements OnInit {
   }
 
   deleteRegistration(eventId: string): void {
+    const event = this.events().find((e) => e.id === eventId);
+    if (event?.isCheckedIn) {
+      return;
+    }
+
     this.openConfirmDialog({
       titleKey: 'events.deleteRegistration.title',
       messageKey: 'events.deleteRegistration.message',
