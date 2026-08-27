@@ -1,0 +1,9 @@
+::ng-deep .close-button {
+  border-color: var(--brand-maroon) !important;
+  background-color: transparent !important;
+  color: var(--brand-maroon) !important;
+}
+
+::ng-deep .close-button:hover {
+  background-color: var(--brand-maroon-hover-bg) !important;
+}

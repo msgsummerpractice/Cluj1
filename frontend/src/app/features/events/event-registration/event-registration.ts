@@ -18,7 +18,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from '../../../core/services/toast.service';
+import { GdprInfoDialogComponent } from '../../../shared/components/gdpr-info-dialog/gdpr-info-dialog';
 
 const DRIVER_NAME_PATTERN = /^[\p{L}.'-]+(?:\s+[\p{L}.'-]+)*$/u;
 
@@ -56,6 +58,7 @@ export class EventRegistration implements OnInit {
   private router = inject(Router);
   private eventService = inject(EventService);
   private fb = inject(FormBuilder);
+  private dialog = inject(MatDialog);
 
   ngOnInit(): void {
     this.eventId = this.route.snapshot.paramMap.get('id')!;
@@ -194,7 +197,6 @@ export class EventRegistration implements OnInit {
   }
 
   private syncConditionalFieldValidators(eventData: Event | null): void {
-    // matches the template gating: this section shows for any non-EXTERNAL event
     const isInternal = eventData?.type !== 'EXTERNAL';
     const transportationNeeded = this.registrationForm.get('transportationNeeded')?.value === true;
     const accommodationNeeded = this.registrationForm.get('accommodationNeeded')?.value === true;
@@ -241,5 +243,14 @@ export class EventRegistration implements OnInit {
     driverNameControl?.updateValueAndValidity({ emitEvent: false });
     driverPhoneControl?.updateValueAndValidity({ emitEvent: false });
     accommodationDaysControl?.updateValueAndValidity({ emitEvent: false });
+  }
+
+  openGdprInfo(): void {
+    this.dialog.open(GdprInfoDialogComponent, {
+      width: '500px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      data: { eventName: this.event()?.name ?? '' },
+    });
   }
 }

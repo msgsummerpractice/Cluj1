@@ -247,6 +247,13 @@
                       <span class="text-red-500">*</span>
                     </span>
                   </label>
+                  <button
+                    type="button"
+                    (click)="openGdprInfo()"
+                    class="text-xs text-primary underline text-left ml-3 hover:opacity-80 cursor-pointer"
+                  >
+                    {{ 'eventRegistration.viewGdprInfo' | transloco }}
+                  </button>
                   @if (
                     registrationForm.get('gdprConsent')?.invalid &&
                     registrationForm.get('gdprConsent')?.touched

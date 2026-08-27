@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>{{ 'gdprInfo.title' | transloco }}</h2>
+
+<mat-dialog-content
+  class="flex flex-col gap-4 text-sm text-gray-700 leading-relaxed max-h-[70vh] overflow-y-auto break-words"
+>
+  <p>
+    {{ 'gdprInfo.introBeforeName' | transloco }}
+    <strong>{{ data.eventName }}</strong>
+    {{ 'gdprInfo.introAfterName' | transloco }}
+  </p>
+  <p>{{ 'gdprInfo.rightsInfo' | transloco }}</p>
+  <p class="font-semibold text-gray-900">{{ 'gdprInfo.storageTitle' | transloco }}</p>
+  <p>{{ 'gdprInfo.storageInfo' | transloco }}</p>
+  <p>{{ 'gdprInfo.retentionInfo' | transloco }}</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="close()" class="close-button w-full sm:w-auto">
+    {{ 'gdprInfo.close' | transloco }}
+  </button>
+</mat-dialog-actions>

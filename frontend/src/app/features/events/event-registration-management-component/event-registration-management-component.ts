@@ -1,6 +1,7 @@
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog';
 import { ConfirmDialogData } from '../../../shared/components/confirm-dialog/confirm-dialog.model';
+import { GdprInfoDialogComponent } from '../../../shared/components/gdpr-info-dialog/gdpr-info-dialog';
 import { filter } from 'rxjs/operators';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -252,5 +253,14 @@ export class EventRegistrationManagement {
         data,
       })
       .afterClosed();
+  }
+
+  openGdprInfo(): void {
+    this.dialog.open(GdprInfoDialogComponent, {
+      width: '500px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      data: { eventName: this.event()?.name ?? '' },
+    });
   }
 }
