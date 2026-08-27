@@ -19,11 +19,35 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatTimepickerModule } from '@angular/material/timepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { DateAdapter, MatNativeDateModule, NativeDateAdapter } from '@angular/material/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ToastService } from '../../../core/services/toast.service';
 import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
 import { QuillModule } from 'ngx-quill';
+
+// Parses manually typed dd.MM.yyyy / dd/MM/yyyy / dd-MM-yyyy dates, since the native adapter can't.
+class TypedDateAdapter extends NativeDateAdapter {
+  override parse(value: unknown): Date | null {
+    if (typeof value === 'string' && value.trim()) {
+      const match = value.trim().match(/^(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{2,4})$/);
+      if (match) {
+        const day = Number(match[1]);
+        const month = Number(match[2]);
+        const year = Number(match[3]);
+        const date = new Date(year, month - 1, day);
+        if (
+          date.getFullYear() === year &&
+          date.getMonth() === month - 1 &&
+          date.getDate() === day
+        ) {
+          return date;
+        }
+        return new Date(NaN);
+      }
+    }
+    return super.parse(value);
+  }
+}
 
 @Component({
   selector: 'app-event-creation',
@@ -45,6 +69,7 @@ import { QuillModule } from 'ngx-quill';
     MatTooltipModule,
     QuillModule,
   ],
+  providers: [{ provide: DateAdapter, useClass: TypedDateAdapter }],
   templateUrl: './event-creation.html',
   styleUrl: './event-creation.css',
 })
@@ -65,6 +90,8 @@ export class EventCreationComponent implements OnInit, OnDestroy {
   readonly eventId = signal<string | null>(null);
   readonly isEditMode = computed(() => this.eventId() !== null);
   private existingPosterUrl: string | null = null;
+
+  readonly minDate = new Date();
 
   readonly descriptionModules = {
     toolbar: [
@@ -88,7 +115,7 @@ export class EventCreationComponent implements OnInit, OnDestroy {
       foodProvided: [{ value: false, disabled: true }],
       registrationEndDate: [<Date | string | null>null],
     },
-    { validators: [endAfterStart, regEndBeforeStart] },
+    { validators: [endAfterStart, regEndBeforeStart, dateNotInPast, startTimeNotInPast] },
   );
 
   ngOnInit() {
@@ -309,4 +336,28 @@ function regEndBeforeStart(group: AbstractControl): ValidationErrors | null {
   if (isNaN(regEnd.getTime())) return null;
   regEnd.setHours(23, 59, 59, 999);
   return regEnd >= eventStart ? { regEndAfterStart: true } : null;
+}
+
+function dateNotInPast(group: AbstractControl): ValidationErrors | null {
+  const { date } = group.value;
+  if (!date) return null;
+  const eventDate = new Date(date as string | Date);
+  if (isNaN(eventDate.getTime())) return null;
+  eventDate.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return eventDate < today ? { dateInPast: true } : null;
+}
+
+function startTimeNotInPast(group: AbstractControl): ValidationErrors | null {
+  const { date, startTime } = group.value;
+  const start = buildDateTime(date, startTime);
+  if (!start) return null;
+  const eventDate = new Date(date as string | Date);
+  if (isNaN(eventDate.getTime())) return null;
+  eventDate.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  if (eventDate.getTime() !== today.getTime()) return null;
+  return start < new Date() ? { startTimeInPast: true } : null;
 }

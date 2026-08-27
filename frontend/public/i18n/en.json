@@ -219,7 +219,7 @@
     "descriptionPlaceholder": "Agenda, target audience, what participants should bring...",
     "scheduleTitle": "Schedule & venue",
     "dateLabel": "Date",
-    "datePlaceholder": "dd.MM.yyyy",
+    "datePlaceholder": "dd/MM/yyyy",
     "startLabel": "Start",
     "startPlaceholder": "09:00",
     "endLabel": "End",
@@ -248,7 +248,7 @@
     "typeHintExternal": "Specific location required. No food preference.",
     "typeHintLocal": "Specific location required. Food preference option available.",
     "regEndDateLabel": "Registration end date",
-    "regEndDatePlaceholder": "dd.MM.yyyy",
+    "regEndDatePlaceholder": "dd/MM/yyyy",
     "regEndDateHint": "Optional. Last day participants can register.",
     "clearDate": "Clear date",
     "openCalendar": "Open calendar",
@@ -259,7 +259,9 @@
       "nameTooLong": "Event title must not exceed 100 characters.",
       "descriptionTooLong": "Description must not exceed 10000 characters.",
       "endBeforeStart": "End time must be after start time.",
-      "regEndAfterStart": "Registration end date must be before the event start date."
+      "regEndAfterStart": "Registration end date must be before the event start date.",
+      "dateInPast": "Event date cannot be in the past.",
+      "startTimeInPast": "Start time cannot be in the past."
     }
   },
   "register": {
