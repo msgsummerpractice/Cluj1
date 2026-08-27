@@ -40,7 +40,7 @@
 
           <mat-card-content class="!p-0">
             <form class="grid gap-4" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div class="grid grid-cols-1 items-start gap-4 sm:grid-cols-2">
                 <mat-form-field appearance="outline">
                   <mat-label>{{ 'register.firstName' | transloco }}</mat-label>
                   <input
