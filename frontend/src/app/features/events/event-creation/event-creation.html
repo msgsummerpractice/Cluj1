@@ -138,12 +138,16 @@
                 <input
                   matInput
                   [matDatepicker]="picker"
+                  [min]="minDate"
                   formControlName="date"
                   [placeholder]="'createEvent.datePlaceholder' | transloco"
                   (click)="picker.open()"
                 />
                 <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
+                @if (form.get('date')?.hasError('matDatepickerMin')) {
+                  <mat-error>{{ 'createEvent.errors.dateInPast' | transloco }}</mat-error>
+                }
               </mat-form-field>
             </div>
             <div class="flex flex-col gap-1">
@@ -153,6 +157,7 @@
               <mat-form-field appearance="outline" class="w-full h-[75px]">
                 <input
                   matInput
+                  class="time-input-text"
                   [matTimepicker]="startPicker"
                   formControlName="startTime"
                   [placeholder]="'createEvent.startPlaceholder' | transloco"
@@ -186,6 +191,14 @@
           ) {
             <p class="text-red-600 text-xs -mt-2">
               {{ 'createEvent.errors.endBeforeStart' | transloco }}
+            </p>
+          }
+
+          @if (form.hasError('startTimeInPast') &&
+            (form.get('startTime')?.touched || form.get('date')?.touched)
+          ) {
+            <p class="text-red-600 text-xs -mt-2">
+              {{ 'createEvent.errors.startTimeInPast' | transloco }}
             </p>
           }
 
