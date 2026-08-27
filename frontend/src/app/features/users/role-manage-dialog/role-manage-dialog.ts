@@ -1,4 +1,4 @@
-import { Component, inject, Inject, DestroyRef } from '@angular/core';
+import { Component, inject, Inject, DestroyRef, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -37,8 +37,8 @@ export class RoleManageDialogComponent {
   selectedRole: Role;
   originalRole: Role;
   roles: Role[] = Object.values(Role);
-  isConfirming = false;
-  isLoading = false;
+  isConfirming = signal(false);
+  isLoading = signal(false);
 
   private snackBar = inject(MatSnackBar);
   private userService = inject(UserService);
@@ -55,8 +55,8 @@ export class RoleManageDialogComponent {
   }
 
   onCancel(): void {
-    if (this.isConfirming) {
-      this.isConfirming = false;
+    if (this.isConfirming()) {
+      this.isConfirming.set(false);
     } else {
       this.dialogRef.close();
     }
@@ -68,12 +68,12 @@ export class RoleManageDialogComponent {
       return;
     }
 
-    if (!this.isConfirming) {
-      this.isConfirming = true;
+    if (!this.isConfirming()) {
+      this.isConfirming.set(true);
       return;
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.userService
       .updateRole(this.data.user.id, this.selectedRole)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -86,7 +86,7 @@ export class RoleManageDialogComponent {
           this.dialogRef.close(updatedUser);
         },
         error: (err) => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           const errMsg =
             err.error?.message || this.translocoService.translate('roleManageDialog.errorMessage');
           this.toastService.show('error', errMsg);

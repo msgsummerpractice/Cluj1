@@ -1,11 +1,11 @@
 <div class="dialog-container">
-  <button mat-icon-button class="close-button" (click)="dialogRef.close()" [disabled]="isLoading">
+  <button mat-icon-button class="close-button" (click)="dialogRef.close()" [disabled]="isLoading()">
     <mat-icon>close</mat-icon>
   </button>
 
   <h2 class="dialog-title">
     {{
-      isConfirming
+      isConfirming()
         ? ('roleManageDialog.confirmTitle' | transloco)
         : ('roleManageDialog.title' | transloco)
     }}
@@ -16,7 +16,7 @@
     <span class="user-email">{{ data.user.email }}</span>
   </p>
 
-  <ng-container *ngIf="!isConfirming">
+  <ng-container *ngIf="!isConfirming()">
     <mat-form-field appearance="outline" class="role-form-field">
       <mat-label class="role-label">
         {{ 'roleManageDialog.platformRole' | transloco }}
@@ -29,7 +29,7 @@
     </mat-form-field>
   </ng-container>
 
-  <ng-container *ngIf="isConfirming">
+  <ng-container *ngIf="isConfirming()">
     <p class="confirmation-text">
       {{ 'roleManageDialog.confirmPrompt' | transloco }}
       <strong>{{ selectedRole | roleTitlecase }}</strong
@@ -38,14 +38,18 @@
   </ng-container>
 
   <div class="actions-container">
-    <button mat-stroked-button (click)="onCancel()" class="btn-cancel" [disabled]="isLoading">
+    <button mat-stroked-button (click)="onCancel()" class="btn-cancel" [disabled]="isLoading()">
       {{
-        isConfirming ? ('roleManageDialog.no' | transloco) : ('roleManageDialog.cancel' | transloco)
+        isConfirming()
+          ? ('roleManageDialog.no' | transloco)
+          : ('roleManageDialog.cancel' | transloco)
       }}
     </button>
-    <button mat-flat-button (click)="onSave()" class="btn-save" [disabled]="isLoading">
+    <button mat-flat-button (click)="onSave()" class="btn-save" [disabled]="isLoading()">
       {{
-        isConfirming ? ('roleManageDialog.yes' | transloco) : ('roleManageDialog.save' | transloco)
+        isConfirming()
+          ? ('roleManageDialog.yes' | transloco)
+          : ('roleManageDialog.save' | transloco)
       }}
     </button>
   </div>
