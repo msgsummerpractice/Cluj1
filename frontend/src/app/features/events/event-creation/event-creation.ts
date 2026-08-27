@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
@@ -48,7 +48,7 @@ import { QuillModule } from 'ngx-quill';
   templateUrl: './event-creation.html',
   styleUrl: './event-creation.css',
 })
-export class EventCreationComponent implements OnInit {
+export class EventCreationComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly eventService = inject(EventService);
   private readonly router = inject(Router);
@@ -64,6 +64,7 @@ export class EventCreationComponent implements OnInit {
 
   readonly eventId = signal<string | null>(null);
   readonly isEditMode = computed(() => this.eventId() !== null);
+  private existingPosterUrl: string | null = null;
 
   readonly descriptionModules = {
     toolbar: [
@@ -100,6 +101,12 @@ export class EventCreationComponent implements OnInit {
     }
   }
 
+  ngOnDestroy() {
+    if (this.existingPosterUrl) {
+      URL.revokeObjectURL(this.existingPosterUrl);
+    }
+  }
+
   loadEventData(id: string) {
     this.eventService.getEventById(id).subscribe({
       next: (event) => {
@@ -121,8 +128,23 @@ export class EventCreationComponent implements OnInit {
         });
 
         this.handleTypeChange(event.type);
+        this.loadExistingPoster(id);
       },
       error: (err) => console.error('Error loading event for edit', err),
+    });
+  }
+
+  private loadExistingPoster(id: string) {
+    this.eventService.getEventPoster(id).subscribe({
+      next: (blob) => {
+        if (!blob || blob.size === 0) return;
+        const url = URL.createObjectURL(blob);
+        this.existingPosterUrl = url;
+        this.filePreview.set(url);
+      },
+      error: () => {
+        // No poster for this event, keep default upload placeholder
+      },
     });
   }
 
@@ -150,6 +172,10 @@ export class EventCreationComponent implements OnInit {
     const file = event.target.files[0];
     this.fileError.set(null);
     this.selectedFile.set(null);
+    if (this.existingPosterUrl) {
+      URL.revokeObjectURL(this.existingPosterUrl);
+      this.existingPosterUrl = null;
+    }
     this.filePreview.set(null);
 
     if (file) {

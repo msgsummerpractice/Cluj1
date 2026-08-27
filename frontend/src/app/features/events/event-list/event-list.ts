@@ -68,11 +68,20 @@ export class EventListComponent implements OnInit {
     this.viewMode() === 'PARTICIPANT' ? 'events.participantPageTitle' : 'events.eventPageTitle',
   );
 
+  readonly canViewStatusColumn = computed(
+    () =>
+      this.authService.isAdmin() ||
+      this.authService.isMarketingOrganizer() ||
+      this.authService.isHrUser(),
+  );
+
   readonly columns = computed<DataTableColumn[]>(() => {
     return [
       { key: 'name', label: 'events.eventNameColumn', sortKey: 'name' },
       { key: 'date', label: 'events.eventDateColumn', sortKey: 'startDate' },
-      { key: 'status', label: 'events.eventStatusColumn', sortKey: 'status' },
+      ...(this.canViewStatusColumn()
+        ? [{ key: 'status', label: 'events.eventStatusColumn', sortKey: 'status' }]
+        : []),
       { key: 'type', label: 'events.eventTypeColumn', sortKey: 'type', cellClass: 'text-gray-600' },
       {
         key: 'participantStatus',
@@ -107,9 +116,7 @@ export class EventListComponent implements OnInit {
     this.uniqueValues(this.events().map((event) => event.status)),
   );
 
-  readonly typeOptions = computed(() =>
-    this.uniqueValues(this.events().map((event) => event.type)),
-  );
+  readonly typeOptions = computed(() => ['INTERNAL', 'EXTERNAL', 'LOCAL']);
 
   readonly hasActiveFilters = computed(
     () =>

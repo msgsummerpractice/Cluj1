@@ -11,11 +11,14 @@ import { EventService } from '../../../core/services/event.service';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialog } from '@angular/material/dialog';
 import { CheckincodesComponent } from '../../checkincodes-component/checkincodes-component';
 import { ToastService } from '../../../core/services/toast.service';
-import { finalize, take } from 'rxjs/operators';
+import { finalize, filter, switchMap, take } from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
 import { BackButtonComponent } from '../../../shared/components/back-button/back-button';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog';
+import { ConfirmDialogData } from '../../../shared/components/confirm-dialog/confirm-dialog.model';
 
 @Component({
   selector: 'app-event-details',
@@ -41,6 +44,7 @@ export class EventDetailsComponent {
   private readonly translocoService = inject(TranslocoService);
   private readonly toast = inject(ToastService);
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly dialog = inject(MatDialog);
 
   private readonly eventId = signal(this.route.snapshot.paramMap.get('id') ?? undefined);
 
@@ -126,6 +130,11 @@ export class EventDetailsComponent {
       this.canCheckIn() ||
       this.canExport() ||
       this.canDownloadReport() ||
+      this.canManageRegistration(currentEvent) ||
+      this.canDeleteRegistration(currentEvent) ||
+      this.canEdit(currentEvent) ||
+      this.canPublish(currentEvent) ||
+      this.canComplete(currentEvent) ||
       ((currentEvent.status === 'PUBLISHED' || currentEvent.status === 'COMPLETED') &&
         this.canViewStatistics())
     );
@@ -134,7 +143,7 @@ export class EventDetailsComponent {
   readonly canCheckIn = computed(() => {
     const currentEvent = this.event();
     if (!currentEvent) return false;
-    return currentEvent.status !== 'DRAFT' && this.isRegistered();
+    return currentEvent.status !== 'DRAFT' && this.isRegistered() && !currentEvent.isCheckedIn;
   });
 
   constructor() {
@@ -165,7 +174,37 @@ export class EventDetailsComponent {
   }
 
   canRegister(event: Event | null): boolean {
-    return event?.status === 'PUBLISHED' && !this.isRegistered();
+    return (
+      event?.status === 'PUBLISHED' &&
+      !this.isRegistered() &&
+      !this.isRegistrationClosed(event)
+    );
+  }
+
+  canManageRegistration(event: Event | null): boolean {
+    return (
+      event?.status === 'PUBLISHED' && this.isRegistered() && !this.isRegistrationClosed(event)
+    );
+  }
+
+  canDeleteRegistration(event: Event | null): boolean {
+    return event?.status === 'PUBLISHED' && this.isRegistered() && this.isRegistrationClosed(event);
+  }
+
+  canEdit(event: Event | null): boolean {
+    return event?.status === 'DRAFT' && this.authService.isMarketingOrganizer();
+  }
+
+  canPublish(event: Event | null): boolean {
+    return event?.status === 'DRAFT' && this.authService.isMarketingOrganizer();
+  }
+
+  canComplete(event: Event | null): boolean {
+    return (
+      event?.status === 'PUBLISHED' &&
+      this.authService.isMarketingOrganizer() &&
+      this.eventHasEnded(event)
+    );
   }
 
   isRegistrationClosed(event: Event | null): boolean {
@@ -174,6 +213,109 @@ export class EventDetailsComponent {
     }
 
     return Date.now() > new Date(event.registrationEndDate).getTime();
+  }
+
+  manageRegistration(eventId: string): void {
+    this.router.navigate(['/events', eventId, 'manage']);
+  }
+
+  onDeleteRegistration(): void {
+    const currentEvent = this.event();
+    if (!currentEvent || !this.canDeleteRegistration(currentEvent)) return;
+
+    this.openConfirmDialog({
+      titleKey: 'events.deleteRegistration.title',
+      messageKey: 'events.deleteRegistration.message',
+      confirmKey: 'events.deleteRegistration.confirm',
+      cancelKey: 'events.deleteRegistration.cancel',
+    })
+      .pipe(
+        filter((confirmed): confirmed is true => Boolean(confirmed)),
+        switchMap(() => this.eventService.deleteRegistration(currentEvent.id)),
+      )
+      .subscribe({
+        next: () => {
+          this.registrationResource.reload();
+          this.toast.show(
+            'success',
+            this.translocoService.translate('events.deleteRegistration.success'),
+          );
+        },
+        error: () => {
+          this.toast.show(
+            'error',
+            this.translocoService.translate('events.deleteRegistration.error'),
+          );
+        },
+      });
+  }
+
+  onPublish(): void {
+    const currentEvent = this.event();
+    if (!currentEvent || !this.canPublish(currentEvent)) return;
+
+    this.openConfirmDialog({
+      titleKey: 'events.publish.title',
+      messageKey: 'events.publish.message',
+      confirmKey: 'events.publish.confirm',
+      cancelKey: 'events.publish.cancel',
+    })
+      .pipe(
+        filter((confirmed): confirmed is true => Boolean(confirmed)),
+        switchMap(() => this.eventService.updateEventStatus(currentEvent.id, 'PUBLISHED')),
+      )
+      .subscribe({
+        next: () => {
+          this.eventResource.reload();
+          this.toast.show('success', this.translocoService.translate('events.publish.success'));
+        },
+        error: (error) => {
+          const backendMsg: string = error?.error?.message ?? '';
+          const errorKey =
+            backendMsg === 'event.publish.error.startDateInPast'
+              ? 'events.publish.errorStartDateInPast'
+              : 'events.publish.error';
+          this.toast.show('error', this.translocoService.translate(errorKey));
+        },
+      });
+  }
+
+  onComplete(): void {
+    const currentEvent = this.event();
+    if (!currentEvent || !this.canComplete(currentEvent)) return;
+
+    this.openConfirmDialog({
+      titleKey: 'events.complete.title',
+      messageKey: 'events.complete.message',
+      confirmKey: 'events.complete.confirm',
+      cancelKey: 'events.complete.cancel',
+    })
+      .pipe(
+        filter((confirmed): confirmed is true => Boolean(confirmed)),
+        switchMap(() => this.eventService.updateEventStatus(currentEvent.id, 'COMPLETED')),
+      )
+      .subscribe({
+        next: () => {
+          this.eventResource.reload();
+          this.toast.show('success', this.translocoService.translate('events.complete.success'));
+        },
+        error: () => {
+          this.toast.show('error', this.translocoService.translate('events.complete.error'));
+        },
+      });
+  }
+
+  eventHasEnded(event: Event): boolean {
+    return new Date() > new Date(event.endDate);
+  }
+
+  private openConfirmDialog(data: ConfirmDialogData) {
+    return this.dialog
+      .open<ConfirmDialogComponent, ConfirmDialogData, boolean>(ConfirmDialogComponent, {
+        width: '400px',
+        data,
+      })
+      .afterClosed();
   }
 
   canViewStatistics(): boolean {

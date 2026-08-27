@@ -49,28 +49,34 @@ public class EventPublishMailService {
     private String eventUrl;
 
     /**
-     * Resolves the recipients for an event location and notifies each recipient.
+     * Resolves the recipients for an event location and notifies them all in a
+     * single email, so no recipient can see who else received it.
      *
      * @param event the published event to include in the notification
      */
     public void notifyRecipients(Event event) {
         List<User> recipients = recipientPoolService.resolveRecipients(event.getLocation());
-        recipients.forEach(recipient -> sendEventPublishedEmail(recipient.getEmail(), event));
+        if (recipients.isEmpty()) {
+            return;
+        }
+        List<String> recipientEmails = recipients.stream().map(User::getEmail).toList();
+        sendEventPublishedEmail(recipientEmails, event);
     }
 
     /**
-     * Builds and sends a bilingual event-published email to one recipient.
+     * Builds and sends a single bilingual event-published email to all given
+     * recipients, placed in BCC so they remain hidden from one another.
      *
      * <p>
      * Missing event details cause an {@link IllegalArgumentException}. Mail
      * delivery failures are logged and do not propagate to the caller.
      * </p>
      *
-     * @param recipientEmail the email address that should receive the message
-     * @param event          the published event to include in the message
+     * @param recipientEmails the email addresses that should receive the message
+     * @param event           the published event to include in the message
      * @throws IllegalArgumentException if the event has no details
      */
-    public void sendEventPublishedEmail(String recipientEmail, Event event) {
+    public void sendEventPublishedEmail(List<String> recipientEmails, Event event) {
         EventDetails details = event.getEventDetails();
         if (details == null) {
             throw new IllegalArgumentException("Event details are missing for event: " + event.getId());
@@ -90,7 +96,7 @@ public class EventPublishMailService {
         String htmlBody = buildEmail(event, eventLink, startDate, poster);
 
         try {
-            sendHtmlMessage(recipientEmail, "New event published | Eveniment nou publicat: " + event.getName(),
+            sendHtmlMessage(recipientEmails, "New event published | Eveniment nou publicat: " + event.getName(),
                     htmlBody, poster,
                     posterMimeType);
         } catch (Exception e) {
@@ -155,24 +161,27 @@ public class EventPublishMailService {
     }
 
     /**
-     * Sends an HTML email and optionally attaches a poster as an inline resource.
+     * Sends a single HTML email to all recipients via BCC, so recipients cannot
+     * see one another, and optionally attaches a poster as an inline resource.
      *
-     * @param to             the recipient email address
-     * @param subject        the email subject
-     * @param htmlBody       the HTML message body
-     * @param poster         poster bytes to embed, or {@code null} when no poster
-     *                       should be embedded
-     * @param posterMimeType the poster MIME type, or {@code null} when no poster is
-     *                       supplied
+     * @param recipientEmails the BCC recipient email addresses
+     * @param subject         the email subject
+     * @param htmlBody        the HTML message body
+     * @param poster          poster bytes to embed, or {@code null} when no poster
+     *                        should be embedded
+     * @param posterMimeType  the poster MIME type, or {@code null} when no poster
+     *                        is
+     *                        supplied
      * @throws MessagingException if the mail message cannot be created or sent
      */
-    public void sendHtmlMessage(String to, String subject, String htmlBody, byte[] poster, String posterMimeType)
-            throws MessagingException {
+    public void sendHtmlMessage(List<String> recipientEmails, String subject, String htmlBody, byte[] poster,
+            String posterMimeType) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
         helper.setFrom(sender);
-        helper.setTo(to);
+        helper.setTo(sender);
+        helper.setBcc(recipientEmails.toArray(new String[0]));
         helper.setSubject(subject);
         helper.setText(htmlBody, true);
 

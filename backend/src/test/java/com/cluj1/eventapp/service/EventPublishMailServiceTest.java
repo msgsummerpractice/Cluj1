@@ -89,13 +89,14 @@ class EventPublishMailServiceTest {
         MimeMessage message = newMimeMessage();
         when(mailSender.createMimeMessage()).thenReturn(message);
 
-        mailService.sendEventPublishedEmail("recipient@msg.group", event);
+        mailService.sendEventPublishedEmail(List.of("recipient@msg.group"), event);
 
         ArgumentCaptor<MimeMessage> captor = ArgumentCaptor.forClass(MimeMessage.class);
         verify(mailSender).send(captor.capture());
         assertThat(captor.getValue().getSubject())
                 .isEqualTo("New event published | Eveniment nou publicat: Tech Meetup");
-        assertThat(captor.getValue().getAllRecipients()[0].toString()).isEqualTo("recipient@msg.group");
+        assertThat(captor.getValue().getRecipients(MimeMessage.RecipientType.BCC)[0].toString())
+                .isEqualTo("recipient@msg.group");
     }
 
     @Test
@@ -104,7 +105,7 @@ class EventPublishMailServiceTest {
         MimeMessage message = newMimeMessage();
         when(mailSender.createMimeMessage()).thenReturn(message);
 
-        mailService.sendEventPublishedEmail("recipient@msg.group", event);
+        mailService.sendEventPublishedEmail(List.of("recipient@msg.group"), event);
 
         verify(mailSender).send(any(MimeMessage.class));
     }
@@ -115,7 +116,7 @@ class EventPublishMailServiceTest {
         MimeMessage message = newMimeMessage();
         when(mailSender.createMimeMessage()).thenReturn(message);
 
-        mailService.sendEventPublishedEmail("recipient@msg.group", event);
+        mailService.sendEventPublishedEmail(List.of("recipient@msg.group"), event);
 
         verify(mailSender).send(any(MimeMessage.class));
     }
@@ -126,7 +127,7 @@ class EventPublishMailServiceTest {
         MimeMessage message = newMimeMessage();
         when(mailSender.createMimeMessage()).thenReturn(message);
 
-        mailService.sendEventPublishedEmail("recipient@msg.group", event);
+        mailService.sendEventPublishedEmail(List.of("recipient@msg.group"), event);
 
         verify(mailSender).send(any(MimeMessage.class));
     }
@@ -137,7 +138,7 @@ class EventPublishMailServiceTest {
         MimeMessage message = newMimeMessage();
         when(mailSender.createMimeMessage()).thenReturn(message);
 
-        mailService.sendEventPublishedEmail("recipient@msg.group", event);
+        mailService.sendEventPublishedEmail(List.of("recipient@msg.group"), event);
 
         verify(mailSender).send(any(MimeMessage.class));
     }
@@ -146,7 +147,7 @@ class EventPublishMailServiceTest {
     void sendEventPublishedEmail_throwsIllegalArgumentException_whenEventDetailsMissing() {
         event.setEventDetails(null);
 
-        assertThatThrownBy(() -> mailService.sendEventPublishedEmail("recipient@msg.group", event))
+        assertThatThrownBy(() -> mailService.sendEventPublishedEmail(List.of("recipient@msg.group"), event))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining(event.getId().toString());
 
@@ -161,22 +162,27 @@ class EventPublishMailServiceTest {
                 .when(mailSender).send(any(MimeMessage.class));
 
 
-        mailService.sendEventPublishedEmail("recipient@msg.group", event);
+        mailService.sendEventPublishedEmail(List.of("recipient@msg.group"), event);
 
         verify(mailSender).send(any(MimeMessage.class));
     }
 
     @Test
-    void notifyRecipients_sendsOneEmailPerResolvedRecipient() {
+    void notifyRecipients_sendsOneEmail_withAllRecipientsInBcc() throws Exception {
         User user1 = User.builder().email("u1@msg.group").build();
         User user2 = User.builder().email("u2@msg.group").build();
         when(recipientPoolService.resolveRecipients(event.getLocation()))
                 .thenReturn(List.of(user1, user2));
-        when(mailSender.createMimeMessage()).thenReturn(newMimeMessage(), newMimeMessage());
+        MimeMessage message = newMimeMessage();
+        when(mailSender.createMimeMessage()).thenReturn(message);
 
         mailService.notifyRecipients(event);
 
-        verify(mailSender, times(2)).send(any(MimeMessage.class));
+        ArgumentCaptor<MimeMessage> captor = ArgumentCaptor.forClass(MimeMessage.class);
+        verify(mailSender, times(1)).send(captor.capture());
+        assertThat(captor.getValue().getRecipients(MimeMessage.RecipientType.BCC))
+                .extracting(Object::toString)
+                .containsExactlyInAnyOrder("u1@msg.group", "u2@msg.group");
     }
 
     @Test
@@ -193,7 +199,7 @@ class EventPublishMailServiceTest {
         MimeMessage realMessage = newMimeMessage();
         when(mailSender.createMimeMessage()).thenReturn(realMessage);
 
-        mailService.sendHtmlMessage("to@msg.group", "Subject", "<p>Body</p>", null, null);
+        mailService.sendHtmlMessage(List.of("to@msg.group"), "Subject", "<p>Body</p>", null, null);
 
         verify(mailSender).send(realMessage);
     }
@@ -203,7 +209,7 @@ class EventPublishMailServiceTest {
         MimeMessage realMessage = newMimeMessage();
         when(mailSender.createMimeMessage()).thenReturn(realMessage);
 
-        mailService.sendHtmlMessage("to@msg.group", "Subject", "<p>Body</p>", PNG_BYTES, "image/png");
+        mailService.sendHtmlMessage(List.of("to@msg.group"), "Subject", "<p>Body</p>", PNG_BYTES, "image/png");
 
         verify(mailSender).send(realMessage);
     }
