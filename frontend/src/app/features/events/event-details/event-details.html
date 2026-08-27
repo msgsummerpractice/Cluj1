@@ -123,6 +123,30 @@
                       </div>
                     }
 
+                    @if (canManageRegistration(event)) {
+                      <button
+                        type="button"
+                        mat-flat-button
+                        class="w-full !rounded-md !py-6 text-base font-semibold shadow-sm text-white action-button-primary"
+                        (click)="manageRegistration(event.id)"
+                      >
+                        <mat-icon class="mr-1">edit_document</mat-icon>
+                        {{ 'events.eventManageRegistrationButton' | transloco }}
+                      </button>
+                    }
+
+                    @if (canDeleteRegistration(event)) {
+                      <button
+                        type="button"
+                        mat-flat-button
+                        class="w-full !rounded-md !py-6 text-base font-semibold shadow-sm text-white action-button-primary"
+                        (click)="onDeleteRegistration()"
+                      >
+                        <mat-icon class="mr-1">transit_enterexit</mat-icon>
+                        {{ 'events.eventDeleteRegistrationButton' | transloco }}
+                      </button>
+                    }
+
                     @if (canCheckIn()) {
                       <button
                         type="button"
@@ -192,6 +216,42 @@
                           }}
                         </button>
                       </div>
+                    }
+
+                    @if (canEdit(event)) {
+                      <button
+                        type="button"
+                        mat-flat-button
+                        class="w-full !rounded-md !py-6 text-base font-semibold shadow-sm text-white action-button-primary"
+                        [routerLink]="['/events', event.id, 'edit']"
+                      >
+                        <mat-icon class="mr-1">edit</mat-icon>
+                        {{ 'events.eventEditButton' | transloco }}
+                      </button>
+                    }
+
+                    @if (canPublish(event)) {
+                      <button
+                        type="button"
+                        mat-flat-button
+                        class="w-full !rounded-md !py-6 text-base font-semibold shadow-sm text-white action-button-primary"
+                        (click)="onPublish()"
+                      >
+                        <mat-icon class="mr-1">publish</mat-icon>
+                        {{ 'events.eventPublishButton' | transloco }}
+                      </button>
+                    }
+
+                    @if (canComplete(event)) {
+                      <button
+                        type="button"
+                        mat-flat-button
+                        class="w-full !rounded-md !py-6 text-base font-semibold shadow-sm text-white action-button-primary"
+                        (click)="onComplete()"
+                      >
+                        <mat-icon class="mr-1">done</mat-icon>
+                        {{ 'events.eventCompleteButton' | transloco }}
+                      </button>
                     }
                   </div>
                 }
