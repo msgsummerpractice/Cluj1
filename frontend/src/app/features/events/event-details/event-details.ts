@@ -95,6 +95,7 @@ export class EventDetailsComponent {
 
   readonly isExporting = signal<boolean>(false);
   readonly isDownloadingReport = signal<boolean>(false);
+  readonly isPublishing = signal<boolean>(false);
 
   readonly canExport = computed(() => {
     const currentEvent = this.event();
@@ -143,7 +144,7 @@ export class EventDetailsComponent {
   readonly canCheckIn = computed(() => {
     const currentEvent = this.event();
     if (!currentEvent) return false;
-    return currentEvent.status !== 'DRAFT' && this.isRegistered() && !currentEvent.isCheckedIn;
+    return currentEvent.status !== 'DRAFT' && this.isRegistered();
   });
 
   constructor() {
@@ -175,9 +176,7 @@ export class EventDetailsComponent {
 
   canRegister(event: Event | null): boolean {
     return (
-      event?.status === 'PUBLISHED' &&
-      !this.isRegistered() &&
-      !this.isRegistrationClosed(event)
+      event?.status === 'PUBLISHED' && !this.isRegistered() && !this.isRegistrationClosed(event)
     );
   }
 
@@ -200,11 +199,7 @@ export class EventDetailsComponent {
   }
 
   canComplete(event: Event | null): boolean {
-    return (
-      event?.status === 'PUBLISHED' &&
-      this.authService.isMarketingOrganizer() &&
-      this.eventHasEnded(event)
-    );
+    return event?.status === 'PUBLISHED' && this.authService.isMarketingOrganizer();
   }
 
   isRegistrationClosed(event: Event | null): boolean {
@@ -221,7 +216,8 @@ export class EventDetailsComponent {
 
   onDeleteRegistration(): void {
     const currentEvent = this.event();
-    if (!currentEvent || !this.canDeleteRegistration(currentEvent)) return;
+    if (!currentEvent || !this.canDeleteRegistration(currentEvent) || currentEvent.isCheckedIn)
+      return;
 
     this.openConfirmDialog({
       titleKey: 'events.deleteRegistration.title',
@@ -252,7 +248,7 @@ export class EventDetailsComponent {
 
   onPublish(): void {
     const currentEvent = this.event();
-    if (!currentEvent || !this.canPublish(currentEvent)) return;
+    if (!currentEvent || !this.canPublish(currentEvent) || this.isPublishing()) return;
 
     this.openConfirmDialog({
       titleKey: 'events.publish.title',
@@ -262,7 +258,11 @@ export class EventDetailsComponent {
     })
       .pipe(
         filter((confirmed): confirmed is true => Boolean(confirmed)),
-        switchMap(() => this.eventService.updateEventStatus(currentEvent.id, 'PUBLISHED')),
+        switchMap(() => {
+          this.isPublishing.set(true);
+          return this.eventService.updateEventStatus(currentEvent.id, 'PUBLISHED');
+        }),
+        finalize(() => this.isPublishing.set(false)),
       )
       .subscribe({
         next: () => {
@@ -282,7 +282,8 @@ export class EventDetailsComponent {
 
   onComplete(): void {
     const currentEvent = this.event();
-    if (!currentEvent || !this.canComplete(currentEvent)) return;
+    if (!currentEvent || !this.canComplete(currentEvent) || !this.eventHasEnded(currentEvent))
+      return;
 
     this.openConfirmDialog({
       titleKey: 'events.complete.title',

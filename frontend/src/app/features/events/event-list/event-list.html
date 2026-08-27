@@ -264,15 +264,9 @@
             <button
               mat-icon-button
               (click)="deleteRegistration(event.id)"
+              [disabled]="event.isCheckedIn"
               [matTooltip]="'events.eventDeleteRegistrationButton' | transloco"
               aria-label="Delete registration"
-            >
-              <mat-icon>transit_enterexit</mat-icon>
-            </button>
-          } @else {
-            <button
-              mat-icon-button
-              [disabled]="isPastRegistrationEndDate(event) && !event.isRegistered"
             >
               <mat-icon>transit_enterexit</mat-icon>
             </button>
@@ -282,7 +276,7 @@
           <button
             mat-icon-button
             (click)="navigateToCheckIn(event.id)"
-            [disabled]="event.isCheckedIn"
+            [disabled]="event.isCheckedIn || event.status === 'COMPLETED'"
             [matTooltip]="'events.eventCheckInButton' | transloco"
             aria-label="Check in to event"
           >
